@@ -11,7 +11,7 @@ This repo is for controlling PrinterOS with Google Apps Script.
 * [Setup](#setup)
 
 ## General Info
-This project helps manage student project submissions to PrinterOS, script updates a google sheet every 5 mins with new data, and creates printable tickets for each print. Tickets have embedded images for easier physical tracking. 
+This project helps manage student project submissions to PrinterOS. The script updates a google sheet every 5 mins with new data, and creates printable tickets for each print. Tickets have embedded images for easier physical tracking. 
 	
 ## Technologies
 Project is created with:
@@ -26,3 +26,6 @@ $ npm install clasp gulp gulp-cli -G
 $ clasp login
 $ clasp clone
 ```
+
+## TODO
+Tickets should print themselves when status changes to "In-Progress".
