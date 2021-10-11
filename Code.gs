@@ -31,12 +31,15 @@ const onChange = async (e) => {
 
   // Skip the first 2 rows of data.
   if (thisRow <= 1) return;
-  if (sheetname == OTHERSHEETS.Metrics.getSheetName() ||
-      sheetname == OTHERSHEETS.Summary.getSheetName() ||
-      sheetname == OTHERSHEETS.Scanner.getSheetName() ||
-      sheetname == OTHERSHEETS.Staff.getSheetName() ||
-      sheetname == OTHERSHEETS.Users.getSheetName()) return;
-
+  switch (sheetname) {
+    case OTHERSHEETS.Metrics.getSheetName():
+    case OTHERSHEETS.Summary.getSheetName():
+    case OTHERSHEETS.Scanner.getSheetName():
+    case OTHERSHEETS.Staff.getSheetName():
+    case OTHERSHEETS.Users.getSheetName():
+      return;
+  }
+  
   // const setCheckbox = SpreadsheetApp
   //   .newDataValidation()
   //   .requireCheckbox()
