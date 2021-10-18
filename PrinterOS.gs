@@ -59,8 +59,6 @@ class PrinterOS {
     };
 
     const html = await UrlFetchApp.fetch(this.root + repo, params);
-    // Logger.log(`Response ---> : ${html.getContentText()}`);
-
     const responseCode = html.getResponseCode();
     Logger.log(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
@@ -72,9 +70,7 @@ class PrinterOS {
         Logger.log(`SESSION -----> ${session}`)
         this.session = session;
         return session;
-      } else {
-        return false;
-      }
+      } else return false;
     }
   }
 
@@ -92,13 +88,12 @@ class PrinterOS {
 
     const html = await UrlFetchApp.fetch(this.root + repo, params);
     const responseCode = html.getResponseCode();
-    // Logger.log(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
     if(responseCode == 200) {
       const response = html.getContentText();
       const result = JSON.parse(response)["result"];
       Logger.log(`Logged Out : ${result}`);
-    }
+    } else return false;
   }
   
 
@@ -118,9 +113,8 @@ class PrinterOS {
     };
 
     const html = await UrlFetchApp.fetch(this.root + repo, params);
-    // Logger.log(`Response : CHECK SESSION ---> : ${html.getContentText()}`);
-
     const responseCode = html.getResponseCode();
+
     Logger.log(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
     if(responseCode == 200) {
@@ -129,9 +123,7 @@ class PrinterOS {
       if(result == true) {
         Logger.log(`CHECK SESSION ---> : ${JSON.parse(response)["message"]}`);
         return JSON.parse(response)["message"];
-      } else {
-        return false;
-      }
+      } else return false;
     }
 
   }
@@ -155,9 +147,8 @@ class PrinterOS {
     };
 
     const html = await UrlFetchApp.fetch(this.root + repo, params);
-    // Logger.log(`Response ---> : ${html.getContentText()}`);
-
     const responseCode = html.getResponseCode();
+
     Logger.log(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
     const printerListOut = [];
@@ -175,9 +166,7 @@ class PrinterOS {
           Logger.log(JSON.stringify(p));
           // printerListOut.push(JSON.stringify(p));
         })
-      } else {
-        return false;
-      }
+      } else return false;
     }
     Logger.log(this.printerIDs);
     Logger.log(this.printerIPs);
@@ -206,9 +195,8 @@ class PrinterOS {
     };
 
     const html = await UrlFetchApp.fetch(this.root + repo, params);
-    Logger.log(`Response ---> : ${html.getContentText()}`);
-
     const responseCode = html.getResponseCode();
+
     Logger.log(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
     if(responseCode == 200) {
@@ -223,9 +211,7 @@ class PrinterOS {
           Logger.log(JSON.stringify(p));
           // printerListOut.push(JSON.stringify(p));
         })
-      } else {
-        return false;
-      }
+      } else return false;
     }
   }
 
@@ -247,9 +233,8 @@ class PrinterOS {
     };
 
     const html = await UrlFetchApp.fetch(this.root + repo, params);
-    // Logger.log(`Response ---> : ${html.getContentText()}`);
-
     const responseCode = html.getResponseCode();
+
     Logger.log(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
     if(responseCode == 200) {
@@ -259,9 +244,7 @@ class PrinterOS {
         const types = JSON.parse(response)["message"];
         // Logger.log(JSON.stringify(types));
         return types;
-      } else {
-        return false;
-      }
+      } else return false;
     }
   }
 
@@ -289,10 +272,9 @@ class PrinterOS {
     };
 
     const html = await UrlFetchApp.fetch(this.root + repo, params);
-    // Logger.log(`Response ---> : ${html.getContentText()}`);
-
     const responseCode = html.getResponseCode();
-    // Logger.log(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+
+    Logger.log(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
     if(responseCode == 200) {
       const response = html.getContentText();
@@ -303,9 +285,7 @@ class PrinterOS {
         //   Logger.log(JSON.stringify(p));
         // })
         return data;
-      } else {
-        return false;
-      }
+      } else return false;
     }
   }
 
@@ -327,9 +307,8 @@ class PrinterOS {
     };
 
     const html = await UrlFetchApp.fetch(this.root + repo, params);
-    // Logger.log(`Response ---> : ${html.getContentText()}`);
-
     const responseCode = html.getResponseCode();
+
     Logger.log(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
     if(responseCode == 200) {
@@ -337,9 +316,7 @@ class PrinterOS {
       const result = JSON.parse(response)["result"];
       if(result == true) {
         return JSON.parse(response)["message"][0];
-      } else {
-        return false;
-      }
+      } else return false;
     }
   }
 
@@ -363,10 +340,9 @@ class PrinterOS {
     };
 
     const html = await UrlFetchApp.fetch(this.root + repo, params);
-    // Logger.log(`Response : JOB INFO ---> : ${html.getContentText()}`);
-
     const responseCode = html.getResponseCode();
-    // Logger.log(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+
+    Logger.log(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
     if(responseCode == 200) {
       const response = html.getContentText();
@@ -377,9 +353,7 @@ class PrinterOS {
         this.imgBlob = this.GetJobImage();
         res["imageBLOB"] = this.imgBlob;
         return res;
-      } else {
-        return false;
-      }
+      } else return false;
     }
   }
 
@@ -402,19 +376,16 @@ class PrinterOS {
     };
 
     const html = await UrlFetchApp.fetch(this.root + repo, params);
-    // Logger.log(`Response : JOB INFO ---> : ${html.getContentText()}`);
-
     const responseCode = html.getResponseCode();
-    // Logger.log(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+
+    Logger.log(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
     if(responseCode == 200) {
       const response = html.getContentText();
       const result = JSON.parse(response)["result"];
       if(result == true) {
         return JSON.parse(response)["message"];
-      } else {
-        return false;
-      }
+      } else return false;
     }
   }
 
@@ -430,21 +401,17 @@ class PrinterOS {
     };
 
     const html = await UrlFetchApp.fetch(this.root + repo, params);
-    const res = html.getContentText();
-    Logger.log(`Response ---> : ${res}`);
-
     const responseCode = html.getResponseCode();
+
     Logger.log(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
     if(responseCode == 200) {
-      const response = res;
+      const response = html.getContentText();
       const result = JSON.parse(response)["result"];
       if(result == true) {
         const stuff = JSON.parse(response);
         return stuff;
-      } else {
-        return false;
-      }
+      } else return false;
     }
   }
 
@@ -474,18 +441,16 @@ class PrinterOS {
       muteHttpExceptions : true
     };
     const html = await UrlFetchApp.fetch(this.root + repo, params);
-    // Logger.log(`Response : JOB INFO ---> : ${html.getContentText()}`);
-
     const responseCode = html.getResponseCode();
+
+    Logger.log(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
     if(responseCode == 200) {
       const response = html.getContentText();
       const result = JSON.parse(response)["result"];
       if(result == true) {
         return JSON.parse(response)["message"];
-      } else {
-        return false;
-      }
+      } else return false;
     }
   }
 
@@ -511,20 +476,17 @@ class PrinterOS {
     };
 
     const html = await UrlFetchApp.fetch(this.root + repo, params);
-    // Logger.log(`Response : CHECK SESSION ---> : ${html.getContentText()}`);
-
     const responseCode = html.getResponseCode();
+
     Logger.log(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
     if(responseCode == 200) {
       const response = html.getContentText();
       const result = JSON.parse(response)["result"];
       if(result == true) {
-        const res = JSON.stringify(JSON.parse(response)["message"]);
-        Logger.log(`REPORT ---> : ${res}`);
-      } else {
-        return false;
-      }
+        const res = JSON.parse(response)["message"];
+        return res;
+      } else return false;
     }
   }
 
@@ -544,16 +506,15 @@ class PrinterOS {
     };
 
     const html = await UrlFetchApp.fetch(repo, params);
-
     const responseCode = html.getResponseCode();
+
     Logger.log(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
     if(responseCode == 200) {
       const folder = DriveApp.getFoldersByName(`Job Tickets`);
       const blob = html.getBlob().setName(`IMAGE_${this.picture}`);
       return blob;
-    }
-    else return false;
+    } else return false;
   }
 
 }
@@ -821,7 +782,6 @@ const UpdateInfo = (jobDetails, sheet, row) => {
  * Remove Duplicate Records
  */
 const RemoveDuplicateRecords = (sheet) => {
-  Logger.log(`Removing Duplicates ....`);
   const records = [];
 
   let numbers = sheet.getRange(2, 4, sheet.getLastRow() -1, 1).getValues();
@@ -843,7 +803,6 @@ const RemoveDuplicateRecords = (sheet) => {
     Logger.log(`Sheet ${sheet.getSheetName()} @ INDEX : ${number}`);
     sheet.deleteRow(number);
   });
-  Logger.log(`Duplicates Removed.`);
 }
 
 /**
@@ -914,6 +873,33 @@ const GetUsers = async () => {
   // return count;
 }
 
+/**
+ * Get User Counts and Print to Data / Metrics
+ */
+const GetUserCount = async () => {
+  let count;
+  let users = [];
+  const pos = new PrinterOS();
+  pos.Login()
+  .then(() => {
+    JACOBSWORKGROUPS.forEach( async (group) => {
+      const res = await pos.GetUsersByWorkgroup(group);
+      res.forEach(user => users.push(user["email"]));
+    })
+  })
+  .then( async() => {
+    let temp = await users;
+    temp = [].concat(...temp);
+    count = new Set(temp).size;
+    Logger.log(`Count : ${count}`);
+    OTHERSHEETS.Metrics.getRange(17, 3, 1, 1).setValue(count);
+  })
+  .finally(() => {
+    pos.Logout();
+  })
+  return await count;
+}
+
 
 /**
  * UNIT TEST
@@ -967,6 +953,8 @@ const _testPOS = async () => {
   // pos.GetPrinters(response);
   // pos.GetPrintersJobList(response, 234918273);
 }
+
+
 
 
 

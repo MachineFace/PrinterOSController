@@ -34,11 +34,6 @@ const CalculateAverageTurnaround = (sheet) => {
 
     return average;
 }
-
-
-/**
- * Prints Above turnaround to a Sheet
- */
 const PrintTurnarounds = () => {
   let obj = {}
   for(const [key, value] of Object.entries(SHEETS)) {
@@ -68,11 +63,6 @@ const SumStatuses = (sheet) => {
   statuses.forEach(countFunc);
   return count;
 }
-
-
-/**
- * Status Counts Per Printer
- */
 const PrintStatusCounts = () => {
   let obj = {};
   for(const [key, value] of Object.entries(SHEETS)) {
@@ -92,7 +82,7 @@ const PrintStatusCounts = () => {
 
 
 /**
- * Sort Users by Number of Jobs
+ * Sort Users by Number of Jobs they've submitted
  */
 const CalculateDistribution = () => {
   let count = {};
@@ -117,6 +107,60 @@ const CalculateDistribution = () => {
   items.sort((first, second) => {
     return second[1] - first[1];
   });
+  return items;  
+}
+
+
+/**
+ * Count and Sort all Date Submissions
+ */
+const CalculateSubmissionDateDistribution = async () => {
+
+  let dates = [];
+  let report = [];
+  const pos = new PrinterOS();
+  await pos.Login()
+    .then(pos.CheckSession())
+    .then( async () => {
+      let date = new Date();
+      date.setDate(date.getDate() - 90);
+      const fromDate = date.toISOString().split('T')[0];
+      const toDate = new Date().toISOString().split('T')[0];
+      Logger.log(`From : ${fromDate}, To : ${toDate}`);
+      report = await pos.GetFinishedJobReport(fromDate, toDate);
+    })
+    .then(() => {
+      let sorted = report.sort((a,b) => b.endtime - a.endtime);
+      sorted.forEach(item => {
+        let date = item["endtime"];
+        dates.push(date);
+      })
+    })
+    .then(pos.Logout());
+
+  dates = [].concat(...dates);
+  let dateList = [];
+  dates.forEach( date => {
+    if(date != null || date != undefined || date != "" || IsValidDate(date)) {
+      let actualDate = new Date(date);
+      let formatted = new Date(actualDate.getFullYear(), actualDate.getMonth(), actualDate.getDay());
+      if(IsValidDate(formatted)) dateList.push(formatted);
+    }
+  })
+  
+  let occurrences = dateList.reduce( (acc, curr) => {
+    return acc[curr] ? ++acc[curr] : acc[curr] = 1, acc
+  }, {});
+  let items = Object.keys(occurrences).map((key) => {
+    if (key != "" || key != undefined || key != null) {
+      return [key, occurrences[key]];
+    }
+  });
+  Logger.log(items);
+  items.forEach( (thing, index) => {
+    OTHERSHEETS.Metrics.getRange(2 + index, 23, 1, 1).setValue(thing[0]);
+    OTHERSHEETS.Metrics.getRange(2 + index, 24, 1, 1).setValue(thing[1]);
+  })
   return items;  
 }
 
@@ -266,7 +310,8 @@ const StatusCounts = () => {
  */
 const Metrics = () => {
     try {
-      Logger.log(`Calculating Metrics .... `)
+      Logger.log(`Calculating Metrics .... `);
+      GetUserCount();
       PrintTurnarounds();
       PrintStatusCounts();
       CountUniqueUsers();

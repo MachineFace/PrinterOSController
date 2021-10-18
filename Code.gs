@@ -21,6 +21,7 @@ const gmailName = "Jacobs Self-Service Printing Bot";
  * @param {Event} e
  */
 const onChange = async (e) => {
+  const writer = new WriteLogger();
   const ss = e.range.getSheet();
   const spreadSheet = SpreadsheetApp.getActiveSpreadsheet();
   const sheetname = spreadSheet.getSheetName();

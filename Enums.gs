@@ -89,6 +89,19 @@ const POSSTATCODE = {
   77 : "Completed",
 }
 
+const PRINTERIDS = { 
+  Luteus : 79606,
+  Caerulus : 79605,
+  Photon : 75677,
+  Quasar : 75675,
+  Zardoz : 79166,
+  Viridis :79167,
+  Rubrum : 79170,
+  Plumbus : 75140,
+  Nimbus : 75670,
+  Spectrum : 79165,
+};
+
 
 const SHEETS = {
   Spectrum : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Spectrum"), 
@@ -114,3 +127,20 @@ const OTHERSHEETS = {
 const WORKGROUPS = [
   3275, 3285, 3286, 3291, 3292, 3296, 3414, 3473, 3474, 3475,
 ];
+
+const JACOBSWORKGROUPS = [
+  3275, 3285, 3286, 3296, 3414,
+];
+
+const WORKGROUPS_ENUMERATED = {
+  STUDENTS_GENERAL : 3275, 
+  MDES : 3285, 
+  ENG : 3286, 
+  CED : 3291, 
+  L_S : 3292, 
+  STAFF : 3296, 
+  TEMP_INCREASE : 3414, 
+  CED_DFL_UNDERGRAD : 3473, 
+  CED_STAFF : 3474, 
+  CED_DFL_PDST : 3475,
+}

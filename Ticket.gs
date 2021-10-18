@@ -117,6 +117,41 @@ class Ticket
     Logger.log(JSON.stringify(doc))
     return doc;
   };
+
+  SetInfo() {
+    let thisSheet;
+    for(const [key, sheet] of Object.entries(SHEETS)) {
+      const finder = sheet.createTextFinder(this.jobID).findNext();
+      if (finder != null) {
+        this.row = finder.getRow();
+        thisSheet = sheet;
+      }
+    }
+    // Status	PrinterID	PrinterName	JobID	Timestamp	Email	POS Stat Code	Duration (Hours)	Notes	Elapsed	Materials	Cost	Picture	Ticket
+    this.designspecialist = designspecialist;
+    this.submissiontime = submissiontime;
+    this.name = name;
+    this.email = email;
+    this.projectname = projectname;
+    this.material1Quantity = material1Quantity;
+    this.material2Quantity = material2Quantity;
+    this.ticketName = ticketName;
+    this.printerID = printerID;
+    this.printerName = printerName;
+    this.printDuration = printDuration;
+    this.jobID = jobID;
+
+    this.designspecialist = "Staff";
+    this.submissiontime = thisSheet.getRange(this.row, 5, 1, 1).getValue();
+    this.email = thisSheet.getRange(this.row, 6, 1, 1).getValue();
+
+    this.projectname = this.GetByHeader(thisSheet, "Project Name", this.row);
+    this.material1Name = this.GetByHeader(thisSheet, "(INTERNAL) Item 1", this.row);
+    this.material1Quantity = this.GetByHeader(thisSheet, "(INTERNAL) Material 1 Quantity", this.row);
+    this.material2Name = this.GetByHeader(thisSheet, "(INTERNAL) Item 2", this.row);
+    this.material2Quantity = this.GetByHeader(thisSheet, "(INTERNAL) Material 2 Quantity", this.row);
+  }
+
 }
 
 const _testTicket = () => {

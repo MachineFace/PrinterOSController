@@ -26,45 +26,51 @@ const GetDriveIDFromUrl = (url) => {
  * Find Image blob from File
  */
 const GetImage = async (pngFile) => {
-    let image;
-    Logger.log(`IMAGE ----> ${pngFile}`);
-    const repo = `https://live3dprinteros.blob.core.windows.net/render/${pngFile}`;
+  const writer = new WriteLogger();
+  let image;
+  writer.Info(`IMAGE ----> ${pngFile}`);
+  const repo = `https://live3dprinteros.blob.core.windows.net/render/${pngFile}`;
 
-    const params = {
-      "method" : "GET",
-      contentType : "image/png",
-      followRedirects : true,
-      muteHttpExceptions : true
-    };
+  const params = {
+    "method" : "GET",
+    contentType : "image/png",
+    followRedirects : true,
+    muteHttpExceptions : true
+  };
 
-    const html = await UrlFetchApp.fetch(repo, params);
+  const html = await UrlFetchApp.fetch(repo, params);
 
-    const responseCode = html.getResponseCode();
-    Logger.log(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+  const responseCode = html.getResponseCode();
+  writer.Debug(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
-    if(responseCode == 200) {
-      const folder = DriveApp.getFoldersByName(`Job Tickets`);
-      const blob = html.getBlob().setName(`IMAGE_${pngFile}`);
-      return blob;
-    }
-    else return false;
+  if(responseCode == 200) {
+    const folder = DriveApp.getFoldersByName(`Job Tickets`);
+    const blob = html.getBlob().setName(`IMAGE_${pngFile}`);
+    return blob;
+  } else return false;
 }
 
 
 /**
- * Search
- * @param {[string]} sheet to search
- * @param {string} searchString
- * @returns {int} index
+ * Search all Sheets for a value
+ * @required {string} value
+ * @returns {[sheet, [values]]} list of sheets with lists of indexes
  */
-const Seek = (sheet, searchTerm) => {
-  let rows = [];
-  const finder = sheet.createTextFinder(searchTerm).findAll();
-  if(!finder) return false;
-  finder.forEach(range => {
-    rows.push(Number(range.getRow()).toFixed());
-  })
-  return rows;
+const Search = (value) => {
+  const writer = new WriteLogger();
+  // value = "laxbop@berkeley.edu";  // test good sid
+  if (value) value.toString().replace(/\s+/g, "");
+  let res = {};
+  for(const [key, sheet] of Object.entries(SHEETS)) {
+    const finder = sheet.createTextFinder(value).findAll();
+    if (finder != null) {
+      temp = [];
+      finder.forEach(result => temp.push(result.getRow()));
+      res[sheet.getName()] = temp;
+    }
+  }
+  writer.Debug(JSON.stringify(res));
+  return res;
 }
 
 
@@ -80,32 +86,33 @@ class JobNumberGenerator {
     date = new Date(),
   }) {
     this.date = date;
+    this.writer = new WriteLogger();
   }
 
-  testDate() {
+  TestDate() {
     if (Object.prototype.toString.call(this.date) !== "[object Date]") return false;
     return !isNaN(this.date.getTime());
   }
 
   GenerateJobNumber() { 
-    const testedDate = this.testDate(this.date);
+    const testedDate = this.TestDate(this.date);
 
     let jobnumber;
     try {
       if ( this.date == undefined || this.date == null || this.date == "" || testedDate == false ) {
         jobnumber = +Utilities.formatDate(new Date(), `PST`, `yyyyMMddHHmmss`);
-        Logger.log(`Set Jobnumber to a new time because timestamp was missing.`);
+        this.writer.Warning(`Set Jobnumber to a new time because timestamp was missing.`);
       } else {
         jobnumber = +Utilities.formatDate(this.date, `PST`, `yyyyMMddhhmmss`);
-        Logger.log(`Input time: ${this.date}, Set Jobnumber: ${jobnumber}`);
+        this.writer.Info(`Input time: ${this.date}, Set Jobnumber: ${jobnumber}`);
       }
     } catch (err) {
-      Logger.log(`${err} : Couldnt fix jobnumber.`);
+      this.writer.Error(`${err} : Couldnt fix jobnumber.`);
     }
     if (jobnumber == undefined || testedDate == false) {
       jobnumber = +Utilities.formatDate(new Date(), `PST`, `yyyyMMddHHmmss`);
     }
-    Logger.log(`Returned Job Number: ${jobnumber}`);
+    this.writer.Info(`Returned Job Number: ${jobnumber}`);
     return jobnumber.toString();
   }
   
@@ -116,7 +123,8 @@ class JobNumberGenerator {
  * Fix Statuses
  */
 const FixStatus = () => {
-  Logger.log(`Checking Statuses....`);
+  const writer = new WriteLogger();
+  writer.Info(`Checking Statuses....`);
   for(const [key, sheet] of Object.entries(SHEETS)) {
     let posCodes = sheet.getRange(2, 7, sheet.getLastRow() -1, 1).getValues();
     posCodes = [].concat(...posCodes);
@@ -127,35 +135,45 @@ const FixStatus = () => {
         case 11:
           if (statuses[index + 2] != "Queued") {
             sheet.getRange(index + 2, 1, 1, 1).setValue("Queued");
-            Logger.log(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
+            writer.Info(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
           }
           break;
         case 21:
           if (statuses[index + 2] != "In-Progress") {
             sheet.getRange(index + 2, 1, 1, 1).setValue("In-Progress");
-            Logger.log(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
+            writer.Info(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
           }
           break;
         case 43:
           if (statuses[index + 2] != "FAILED") {
             sheet.getRange(index + 2, 1, 1, 1).setValue("FAILED");
-            Logger.log(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
+            writer.Info(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
           }
           break;
         case 45:
           if (statuses[index + 2] != "Cancelled") {
             sheet.getRange(index + 2, 1, 1, 1).setValue("Cancelled");
-            Logger.log(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
+            writer.Info(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
           }
           break;
       }
     });
 
   }
-  Logger.log(`Statuses Checked and Fixed....`)
-
+  writer.Info(`Statuses Checked and Fixed....`);
 }
 
+
+/**
+ * ----------------------------------------------------------------------------------------------------------------
+ * Test if value is a date and return true or false
+ * @param {date} d
+ * @returns {boolean} b
+ */
+const IsValidDate = (d) => {
+  if (Object.prototype.toString.call(d) !== "[object Date]") return false;
+  return !isNaN(d.getTime());
+};
 
 
 /**
@@ -170,12 +188,13 @@ const _testJob = () => {
 }
 
 /**
- * Unit test for Seek
+ * Unit test for Search
  */
-const _testSeek = () => {
-  const term = 2173391;
-  const seek = Seek( OTHERSHEETS.Users, term );
-  Logger.log(`Seek : ${seek}`);
+const _testSearch = () => {
+  const writer = new WriteLogger();
+  const term = "berkdincer@berkeley.edu";
+  const search = Search(term);
+  writer.Debug(`Search : ${search}`);
 }
 
 /**

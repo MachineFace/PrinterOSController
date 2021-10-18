@@ -138,6 +138,9 @@ const BarMenu = () => {
     .addItem(`Fix All Missing Tickets`, `FixMissingTickets`)
     .addSeparator()
     .addItem("Help", "PopupHelp")
+    .addSeparator()
+    .addItem(`Recompute Metrics`, `Metrics`)
+    .addItem(`Fetch All Data & Update`, `WriteAllNewDataToSheets`)
     .addToUi();
 };
 
