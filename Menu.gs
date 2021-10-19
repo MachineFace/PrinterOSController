@@ -116,10 +116,10 @@ const BuildHTMLHELP = () => {
 /**
  * Creates a modal pop-up for the help text.
  */
-const PopupHelp = async () => {
-  let ui = await SpreadsheetApp.getUi();
+const PopupHelp = () => {
+  let ui = SpreadsheetApp.getUi();
   let title = "JPS Runtime HELP";
-  let htmlOutput = HtmlService.createHtmlOutput(await BuildHTMLHELP())
+  let htmlOutput = HtmlService.createHtmlOutput(BuildHTMLHELP())
     .setWidth(640)
     .setHeight(480);
   ui.showModalDialog(htmlOutput, title);

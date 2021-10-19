@@ -38,6 +38,7 @@ const onChange = async (e) => {
     case OTHERSHEETS.Scanner.getSheetName():
     case OTHERSHEETS.Staff.getSheetName():
     case OTHERSHEETS.Users.getSheetName():
+    case OTHERSHEETS.Logger.getSheetName():
       return;
   }
   
@@ -55,7 +56,7 @@ const onChange = async (e) => {
   for(const [name, id] of Object.entries(hardIDs)) {
     if(name == sheetname) hardID = id; 
   }
-  Logger.log(`Sheet : ${sheetname} : PrinterID : ${hardID}`);
+  writer.Info(`Sheet : ${sheetname} : PrinterID : ${hardID}`);
 
   FetchAndWrite(hardID, ss);
   RemoveDuplicateRecords(ss);

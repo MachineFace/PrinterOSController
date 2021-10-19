@@ -20,7 +20,7 @@ const CalculateAverageTurnaround = (sheet) => {
       })
     }
     catch (err) {
-        Logger.log(`${err} : Could not fetch list of times. Probably a sheet error.`);
+        new WriteLogger().Error(`${err} : Could not fetch list of times. Probably a sheet error.`);
     }
 
     // Sum all the totals
@@ -309,8 +309,9 @@ const StatusCounts = () => {
  * Used to Calculate Average Turnaround times and write to 'Data/Metrics' sheet
  */
 const Metrics = () => {
+  const writer = new WriteLogger();
     try {
-      Logger.log(`Calculating Metrics .... `);
+      writer.Debug(`Calculating Metrics .... `);
       GetUserCount();
       PrintTurnarounds();
       PrintStatusCounts();
@@ -320,10 +321,10 @@ const Metrics = () => {
       CalculateStandardDeviation();
       CalculateArithmeticMean();
       StatusCounts();
-      Logger.log(`Recalculated Metrics`);
+      writer.Debug(`Recalculated Metrics`);
     }
     catch (err) {
-      Logger.log(`${err} : Couldn't generate statistics on Metrics.`);
+      writer.Error(`${err} : Couldn't generate statistics on Metrics.`);
     }
 
 }

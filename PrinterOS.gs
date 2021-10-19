@@ -38,6 +38,7 @@ class PrinterOS {
     this.printerIPs = [];
     this.picture;
     this.imgBlob;
+    this.writer = new WriteLogger();
   }
   
 
@@ -60,14 +61,14 @@ class PrinterOS {
 
     const html = await UrlFetchApp.fetch(this.root + repo, params);
     const responseCode = html.getResponseCode();
-    Logger.log(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+    this.writer.Debug(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
     if(responseCode == 200) {
       const response = html.getContentText();
       const result = JSON.parse(response)["result"];
       if(result == true) {
         const session = JSON.parse(response)["message"]["session"];
-        Logger.log(`SESSION -----> ${session}`)
+        this.writer.Info(`SESSION -----> ${session}`)
         this.session = session;
         return session;
       } else return false;
@@ -92,7 +93,7 @@ class PrinterOS {
     if(responseCode == 200) {
       const response = html.getContentText();
       const result = JSON.parse(response)["result"];
-      Logger.log(`Logged Out : ${result}`);
+      this.writer.Warning(`Logged Out : ${result}`);
     } else return false;
   }
   
@@ -115,13 +116,13 @@ class PrinterOS {
     const html = await UrlFetchApp.fetch(this.root + repo, params);
     const responseCode = html.getResponseCode();
 
-    Logger.log(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+    this.writer.Debug(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
     if(responseCode == 200) {
       const response = html.getContentText();
       const result = JSON.parse(response)["result"];
       if(result == true) {
-        Logger.log(`CHECK SESSION ---> : ${JSON.parse(response)["message"]}`);
+        this.writer.Info(`CHECK SESSION ---> : ${JSON.parse(response)["message"]}`);
         return JSON.parse(response)["message"];
       } else return false;
     }
@@ -149,7 +150,7 @@ class PrinterOS {
     const html = await UrlFetchApp.fetch(this.root + repo, params);
     const responseCode = html.getResponseCode();
 
-    Logger.log(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+    this.writer.Debug(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
     const printerListOut = [];
 
@@ -163,14 +164,14 @@ class PrinterOS {
           this.printerIDs.push(p["id"]);
           this.printerIPs.push(p["local_ip"]);
           this.printerNames.push(p["name"]);
-          Logger.log(JSON.stringify(p));
+          this.writer.Info(JSON.stringify(p));
           // printerListOut.push(JSON.stringify(p));
         })
       } else return false;
     }
-    Logger.log(this.printerIDs);
-    Logger.log(this.printerIPs);
-    Logger.log(this.printerNames);
+    this.writer.Info(this.printerIDs);
+    this.writer.Info(this.printerIPs);
+    this.writer.Info(this.printerNames);
     return printerListOut;
   }
 
@@ -197,7 +198,7 @@ class PrinterOS {
     const html = await UrlFetchApp.fetch(this.root + repo, params);
     const responseCode = html.getResponseCode();
 
-    Logger.log(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+    this.writer.Debug(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
     if(responseCode == 200) {
       const response = html.getContentText();
@@ -208,7 +209,7 @@ class PrinterOS {
           this.printerIDs.push(p["id"]);
           this.printerIPs.push(p["local_ip"]);
           this.printerNames.push(p["name"]);
-          Logger.log(JSON.stringify(p));
+          this.writer.Info(JSON.stringify(p));
           // printerListOut.push(JSON.stringify(p));
         })
       } else return false;
@@ -235,14 +236,13 @@ class PrinterOS {
     const html = await UrlFetchApp.fetch(this.root + repo, params);
     const responseCode = html.getResponseCode();
 
-    Logger.log(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+    this.writer.Debug(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
     if(responseCode == 200) {
       const response = html.getContentText();
       const result = JSON.parse(response)["result"];
       if(result == true) {
         const types = JSON.parse(response)["message"];
-        // Logger.log(JSON.stringify(types));
         return types;
       } else return false;
     }
@@ -274,7 +274,7 @@ class PrinterOS {
     const html = await UrlFetchApp.fetch(this.root + repo, params);
     const responseCode = html.getResponseCode();
 
-    Logger.log(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+    this.writer.Debug(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
     if(responseCode == 200) {
       const response = html.getContentText();
@@ -309,7 +309,7 @@ class PrinterOS {
     const html = await UrlFetchApp.fetch(this.root + repo, params);
     const responseCode = html.getResponseCode();
 
-    Logger.log(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+    this.writer.Debug(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
     if(responseCode == 200) {
       const response = html.getContentText();
@@ -342,7 +342,7 @@ class PrinterOS {
     const html = await UrlFetchApp.fetch(this.root + repo, params);
     const responseCode = html.getResponseCode();
 
-    Logger.log(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+    this.writer.Debug(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
     if(responseCode == 200) {
       const response = html.getContentText();
@@ -378,7 +378,7 @@ class PrinterOS {
     const html = await UrlFetchApp.fetch(this.root + repo, params);
     const responseCode = html.getResponseCode();
 
-    Logger.log(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+    this.writer.Debug(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
     if(responseCode == 200) {
       const response = html.getContentText();
@@ -403,7 +403,7 @@ class PrinterOS {
     const html = await UrlFetchApp.fetch(this.root + repo, params);
     const responseCode = html.getResponseCode();
 
-    Logger.log(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+    this.writer.Debug(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
     if(responseCode == 200) {
       const response = html.getContentText();
@@ -443,7 +443,7 @@ class PrinterOS {
     const html = await UrlFetchApp.fetch(this.root + repo, params);
     const responseCode = html.getResponseCode();
 
-    Logger.log(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+    this.writer.Debug(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
     if(responseCode == 200) {
       const response = html.getContentText();
@@ -478,7 +478,7 @@ class PrinterOS {
     const html = await UrlFetchApp.fetch(this.root + repo, params);
     const responseCode = html.getResponseCode();
 
-    Logger.log(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+    this.writer.Debug(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
     if(responseCode == 200) {
       const response = html.getContentText();
@@ -495,7 +495,7 @@ class PrinterOS {
    */
   async GetJobImage() {
     let image;
-    Logger.log(`IMAGE ----> ${this.picture}`);
+    this.writer.Info(`IMAGE ----> ${this.picture}`);
     const repo = `https://live3dprinteros.blob.core.windows.net/render/${this.picture}`;
 
     const params = {
@@ -508,7 +508,7 @@ class PrinterOS {
     const html = await UrlFetchApp.fetch(repo, params);
     const responseCode = html.getResponseCode();
 
-    Logger.log(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+    this.writer.Debug(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
     if(responseCode == 200) {
       const folder = DriveApp.getFoldersByName(`Job Tickets`);
@@ -905,6 +905,7 @@ const GetUserCount = async () => {
  * UNIT TEST
  */
 const _testPOS = async () => {
+  const writer = new WriteLogger();
   const pos = new PrinterOS();
   // await pos.Login().then(session => {
   //   // pos.GetPrintersJobList(hardIDs.Spectrum);
@@ -922,7 +923,10 @@ const _testPOS = async () => {
   //   })
 
   await pos.Login()
-  .then(pos.CheckSession())
+  .then(async () => {
+    const info = await pos.GetJobInfo(2194576);
+    writer.Info(JSON.stringify(info));
+  })
   .then(pos.Logout());
 
   // await pos.Login()

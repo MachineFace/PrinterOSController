@@ -21,7 +21,10 @@ class DesignSpecialist
     this.email = email;
     this.type = 'Design Specialist';
     this.admin = true;
-    this.link = MakeLink(this.email)
+    this.link = this._MakeLink(this.email)
+  }
+  _MakeLink() {
+    return '<a href="mailto:' + this.email + '">' + this.email + '</a>';
   }
 }
 
@@ -45,7 +48,10 @@ class StudentSupervisor extends DesignSpecialist
     this.email = email;
     this.type = 'Student Supervisor';
     this.admin = false;
-    this.link = MakeLink(this.email)
+    this.link = this._MakeLink();
+  }
+  _MakeLink() {
+    return '<a href="mailto:' + this.email + '">' + this.email + '</a>';
   }
 
 }
@@ -68,20 +74,12 @@ class Manager extends DesignSpecialist
     this.email = email;
     this.type = 'Manager';
     this.admin = true;
-    this.link = MakeLink(this.email)
+    this.link = _MakeLink();
+  }
+  _MakeLink() {
+    return '<a href="mailto:' + this.email + '">' + this.email + '</a>';
   }
 }
-
-
-
-/**
- * ----------------------------------------------------------------------------------------------------------------
- * Turn an email address into a link
- * @param {string} email
- * @returns {string} link
- */
-const MakeLink = (email) => '<a href="mailto:' + email + '">' + email + '</a>';
-
 
 
 
@@ -93,16 +91,13 @@ const MakeLink = (email) => '<a href="mailto:' + email + '">' + email + '</a>';
  * @returns {string} fullname, email, or email link
  */
 const Staff = () => {
-  const staffSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(`StaffList`);
-  const data = staffSheet.getRange(2, 1, staffSheet.getLastRow() -1, 5).getValues();
+  const data = OTHERSHEETS.Staff.getRange(2, 1, OTHERSHEETS.Staff.getLastRow() -1, 5).getValues();
 
   let staff = {};
   data.forEach( (item,index) => {
     let name = item[0], fullname = item[1], email = item[2], emaillink = item[3], type = item[4];
-    // Logger.log(`Name : ${name}, FullName : ${fullname}, Email : ${email}, Link : ${emaillink}, Type : ${type}`)
     if(type === 'DS') {
       staff[name] = new DesignSpecialist({name : name, fullname : fullname, email : email})
-      // objs.push(new DesignSpecialist({name : name, fullname : fullname, email : email}))
     }
     if(type === 'SS') {
       staff[name] = new StudentSupervisor({name : name, fullname : fullname, email : email})
@@ -111,7 +106,6 @@ const Staff = () => {
       staff[name] = new Manager({name : name, fullname : fullname, email : email})
     }
   })
-  // Logger.log(staff)
   return staff;
 }
 
@@ -121,6 +115,7 @@ const Staff = () => {
  */
 const _test = () => {
   const staff = Staff();
+  Logger.log(JSON.stringify(staff))
   Logger.log(staff["Adam"]["email"])
   Logger.log(staff["Cody"])
 }

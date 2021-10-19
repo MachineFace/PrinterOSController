@@ -58,7 +58,6 @@ const GetImage = async (pngFile) => {
  */
 const Search = (value) => {
   const writer = new WriteLogger();
-  // value = "laxbop@berkeley.edu";  // test good sid
   if (value) value.toString().replace(/\s+/g, "");
   let res = {};
   for(const [key, sheet] of Object.entries(SHEETS)) {
@@ -214,9 +213,10 @@ const _testGetImage = async () => {
 }
 
 const _testFixStatus = async () => {
-  Logger.log(`Testing fixing the Status....`);
+  const writer = new WriteLogger();
+  writer.Info(`Testing fixing the Status....`);
   FixStatus();
-  Logger.log(`Finished testing fixing the Status.`)
+  writer.Info(`Finished testing fixing the Status.`)
 }
 
 

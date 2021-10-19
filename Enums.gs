@@ -122,6 +122,7 @@ const OTHERSHEETS = {
   Staff : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("StaffList"),
   Metrics : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Data/Metrics"),
   Users : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Users"),
+  Logger : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Logger"),
 }
 
 const WORKGROUPS = [

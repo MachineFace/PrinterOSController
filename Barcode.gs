@@ -49,10 +49,11 @@ class QRCodeAndBarcodeGenerator {
     }) {
     this.url = url;
     this.jobnumber = jobnumber;
+    this.writer = new WriteLogger();
   }
 
   GenerateQRCode(){
-    Logger.log(`URL : ${this.url}, Jobnumber || RNDNumber : ${this.jobnumber}`);
+    this.writer.Info(`URL : ${this.url}, Jobnumber : ${this.jobnumber}`);
     const loc = `https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=${this.url}`;  //API call
     const postParams = {
         "method" : "GET",
@@ -64,14 +65,14 @@ class QRCodeAndBarcodeGenerator {
 
     let qrCode;
     const html = UrlFetchApp.fetch(loc, postParams);
-    Logger.log(`Response Code : ${html.getResponseCode()}`);
+    this.writer.Debug(`Response Code : ${html.getResponseCode()}`);
     if (html.getResponseCode() == 200) {
         qrCode = DriveApp.createFile( Utilities.newBlob(html.getContent()).setName('QRCode' + this.jobnumber ) );
         qrCode.setTrashed(true);
     }
-    else Logger.log('Failed to GET QRCode');
+    else this.writer.Error('Failed to GET QRCode');
 
-    Logger.log(qrCode);
+    this.writer.Info(qrCode);
     return qrCode;
   }
 
@@ -98,27 +99,14 @@ class QRCodeAndBarcodeGenerator {
     let barcode;
 
     let html = UrlFetchApp.fetch(barcodeLoc, params);
-    Logger.log("Response Code : " + html.getResponseCode());
+    this.writer.Debug("Response Code : " + html.getResponseCode());
     if (html.getResponseCode() == 200) {
-
-        barcode = DriveApp.createFile( Utilities.newBlob(html.getContent()).setName(`Barcode : ${this.jobnumber}`) );
-        barcode.setTrashed(true);
-
-        // var meta = Drive.Files.get(file.getId()).imageMediaMetadata;
-        // let embed = Drive.Files.get(file.getId()).embedLink; 
-
-        // GmailApp.sendEmail('codyglen@berkeley.edu', 'JPSY : Barcode', '', {
-        //     htmlBody: embed,
-        //     'from': 'jacobsprojectsupport@berkeley.edu',
-        //     'name': 'JPSY'
-        // });
-
+      barcode = DriveApp.createFile( Utilities.newBlob(html.getContent()).setName(`Barcode : ${this.jobnumber}`) );
+      barcode.setTrashed(true);
     } 
-    else Logger.log('Failed to GET Barcode');
-
-    Logger.log(barcode);
+    else this.writer.Error('Failed to GET Barcode');
+    this.writer.Info(barcode);
     return barcode;
-
   }
   
 }
@@ -139,11 +127,12 @@ class OpenQRGenerator {
     }) {
     this.url = url;
     this.size = size;
+    this.writer = new WriteLogger();
   }
 
   async GenerateQRCode(){
     const randName = Math.floor(Math.random() * 100000).toFixed();
-    Logger.log(`URL : ${this.url}`);
+    this.writer.Info(`URL : ${this.url}`);
     const loc = `https://api.qrserver.com/v1/create-qr-code/?size=${this.size}&data=${this.url}`;  //API call
     const postParams = {
         "method" : "GET",
@@ -155,14 +144,14 @@ class OpenQRGenerator {
 
     let qrCode;
     const html = UrlFetchApp.fetch(loc, postParams);
-    Logger.log(`Response Code : ${RESPONSECODES[html.getResponseCode()]}`);
+    this.writer.Debug(`Response Code : ${RESPONSECODES[html.getResponseCode()]}`);
     if (html.getResponseCode() == 200) {
-        qrCode = DriveApp.createFile( Utilities.newBlob(html.getContent()).setName(`QRCode ${randName}`) );
-        qrCode.setTrashed(true);
+      qrCode = DriveApp.createFile( Utilities.newBlob(html.getContent()).setName(`QRCode ${randName}`) );
+      qrCode.setTrashed(true);
     }
-    else Logger.log(`Failed to GET QRCode`);
+    else this.writer.Error(`Failed to GET QRCode`);
 
-    Logger.log(qrCode);
+    this.writer.Info(qrCode);
     return await qrCode;
   }
 
@@ -193,7 +182,7 @@ class OpenQRGenerator {
         folder.next().addFile(docFile);
         folder.next().addFile(barcode);
       } catch (err) {
-        Logger.log(`Whoops : ${err}`);
+        this.writer.Error(`Whoops : ${err}`);
       }
 
 
@@ -202,7 +191,7 @@ class OpenQRGenerator {
       file.setSharing(DriveApp.Access.ANYONE, DriveApp.Permission.EDIT); //set sharing
     }
     //Return Document to use later
-    Logger.log(JSON.stringify(doc))
+    this.writer.Info(JSON.stringify(doc))
     return doc;
   };
 
