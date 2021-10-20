@@ -21,10 +21,11 @@ class DesignSpecialist
     this.email = email;
     this.type = 'Design Specialist';
     this.admin = true;
-    this.link = this._MakeLink(this.email)
+    this.link = '<a href="mailto:' + this.email + '">' + this.email + '</a>';
+    this.writer = new WriteLogger();
   }
-  _MakeLink() {
-    return '<a href="mailto:' + this.email + '">' + this.email + '</a>';
+  get Link() {
+    return this.link;
   }
 }
 
@@ -48,10 +49,11 @@ class StudentSupervisor extends DesignSpecialist
     this.email = email;
     this.type = 'Student Supervisor';
     this.admin = false;
-    this.link = this._MakeLink();
+    this.link = '<a href="mailto:' + this.email + '">' + this.email + '</a>';
+    this.writer = new WriteLogger();
   }
-  _MakeLink() {
-    return '<a href="mailto:' + this.email + '">' + this.email + '</a>';
+  get Link() {
+    return this.link;
   }
 
 }
@@ -74,10 +76,11 @@ class Manager extends DesignSpecialist
     this.email = email;
     this.type = 'Manager';
     this.admin = true;
-    this.link = _MakeLink();
+    this.link = '<a href="mailto:' + this.email + '">' + this.email + '</a>';
+    this.writer = new WriteLogger();
   }
-  _MakeLink() {
-    return '<a href="mailto:' + this.email + '">' + this.email + '</a>';
+  get Link() {
+    return this.link;
   }
 }
 
