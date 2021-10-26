@@ -1,7 +1,6 @@
 class NetworkPrinter
 {
   constructor(){
-    this.writer = new WriteLogger();
     this.service = this.GetCloudPrintService();
   }
 
@@ -11,7 +10,7 @@ class NetworkPrinter
   ShowURL() {
     const cpService = this.service;
     if (!cpService.hasAccess()) {
-      this.writer.Error(cpService.getAuthorizationUrl());
+      Logger.log(cpService.getAuthorizationUrl());
     }
   }
 
@@ -54,7 +53,7 @@ class NetworkPrinter
     const printers = JSON.parse(response).printers;
 
     printers.forEach(printer => {
-      this.writer.Info(`Printer : ${printer.id}, Name : ${printer.name}, Description : ${printer.description}`);
+      Logger.log(`Printer : ${printer.id}, Name : ${printer.name}, Description : ${printer.description}`);
     });
   }
 
@@ -94,8 +93,8 @@ class NetworkPrinter
     const res = await UrlFetchApp(repo, params);
     const response = JSON.parse(res);
 
-    if (response.success) this.writer.Info(`Success : ${response.message}`);
-    else this.writer.Error(`Error Code : ${response.errorCode}, Message : ${response.message}`);
+    if (response.success) Logger.log(`Success : ${response.message}`);
+    else Logger.log(`Error Code : ${response.errorCode}, Message : ${response.message}`);
   }
 
 }

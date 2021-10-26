@@ -21,7 +21,6 @@ const gmailName = "Jacobs Self-Service Printing Bot";
  * @param {Event} e
  */
 const onChange = async (e) => {
-  const writer = new WriteLogger();
   const ss = e.range.getSheet();
   const spreadSheet = SpreadsheetApp.getActiveSpreadsheet();
   const sheetname = spreadSheet.getSheetName();
@@ -56,7 +55,7 @@ const onChange = async (e) => {
   for(const [name, id] of Object.entries(hardIDs)) {
     if(name == sheetname) hardID = id; 
   }
-  writer.Info(`Sheet : ${sheetname} : PrinterID : ${hardID}`);
+  Logger.log(`Sheet : ${sheetname} : PrinterID : ${hardID}`);
 
   FetchAndWrite(hardID, ss);
   RemoveDuplicateRecords(ss);

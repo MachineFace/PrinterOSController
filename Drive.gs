@@ -5,7 +5,6 @@ class Drive
     this.destination = DriveApp.getFoldersByName(`Job Tickets`);
     this.now = new Date();
     this.dateMinusOneTwenty = new Date(new Date().setDate(new Date().getDate() - 120));
-    this.writer = new WriteLogger();
   }
 
   GetAllFileNamesInRoot() {
@@ -15,22 +14,21 @@ class Drive
       let file = files.next();
       out.push(file);
     }
-    // this.writer.Info(out);
     return out;
   }
 
   MoveTicketsOutOfRoot() {
     const files = this.GetAllFileNamesInRoot();
     const target = DriveApp.getFolderById(`1OJj0dxsa2Sf_tIBUnKm_BDmY7vFNMXYC`);
-    this.writer.Info(`Destination ----> ${this.destination.next().getName()}, ID : `);
+    Logger.log(`Destination ----> ${this.destination.next().getName()}, ID : `);
     files.forEach(file => {
       let name = file.getName();
       if(name == `Job Ticket` || name == `Job Ticket-[object Object]` || name == `PrinterOS Ticket`) {
-        this.writer.Warning(`Moving ----> Name : ${name}, ID : ${file.getId()}`);
+        Logger.log(`Moving ----> Name : ${name}, ID : ${file.getId()}`);
         file.moveTo(target);
-        this.writer.Warning(`Moved ----> Name : ${name}, ID : ${file.getId()}`);
+        Logger.log(`Moved ----> Name : ${name}, ID : ${file.getId()}`);
       } else {
-        this.writer.Warning(`No files moved....`);
+        Logger.log(`No files moved....`);
         return;
       }
     });
@@ -42,7 +40,7 @@ class Drive
     while (files.hasNext()) {
       count++;
     }
-    this.writer.Info(`Total Tickets : ${count}`);
+    Logger.log(`Total Tickets : ${count}`);
     return count;
   }
 
@@ -52,19 +50,19 @@ class Drive
       let file = files.next();
       let date = file.getDateCreated();
       if(date < this.dateMinusOneTwenty) {
-        this.writer.Warning(`Deleting ----> Name : ${file.getName()}, ID : ${file.getId()}, Date : ${file.getDateCreated()}`);
+        Logger.log(`Deleting ----> Name : ${file.getName()}, ID : ${file.getId()}, Date : ${file.getDateCreated()}`);
         file.setTrashed(true);
-        this.writer.Warning(`Removed : ${file.getId()}`);
+        Logger.log(`Removed : ${file.getId()}`);
       } 
-    }
+    } 
   }
 }
 
 const CleanupDrive = () => {
   let d = new Drive();
   d.MoveTicketsOutOfRoot();
-  d.TrashOldTickets();
-  d.CountTickets();
+  // d.TrashOldTickets();
+  // d.CountTickets();
 }
 
 const _testTick = () => {

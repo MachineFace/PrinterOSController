@@ -49,11 +49,10 @@ class QRCodeAndBarcodeGenerator {
     }) {
     this.url = url;
     this.jobnumber = jobnumber;
-    this.writer = new WriteLogger();
   }
 
   GenerateQRCode(){
-    this.writer.Info(`URL : ${this.url}, Jobnumber : ${this.jobnumber}`);
+    Logger.log(`URL : ${this.url}, Jobnumber : ${this.jobnumber}`);
     const loc = `https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=${this.url}`;  //API call
     const postParams = {
         "method" : "GET",
@@ -65,14 +64,14 @@ class QRCodeAndBarcodeGenerator {
 
     let qrCode;
     const html = UrlFetchApp.fetch(loc, postParams);
-    this.writer.Debug(`Response Code : ${html.getResponseCode()}`);
+    Logger.log(`Response Code : ${html.getResponseCode()}`);
     if (html.getResponseCode() == 200) {
         qrCode = DriveApp.createFile( Utilities.newBlob(html.getContent()).setName('QRCode' + this.jobnumber ) );
         qrCode.setTrashed(true);
     }
-    else this.writer.Error('Failed to GET QRCode');
+    else Logger.log('Failed to GET QRCode');
 
-    this.writer.Info(qrCode);
+    Logger.log(qrCode);
     return qrCode;
   }
 
@@ -99,13 +98,13 @@ class QRCodeAndBarcodeGenerator {
     let barcode;
 
     let html = UrlFetchApp.fetch(barcodeLoc, params);
-    this.writer.Debug("Response Code : " + html.getResponseCode());
+    Logger.log("Response Code : " + html.getResponseCode());
     if (html.getResponseCode() == 200) {
       barcode = DriveApp.createFile( Utilities.newBlob(html.getContent()).setName(`Barcode : ${this.jobnumber}`) );
       barcode.setTrashed(true);
     } 
-    else this.writer.Error('Failed to GET Barcode');
-    this.writer.Info(barcode);
+    else Logger.log('Failed to GET Barcode');
+    Logger.log(barcode);
     return barcode;
   }
   
@@ -127,12 +126,11 @@ class OpenQRGenerator {
     }) {
     this.url = url;
     this.size = size;
-    this.writer = new WriteLogger();
   }
 
   async GenerateQRCode(){
     const randName = Math.floor(Math.random() * 100000).toFixed();
-    this.writer.Info(`URL : ${this.url}`);
+    Logger.log(`URL : ${this.url}`);
     const loc = `https://api.qrserver.com/v1/create-qr-code/?size=${this.size}&data=${this.url}`;  //API call
     const postParams = {
         "method" : "GET",
@@ -144,14 +142,14 @@ class OpenQRGenerator {
 
     let qrCode;
     const html = UrlFetchApp.fetch(loc, postParams);
-    this.writer.Debug(`Response Code : ${RESPONSECODES[html.getResponseCode()]}`);
+    Logger.log(`Response Code : ${RESPONSECODES[html.getResponseCode()]}`);
     if (html.getResponseCode() == 200) {
       qrCode = DriveApp.createFile( Utilities.newBlob(html.getContent()).setName(`QRCode ${randName}`) );
       qrCode.setTrashed(true);
     }
-    else this.writer.Error(`Failed to GET QRCode`);
+    else Logger.log(`Failed to GET QRCode`);
 
-    this.writer.Info(qrCode);
+    Logger.log(qrCode);
     return await qrCode;
   }
 
@@ -182,7 +180,7 @@ class OpenQRGenerator {
         folder.next().addFile(docFile);
         folder.next().addFile(barcode);
       } catch (err) {
-        this.writer.Error(`Whoops : ${err}`);
+        Logger.log(`Whoops : ${err}`);
       }
 
 
@@ -191,7 +189,7 @@ class OpenQRGenerator {
       file.setSharing(DriveApp.Access.ANYONE, DriveApp.Permission.EDIT); //set sharing
     }
     //Return Document to use later
-    this.writer.Info(JSON.stringify(doc))
+    Logger.log(JSON.stringify(doc))
     return doc;
   };
 

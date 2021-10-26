@@ -26,9 +26,7 @@ const GetDriveIDFromUrl = (url) => {
  * Find Image blob from File
  */
 const GetImage = async (pngFile) => {
-  const writer = new WriteLogger();
   let image;
-  writer.Info(`IMAGE ----> ${pngFile}`);
   const repo = `https://live3dprinteros.blob.core.windows.net/render/${pngFile}`;
 
   const params = {
@@ -41,7 +39,7 @@ const GetImage = async (pngFile) => {
   const html = await UrlFetchApp.fetch(repo, params);
 
   const responseCode = html.getResponseCode();
-  writer.Debug(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+  Logger.log(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
   if(responseCode == 200) {
     const folder = DriveApp.getFoldersByName(`Job Tickets`);
@@ -57,7 +55,6 @@ const GetImage = async (pngFile) => {
  * @returns {[sheet, [values]]} list of sheets with lists of indexes
  */
 const Search = (value) => {
-  const writer = new WriteLogger();
   if (value) value.toString().replace(/\s+/g, "");
   let res = {};
   for(const [key, sheet] of Object.entries(SHEETS)) {
@@ -68,8 +65,23 @@ const Search = (value) => {
       res[sheet.getName()] = temp;
     }
   }
-  writer.Debug(JSON.stringify(res));
+  Logger.log(JSON.stringify(res));
   return res;
+}
+
+/**
+ * Search a Specific Sheets for a value
+ * @required {string} value
+ * @returns {[sheet, [values]]} list of sheets with lists of indexes
+ */
+const SearchSpecificSheet = (sheet, value) => {
+  if (value) value.toString().replace(/\s+/g, "");
+
+  const finder = sheet.createTextFinder(value).findNext();
+  if (finder != null) {
+    return finder.getRow();
+  } else return false;
+
 }
 
 
@@ -85,7 +97,6 @@ class JobNumberGenerator {
     date = new Date(),
   }) {
     this.date = date;
-    this.writer = new WriteLogger();
   }
 
   TestDate() {
@@ -100,18 +111,18 @@ class JobNumberGenerator {
     try {
       if ( this.date == undefined || this.date == null || this.date == "" || testedDate == false ) {
         jobnumber = +Utilities.formatDate(new Date(), `PST`, `yyyyMMddHHmmss`);
-        this.writer.Warning(`Set Jobnumber to a new time because timestamp was missing.`);
+        Logger.log(`Set Jobnumber to a new time because timestamp was missing.`);
       } else {
         jobnumber = +Utilities.formatDate(this.date, `PST`, `yyyyMMddhhmmss`);
-        this.writer.Info(`Input time: ${this.date}, Set Jobnumber: ${jobnumber}`);
+        Logger.log(`Input time: ${this.date}, Set Jobnumber: ${jobnumber}`);
       }
     } catch (err) {
-      this.writer.Error(`${err} : Couldnt fix jobnumber.`);
+      Logger.log(`${err} : Couldnt fix jobnumber.`);
     }
     if (jobnumber == undefined || testedDate == false) {
       jobnumber = +Utilities.formatDate(new Date(), `PST`, `yyyyMMddHHmmss`);
     }
-    this.writer.Info(`Returned Job Number: ${jobnumber}`);
+    Logger.log(`Returned Job Number: ${jobnumber}`);
     return jobnumber.toString();
   }
   
@@ -122,8 +133,7 @@ class JobNumberGenerator {
  * Fix Statuses
  */
 const FixStatus = () => {
-  const writer = new WriteLogger();
-  writer.Info(`Checking Statuses....`);
+  Logger.log(`Checking Statuses....`);
   for(const [key, sheet] of Object.entries(SHEETS)) {
     let posCodes = sheet.getRange(2, 7, sheet.getLastRow() -1, 1).getValues();
     posCodes = [].concat(...posCodes);
@@ -134,32 +144,32 @@ const FixStatus = () => {
         case 11:
           if (statuses[index + 2] != "Queued") {
             sheet.getRange(index + 2, 1, 1, 1).setValue("Queued");
-            writer.Info(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
+            Logger.log(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
           }
           break;
         case 21:
           if (statuses[index + 2] != "In-Progress") {
             sheet.getRange(index + 2, 1, 1, 1).setValue("In-Progress");
-            writer.Info(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
+            Logger.log(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
           }
           break;
         case 43:
           if (statuses[index + 2] != "FAILED") {
             sheet.getRange(index + 2, 1, 1, 1).setValue("FAILED");
-            writer.Info(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
+            Logger.log(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
           }
           break;
         case 45:
           if (statuses[index + 2] != "Cancelled") {
             sheet.getRange(index + 2, 1, 1, 1).setValue("Cancelled");
-            writer.Info(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
+            Logger.log(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
           }
           break;
       }
     });
 
   }
-  writer.Info(`Statuses Checked and Fixed....`);
+  Logger.log(`Statuses Checked and Fixed....`);
 }
 
 
@@ -190,10 +200,9 @@ const _testJob = () => {
  * Unit test for Search
  */
 const _testSearch = () => {
-  const writer = new WriteLogger();
   const term = "berkdincer@berkeley.edu";
   const search = Search(term);
-  writer.Debug(`Search : ${search}`);
+  Logger.log(`Search : ${search}`);
 }
 
 /**
@@ -213,10 +222,9 @@ const _testGetImage = async () => {
 }
 
 const _testFixStatus = async () => {
-  const writer = new WriteLogger();
-  writer.Info(`Testing fixing the Status....`);
+  Logger.log(`Testing fixing the Status....`);
   FixStatus();
-  writer.Info(`Finished testing fixing the Status.`)
+  Logger.log(`Finished testing fixing the Status.`)
 }
 
 

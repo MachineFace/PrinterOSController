@@ -22,7 +22,6 @@ class DesignSpecialist
     this.type = 'Design Specialist';
     this.admin = true;
     this.link = '<a href="mailto:' + this.email + '">' + this.email + '</a>';
-    this.writer = new WriteLogger();
   }
   get Link() {
     return this.link;
@@ -50,7 +49,6 @@ class StudentSupervisor extends DesignSpecialist
     this.type = 'Student Supervisor';
     this.admin = false;
     this.link = '<a href="mailto:' + this.email + '">' + this.email + '</a>';
-    this.writer = new WriteLogger();
   }
   get Link() {
     return this.link;
@@ -77,7 +75,6 @@ class Manager extends DesignSpecialist
     this.type = 'Manager';
     this.admin = true;
     this.link = '<a href="mailto:' + this.email + '">' + this.email + '</a>';
-    this.writer = new WriteLogger();
   }
   get Link() {
     return this.link;

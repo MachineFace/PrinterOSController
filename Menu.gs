@@ -66,7 +66,7 @@ const PopupCreateTicket = async () => {
   const imageBlob = await GetImage(png);
   
   try {
-    const ticket = await new TicketWithPicture({
+    const ticket = await new Ticket({
       name : email,
       submissionTime : timestamp,
       email : email,

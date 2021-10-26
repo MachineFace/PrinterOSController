@@ -1,195 +1,9 @@
 
-
-class Ticket 
-{
-  constructor({
-    designspecialist = "Staff", 
-    submissiontime = new Date(), 
-    name = "Student Name", 
-    email = "Student Email", 
-    projectname = "Project Name", 
-    material1Quantity = 0, 
-    material2Quantity = 0,
-    ticketName = "PrinterOS Ticket",
-    printerID = "79165",
-    printerName = "Spectrum",
-    printDuration = 2000,
-    jobID = 12934871,
-  }){
-    this.designspecialist = designspecialist;
-    this.submissiontime = submissiontime;
-    this.name = name;
-    this.email = email;
-    this.projectname = projectname;
-    this.material1Quantity = material1Quantity;
-    this.material2Quantity = material2Quantity;
-    this.ticketName = ticketName;
-    this.printerID = printerID;
-    this.printerName = printerName;
-    this.printDuration = printDuration;
-    this.jobID = jobID;
-  }
-
-  /**
-   * ----------------------------------------------------------------------------------------------------------------
-   * Replace table entries with an Image blob
-   * @param {DocumentApp.create(`doc`).getbody()} body
-   * @param {string} text
-   * @param {blob} image
-   */
-  ReplaceTextToImage(body, searchText, image) {
-    var next = body.findText(searchText);
-    if (!next) return;
-    var r = next.getElement();
-    r.asText().setText("");
-    var img = r.getParent().asParagraph().insertInlineImage(0, image);
-    return next;
-  };
-
-  CreateTicket() {
-    const jobnumber = this.jobID;
-    const folder = DriveApp.getFoldersByName(`Job Tickets`); //Set the correct folder
-    const doc = DocumentApp.create(this.ticketName); //Make Document
-    let body = doc.getBody();
-    let docId = doc.getId();
-    let url = doc.getUrl();
-    
-    const qGen = new QRCodeAndBarcodeGenerator({url, jobnumber});
-    const barcode = qGen.GenerateBarCode();
-    const qrCode = qGen.GenerateQRCode();
-
-    // Append Document with Info
-    if (doc != undefined || doc != null || doc != NaN) {
-      let header = doc
-        .addHeader()
-        .appendTable([[`img1`, `img2`]])
-        .setAttributes({
-          [DocumentApp.Attribute.BORDER_WIDTH]: 0,
-          [DocumentApp.Attribute.BORDER_COLOR]: `#ffffff`,
-        });
-      this.ReplaceTextToImage(header, `img1`, barcode);
-      this.ReplaceTextToImage(header, `img2`, qrCode);
-
-      body.insertHorizontalRule(0);
-      body.insertParagraph(1, "Email: " + this.email.toString())
-        .setHeading(DocumentApp.ParagraphHeading.HEADING1)
-        .setAttributes({
-          [DocumentApp.Attribute.FONT_SIZE]: 18,
-          [DocumentApp.Attribute.BOLD]: true,
-        });
-      body.insertParagraph(2, "Printer: " + this.printerName.toString())
-        .setHeading(DocumentApp.ParagraphHeading.HEADING2)
-        .setAttributes({
-          [DocumentApp.Attribute.FONT_SIZE]: 12,
-          [DocumentApp.Attribute.BOLD]: true,
-        });
-
-      // Create a two-dimensional array containing the cell contents.
-      body.appendTable([
-          ["Date Started", this.submissiontime.toString()],
-          ["Design Specialist:", this.designspecialist],
-          ["Job Number:", this.jobID.toString()],
-          ["Student Email:", this.email.toString()],
-          ["Elapsed time : ", this.printDuration.toString()],
-          ["Materials:", `PLA : ${this.material1Quantity}`],
-          ["Materials:", `Breakaway Support : ${this.material2Quantity}`],
-        ])
-        .setAttributes({
-          [DocumentApp.Attribute.FONT_SIZE]: 9,
-        });
-
-      // Remove File from root and Add that file to a specific folder
-      try {
-        const docFile = DriveApp.getFileById(docId);
-        DriveApp.removeFile(docFile);
-        folder.next().addFile(docFile);
-        folder.next().addFile(barcode);
-      } catch (err) {
-        Logger.log(`Whoops : ${err}`);
-      }
-
-
-      // Set permissions to 'anyone can edit' for that file
-      let file = DriveApp.getFileById(docId);
-      file.setSharing(DriveApp.Access.ANYONE, DriveApp.Permission.EDIT); //set sharing
-    }
-    //Return Document to use later
-    Logger.log(JSON.stringify(doc))
-    return doc;
-  };
-
-  SetInfo() {
-    let thisSheet;
-    for(const [key, sheet] of Object.entries(SHEETS)) {
-      const finder = sheet.createTextFinder(this.jobID).findNext();
-      if (finder != null) {
-        this.row = finder.getRow();
-        thisSheet = sheet;
-      }
-    }
-    // Status	PrinterID	PrinterName	JobID	Timestamp	Email	POS Stat Code	Duration (Hours)	Notes	Elapsed	Materials	Cost	Picture	Ticket
-    this.designspecialist = designspecialist;
-    this.submissiontime = submissiontime;
-    this.name = name;
-    this.email = email;
-    this.projectname = projectname;
-    this.material1Quantity = material1Quantity;
-    this.material2Quantity = material2Quantity;
-    this.ticketName = ticketName;
-    this.printerID = printerID;
-    this.printerName = printerName;
-    this.printDuration = printDuration;
-    this.jobID = jobID;
-
-    this.designspecialist = "Staff";
-    this.submissiontime = thisSheet.getRange(this.row, 5, 1, 1).getValue();
-    this.email = thisSheet.getRange(this.row, 6, 1, 1).getValue();
-
-    this.projectname = this.GetByHeader(thisSheet, "Project Name", this.row);
-    this.material1Name = this.GetByHeader(thisSheet, "(INTERNAL) Item 1", this.row);
-    this.material1Quantity = this.GetByHeader(thisSheet, "(INTERNAL) Material 1 Quantity", this.row);
-    this.material2Name = this.GetByHeader(thisSheet, "(INTERNAL) Item 2", this.row);
-    this.material2Quantity = this.GetByHeader(thisSheet, "(INTERNAL) Material 2 Quantity", this.row);
-  }
-
-}
-
-const _testTicket = () => {
-  const dummyObj = {
-    designspecialist : "Mike",
-    submissiontime : new Date(),
-    name : "Stu Dent",
-    email : "email@email.com",
-    projectname : "Pro Jecta",
-    material1Quantity : 5000,
-    material2Quantity : 9000,
-    printerID : "123876",
-    printerName : "Dingus",
-    printDuration : "12837612",
-  }
-  const tic = new Ticket(dummyObj).CreateTicket();
-  Logger.log(tic);
-}
-
-
-const PrintTicket = async (sheet, row) => {
-  sheet = SHEETS.Spectrum;
-  row = 3;
-  const checkbox = sheet.getRange(row, 15, 1, 1).getValue();
-  if(checkbox == true) {
-    const ticketURL = SHEETS.Spectrum.getRange(row, 14, 1, 1).getValue();
-    const ticketID = GetDriveIDFromUrl(ticketURL);
-    const file = DriveApp.getFileById(ticketID);
-    Logger.log(ticketID);
-  }
-  else sheet.getRange(row, 15, 1, 1).setValue(false);
-  // Logger.log(`CheckBox = ${checkbox.toString()}`);
-}
-
-
-
-
-class TicketWithPicture
+/**
+ * ----------------------------------------------------------------------------------------------------------------
+ * Ticket Class
+ */
+class Ticket
 {
   constructor({
     designspecialist = "Staff", 
@@ -221,14 +35,7 @@ class TicketWithPicture
     this.image = image;
   }
 
-  /**
-   * ----------------------------------------------------------------------------------------------------------------
-   * Replace table entries with an Image blob
-   * @param {DocumentApp.create(`doc`).getbody()} body
-   * @param {string} text
-   * @param {blob} image
-   */
-  ReplaceTextToImage(body, searchText, image) {
+  _ReplaceTextToImage(body, searchText, image) {
     var next = body.findText(searchText);
     if (!next) return;
     var r = next.getElement();
@@ -258,8 +65,8 @@ class TicketWithPicture
           [DocumentApp.Attribute.BORDER_WIDTH]: 0,
           [DocumentApp.Attribute.BORDER_COLOR]: `#ffffff`,
         });
-      this.ReplaceTextToImage(header, `img1`, barcode);
-      this.ReplaceTextToImage(header, `img2`, qrCode);
+      this._ReplaceTextToImage(header, `img1`, barcode);
+      this._ReplaceTextToImage(header, `img2`, qrCode);
 
       body.insertHorizontalRule(0);
       body.insertParagraph(1, "Email: " + this.email.toString())
@@ -299,10 +106,12 @@ class TicketWithPicture
 
       // Remove File from root and Add that file to a specific folder
       try {
-        const docFile = DriveApp.getFileById(docId);
-        DriveApp.removeFile(docFile);
-        folder.next().addFile(docFile);
-        folder.next().addFile(barcode);
+        while(folder.hasNext()){
+          const docFile = DriveApp.getFileById(docId);
+          DriveApp.removeFile(docFile);
+          folder.next().addFile(docFile);
+          folder.next().addFile(barcode);
+        }
       } catch (err) {
         Logger.log(`Whoops : ${err}`);
       }
@@ -322,7 +131,7 @@ class TicketWithPicture
  * datetime=**, extruders=[**], id=**, print_time=**, gif_image=**, heated_bed_temperature=**, cost=**, raft=**, email=**, notes=**, material_type=**, filename=**.gcode, file_id=**,
  * picture=**.png, heated_bed=**, status_id=**, printing_duration=**, layer_height=**, file_size=**, printer_id=**, supports=**, weight=**
  */
-const _testTicketWithImage = () => {
+const _testTicket = () => {
   let jobID;
   let info;
   let image;
@@ -355,7 +164,7 @@ const _testTicketWithImage = () => {
     }
     Logger.log(dummyObj);
 
-    const tic = new TicketWithPicture(dummyObj).CreateTicket();
+    const tic = new Ticket(dummyObj).CreateTicket();
     Logger.log(tic);
   })
   
@@ -392,7 +201,7 @@ const FixMissingTickets = () => {
         
         let imageBLOB = await GetImage(picture);
 
-        const ticket = await new TicketWithPicture({
+        const ticket = await new Ticket({
           submissionTime : timestamp,
           email : email,
           printerName : printerName,

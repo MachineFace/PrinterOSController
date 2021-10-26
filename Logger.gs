@@ -4,7 +4,7 @@
 class WriteLogger
 {
   constructor() { 
-    this.date = new Date();
+    this.date = new Date().getTime();
     this.row = OTHERSHEETS.Logger.getLastRow() + 1;
     this.sheetLength = OTHERSHEETS.Logger.getMaxRows();
   }
@@ -18,8 +18,9 @@ class WriteLogger
       OTHERSHEETS.Logger.getRange(this.row, 2, 1, 1).setValue("ERROR!");
       OTHERSHEETS.Logger.getRange(this.row, 3, 1, 1).setValue(message);
     }
-    Logger.log(`ERROR : ${this.date}, ${message}`);
+    Logger.log(`ERROR : ${message}`);
     this._PopItem();
+    this._CleanupSheet();
   }
   Warning(message) {
     if(this.row > this.sheetLength) {
@@ -31,8 +32,9 @@ class WriteLogger
       OTHERSHEETS.Logger.getRange(this.row, 2, 1, 1).setValue("WARNING");
       OTHERSHEETS.Logger.getRange(this.row, 3, 1, 1).setValue(message);
     }
-    Logger.log(`WARNING : ${this.date}, ${message}`);
+    Logger.log(`WARNING : ${message}`);
     this._PopItem();
+    this._CleanupSheet();
   }
   Info(message) {
     if(this.row > this.sheetLength) {
@@ -44,8 +46,9 @@ class WriteLogger
       OTHERSHEETS.Logger.getRange(this.row, 2, 1, 1).setValue("INFO");
       OTHERSHEETS.Logger.getRange(this.row, 3, 1, 1).setValue(message);
     }
-    Logger.log(`INFO : ${this.date}, ${message}`);
+    Logger.log(`INFO : ${message}`);
     this._PopItem();
+    this._CleanupSheet();
   }
   Debug(message) {
     if(this.row > this.sheetLength) {
@@ -57,13 +60,16 @@ class WriteLogger
       OTHERSHEETS.Logger.getRange(this.row, 2, 1, 1).setValue("DEBUG");
       OTHERSHEETS.Logger.getRange(this.row, 3, 1, 1).setValue(message);
     }
-    Logger.log(`DEBUG : ${this.date}, ${message}`);
+    Logger.log(`DEBUG : ${message}`);
     this._PopItem();
+    this._CleanupSheet();
   }
   _PopItem() {
-    if(this.row > 2000) {
+    if(OTHERSHEETS.Logger.getLastRow() > 100) {
       OTHERSHEETS.Logger.deleteRows(1, 1);
-    } else return;
+    } else {
+      OTHERSHEETS.Logger.insertRowAfter(this.sheetLength - 1);
+    }
   }
   _CleanupSheet() {
     if(this.row > 2000) {
