@@ -6,7 +6,7 @@
  * Code developed by Cody Glen for Jacobs Institute for Design Innovation - UC Berkeley
  * This project creates a project-tracking and notification system for PrinterOS software.
  * Release 20210820 - Version 0.1
- * Last Updated: 20210105 - Version 2.7.0
+ * Last Updated: 20211102 - Version 2.9.0
  * =======================================================================================================================================================================
  * =======================================================================================================================================================================
  */
@@ -52,7 +52,7 @@ const onChange = async (e) => {
 
   
   let hardID;
-  for(const [name, id] of Object.entries(hardIDs)) {
+  for(const [name, id] of Object.entries(PRINTERIDS)) {
     if(name == sheetname) hardID = id; 
   }
   Logger.log(`Sheet : ${sheetname} : PrinterID : ${hardID}`);

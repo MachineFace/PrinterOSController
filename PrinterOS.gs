@@ -1,25 +1,5 @@
-// const googleID = "576527286089-l5pr801cmggb0hisn5kcisanbsiv14ul.apps.googleusercontent.com";
-// const google_secret = "6X5vHouCqFT6GeiPp3Cjmr93";
-// const cody_UID = "0df1ff70722211ebbc93fbb2f3299051";
 
-// const root = 'https://cloud.3dprinteros.com/apiglobal';
-// const uid = 'ccee6140208011eca4f4fbb2f3299051';
-// const username = "jacobsprojectsupport@berkeley.edu";
-// const password = "Jacobsde$ign1";
-// const password = 'tXnPVw0zkmRcuEJkBrxv';
 
-const hardIDs = { 
-  Luteus : "79606",
-  Caerulus : "79605",
-  Photon : "75677",
-  Quasar : "75675",
-  Zardoz : "79166",
-  Viridis :"79167",
-  Rubrum : "79170",
-  Plumbus : "75140",
-  Nimbus : "75670",
-  Spectrum : "79165",
-};
 
 
 
@@ -29,6 +9,13 @@ const hardIDs = {
 class PrinterOS {
 
   constructor(){
+    // this.googleID = "576527286089-l5pr801cmggb0hisn5kcisanbsiv14ul.apps.googleusercontent.com";
+    // this.google_secret = "6X5vHouCqFT6GeiPp3Cjmr93";
+    // this.cody_UID = "0df1ff70722211ebbc93fbb2f3299051";
+    // this.uid = 'ccee6140208011eca4f4fbb2f3299051';
+    // this.username = "jacobsprojectsupport@berkeley.edu";
+    // this.password = "Jacobsde$ign1";
+    // this.password = 'tXnPVw0zkmRcuEJkBrxv';
     this.root = 'https://cloud.3dprinteros.com/apiglobal';
     this.username = "jacobsprojectsupport@berkeley.edu";
     this.password = "Jacobsde$ign1";
@@ -322,6 +309,21 @@ class PrinterOS {
 
 
   /**
+   * Get Latest Job from All Printers
+   */
+  async GetLatestJobsForAllPrinters () {
+    const jobIDS = [];
+    for (const [key, value] of Object.entries(PRINTERIDS)) {
+      const latestjobID = await this.GetPrintersLatestJob(value);
+      Logger.log(`Printer ----> ${key}`);
+      jobIDS.push(latestjobID["id"]);
+    }
+    jobIDS.forEach(async (jobID) => Logger.log(jobID));
+    return jobIDS;
+  }
+
+
+  /**
    * Get a Specific Job Details
    * @param {obj} session
    * @param {int} jobID
@@ -358,6 +360,33 @@ class PrinterOS {
     }
   }
 
+
+  /**
+   * Get WorkGroup Numbers
+   */
+  async GetWorkGroups () {
+    
+    let date = new Date();
+    date.setDate(date.getDate() - 1);
+    const fromDate = date.toISOString().split('T')[0];
+    const toDate = new Date().toISOString().split('T')[0];
+    Logger.log(`From : ${fromDate}, To : ${toDate}`);
+    const res = await this.GetAdminReport(fromDate, toDate);
+
+    let workgroups = [];
+    res.forEach(entry => {
+      if(entry[16] != null) workgroups.push(entry[16]);
+    });
+    workgroups.shift();
+    workgroups.pop();
+    workgroups = [].concat(...workgroups);
+    let unique = [...new Set(workgroups)]
+    Logger.log(unique);
+    return unique;
+
+  }
+
+
   /**
    * Get Users by Workgroup Assignment
    * @param {obj} session
@@ -389,6 +418,46 @@ class PrinterOS {
       } else return false;
     }
   }
+
+
+  /**
+   * Get Users
+   * returns : {name= **, balance= **, monthly_quota= **, email= **, id= **}
+   */
+  async GetUsers () {
+    
+    let users = [];
+    WORKGROUPS.forEach( async (group) => {
+      const res = await this.GetUsersByWorkgroup(group);
+      let usergroup = [];
+      res.forEach(user => usergroup.push(user["email"]));
+      usergroup = [].concat(...usergroup);
+      Logger.log(countUnique(usergroup))
+    })
+    Logger.log(users)
+    return users;
+  }
+
+
+  /**
+   * Get User Counts and Print to Data / Metrics
+   */
+  async GetUserCount () {
+
+    let users = [];
+    JACOBSWORKGROUPS.forEach( async(group) => {
+      const res = await this.GetUsersByWorkgroup(group)
+      .then(Logger.log(res["email"]));
+      
+      // res.forEach(user => users.push(res["email"]));
+    })
+    users = [].concat(...users);
+    let count = new Set(users).size;
+    Logger.log(`Count : ${count}`);
+    // OTHERSHEETS.Metrics.getRange(17, 3, 1, 1).setValue(count);
+    return count;
+  }
+
 
   /**
    * Get Printers in Cloud - No input params
@@ -545,7 +614,7 @@ class PrinterOS {
     const status = data["status_id"];
     sheet.getRange(thisRow, 7).setValue(status.toString());
     const duration = data["printing_duration"];
-    const d = Number(duration) / 3600;
+    const d = +Number.parseFloat(duration) / 3600;
     sheet.getRange(thisRow, 8).setValue(d.toFixed(2).toString());
 
     const elapsed = data["print_time"];
@@ -584,6 +653,10 @@ class PrinterOS {
 
   }
 
+  _CountUnique (iterable) {
+    return new Set(iterable).size;
+  }
+
 }
 
 
@@ -596,43 +669,13 @@ class PrinterOS {
 
 
 /**
- * Get Latest Job from All Printers
- */
-const GetLatestJobsForAllPrinters = async () => {
-  const jobIDS = [];
-
-  const pos = new PrinterOS();
-  await pos.Login()
-  .then(pos.CheckSession())
-  .then( async () => {
-    for (const [key, value] of Object.entries(hardIDs)) {
-      const latestjobID = await pos.GetPrintersLatestJob(value);
-      Logger.log(`Printer ----> ${key}`);
-      jobIDS.push(latestjobID["id"]);
-    }
-  })
-  .then( async () => {
-    jobIDS.forEach(async (jobID) => {
-      const jobDetails = await pos.GetJobInfo(jobID);
-      // Logger.log(jobDetails);
-      // return jobDetails;
-    })
-  })
-  .finally(() => {
-    pos.Logout();
-  })
-}
-
-
-
-/**
  * Helper Function to write to a sheet
  */
 const _FetchAll = async () => {
   let jobList = [];
   const pos = new PrinterOS();
 
-  for(const [key,value] of Object.entries(hardIDs)) {
+  for(const [key,value] of Object.entries(PRINTERIDS)) {
     pos.Login()
     .then( async () => {
       const jobs = await pos.GetPrintersJobList(value);
@@ -780,7 +823,6 @@ const TriggerRemoveDuplicates = () => {
   }
 }
 const RemoveDuplicateRecords = (sheet) => {
-  sheet = SHEETS.Spectrum;
   const records = [];
 
   let numbers = sheet.getRange(2, 4, sheet.getLastRow() -1, 1).getValues();
@@ -801,7 +843,7 @@ const RemoveDuplicateRecords = (sheet) => {
   // Remove
   if(dups) {
     indexes.forEach(number => {
-      Logger.log(`Sheet ${sheet.getSheetName()} @ INDEX : ${number}`);
+      Logger.log(`Sheet ${sheet.getSheetName()} @ ROW : ${number}`);
       sheet.deleteRow(number);
       sheet.insertRowsAfter(sheet.getMaxRows(), 1);
     });
@@ -810,73 +852,6 @@ const RemoveDuplicateRecords = (sheet) => {
 
 
 
-/**
- * Get WorkGroup Numbers
- */
-const GetWorkGroups = async () => {
-  const countUnique = (iterable) => {
-    return new Set(iterable).size;
-  }
-
-  const pos = new PrinterOS();
-  await pos.Login()
-  .then(pos.CheckSession())
-  .then( async () => {
-    let date = new Date();
-    date.setDate(date.getDate() - 1);
-    const fromDate = date.toISOString().split('T')[0];
-    const toDate = new Date().toISOString().split('T')[0];
-    Logger.log(`From : ${fromDate}, To : ${toDate}`);
-    const res = await pos.GetAdminReport(fromDate, toDate);
-
-    let workgroups = [];
-
-    res.forEach(entry => {
-      if(entry[16] != null) workgroups.push(entry[16]);
-    });
-    workgroups.shift();
-    workgroups.pop();
-    workgroups = [].concat(...workgroups);
-    let unique = [...new Set(workgroups)]
-    Logger.log(unique);
-    // const users = await pos.GetUsersByWorkgroup(0);
-    // Logger.log(users);
-  })
-  .finally(() => pos.Logout());
-}
-
-/**
- * Get Users
- * returns : {name= **, balance= **, monthly_quota= **, email= **, id= **}
- */
-const GetUsers = async () => {
-  const countUnique = (iterable) => {
-    return new Set(iterable).size;
-  }
-  
-  const pos = new PrinterOS();
-  pos.Login()
-  .then(() => {
-    let users = [];
-    WORKGROUPS.forEach( async (group) => {
-      const res = await pos.GetUsersByWorkgroup(group);
-      let usergroup = [];
-      res.forEach(user => {
-        usergroup.push(user["email"]);
-      })
-      usergroup = [].concat(...usergroup);
-      Logger.log(countUnique(usergroup))
-    })
-    Logger.log(users)
-  })
-  .finally(() => {
-    pos.Logout();
-  })
-  
-  // let count = countUnique(users);
-  // Logger.log(count)
-  // return count;
-}
 const RemoveDuplicateUsers = async () => {
   let ids = [].concat(...OTHERSHEETS.Users.getRange(2, 1, OTHERSHEETS.Users.getLastRow(), 1).getValues());
   let dups = [];
@@ -928,13 +903,13 @@ const _testPOS = async () => {
   const writer = new WriteLogger();
   const pos = new PrinterOS();
   // await pos.Login().then(session => {
-  //   // pos.GetPrintersJobList(hardIDs.Spectrum);
-  //   const data = pos.GetPrintersLatestJob(hardIDs.Spectrum);
+    //  pos.GetPrintersJobList(PRINTERIDS.Spectrum);
+  //   const data = pos.GetPrintersLatestJob(PRINTERIDS.Spectrum);
   // })
 
   // await pos.Login()
   //   .then( async() => {
-  //     const job = await pos.GetPrintersLatestJob(hardIDs.Spectrum)
+  //     const job = await pos.GetPrintersLatestJob(PRINTERIDS.Spectrum)
   //     const jobID = job["id"];
   //     const jobDetails = await pos.GetJobInfo(jobID);
   //     Logger.log(jobDetails);
@@ -978,8 +953,15 @@ const _testPOS = async () => {
   // pos.GetPrintersJobList(response, 234918273);
 }
 
-
-
+const _tCount = async () => {
+  const pos = new PrinterOS();
+  await pos.Login()
+  .then(async () => {
+    const info = await pos.GetUserCount();
+    Logger.log(info);
+  })
+  .then(pos.Logout());
+}
 
 
 

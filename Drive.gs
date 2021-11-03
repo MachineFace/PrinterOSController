@@ -1,3 +1,6 @@
+/**
+ * Class for Working with Google Drive
+ */
 class Drive
 {
   constructor() {
@@ -72,8 +75,8 @@ const _testTick = () => {
   // const toDate = new Date().toISOString().split('T')[0];
   // Logger.log(`90 Days ago : ${dateMinusNinety}, Now : ${date}`);
   let d = new Drive();
-  // d.CountTickets();
-  d.TrashOldTickets();
+  d.CountTickets();
+  // d.TrashOldTickets();
 }
 
 

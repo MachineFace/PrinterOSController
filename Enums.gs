@@ -123,6 +123,7 @@ const OTHERSHEETS = {
   Metrics : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Data/Metrics"),
   Users : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Users"),
   Logger : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Logger"),
+  Unique : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("UniqueUsers"),
 }
 
 const WORKGROUPS = [

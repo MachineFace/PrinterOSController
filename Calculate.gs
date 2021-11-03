@@ -8,30 +8,24 @@ class Calculate
   }
 
   CalculateAverageTurnaround (sheet) {
-
-    let last = sheet.getLastRow();
-    let completionTimes = sheet.getRange(2, 8, last, 1).getValues(); 
-
-    // Get list of times and remove all the Bullshit
-    let revisedTimes = [];
+    let culled = [];
     try {
-      completionTimes.forEach(time => {
-        if (time[0] != '' || time[0] != undefined || time[0] != null || time[0] != ' ' || time[0] != NaN || time[0] != '[]') {
-          revisedTimes.push(time[0]);
-        }
-      })
+      let last = sheet.getLastRow();
+      let completionTimes = sheet.getRange(2, 8, last, 1).getValues();
+      completionTimes = [].concat(...completionTimes); 
+      culled = completionTimes.filter(Boolean);
     }
     catch (err) {
       Logger.log(`${err} : Couldn't fetch list of times. Probably a sheet error.`);
     }
 
-    // Sum all the totals
+    // Sum
     let total = 0;
-    for (let i = 0; i < revisedTimes.length; i++) {
-        total += revisedTimes[i];
-    }
+    culled.forEach( time => total += time);
+
     // Average the totals (a list of times in minutes)
-    let average = (total / revisedTimes.length).toFixed(2);
+    let average = Number.parseFloat(total / culled.length).toFixed(2);
+    Logger.log(`Total Time : ${total}, Average : ${average}`);
     return average;
   }
   PrintTurnarounds () {
@@ -79,13 +73,9 @@ class Calculate
   CalculateDistribution () {
     let userList = [];
     for(const [name, sheet] of Object.entries(SHEETS)) { 
-      let users = sheet.getRange(2, 6, sheet.getLastRow(), 1).getValues();
-      users = [].concat(...users);
-      users.forEach( user => {
-        if(user != null || user != undefined || user != "") {
-          userList.push(user);
-        }
-      })
+      let users = [].concat(...sheet.getRange(2, 6, sheet.getLastRow(), 1).getValues());
+      users.filter(Boolean);
+      users.forEach( user => userList.push(user));
     }
     let occurrences = userList.reduce( (acc, curr) => {
       return acc[curr] ? ++acc[curr] : acc[curr] = 1, acc
@@ -194,6 +184,32 @@ class Calculate
     return count;
   }
 
+  CountUniqueUsersWhoHavePrinted () {
+    const countUnique = (iterable) => {
+      return new Set(iterable);
+    }
+    let userList = [];
+    for(const [key, sheet] of Object.entries(SHEETS)) {
+      let status = [].concat(...sheet.getRange(2, 1, sheet.getLastRow(), 1).getValues()); 
+      let users = [].concat(...sheet.getRange(2, 6, sheet.getLastRow(), 1).getValues());
+      status.forEach( (stat, index) => {
+        if(stat == STATUS.complete) userList.push(users[index])
+      });
+    }
+    const userSet = [...new Set(userList)];
+    Logger.log(`Number of Users who have Successfully print : ${userSet.length}`);
+    return userSet;
+  }
+  PrintUniqueUsersWhoHavePrinted () {
+    const users = this.CountUniqueUsersWhoHavePrinted();
+    OTHERSHEETS.Unique.getRange(1, 3, 1, 1).setValue(`Total Successful Students : `);
+    OTHERSHEETS.Unique.getRange(1, 4, 1, 1).setValue(users.length);
+    OTHERSHEETS.Metrics.getRange(17, 3, 1, 1).setValue(users.length);
+    users.forEach( (user, index) => {
+      OTHERSHEETS.Unique.getRange(2 + index, 1, 1, 1).setValue(user);
+    })
+  }
+
   CalculateStandardDeviation () {
     const distribution = this.CalculateDistribution();
     const n = distribution.length;
@@ -230,7 +246,7 @@ class Calculate
     for(const [key, sheet] of Object.entries(SHEETS)) {
       let statuses = sheet.getRange(2, 1, sheet.getLastRow(), 1).getValues();
       statuses = [].concat(...statuses);
-      temp = [];
+      let temp = [];
       statuses.forEach(stat => {
         if(stat != null || stat != undefined || stat != "" || stat != " ") {
           temp.push(stat.split('-').join('').toLowerCase());
@@ -264,6 +280,7 @@ const Metrics = () => {
     calculate.CalculateStandardDeviation();
     calculate.CalculateArithmeticMean();
     calculate.StatusCounts();
+    calculate.PrintUniqueUsersWhoHavePrinted();
     writer.Debug(`Recalculated Metrics`);
   }
   catch (err) {
@@ -271,7 +288,11 @@ const Metrics = () => {
   }
 }
 
-
+const _testMetrics = () => {
+  const calculate = new Calculate();
+  const d = calculate.PrintUniqueUsersWhoHavePrinted();
+  Logger.log(d);
+}
 
 
 

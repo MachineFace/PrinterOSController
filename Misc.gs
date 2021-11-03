@@ -210,7 +210,7 @@ const _testSearch = () => {
  */
 const _helperMakeSheets = async () => {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
-  for(const [key, value] of Object.entries(hardIDs)) {
+  for(const [key, value] of Object.entries(PRINTERIDS)) {
     Logger.log(key);
     await ss.insertSheet().setName(key);
   }

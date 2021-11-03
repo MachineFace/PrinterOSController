@@ -125,6 +125,26 @@ const PopupHelp = () => {
   ui.showModalDialog(htmlOutput, title);
 };
 
+const PopupUpdate = async () => {
+  let ui = await SpreadsheetApp.getUi();
+  UpdateAll();
+  ui.alert(
+    `JPS Runtime Message`,
+    `All Info Updated from PrinterOS Server`,
+    ui.ButtonSet.OK
+  );
+};
+
+const PopupRemoveDuplicates = async () => {
+  let ui = await SpreadsheetApp.getUi();
+  TriggerRemoveDuplicates();
+  ui.alert(
+    `JPS Runtime Message`,
+    `All Duplicate Info from PrinterOS Server removed.`,
+    ui.ButtonSet.OK
+  );
+};
+
 /**
  * Builds our JPS Menu and sets functions.
  */
@@ -140,7 +160,9 @@ const BarMenu = () => {
     .addItem("Help", "PopupHelp")
     .addSeparator()
     .addItem(`Recompute Metrics`, `Metrics`)
-    .addItem(`Fetch All Data & Update`, `WriteAllNewDataToSheets`)
+    .addItem(`Fetch All New Data`, `WriteAllNewDataToSheets`)
+    .addItem(`Update All`, `PopupUpdate`)
+    .addItem(`Remove Duplicate Info`, `PopupRemoveDuplicates`)
     .addToUi();
 };
 
