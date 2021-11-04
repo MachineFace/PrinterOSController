@@ -13,8 +13,8 @@ class DesignSpecialist
     this.name = name;
     this.fullname = fullname;
     this.email = email;
-    this.link = '<a href = "' + this.email + '">' + this.email + '</a>';
-    this.type = 'Design Specialist';
+    this.link = `<a href="${this.email}">${this.email}</a>`;
+    this.type = `Design Specialist`;
     this.isAdmin = true;
     this.shortCode = `DS`;
   }
@@ -51,7 +51,7 @@ class StudentSupervisor extends DesignSpecialist
     this.name = name;
     this.fullname = fullname;
     this.email = email;
-    this.link = '<a href = "' + this.email + '">' + this.email + '</a>';
+    this.link = `<a href="${this.email}">${this.email}</a>`;
     this.type = 'Student Supervisor';
     this.isAdmin = false;
     this.shortCode = `SS`;
@@ -88,7 +88,7 @@ class Manager extends DesignSpecialist
     this.name = name;
     this.fullname = fullname;
     this.email = email;
-    this.link = '<a href = "' + this.email + '">' + this.email + '</a>';
+    this.link = `<a href="${this.email}">${this.email}</a>`;
     this.type = 'Manager';
     this.isAdmin = true;
     this.shortCode = `MA`;
@@ -120,34 +120,47 @@ const StaffEmailAsString = () => {
 }
 
 
+
+
+
 /**
  * -----------------------------------------------------------------------------------------------------------------
- * Invoke Design Specialist properties
- * @param {string} name
- * @param {string} property
- * @returns {string} fullname, email, or email link
+ * Class for Building Staff
  */
-const Staff = () => {
-  const data = OTHERSHEETS.Staff.getRange(2, 1, OTHERSHEETS.Staff.getLastRow() -1, 5).getValues();
+class StaffBuilder
+{
+  constructor() {
+    this.staff = {};
+    this.MakeStaff();
+  }
 
-  let staff = {};
-  data.forEach( (item,index) => {
-    let name = item[0], fullname = item[1], email = item[2], emaillink = item[3], type = item[4];
-    if(type === 'DS') staff[name] = new DesignSpecialist({name : name, fullname : fullname, email : email});
-    if(type === 'SS') staff[name] = new StudentSupervisor({name : name, fullname : fullname, email : email});
-    if(type === 'MA') staff[name] = new Manager({name : name, fullname : fullname, email : email});
-  })
-  return staff;
+  MakeStaff () {
+    const data = OTHERSHEETS.Staff.getRange(2, 1, OTHERSHEETS.Staff.getLastRow() -1, 5).getValues();
+    data.forEach( item => {
+      let name = item[0], fullname = item[1], email = item[2], emaillink = item[3], type = item[4];
+      if(type === 'DS') this.staff[name] = new DesignSpecialist({name : name, fullname : fullname, email : email});
+      if(type === 'SS') this.staff[name] = new StudentSupervisor({name : name, fullname : fullname, email : email});
+      if(type === 'MA') this.staff[name] = new Manager({name : name, fullname : fullname, email : email});
+    });
+  }
+
+  get () {
+    return this.staff;
+  }
+
 }
+
 
 
 /**
  * Unit test for making Staff
  */
 const _test = () => {
-  const staff = Staff();
-  Logger.log(JSON.stringify(staff))
-  Logger.log(staff["Adam"]["email"])
-  Logger.log(staff["Cody"])
+  const staff = new StaffBuilder().get();
+  for(const [name, values] of Object.entries(staff)) {
+    Logger.log(`${name} ----> First Name :${values.name}, Full : ${values.fullname} ~~ ${JSON.stringify(values)}`)
+  }
+  const cody = staff["Cody"];
+  Logger.log(cody)
 }
 
