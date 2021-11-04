@@ -1,4 +1,5 @@
 /**
+ * -----------------------------------------------------------------------------------------------------------------
  * Calculate Metrics
  */
 class Calculate
@@ -266,7 +267,10 @@ class Calculate
 }
 
 
-
+/**
+ * -----------------------------------------------------------------------------------------------------------------
+ * Run Metrics
+ */
 const Metrics = () => {
   const calculate = new Calculate();
   try {
@@ -288,6 +292,11 @@ const Metrics = () => {
   }
 }
 
+
+/**
+ * -----------------------------------------------------------------------------------------------------------------
+ * Testing for Metrics
+ */
 const _testMetrics = () => {
   const calculate = new Calculate();
   const d = calculate.PrintUniqueUsersWhoHavePrinted();

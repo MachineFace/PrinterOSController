@@ -3,6 +3,7 @@
 
 
 /**
+ * -----------------------------------------------------------------------------------------------------------------
  * For use with barcode scanner.
  * Searches for job number found in cell B2 of SearchByBarCode sheet and changes status to 'Picked Up'
  */
@@ -36,6 +37,7 @@ const PickupByBarcode = () => {
 
 
 /**
+ * -----------------------------------------------------------------------------------------------------------------
  * Generate a QR code from some data. Feed it a url.
  * @param {string} url
  * @pararm {string} jobnumber
@@ -112,6 +114,7 @@ class QRCodeAndBarcodeGenerator {
 
 
 /**
+ * -----------------------------------------------------------------------------------------------------------------
  * Generate a QR code from some data. Feed it a url.
  * https://goqr.me/api/doc/create-qr-code/
  * @param {string} url

@@ -1,57 +1,72 @@
+
 /**
  * ----------------------------------------------------------------------------------------------------------------
- * Design Specialist Class function 
- * @param {string} name
- * @param {string} fullname
- * @param {string} email
- */
-/**
- * ----------------------------------------------------------------------------------------------------------------
- * Design Specialist Class
+ * Class for Creating a Design Specialist Employee
  */
 class DesignSpecialist
 {
   constructor({
-    name = "Default FirstName", 
-    fullname = "FirstName LastName", 
-    email = "somename@place.com"
-  }){
+    name = `DS`, 
+    fullname = `Design Specialist`, 
+    email = `jacobsprojectsupport@berkeley.edu`
+  }) {
     this.name = name;
     this.fullname = fullname;
     this.email = email;
+    this.link = '<a href = "' + this.email + '">' + this.email + '</a>';
     this.type = 'Design Specialist';
-    this.admin = true;
-    this.link = '<a href="mailto:' + this.email + '">' + this.email + '</a>';
+    this.isAdmin = true;
+    this.shortCode = `DS`;
   }
-  get Link() {
-    return this.link;
+  
+  get() {
+    return {
+      name : this.name,
+      fullname : this.fullname,
+      email : this.email,
+      link : this.link,
+      type : this.type,
+      isAdmin : this.isAdmin,
+      shortCode : this.shortCode,
+    }
   }
+
 }
 
 
 /**
  * ----------------------------------------------------------------------------------------------------------------
  * SS Class - child of DS Class
+ * Note: In derived classes, super() must be called before you can use 'this'. Leaving this out will cause a reference error.
  */
 class StudentSupervisor extends DesignSpecialist
 {
   constructor({
-    name = "Default FirstName", 
-    fullname = "FirstName LastName", 
-    email = "somename@place.com"
-  }){
+    name = `SS`, 
+    fullname = `Student Supervisor`, 
+    email = `jacobsprojectsupport@berkeley.edu`
+  }) {
     // The reserved 'super' keyword is for making super-constructor calls and allows access to parent methods.
-    super({name, fullname, email});
-    // Note: In derived classes, super() must be called before you can use 'this'. Leaving this out will cause a reference error.
+    super(name, fullname, email);
     this.name = name;
     this.fullname = fullname;
     this.email = email;
+    this.link = '<a href = "' + this.email + '">' + this.email + '</a>';
     this.type = 'Student Supervisor';
-    this.admin = false;
-    this.link = '<a href="mailto:' + this.email + '">' + this.email + '</a>';
+    this.isAdmin = false;
+    this.shortCode = `SS`;
   }
-  get Link() {
-    return this.link;
+
+  get() {
+    return {
+      name : this.name,
+      fullname : this.fullname,
+      email : this.email,
+      link : this.link,
+      type : this.type,
+      isAdmin : this.isAdmin,
+      shortCode : this.shortCode,
+    }
   }
 
 }
@@ -64,27 +79,49 @@ class StudentSupervisor extends DesignSpecialist
 class Manager extends DesignSpecialist 
 { 
   constructor({
-    name = "Default FirstName", 
-    fullname = "FirstName LastName", 
-    email = "somename@place.com"
-  }){
-    super({name, fullname, email});
+    name = `MA`, 
+    fullname = `Manager`, 
+    email = `jacobsprojectsupport@berkeley.edu`
+  }) 
+  {
+    super(name, fullname, email);
     this.name = name;
     this.fullname = fullname;
     this.email = email;
+    this.link = '<a href = "' + this.email + '">' + this.email + '</a>';
     this.type = 'Manager';
-    this.admin = true;
-    this.link = '<a href="mailto:' + this.email + '">' + this.email + '</a>';
+    this.isAdmin = true;
+    this.shortCode = `MA`;
   }
-  get Link() {
-    return this.link;
+
+  get() {
+    return {
+      name : this.name,
+      fullname : this.fullname,
+      email : this.email,
+      link : this.link,
+      type : this.type,
+      isAdmin : this.isAdmin,
+      shortCode : this.shortCode,
+    }
   }
+  
 }
 
 
 
 /**
  * ----------------------------------------------------------------------------------------------------------------
+ * Return Staff Email as a string.
+ */
+const StaffEmailAsString = () => {
+  let emaillist = OTHERSHEETS.staff.getRange(2, 3, OTHERSHEETS.staff.getLastRow() - 1, 1).getValues();
+  return emaillist.toString();
+}
+
+
+/**
+ * -----------------------------------------------------------------------------------------------------------------
  * Invoke Design Specialist properties
  * @param {string} name
  * @param {string} property
@@ -96,15 +133,9 @@ const Staff = () => {
   let staff = {};
   data.forEach( (item,index) => {
     let name = item[0], fullname = item[1], email = item[2], emaillink = item[3], type = item[4];
-    if(type === 'DS') {
-      staff[name] = new DesignSpecialist({name : name, fullname : fullname, email : email})
-    }
-    if(type === 'SS') {
-      staff[name] = new StudentSupervisor({name : name, fullname : fullname, email : email})
-    }
-    if(type === 'MA') {
-      staff[name] = new Manager({name : name, fullname : fullname, email : email})
-    }
+    if(type === 'DS') staff[name] = new DesignSpecialist({name : name, fullname : fullname, email : email});
+    if(type === 'SS') staff[name] = new StudentSupervisor({name : name, fullname : fullname, email : email});
+    if(type === 'MA') staff[name] = new Manager({name : name, fullname : fullname, email : email});
   })
   return staff;
 }

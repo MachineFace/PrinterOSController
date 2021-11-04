@@ -1,6 +1,6 @@
 
 /**
- * ----------------------------------------------------------------------------------------------------------------
+ * -----------------------------------------------------------------------------------------------------------------
  * Ticket Class
  */
 class Ticket
@@ -128,6 +128,7 @@ class Ticket
 }
 
 /**
+ * -----------------------------------------------------------------------------------------------------------------
  * datetime=**, extruders=[**], id=**, print_time=**, gif_image=**, heated_bed_temperature=**, cost=**, raft=**, email=**, notes=**, material_type=**, filename=**.gcode, file_id=**,
  * picture=**.png, heated_bed=**, status_id=**, printing_duration=**, layer_height=**, file_size=**, printer_id=**, supports=**, weight=**
  */
@@ -175,6 +176,7 @@ const _testTicket = () => {
 
 
 /**
+ * -----------------------------------------------------------------------------------------------------------------
  * Check and Fix Missing Tickets
  */
 const FixMissingTickets = () => {

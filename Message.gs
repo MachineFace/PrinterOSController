@@ -1,5 +1,5 @@
 /**
- * ----------------------------------------------------------------------------------------------------------------
+ * -----------------------------------------------------------------------------------------------------------------
  * Class for Creating Response Messages
  * Properties accessed via 'this.receivedMessage' or 'this.failedMessage'
  * @param {string} name
@@ -217,6 +217,7 @@ class CreateMessage {
 
 
 /**
+ * -----------------------------------------------------------------------------------------------------------------
  * Unit Test for Making 'OnEdit' Messages
  */
 const _testMessages = async () => {

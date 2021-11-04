@@ -1,3 +1,7 @@
+/**
+ * -----------------------------------------------------------------------------------------------------------------
+ * Class for interfacing with Physical Printers
+ */
 class NetworkPrinter
 {
   constructor(){
@@ -99,6 +103,10 @@ class NetworkPrinter
 
 }
 
+/**
+ * -----------------------------------------------------------------------------------------------------------------
+ * Testing for Printer Class
+ */
 const _testNet = () => {
   const p = new NetworkPrinter();
   p.ShowURL();

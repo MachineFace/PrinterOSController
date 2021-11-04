@@ -1,4 +1,5 @@
 /**
+ * -----------------------------------------------------------------------------------------------------------------
  * Class For Logging
  */
 class WriteLogger
@@ -79,6 +80,10 @@ class WriteLogger
   
 }
 
+/**
+ * -----------------------------------------------------------------------------------------------------------------
+ * Testing for Logger Class
+ */
 const _testWriteLog = () => {
   const write = new WriteLogger();
   write.Warning(`Ooopsies ----> Warning`);
