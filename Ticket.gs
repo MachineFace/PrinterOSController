@@ -188,18 +188,18 @@ const FixMissingTickets = () => {
       if(!cell) {
         let thisRow = index + 2;
         Logger.log(`Sheet : ${sheet.getSheetName()}, Index : ${thisRow} is Missing a Ticket! Creating new Ticket....`);
-
-        const printerID = sheet.getRange(thisRow, 2).getValue();
-        const printerName = sheet.getRange(thisRow, 3).getValue();
-        const jobID = sheet.getRange(thisRow, 4).getValue();
-        const timestamp = sheet.getRange(thisRow, 5).getValue();
-        const email = sheet.getRange(thisRow, 6).getValue();
-        const status = sheet.getRange(thisRow, 7).getValue();
-        const duration = sheet.getRange(thisRow, 8).getValue();
-        const elapsed = sheet.getRange(thisRow, 10).getValue();
-        const materials = sheet.getRange(thisRow, 11).getValue();
-        const cost = sheet.getRange(thisRow, 12).getValue();
-        const picture = sheet.getRange(thisRow, 13).getValue();
+        
+        const printerID = GetByHeader(sheet, "PrinterID", thisRow);
+        const printerName = GetByHeader(sheet, "PrinterName", thisRow);
+        const jobID = GetByHeader(sheet, "JobID", thisRow);
+        const timestamp = GetByHeader(sheet, "Timestamp", thisRow);
+        const email = GetByHeader(sheet, "Email", thisRow);
+        const status = GetByHeader(sheet, "POS Stat Code", thisRow);
+        const duration = GetByHeader(sheet, "Duration (Hours)", thisRow);
+        const elapsed = GetByHeader(sheet, "Elapsed", thisRow);
+        const materials = GetByHeader(sheet, "Materials", thisRow);
+        const cost = GetByHeader(sheet, "Cost", thisRow);
+        const picture = GetByHeader(sheet, "Picture", thisRow);
         
         let imageBLOB = await GetImage(picture);
 

@@ -8,9 +8,8 @@
  * Searches for job number found in cell B2 of SearchByBarCode sheet and changes status to 'Picked Up'
  */
 const PickupByBarcode = () => {
-  const scannerSheet = SpreadsheetApp.getActive().getSheetByName('Pickup Scanner');
-  const jobnumber = scannerSheet.getRange(3,2).getValue();
-  let progress = scannerSheet.getRange(4,2);
+  const jobnumber = OTHERSHEETS.Scanner.getRange(3,2).getValue();
+  let progress = OTHERSHEETS.Scanner.getRange(4,2);
   progress.setValue(`Searching for Print #${jobnumber}.......`);
   if (jobnumber == null || jobnumber == "") {
     progress.setValue(`No Print Number provided! Select the yellow cell, scan, then press enter to make sure the cell's value has been changed.`);

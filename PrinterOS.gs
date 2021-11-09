@@ -1,8 +1,3 @@
-
-
-
-
-
 /**
  * -----------------------------------------------------------------------------------------------------------------
  * PrinterOS Class for handling PrinterOS requests and responses
@@ -565,8 +560,8 @@ class PrinterOS {
    * Get an Image
    */
   async GetJobImage() {
+    // Logger.log(`IMAGE ----> ${this.picture}`);
     let image;
-    Logger.log(`IMAGE ----> ${this.picture}`);
     const repo = `https://live3dprinteros.blob.core.windows.net/render/${this.picture}`;
 
     const params = {
@@ -707,16 +702,16 @@ const _FetchAll = async () => {
  */
 const WriteAllNewDataToSheets = async () => {
 
-  await FetchAndWrite(PRINTERIDS.Spectrum, SHEETS.Spectrum)
-    .then(FetchAndWrite(PRINTERIDS.Zardoz, SHEETS.Zardoz))
-    .then(FetchAndWrite(PRINTERIDS.Viridis, SHEETS.Viridis))
-    .then(FetchAndWrite(PRINTERIDS.Rubrum, SHEETS.Rubrum))
-    .then(FetchAndWrite(PRINTERIDS.Quasar, SHEETS.Quasar))
-    .then(FetchAndWrite(PRINTERIDS.Plumbus, SHEETS.Plumbus))
-    .then(FetchAndWrite(PRINTERIDS.Photon, SHEETS.Photon))
-    .then(FetchAndWrite(PRINTERIDS.Nimbus, SHEETS.Nimbus))
-    .then(FetchAndWrite(PRINTERIDS.Luteus, SHEETS.Luteus))
-    .then(FetchAndWrite(PRINTERIDS.Caerulus, SHEETS.Caerulus))
+  await FetchAndWrite(SHEETS.Spectrum)
+    .then(FetchAndWrite(SHEETS.Zardoz))
+    .then(FetchAndWrite(SHEETS.Viridis))
+    .then(FetchAndWrite(SHEETS.Rubrum))
+    .then(FetchAndWrite(SHEETS.Quasar))
+    .then(FetchAndWrite(SHEETS.Plumbus))
+    .then(FetchAndWrite(SHEETS.Photon))
+    .then(FetchAndWrite(SHEETS.Nimbus))
+    .then(FetchAndWrite(SHEETS.Luteus))
+    .then(FetchAndWrite(SHEETS.Caerulus))
     .catch(err => Logger.log(`${err} : : Couldn't write data too sheet. Maybe it just took too long?...`))
     .finally(() => Logger.log(`Added New Data to All Sheets.`)) 
 
@@ -727,13 +722,10 @@ const WriteAllNewDataToSheets = async () => {
  * -----------------------------------------------------------------------------------------------------------------
  * Fetch POS Job List Per printer and write to sheet only new stuff
  */
-const FetchAndWrite = async (machineID, sheet) => {
-
+const FetchAndWrite = async (sheet) => {
+  let machineID = PRINTERIDS[sheet.getName()];
   let jobList = [];
-  const records = [];
-  let numbers = sheet.getRange(2, 4, sheet.getLastRow(), 1).getValues();
-  numbers = [].concat(...numbers);
-  Logger.log(numbers)
+  let numbers = GetColumnDataByHeader(sheet, "JobID");
   const pos = new PrinterOS();
   pos.Login()
   .then( async () => {
@@ -741,15 +733,11 @@ const FetchAndWrite = async (machineID, sheet) => {
     jobs.forEach(job => {
       let jobnumber = Number(job["id"]);
       let index = numbers.indexOf(jobnumber);
-      if(index == -1) {
-        jobList.push(jobnumber);
-      } 
+      if(index == -1) jobList.push(jobnumber);
     })
   })
   .then(() => {
-    if(jobList.length === 0) {
-      Logger.log(`${sheet.getName()} ----> Nothing New....`);
-    } 
+    if(jobList.length === 0) Logger.log(`${sheet.getName()} ----> Nothing New....`);
     else if(jobList.length !== 0) {
       jobList.forEach( async(job) => {
         Logger.log(`${sheet.getName()} ----> New Job! : ${job}`);
@@ -856,12 +844,14 @@ const RemoveDuplicateRecords = (sheet) => {
 }
 
 
-
+/**
+ * Remove Dup Users
+ */
 const RemoveDuplicateUsers = async () => {
-  let ids = [].concat(...OTHERSHEETS.Users.getRange(2, 1, OTHERSHEETS.Users.getLastRow(), 1).getValues());
+  let ids = GetColumnDataByHeader(OTHERSHEETS.Users, "ID");
   let dups = [];
   const uniqueElements = new Set(ids);
-  const filteredElements = ids.filter( (item, index) => {
+  ids.filter( (item, index) => {
     if (uniqueElements.has(item)) {
       uniqueElements.delete(item);
     } else {
@@ -967,6 +957,3 @@ const _tCount = async () => {
   })
   .then(pos.Logout());
 }
-
-
-

@@ -5,6 +5,64 @@
 
 
 /**
+ * ----------------------------------------------------------------------------------------------------------------
+ * Return the value of a cell by column name and row number
+ * @param {sheet} sheet
+ * @param {string} colName
+ * @param {number} row
+ */
+const GetByHeader = (sheet, columnName, row) => {
+  try {
+    let data = sheet.getDataRange().getValues();
+    let col = data[0].indexOf(columnName);
+    if (col != -1) return data[row - 1][col];
+  } catch (err) {
+    Logger.log(`${err} : GetByHeader failed - Sheet: ${sheet} Col Name specified: ${columnName} Row: ${row}`);
+  }
+};
+
+
+/**
+ * ----------------------------------------------------------------------------------------------------------------
+ * Return the values of a column by the name
+ * @param {sheet} sheet
+ * @param {string} colName
+ * @param {number} row
+ */
+const GetColumnDataByHeader = (sheet, columnName) => {
+  try {
+    const data = sheet.getDataRange().getValues();
+    const col = data[0].indexOf(columnName);
+    let colData = data.map(d => d[col]);
+    colData.splice(0, 1);
+    if (col != -1) return colData;
+  } catch (err) {
+    Logger.log(`${err} : GetByHeader failed - Sheet: ${sheet} Col Name specified: ${columnName}`);
+  }
+};
+
+
+
+/**
+ * ----------------------------------------------------------------------------------------------------------------
+ * Set the value of a cell by column name and row number
+ * @param {sheet} sheet
+ * @param {string} colName
+ * @param {number} row
+ * @param {any} val
+ */
+const SetByHeader = (sheet, columnName, row, val) => {
+  try {
+    const data = sheet.getDataRange().getValues();
+    const col = data[0].indexOf(columnName) + 1;
+    sheet.getRange(row, col).setValue(val);
+  } catch (err) {
+    Logger.log(`${err} : setByHeader failed - Sheet: ${sheet} Row: ${row} Col: ${col} Value: ${val}`);
+  }
+};
+
+
+/**
  * Get Drive ID from URL
  */
 const GetDriveIDFromUrl = (url) => { 
@@ -135,33 +193,32 @@ class JobNumberGenerator {
 const FixStatus = () => {
   Logger.log(`Checking Statuses....`);
   for(const [key, sheet] of Object.entries(SHEETS)) {
-    let posCodes = sheet.getRange(2, 7, sheet.getLastRow() -1, 1).getValues();
-    posCodes = [].concat(...posCodes);
-    let statuses = sheet.getRange(2, 1, sheet.getLastRow() -1, 1).getValues();
-    statuses = [].concat(...statuses);
+    
+    let posCodes = GetColumnDataByHeader(sheet, "POS Stat Code");
+    let statuses = GetColumnDataByHeader(sheet, "Status");
     posCodes.forEach( (code, index) => {
       switch(code) {
         case 11:
-          if (statuses[index + 2] != "Queued") {
-            sheet.getRange(index + 2, 1, 1, 1).setValue("Queued");
+          if (statuses[index + 2] != STATUS.queued) {
+            SetByHeader(sheet, "Status", index + 2, STATUS.queued);
             Logger.log(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
           }
           break;
         case 21:
-          if (statuses[index + 2] != "In-Progress") {
-            sheet.getRange(index + 2, 1, 1, 1).setValue("In-Progress");
+          if (statuses[index + 2] != STATUS.inProgress) {
+            SetByHeader(sheet, "Status", index + 2, STATUS.inProgress);
             Logger.log(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
           }
           break;
         case 43:
-          if (statuses[index + 2] != "FAILED") {
-            sheet.getRange(index + 2, 1, 1, 1).setValue("FAILED");
+          if (statuses[index + 2] != STATUS.failed) {
+            SetByHeader(sheet, "Status", index + 2, STATUS.failed);
             Logger.log(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
           }
           break;
         case 45:
-          if (statuses[index + 2] != "Cancelled") {
-            sheet.getRange(index + 2, 1, 1, 1).setValue("Cancelled");
+          if (statuses[index + 2] != STATUS.cancelled) {
+            SetByHeader(sheet, "Status", index + 2, STATUS.cancelled);
             Logger.log(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
           }
           break;
@@ -217,7 +274,8 @@ const _helperMakeSheets = async () => {
 }
 
 const _testGetImage = async () => {
-  let png = SHEETS.Spectrum.getRange(10, 13, 1, 1).getValue();
+  let png = GetByHeader(SHEETS.Spectrum, "Picture", 10);
+  Logger.log(png)
   let blob = await GetImage(png);
 }
 
@@ -227,6 +285,11 @@ const _testFixStatus = async () => {
   Logger.log(`Finished testing fixing the Status.`)
 }
 
+
+const _testGetHead = () => {
+  let d = GetColumnDataByHeader(SHEETS.Spectrum, "JobID");
+  Logger.log(d)
+}
 
 
 
