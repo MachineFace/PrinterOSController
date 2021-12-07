@@ -5,6 +5,8 @@
 class NetworkPrinter
 {
   constructor(){
+    this.googleID = "576527286089-l5pr801cmggb0hisn5kcisanbsiv14ul.apps.googleusercontent.com";
+    this.google_secret = "6X5vHouCqFT6GeiPp3Cjmr93";
     this.service = this.GetCloudPrintService();
   }
 
@@ -25,8 +27,8 @@ class NetworkPrinter
     return OAuth2.createService('print')
       .setAuthorizationBaseUrl('https://accounts.google.com/o/oauth2/auth')
       .setTokenUrl('https://accounts.google.com/o/oauth2/token')
-      .setClientId('CLIENT_ID')
-      .setClientSecret('CLIENT_SECRET')
+      .setClientId(this.googleID)
+      .setClientSecret(this.google_secret)
       .setCallbackFunction('AuthCallback')
       .setPropertyStore(PropertiesService.getUserProperties())
       .setScope('https://www.googleapis.com/auth/cloudprint')
@@ -53,12 +55,19 @@ class NetworkPrinter
       headers: { Authorization: 'Bearer ' + this.service.getAccessToken() },
       muteHttpExceptions: true
     }
-    const response = await UrlFetchApp.fetch(repo, params).getContentText();
-    const printers = JSON.parse(response).printers;
+    const html = await UrlFetchApp.fetch(repo, params);
+    const responseCode = html.getResponseCode();
+    Logger.log(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
-    printers.forEach(printer => {
-      Logger.log(`Printer : ${printer.id}, Name : ${printer.name}, Description : ${printer.description}`);
-    });
+    if(responseCode == 200) {
+      const printers = JSON.parse(html.getContentText()).printers;
+      Logger.log(printers);  
+      printers.forEach(printer => {
+        Logger.log(`Printer : ${printer.id}, Name : ${printer.name}, Description : ${printer.description}`);
+      });
+    } else {
+      Logger.log(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+    }
   }
 
   /**
@@ -109,7 +118,7 @@ class NetworkPrinter
  */
 const _testNet = () => {
   const p = new NetworkPrinter();
-  p.ShowURL();
+  // p.ShowURL();
   p.GetCloudPrinterList();
 }
 

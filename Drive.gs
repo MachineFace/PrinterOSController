@@ -12,7 +12,7 @@ class Drive
     this.dateMinusOneTwenty = new Date(new Date().setDate(new Date().getDate() - 120));
   }
 
-  GetAllFileNamesInRoot() {
+  GetAllFileNamesInRoot () {
     let out = [];
     let files = this.root.getFiles();
     while (files.hasNext()) {
@@ -22,7 +22,7 @@ class Drive
     return out;
   }
 
-  MoveTicketsOutOfRoot() {
+  MoveTicketsOutOfRoot () {
     const files = this.GetAllFileNamesInRoot();
     Logger.log(`Destination ----> ${this.destination.next().getName()}`);
     files.forEach(file => {
@@ -38,7 +38,7 @@ class Drive
     });
   }
 
-  CountTickets() {
+  CountTickets () {
     let count = 0;
     let files = this.destination.next().getFiles();
     while (files.hasNext()) {
@@ -49,7 +49,7 @@ class Drive
     return count;
   }
 
-  TrashOldTickets() {
+  TrashOldTickets () {
     let files = this.destination.next().getFiles();
     while (files.hasNext()) {
       let file = files.next();
@@ -60,6 +60,13 @@ class Drive
         Logger.log(`Removed : ${file.getId()}`);
       } 
     } 
+  }
+
+  DownloadFile (file) {
+    const fileID = file.getId();
+    const fileName = file.getName();
+    const fileString = fileID.getContentAsString();
+    return ContentService.createTextOutput(fileString).downloadAsFile(fileName);
   }
 }
 

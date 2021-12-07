@@ -53,32 +53,34 @@ class Ticket
     let url = doc.getUrl();
     
     const qGen = new QRCodeAndBarcodeGenerator({url, jobnumber});
-    const barcode = qGen.GenerateBarCode();
-    const qrCode = qGen.GenerateQRCode();
+    const barcode = qGen.GenerateBarCodeForTicketHeader();
 
     // Append Document with Info
     if (doc != undefined || doc != null || doc != NaN) {
-      let header = doc
-        .addHeader()
-        .appendTable([[`img1`, `img2`]])
-        .setAttributes({
-          [DocumentApp.Attribute.BORDER_WIDTH]: 0,
-          [DocumentApp.Attribute.BORDER_COLOR]: `#ffffff`,
-        });
-      this._ReplaceTextToImage(header, `img1`, barcode);
-      this._ReplaceTextToImage(header, `img2`, qrCode);
 
-      body.insertHorizontalRule(0);
-      body.insertParagraph(1, "Email: " + this.email.toString())
+      body.setPageWidth(PAGESIZES.statement.width)
+        .setPageHeight(PAGESIZES.a4.height)
+        .setMarginTop(5)
+        .setMarginBottom(5)
+        .setMarginLeft(5)
+        .setMarginRight(5)
+
+
+      body.insertImage(0, barcode)
+        .setWidth(500)
+        .setHeight(100);
+      body.insertHorizontalRule(1);
+
+      body.insertParagraph(2, "Email: " + this.email.toString())
         .setHeading(DocumentApp.ParagraphHeading.HEADING1)
         .setAttributes({
           [DocumentApp.Attribute.FONT_SIZE]: 18,
           [DocumentApp.Attribute.BOLD]: true,
         });
-      body.insertParagraph(2, "Printer: " + this.printerName.toString())
+      body.insertParagraph(3, "Printer: " + this.printerName.toString())
         .setHeading(DocumentApp.ParagraphHeading.HEADING2)
         .setAttributes({
-          [DocumentApp.Attribute.FONT_SIZE]: 12,
+          [DocumentApp.Attribute.FONT_SIZE]: 16,
           [DocumentApp.Attribute.BOLD]: true,
         });
 
@@ -93,12 +95,12 @@ class Ticket
           ["Materials:", `Breakaway Support : ${this.material2Quantity}`],
         ])
         .setAttributes({
-          [DocumentApp.Attribute.FONT_SIZE]: 9,
+          [DocumentApp.Attribute.FONT_SIZE]: 14,
         });
       try {
-        body.insertImage(5, this.image)
-        .setWidth(350)
-        .setHeight(350);
+        body.insertImage(6, this.image)
+        .setWidth(280)
+        .setHeight(280);
       } catch(err) {
         Logger.log(`${err} : Couldn't append the image to the ticket for some reason.`);
       }
@@ -123,6 +125,7 @@ class Ticket
     }
     //Return Document to use later
     Logger.log(JSON.stringify(doc))
+    Logger.log(`DOC ----> ${doc.getUrl()}`)
     return doc;
   };
 }
