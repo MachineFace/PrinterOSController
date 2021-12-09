@@ -122,8 +122,24 @@ const _testNet = () => {
   p.GetCloudPrinterList();
 }
 
+const DownloadFile = (id) => {
+  const outputStream = new ByteArrayOutputStream();
+  driveService.files().get(id)
+      .executeMediaAndDownloadTo(outputStream);
+}
 
 
+const _testPrinters = () => {
+  const s = Search(STATUS.inProgress)
+  for(const [sheetname, indexes] of Object.entries(s)) {
+    Logger.log(sheetname)
+    indexes.forEach(index => {
+      const ticketURL = SpreadsheetApp.getActive().getSheetByName(sheetname).getRange( index, 14, 1, 1 ).getValue();
+      const file = DocumentApp.openByUrl(ticketURL).
+      Logger.log(file)
+    })
+  }
+}
 
 
 
