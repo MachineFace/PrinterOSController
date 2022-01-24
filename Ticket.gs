@@ -18,6 +18,7 @@ class Ticket
     printerName = "Spectrum",
     printDuration = 2000,
     jobID = 12934871,
+    filename = "file.gcode",
     image,
   }){
     this.designspecialist = designspecialist;
@@ -32,6 +33,7 @@ class Ticket
     this.printerName = printerName;
     this.printDuration = printDuration;
     this.jobID = jobID;
+    this.filename = filename;
     this.image = image;
   }
 
@@ -58,30 +60,32 @@ class Ticket
     // Append Document with Info
     if (doc != undefined || doc != null || doc != NaN) {
 
-      body.setPageWidth(PAGESIZES.statement.width)
-        .setPageHeight(PAGESIZES.a4.height)
-        .setMarginTop(5)
-        .setMarginBottom(5)
-        .setMarginLeft(5)
-        .setMarginRight(5)
-
+      body
+        .setPageWidth(PAGESIZES.custom.width)
+        .setPageHeight(PAGESIZES.custom.height)
+        .setMarginTop(2)
+        .setMarginBottom(2)
+        .setMarginLeft(2)
+        .setMarginRight(2);
 
       body.insertImage(0, barcode)
-        .setWidth(500)
+        .setWidth(260)
         .setHeight(100);
       body.insertHorizontalRule(1);
 
       body.insertParagraph(2, "Email: " + this.email.toString())
         .setHeading(DocumentApp.ParagraphHeading.HEADING1)
         .setAttributes({
-          [DocumentApp.Attribute.FONT_SIZE]: 18,
+          [DocumentApp.Attribute.FONT_SIZE]: 13,
           [DocumentApp.Attribute.BOLD]: true,
+          [DocumentApp.Attribute.LINE_SPACING]: 1,
         });
       body.insertParagraph(3, "Printer: " + this.printerName.toString())
         .setHeading(DocumentApp.ParagraphHeading.HEADING2)
         .setAttributes({
-          [DocumentApp.Attribute.FONT_SIZE]: 16,
+          [DocumentApp.Attribute.FONT_SIZE]: 9,
           [DocumentApp.Attribute.BOLD]: true,
+          [DocumentApp.Attribute.LINE_SPACING]: 1,
         });
 
       // Create a two-dimensional array containing the cell contents.
@@ -91,16 +95,18 @@ class Ticket
           ["Job Number:", this.jobID.toString()],
           ["Student Email:", this.email.toString()],
           ["Elapsed time : ", this.printDuration.toString()],
-          ["Materials:", `PLA : ${this.material1Quantity}`],
-          ["Materials:", `Breakaway Support : ${this.material2Quantity}`],
+          ["Materials:", `PLA : ${this.material1Quantity + this.material2Quantity}`],
+          ["Filename:", `${this.filename}`],
         ])
         .setAttributes({
-          [DocumentApp.Attribute.FONT_SIZE]: 14,
+          [DocumentApp.Attribute.FONT_SIZE]: 6,
+          [DocumentApp.Attribute.LINE_SPACING]: 1,
+          [DocumentApp.Attribute.BORDER_WIDTH]: 0.5,
         });
       try {
         body.insertImage(6, this.image)
-        .setWidth(280)
-        .setHeight(280);
+        .setWidth(260)
+        .setHeight(260);
       } catch(err) {
         Logger.log(`${err} : Couldn't append the image to the ticket for some reason.`);
       }
@@ -164,6 +170,7 @@ const _testTicket = () => {
       printerID : "123876",
       printerName : "Dingus",
       printDuration : info.print_time,
+      filename : "somefile.gcode",
       image : image,
     }
     Logger.log(dummyObj);
@@ -202,6 +209,7 @@ const FixMissingTickets = () => {
         const elapsed = GetByHeader(sheet, "Elapsed", thisRow);
         const materials = GetByHeader(sheet, "Materials", thisRow);
         const cost = GetByHeader(sheet, "Cost", thisRow);
+        const filename = GetByHeader(sheet, "Filename", thisRow);
         const picture = GetByHeader(sheet, "Picture", thisRow);
         
         let imageBLOB = await GetImage(picture);
@@ -214,6 +222,7 @@ const FixMissingTickets = () => {
           printDuration : duration,
           material1Quantity : materials,
           jobID : jobID,
+          filename: filename,
           image : imageBLOB, 
         }).CreateTicket();
         const url = ticket.getUrl();

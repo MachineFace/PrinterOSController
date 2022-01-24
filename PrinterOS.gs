@@ -760,12 +760,17 @@ const UpdateInfo = (jobDetails, sheet, row) => {
 
   const status = jobDetails["status_id"];
   sheet.getRange(row, 7).setValue(status.toString());
+
   const duration = jobDetails["printing_duration"];
   const d = Number(duration) / 3600;
   Logger.log(`Elapsed Time : ${d}`);
   sheet.getRange(row, 8).setValue(d.toFixed(2).toString());
+  
   const elapsed = jobDetails["print_time"];
   sheet.getRange(row, 10).setValue(elapsed.toString());
+
+  const filename = jobDetails["filename"];
+  sheet.getRange(row, 15).setValue(filename.toString());
 
   if(status == 11 || status == "11") sheet.getRange(row, 1, 1, 1).setValue(STATUS.queued);
   else if(status == 21 || status == "21") sheet.getRange(row, 1, 1, 1).setValue(STATUS.inProgress);
@@ -895,7 +900,6 @@ const GetUserCount = async () => {
  * UNIT TEST
  */
 const _testPOS = async () => {
-  const writer = new WriteLogger();
   const pos = new PrinterOS();
   // await pos.Login().then(session => {
     //  pos.GetPrintersJobList(PRINTERIDS.Spectrum);
@@ -914,8 +918,8 @@ const _testPOS = async () => {
 
   await pos.Login()
   .then(async () => {
-    const info = await pos.GetJobInfo(2194576);
-    writer.Info(JSON.stringify(info));
+    const info = await pos.GetJobInfo(2365016);
+    Logger.log(JSON.stringify(info));
   })
   .then(pos.Logout());
 
@@ -948,12 +952,19 @@ const _testPOS = async () => {
   // pos.GetPrintersJobList(response, 234918273);
 }
 
-const _tCount = async () => {
+const FinalReport = async () => {
   const pos = new PrinterOS();
   await pos.Login()
   .then(async () => {
-    const info = await pos.GetUserCount();
-    Logger.log(info);
+    const fromDate = new Date(2021, 8, 1);
+    const toDate = new Date(2021, 12, 15);
+    const info = await pos.GetFinishedJobReport(fromDate, toDate);
+    info.forEach( (item, index) => {
+      // OTHERSHEETS.Report.getRange(2 + index, 1, 1, 1).setValue(item.lastname)
+      // OTHERSHEETS.Report.getRange(2 + index, 2, 1, 1).setValue(item.firstname)
+      // OTHERSHEETS.Report.getRange(2 + index, 3, 1, 1).setValue(item.email)
+      Logger.log(item);
+    })
   })
   .then(pos.Logout());
 }

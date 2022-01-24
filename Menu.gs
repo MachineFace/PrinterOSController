@@ -62,6 +62,7 @@ const PopupCreateTicket = async () => {
   const elapsed = thisSheet.getRange(thisRow, 10).getValue();
   const materials = thisSheet.getRange(thisRow, 11).getValue();
   const cost = thisSheet.getRange(thisRow, 12).getValue();
+  const filename = thisSheet.getRange(thisRow, 15).getValue();
   const png = thisSheet.getRange(thisRow, 13).getValue();
   
   const imageBlob = await GetImage(png);
@@ -76,6 +77,7 @@ const PopupCreateTicket = async () => {
       printDuration : duration,
       material1Quantity : materials,
       jobID : jobID,
+      filename : filename,
       image : imageBlob,
     }).CreateTicket();
     const url = ticket.getUrl();

@@ -123,9 +123,18 @@ const _testNet = () => {
 }
 
 const DownloadFile = (id) => {
-  const outputStream = new ByteArrayOutputStream();
-  driveService.files().get(id)
-      .executeMediaAndDownloadTo(outputStream);
+  const file = DriveApp.getFileById(id);
+  const name = file.getName();
+  const content = file.getAs('application/pdf').getDataAsString();
+    
+  const output = ContentService
+    .createTextOutput()
+    .setMimeType(ContentService.MimeType.CSV)
+    .setContent(content)
+    .downloadAsFile(name)
+
+  file.setTrashed(true);
+  return output;
 }
 
 
@@ -141,6 +150,17 @@ const _testPrinters = () => {
   }
 }
 
+
+const _testa = () => {
+  // Test on random ticket
+  const random = Math.floor(Math.random() * (200 - 2) + 2);
+  const ticket = SHEETS.Spectrum.getRange(random, 14, 1, 1).getValue();
+  const doc = DocumentApp.openByUrl(ticket)
+  const id = doc.getId()
+  let d = DownloadFile(id)
+  Logger.log(d)
+  // return ContentService.createTextOutput(fileString).downloadAsFile(fileName);
+}
 
 
 

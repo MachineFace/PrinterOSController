@@ -124,6 +124,7 @@ const OTHERSHEETS = {
   Users : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Users"),
   Logger : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Logger"),
   Unique : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("UniqueUsers"),
+  Report : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("REPORT"),
 }
 
 const WORKGROUPS = [
@@ -172,5 +173,7 @@ const PAGESIZES = {
   a3: {width: 841.89, height: 1190.55},
   a4: {width: 595.276, height: 841.89},
   a5: {width: 419.528, height: 595.276},
+  custom: {width: 204.000, height: 566.000},
+
 }
 

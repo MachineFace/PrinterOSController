@@ -11,7 +11,7 @@ class Calculate
   CalculateAverageTurnaround (sheet) {
     let culled = [];
     try {
-      let last = sheet.getLastRow();
+      let last = sheet.getLastRow() ? sheet.getLastRow() : 1;
       let completionTimes = sheet.getRange(2, 8, last, 1).getValues();
       completionTimes = [].concat(...completionTimes); 
       culled = completionTimes.filter(Boolean);
@@ -22,7 +22,10 @@ class Calculate
 
     // Sum
     let total = 0;
-    culled.forEach( time => total += time);
+    culled.forEach( time => {
+      if(time) total += time;
+      else total += 0;
+    });
 
     // Average the totals (a list of times in minutes)
     let average = Number.parseFloat(total / culled.length).toFixed(2);
@@ -78,6 +81,7 @@ class Calculate
       users.filter(Boolean);
       users.forEach( user => userList.push(user));
     }
+    userList.filter(Boolean);
     let occurrences = userList.reduce( (acc, curr) => {
       return acc[curr] ? ++acc[curr] : acc[curr] = 1, acc
     }, {});
@@ -299,7 +303,7 @@ const Metrics = () => {
  */
 const _testMetrics = () => {
   const calculate = new Calculate();
-  const d = calculate.PrintUniqueUsersWhoHavePrinted();
+  const d = calculate.PrintTopTen();
   Logger.log(d);
 }
 
