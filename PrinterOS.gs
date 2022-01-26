@@ -619,6 +619,11 @@ class PrinterOS {
     sheet.getRange(thisRow, 11).setValue(materials.toString());
     const cost = data["cost"];
     sheet.getRange(thisRow, 12).setValue(cost.toString());
+
+    const filename = data["filename"];
+    const split = filename.slice(0, -6);
+    sheet.getRange(thisRow, 15).setValue(split.toString());
+
     const picture = data["picture"];
     sheet.getRange(thisRow, 13).setValue(picture.toString());
     
@@ -639,6 +644,7 @@ class PrinterOS {
         printDuration : duration,
         material1Quantity : materials,
         jobID : jobID,
+        filename : filename,
         image : imageBLOB, 
       }).CreateTicket();
       const url = ticket.getUrl();
@@ -770,7 +776,8 @@ const UpdateInfo = (jobDetails, sheet, row) => {
   sheet.getRange(row, 10).setValue(elapsed.toString());
 
   const filename = jobDetails["filename"];
-  sheet.getRange(row, 15).setValue(filename.toString());
+  const split = filename.slice(0, -6);
+  sheet.getRange(row, 15).setValue(split.toString());
 
   if(status == 11 || status == "11") sheet.getRange(row, 1, 1, 1).setValue(STATUS.queued);
   else if(status == 21 || status == "21") sheet.getRange(row, 1, 1, 1).setValue(STATUS.inProgress);
@@ -895,6 +902,34 @@ const GetUserCount = async () => {
   return await count;
 }
 
+
+const UpdateFilenames = (sheet) => {
+  const pos = new PrinterOS();
+  pos.Login()
+  .then(() => {
+    let jobIds = sheet.getRange(2, 4, sheet.getLastRow(), 1).getValues();
+    jobIds = [].concat(...jobIds);
+    let culled = jobIds.filter(Boolean);
+    Logger.log(culled);
+    culled.forEach( async(jobId, index) => {
+      const info = await pos.GetJobInfo(jobId);
+      let filename = info["filename"];
+      let split = filename.slice(0, -6);
+      Logger.log(`INDEX: ${index + 2} : FILENAME ---> ${split}`);
+      sheet.getRange(index + 2, 15, 1, 1).setValue(split);
+    });
+  })
+  .finally(pos.Logout());
+}
+const UpdateAllFilenames = () => {
+  for(const [key, sheet] of Object.entries(SHEETS)) {
+    UpdateFilenames(sheet);
+  }
+}
+
+const _testFilename = async () => {
+  UpdateFilenames(SHEETS.Spectrum);
+}
 
 /**
  * UNIT TEST

@@ -77,7 +77,7 @@ class Calculate
   CalculateDistribution () {
     let userList = [];
     for(const [name, sheet] of Object.entries(SHEETS)) { 
-      let users = [].concat(...sheet.getRange(2, 6, sheet.getLastRow(), 1).getValues());
+      let users = [].concat(...sheet.getRange(2, 6, sheet.getLastRow() -1, 1).getValues());
       users.filter(Boolean);
       users.forEach( user => userList.push(user));
     }

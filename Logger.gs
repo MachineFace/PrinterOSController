@@ -5,63 +5,35 @@
 class WriteLogger
 {
   constructor() { 
-    this.date = new Date().getTime();
+    this.date = new Date().toUTCString();
     this.row = OTHERSHEETS.Logger.getLastRow() + 1;
     this.sheetLength = OTHERSHEETS.Logger.getMaxRows();
   }
-  Error(message){
-    if(this.row > this.sheetLength) {
-      OTHERSHEETS.Logger.appendRow([
-        this.date, "ERROR!", message,
-      ]);
-    } else {
-      OTHERSHEETS.Logger.getRange(this.row, 1, 1, 1).setValue(this.date);
-      OTHERSHEETS.Logger.getRange(this.row, 2, 1, 1).setValue("ERROR!");
-      OTHERSHEETS.Logger.getRange(this.row, 3, 1, 1).setValue(message);
-    }
-    Logger.log(`ERROR : ${message}`);
+  Error(message) {
+    const text = [this.date, "ERROR!", message, ];
+    OTHERSHEETS.Logger.appendRow(text);
+    Logger.log(`${text[0]}, ${text[1]} : ${message}`);
     this._PopItem();
     this._CleanupSheet();
   }
   Warning(message) {
-    if(this.row > this.sheetLength) {
-      OTHERSHEETS.Logger.appendRow([
-        this.date, "WARNING!", message,
-      ]);
-    } else {
-      OTHERSHEETS.Logger.getRange(this.row, 1, 1, 1).setValue(this.date);
-      OTHERSHEETS.Logger.getRange(this.row, 2, 1, 1).setValue("WARNING");
-      OTHERSHEETS.Logger.getRange(this.row, 3, 1, 1).setValue(message);
-    }
-    Logger.log(`WARNING : ${message}`);
+    const text = [this.date, "WARNING!", message, ];
+    OTHERSHEETS.Logger.appendRow(text);
+    Logger.log(`${text[0]}, ${text[1]} : ${message}`);
     this._PopItem();
     this._CleanupSheet();
   }
   Info(message) {
-    if(this.row > this.sheetLength) {
-      OTHERSHEETS.Logger.appendRow([
-        this.date, "INFO!", message,
-      ]);
-    } else {
-      OTHERSHEETS.Logger.getRange(this.row, 1, 1, 1).setValue(this.date);
-      OTHERSHEETS.Logger.getRange(this.row, 2, 1, 1).setValue("INFO");
-      OTHERSHEETS.Logger.getRange(this.row, 3, 1, 1).setValue(message);
-    }
-    Logger.log(`INFO : ${message}`);
+    const text = [this.date, "INFO!", message, ];
+    OTHERSHEETS.Logger.appendRow(text);
+    Logger.log(`${text[0]}, ${text[1]} : ${message}`);
     this._PopItem();
     this._CleanupSheet();
   }
   Debug(message) {
-    if(this.row > this.sheetLength) {
-      OTHERSHEETS.Logger.appendRow([
-        this.date, "DEBUG", message,
-      ]);
-    } else {
-      OTHERSHEETS.Logger.getRange(this.row, 1, 1, 1).setValue(this.date);
-      OTHERSHEETS.Logger.getRange(this.row, 2, 1, 1).setValue("DEBUG");
-      OTHERSHEETS.Logger.getRange(this.row, 3, 1, 1).setValue(message);
-    }
-    Logger.log(`DEBUG : ${message}`);
+    const text = [this.date, "DEBUG", message, ];
+    OTHERSHEETS.Logger.appendRow(text);
+    Logger.log(`${text[0]}, ${text[1]} : ${message}`);
     this._PopItem();
     this._CleanupSheet();
   }
@@ -86,11 +58,13 @@ class WriteLogger
  */
 const _testWriteLog = () => {
   const write = new WriteLogger();
-  write.Warning(`Ooopsies ----> Warning`);
-  write.Info(`Some Info`);
-  write.Error(`ERROR`);
-  write.Debug(`Debugging`);
-  write._CleanupSheet();
+  for (let i = 0; i < 25; i++) {
+    write.Warning(`Ooopsies ----> Warning`);
+    write.Info(`Some Info`);
+    write.Error(`ERROR`);
+    write.Debug(`Debugging`);
+    write._CleanupSheet();
+  }
 }
 
 

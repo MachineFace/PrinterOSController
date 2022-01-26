@@ -159,6 +159,7 @@ const BarMenu = () => {
     .addItem("Count Queue", "PopupCountQueue")
     .addItem(`Create a Ticket for a User`, `PopupCreateTicket`)
     .addItem(`Fix All Missing Tickets`, `FixMissingTickets`)
+    .addItem(`Fix All Missing Filenames`, `UpdateAllFilenames`)
     .addSeparator()
     .addItem("Help", "PopupHelp")
     .addSeparator()
