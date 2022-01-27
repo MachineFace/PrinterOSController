@@ -6,47 +6,48 @@ class WriteLogger
 {
   constructor() { 
     this.date = new Date().toUTCString();
+    this.sheet = OTHERSHEETS.Logger;
     this.row = OTHERSHEETS.Logger.getLastRow() + 1;
     this.sheetLength = OTHERSHEETS.Logger.getMaxRows();
   }
   Error(message) {
     const text = [this.date, "ERROR!", message, ];
-    OTHERSHEETS.Logger.appendRow(text);
-    Logger.log(`${text[0]}, ${text[1]} : ${message}`);
+    this.sheet.appendRow(text);
+    console.error(`${text[0]}, ${text[1]} : ${message}`);
     this._PopItem();
     this._CleanupSheet();
   }
   Warning(message) {
     const text = [this.date, "WARNING!", message, ];
-    OTHERSHEETS.Logger.appendRow(text);
-    Logger.log(`${text[0]}, ${text[1]} : ${message}`);
+    this.sheet.appendRow(text);
+    console.warn(`${text[0]}, ${text[1]} : ${message}`);
     this._PopItem();
     this._CleanupSheet();
   }
   Info(message) {
     const text = [this.date, "INFO!", message, ];
-    OTHERSHEETS.Logger.appendRow(text);
-    Logger.log(`${text[0]}, ${text[1]} : ${message}`);
+    this.sheet.appendRow(text);
+    console.info(`${text[0]}, ${text[1]} : ${message}`);
     this._PopItem();
     this._CleanupSheet();
   }
   Debug(message) {
     const text = [this.date, "DEBUG", message, ];
-    OTHERSHEETS.Logger.appendRow(text);
-    Logger.log(`${text[0]}, ${text[1]} : ${message}`);
+    this.sheet.appendRow(text);
+    console.log(`${text[0]}, ${text[1]} : ${message}`);
     this._PopItem();
     this._CleanupSheet();
   }
   _PopItem() {
-    if(OTHERSHEETS.Logger.getLastRow() > 100) {
-      OTHERSHEETS.Logger.deleteRows(1, 1);
+    if(this.row > 100) {
+      this.sheet.deleteRows(1, 1);
     } else {
-      OTHERSHEETS.Logger.insertRowAfter(this.sheetLength - 1);
+      this.sheet.insertRowAfter(this.sheetLength - 1);
     }
   }
   _CleanupSheet() {
     if(this.row > 2000) {
-      OTHERSHEETS.Logger.deleteRows(1, 1999);
+      this.sheet.deleteRows(1, 1999);
     } else return;
   }
   

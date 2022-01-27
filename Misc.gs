@@ -17,7 +17,7 @@ const GetByHeader = (sheet, columnName, row) => {
     let col = data[0].indexOf(columnName);
     if (col != -1) return data[row - 1][col];
   } catch (err) {
-    Logger.log(`${err} : GetByHeader failed - Sheet: ${sheet} Col Name specified: ${columnName} Row: ${row}`);
+    console.error(`${err} : GetByHeader failed - Sheet: ${sheet} Col Name specified: ${columnName} Row: ${row}`);
   }
 };
 
@@ -37,7 +37,7 @@ const GetColumnDataByHeader = (sheet, columnName) => {
     colData.splice(0, 1);
     if (col != -1) return colData;
   } catch (err) {
-    Logger.log(`${err} : GetByHeader failed - Sheet: ${sheet} Col Name specified: ${columnName}`);
+    console.error(`${err} : GetByHeader failed - Sheet: ${sheet} Col Name specified: ${columnName}`);
   }
 };
 
@@ -57,7 +57,7 @@ const SetByHeader = (sheet, columnName, row, val) => {
     const col = data[0].indexOf(columnName) + 1;
     sheet.getRange(row, col).setValue(val);
   } catch (err) {
-    Logger.log(`${err} : setByHeader failed - Sheet: ${sheet} Row: ${row} Col: ${col} Value: ${val}`);
+    console.error(`${err} : setByHeader failed - Sheet: ${sheet} Row: ${row} Col: ${col} Value: ${val}`);
   }
 };
 
@@ -97,7 +97,7 @@ const GetImage = async (pngFile) => {
   const html = await UrlFetchApp.fetch(repo, params);
 
   const responseCode = html.getResponseCode();
-  Logger.log(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+  console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
   if(responseCode == 200) {
     const folder = DriveApp.getFoldersByName(`Job Tickets`);
@@ -123,7 +123,7 @@ const Search = (value) => {
       res[sheet.getName()] = temp;
     }
   }
-  Logger.log(JSON.stringify(res));
+  console.info(JSON.stringify(res));
   return res;
 }
 
@@ -169,18 +169,18 @@ class JobNumberGenerator {
     try {
       if ( this.date == undefined || this.date == null || this.date == "" || testedDate == false ) {
         jobnumber = +Utilities.formatDate(new Date(), `PST`, `yyyyMMddHHmmss`);
-        Logger.log(`Set Jobnumber to a new time because timestamp was missing.`);
+        console.warn(`Set Jobnumber to a new time because timestamp was missing.`);
       } else {
         jobnumber = +Utilities.formatDate(this.date, `PST`, `yyyyMMddhhmmss`);
-        Logger.log(`Input time: ${this.date}, Set Jobnumber: ${jobnumber}`);
+        console.info(`Input time: ${this.date}, Set Jobnumber: ${jobnumber}`);
       }
     } catch (err) {
-      Logger.log(`${err} : Couldnt fix jobnumber.`);
+      console.error(`${err} : Couldnt fix jobnumber.`);
     }
     if (jobnumber == undefined || testedDate == false) {
       jobnumber = +Utilities.formatDate(new Date(), `PST`, `yyyyMMddHHmmss`);
     }
-    Logger.log(`Returned Job Number: ${jobnumber}`);
+    console.info(`Returned Job Number: ${jobnumber}`);
     return jobnumber.toString();
   }
   
@@ -191,7 +191,7 @@ class JobNumberGenerator {
  * Fix Statuses
  */
 const FixStatus = () => {
-  Logger.log(`Checking Statuses....`);
+  console.info(`Checking Statuses....`);
   for(const [key, sheet] of Object.entries(SHEETS)) {
     
     let posCodes = GetColumnDataByHeader(sheet, "POS Stat Code");
@@ -201,32 +201,32 @@ const FixStatus = () => {
         case 11:
           if (statuses[index + 2] != STATUS.queued) {
             SetByHeader(sheet, "Status", index + 2, STATUS.queued);
-            Logger.log(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
+            console.warn(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
           }
           break;
         case 21:
           if (statuses[index + 2] != STATUS.inProgress) {
             SetByHeader(sheet, "Status", index + 2, STATUS.inProgress);
-            Logger.log(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
+            console.warn(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
           }
           break;
         case 43:
           if (statuses[index + 2] != STATUS.failed) {
             SetByHeader(sheet, "Status", index + 2, STATUS.failed);
-            Logger.log(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
+            console.warn(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
           }
           break;
         case 45:
           if (statuses[index + 2] != STATUS.cancelled) {
             SetByHeader(sheet, "Status", index + 2, STATUS.cancelled);
-            Logger.log(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
+            console.warn(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
           }
           break;
       }
     });
 
   }
-  Logger.log(`Statuses Checked and Fixed....`);
+  console.warn(`Statuses Checked and Fixed....`);
 }
 
 
@@ -242,6 +242,7 @@ const IsValidDate = (d) => {
 };
 
 
+
 /**
  * ----------------------------------------------------------------------------------------------------------------
  * Unit test for JobNumber
@@ -250,7 +251,7 @@ const _testJob = () => {
   const now = new Date();
   // const jnum = new JobNumberGenerator({date : now}).GenerateJobNumber();
   const jnum = new JobNumberGenerator({}).GenerateJobNumber();
-  Logger.log(jnum)
+  console.info(jnum)
 }
 
 /**
@@ -259,7 +260,7 @@ const _testJob = () => {
 const _testSearch = () => {
   const term = "berkdincer@berkeley.edu";
   const search = Search(term);
-  Logger.log(`Search : ${search}`);
+  console.info(`Search : ${search}`);
 }
 
 /**
@@ -268,27 +269,27 @@ const _testSearch = () => {
 const _helperMakeSheets = async () => {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   for(const [key, value] of Object.entries(PRINTERIDS)) {
-    Logger.log(key);
+    console.info(key);
     await ss.insertSheet().setName(key);
   }
 }
 
 const _testGetImage = async () => {
   let png = GetByHeader(SHEETS.Spectrum, "Picture", 10);
-  Logger.log(png)
+  console.info(png)
   let blob = await GetImage(png);
 }
 
 const _testFixStatus = async () => {
-  Logger.log(`Testing fixing the Status....`);
+  console.info(`Testing fixing the Status....`);
   FixStatus();
-  Logger.log(`Finished testing fixing the Status.`)
+  console.info(`Finished testing fixing the Status.`)
 }
 
 
 const _testGetHead = () => {
   let d = GetColumnDataByHeader(SHEETS.Spectrum, "JobID");
-  Logger.log(d)
+  console.info(d)
 }
 
 

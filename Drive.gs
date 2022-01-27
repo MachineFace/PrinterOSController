@@ -24,15 +24,15 @@ class Drive
 
   MoveTicketsOutOfRoot () {
     const files = this.GetAllFileNamesInRoot();
-    Logger.log(`Destination ----> ${this.destination.next().getName()}`);
+    console.info(`Destination ----> ${this.destination.next().getName()}`);
     files.forEach(file => {
       let name = file.getName();
       if(name == `Job Ticket` || name == `Job Ticket-[object Object]` || name == `PrinterOS Ticket` || name.includes(`Job Ticket-`)) {
-        Logger.log(`Moving ----> Name : ${name}, ID : ${file.getId()}`);
+        console.warn(`Moving ----> Name : ${name}, ID : ${file.getId()}`);
         file.moveTo(this.destinationID);
-        Logger.log(`Moved ----> Name : ${name}, ID : ${file.getId()}`);
+        console.warn(`Moved ----> Name : ${name}, ID : ${file.getId()}`);
       } else {
-        Logger.log(`No files moved....`);
+        console.error(`No files moved....`);
         return;
       }
     });
@@ -45,7 +45,7 @@ class Drive
       count++;
       files.next();
     }
-    Logger.log(`Total Tickets : ${count}`);
+    console.info(`Total Tickets : ${count}`);
     return count;
   }
 
@@ -55,9 +55,9 @@ class Drive
       let file = files.next();
       let date = file.getDateCreated();
       if(date < this.dateMinusOneTwenty) {
-        Logger.log(`Deleting ----> Name : ${file.getName()}, ID : ${file.getId()}, Date : ${file.getDateCreated()}`);
+        console.warn(`Deleting ----> Name : ${file.getName()}, ID : ${file.getId()}, Date : ${file.getDateCreated()}`);
         file.setTrashed(true);
-        Logger.log(`Removed : ${file.getId()}`);
+        console.warn(`Removed : ${file.getId()}`);
       } 
     } 
   }
@@ -86,7 +86,7 @@ const _testDrive = () => {
   // let dateMinusNinety = new Date(new Date().setDate(date.getDate() - 90));
   // const fromDate = date.toISOString().split('T')[0];
   // const toDate = new Date().toISOString().split('T')[0];
-  // Logger.log(`90 Days ago : ${dateMinusNinety}, Now : ${date}`);
+  // console.info(`90 Days ago : ${dateMinusNinety}, Now : ${date}`);
   let d = new Drive().CountTickets();
 }
 

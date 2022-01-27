@@ -108,7 +108,7 @@ class Ticket
         .setWidth(260)
         .setHeight(260);
       } catch(err) {
-        Logger.log(`${err} : Couldn't append the image to the ticket for some reason.`);
+        console.error(`${err} : Couldn't append the image to the ticket for some reason.`);
       }
       
 
@@ -121,7 +121,7 @@ class Ticket
           folder.next().addFile(barcode);
         }
       } catch (err) {
-        Logger.log(`Whoops : ${err}`);
+        console.error(`Whoops : ${err}`);
       }
 
 
@@ -130,8 +130,8 @@ class Ticket
       file.setSharing(DriveApp.Access.ANYONE, DriveApp.Permission.EDIT); //set sharing
     }
     //Return Document to use later
-    Logger.log(JSON.stringify(doc))
-    Logger.log(`DOC ----> ${doc.getUrl()}`)
+    console.info(JSON.stringify(doc))
+    console.info(`DOC ----> ${doc.getUrl()}`)
     return doc;
   };
 }
@@ -150,13 +150,13 @@ const _testTicket = () => {
   .then( async () => {
     const jobs = await pos.GetPrintersJobList(79165);
     jobID = jobs[0].id;
-    Logger.log(jobID);
+    console.info(jobID);
   })
   .then( async () => {
     info = await pos.GetJobInfo(jobID);
     image = await pos.imgBlob;
-    Logger.log(info);
-    Logger.log(image);
+    console.info(info);
+    console.info(image);
   })
   .then(() => {
     const dummyObj = {
@@ -173,10 +173,10 @@ const _testTicket = () => {
       filename : "somefile.gcode",
       image : image,
     }
-    Logger.log(dummyObj);
+    console.info(dummyObj);
 
     const tic = new Ticket(dummyObj).CreateTicket();
-    Logger.log(tic);
+    console.info(tic);
   })
   
   
@@ -190,14 +190,14 @@ const _testTicket = () => {
  * Check and Fix Missing Tickets
  */
 const FixMissingTickets = () => {
-  Logger.log(`Checking Tickets....`);
+  console.info(`Checking Tickets....`);
   for(const [key, sheet] of Object.entries(SHEETS)) {
     let ticketCells = sheet.getRange(2, 14, sheet.getLastRow() -1, 1).getValues();
     ticketCells = [].concat(...ticketCells);
     ticketCells.forEach( async (cell, index) => {
       if(!cell) {
         let thisRow = index + 2;
-        Logger.log(`Sheet : ${sheet.getSheetName()}, Index : ${thisRow} is Missing a Ticket! Creating new Ticket....`);
+        console.warn(`Sheet : ${sheet.getSheetName()}, Index : ${thisRow} is Missing a Ticket! Creating new Ticket....`);
         
         const printerID = GetByHeader(sheet, "PrinterID", thisRow);
         const printerName = GetByHeader(sheet, "PrinterName", thisRow);
@@ -227,11 +227,11 @@ const FixMissingTickets = () => {
         }).CreateTicket();
         const url = ticket.getUrl();
         sheet.getRange(thisRow, 14).setValue(url.toString());
-        Logger.log(`Ticket Created....`);
+        console.warn(`Ticket Created....`);
       }
     });
   }
-  Logger.log(`Tickets Checked and Fixed....`);
+  console.info(`Tickets Checked and Fixed....`);
 
 }
 

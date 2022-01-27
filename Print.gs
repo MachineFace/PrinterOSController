@@ -16,7 +16,7 @@ class NetworkPrinter
   ShowURL() {
     const cpService = this.service;
     if (!cpService.hasAccess()) {
-      Logger.log(cpService.getAuthorizationUrl());
+      console.info(cpService.getAuthorizationUrl());
     }
   }
 
@@ -57,16 +57,16 @@ class NetworkPrinter
     }
     const html = await UrlFetchApp.fetch(repo, params);
     const responseCode = html.getResponseCode();
-    Logger.log(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+    console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
     if(responseCode == 200) {
       const printers = JSON.parse(html.getContentText()).printers;
-      Logger.log(printers);  
+      console.info(printers);  
       printers.forEach(printer => {
-        Logger.log(`Printer : ${printer.id}, Name : ${printer.name}, Description : ${printer.description}`);
+        console.info(`Printer : ${printer.id}, Name : ${printer.name}, Description : ${printer.description}`);
       });
     } else {
-      Logger.log(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+      console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
     }
   }
 
@@ -106,8 +106,8 @@ class NetworkPrinter
     const res = await UrlFetchApp(repo, params);
     const response = JSON.parse(res);
 
-    if (response.success) Logger.log(`Success : ${response.message}`);
-    else Logger.log(`Error Code : ${response.errorCode}, Message : ${response.message}`);
+    if (response.success) console.info(`Success : ${response.message}`);
+    else console.error(`Error Code : ${response.errorCode}, Message : ${response.message}`);
   }
 
 }
@@ -141,11 +141,11 @@ const DownloadFile = (id) => {
 const _testPrinters = () => {
   const s = Search(STATUS.inProgress)
   for(const [sheetname, indexes] of Object.entries(s)) {
-    Logger.log(sheetname)
+    console.info(sheetname)
     indexes.forEach(index => {
       const ticketURL = SpreadsheetApp.getActive().getSheetByName(sheetname).getRange( index, 14, 1, 1 ).getValue();
       const file = DocumentApp.openByUrl(ticketURL).
-      Logger.log(file)
+      console.info(file)
     })
   }
 }
@@ -158,7 +158,7 @@ const _testa = () => {
   const doc = DocumentApp.openByUrl(ticket)
   const id = doc.getId()
   let d = DownloadFile(id)
-  Logger.log(d)
+  console.info(d)
   // return ContentService.createTextOutput(fileString).downloadAsFile(fileName);
 }
 

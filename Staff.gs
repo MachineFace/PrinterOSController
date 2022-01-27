@@ -158,9 +158,9 @@ class StaffBuilder
 const _test = () => {
   const staff = new StaffBuilder().get();
   for(const [name, values] of Object.entries(staff)) {
-    Logger.log(`${name} ----> First Name :${values.name}, Full : ${values.fullname} ~~ ${JSON.stringify(values)}`)
+    console.info(`${name} ----> First Name :${values.name}, Full : ${values.fullname} ~~ ${JSON.stringify(values)}`)
   }
   const cody = staff["Cody"];
-  Logger.log(cody)
+  console.info(cody)
 }
 

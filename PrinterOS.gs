@@ -44,14 +44,14 @@ class PrinterOS {
 
     const html = await UrlFetchApp.fetch(this.root + repo, params);
     const responseCode = html.getResponseCode();
-    Logger.log(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+    console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
     if(responseCode == 200) {
       const response = html.getContentText();
       const result = JSON.parse(response)["result"];
       if(result == true) {
         const session = JSON.parse(response)["message"]["session"];
-        Logger.log(`SESSION -----> ${session}`)
+        console.info(`SESSION -----> ${session}`)
         this.session = session;
         return session;
       } else return false;
@@ -76,7 +76,7 @@ class PrinterOS {
     if(responseCode == 200) {
       const response = html.getContentText();
       const result = JSON.parse(response)["result"];
-      Logger.log(`Logged Out : ${result}`);
+      console.warn(`Logged Out : ${result}`);
     } else return false;
   }
   
@@ -99,13 +99,13 @@ class PrinterOS {
     const html = await UrlFetchApp.fetch(this.root + repo, params);
     const responseCode = html.getResponseCode();
 
-    Logger.log(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+    console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
     if(responseCode == 200) {
       const response = html.getContentText();
       const result = JSON.parse(response)["result"];
       if(result == true) {
-        Logger.log(`CHECK SESSION ---> : ${JSON.parse(response)["message"]}`);
+        console.info(`CHECK SESSION ---> : ${JSON.parse(response)["message"]}`);
         return JSON.parse(response)["message"];
       } else return false;
     }
@@ -133,7 +133,7 @@ class PrinterOS {
     const html = await UrlFetchApp.fetch(this.root + repo, params);
     const responseCode = html.getResponseCode();
 
-    Logger.log(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+    console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
     const printerListOut = [];
 
@@ -147,14 +147,14 @@ class PrinterOS {
           this.printerIDs.push(p["id"]);
           this.printerIPs.push(p["local_ip"]);
           this.printerNames.push(p["name"]);
-          Logger.log(JSON.stringify(p));
+          console.info(JSON.stringify(p));
           // printerListOut.push(JSON.stringify(p));
         })
       } else return false;
     }
-    Logger.log(this.printerIDs);
-    Logger.log(this.printerIPs);
-    Logger.log(this.printerNames);
+    console.info(this.printerIDs);
+    console.info(this.printerIPs);
+    console.info(this.printerNames);
     return printerListOut;
   }
 
@@ -181,7 +181,7 @@ class PrinterOS {
     const html = await UrlFetchApp.fetch(this.root + repo, params);
     const responseCode = html.getResponseCode();
 
-    Logger.log(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+    console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
     if(responseCode == 200) {
       const response = html.getContentText();
@@ -192,7 +192,7 @@ class PrinterOS {
           this.printerIDs.push(p["id"]);
           this.printerIPs.push(p["local_ip"]);
           this.printerNames.push(p["name"]);
-          Logger.log(JSON.stringify(p));
+          console.info(JSON.stringify(p));
           // printerListOut.push(JSON.stringify(p));
         })
       } else return false;
@@ -219,7 +219,7 @@ class PrinterOS {
     const html = await UrlFetchApp.fetch(this.root + repo, params);
     const responseCode = html.getResponseCode();
 
-    Logger.log(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+    console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
     if(responseCode == 200) {
       const response = html.getContentText();
@@ -257,7 +257,7 @@ class PrinterOS {
     const html = await UrlFetchApp.fetch(this.root + repo, params);
     const responseCode = html.getResponseCode();
 
-    Logger.log(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+    console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
     if(responseCode == 200) {
       const response = html.getContentText();
@@ -265,7 +265,7 @@ class PrinterOS {
       if(result == true) {
         const data = JSON.parse(response)["message"];
         // data.forEach(p => {
-        //   Logger.log(JSON.stringify(p));
+        //   console.info(JSON.stringify(p));
         // })
         return data;
       } else return false;
@@ -292,7 +292,7 @@ class PrinterOS {
     const html = await UrlFetchApp.fetch(this.root + repo, params);
     const responseCode = html.getResponseCode();
 
-    Logger.log(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+    console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
     if(responseCode == 200) {
       const response = html.getContentText();
@@ -311,10 +311,10 @@ class PrinterOS {
     const jobIDS = [];
     for (const [key, value] of Object.entries(PRINTERIDS)) {
       const latestjobID = await this.GetPrintersLatestJob(value);
-      Logger.log(`Printer ----> ${key}`);
+      console.info(`Printer ----> ${key}`);
       jobIDS.push(latestjobID["id"]);
     }
-    jobIDS.forEach(async (jobID) => Logger.log(jobID));
+    jobIDS.forEach(async (jobID) => console.info(jobID));
     return jobIDS;
   }
 
@@ -340,7 +340,7 @@ class PrinterOS {
     const html = await UrlFetchApp.fetch(this.root + repo, params);
     const responseCode = html.getResponseCode();
 
-    Logger.log(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+    console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
     if(responseCode == 200) {
       const response = html.getContentText();
@@ -366,7 +366,7 @@ class PrinterOS {
     date.setDate(date.getDate() - 1);
     const fromDate = date.toISOString().split('T')[0];
     const toDate = new Date().toISOString().split('T')[0];
-    Logger.log(`From : ${fromDate}, To : ${toDate}`);
+    console.info(`From : ${fromDate}, To : ${toDate}`);
     const res = await this.GetAdminReport(fromDate, toDate);
 
     let workgroups = [];
@@ -377,7 +377,7 @@ class PrinterOS {
     workgroups.pop();
     workgroups = [].concat(...workgroups);
     let unique = [...new Set(workgroups)]
-    Logger.log(unique);
+    console.info(unique);
     return unique;
 
   }
@@ -404,7 +404,7 @@ class PrinterOS {
     const html = await UrlFetchApp.fetch(this.root + repo, params);
     const responseCode = html.getResponseCode();
 
-    Logger.log(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+    console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
     if(responseCode == 200) {
       const response = html.getContentText();
@@ -428,9 +428,9 @@ class PrinterOS {
       let usergroup = [];
       res.forEach(user => usergroup.push(user["email"]));
       usergroup = [].concat(...usergroup);
-      Logger.log(countUnique(usergroup))
+      console.info(countUnique(usergroup))
     })
-    Logger.log(users)
+    console.info(users)
     return users;
   }
 
@@ -443,13 +443,13 @@ class PrinterOS {
     let users = [];
     JACOBSWORKGROUPS.forEach( async(group) => {
       const res = await this.GetUsersByWorkgroup(group)
-      .then(Logger.log(res["email"]));
+      .then(console.info(res["email"]));
       
       // res.forEach(user => users.push(res["email"]));
     })
     users = [].concat(...users);
     let count = new Set(users).size;
-    Logger.log(`Count : ${count}`);
+    console.info(`Count : ${count}`);
     // OTHERSHEETS.Metrics.getRange(17, 3, 1, 1).setValue(count);
     return count;
   }
@@ -469,7 +469,7 @@ class PrinterOS {
     const html = await UrlFetchApp.fetch(this.root + repo, params);
     const responseCode = html.getResponseCode();
 
-    Logger.log(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+    console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
     if(responseCode == 200) {
       const response = html.getContentText();
@@ -509,7 +509,7 @@ class PrinterOS {
     const html = await UrlFetchApp.fetch(this.root + repo, params);
     const responseCode = html.getResponseCode();
 
-    Logger.log(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+    console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
     if(responseCode == 200) {
       const response = html.getContentText();
@@ -544,7 +544,7 @@ class PrinterOS {
     const html = await UrlFetchApp.fetch(this.root + repo, params);
     const responseCode = html.getResponseCode();
 
-    Logger.log(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+    console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
     if(responseCode == 200) {
       const response = html.getContentText();
@@ -560,7 +560,7 @@ class PrinterOS {
    * Get an Image
    */
   async GetJobImage() {
-    // Logger.log(`IMAGE ----> ${this.picture}`);
+    // console.info(`IMAGE ----> ${this.picture}`);
     let image;
     const repo = `https://live3dprinteros.blob.core.windows.net/render/${this.picture}`;
 
@@ -587,7 +587,7 @@ class PrinterOS {
   GetPrinterNameFromID (printerID) {
     for (const [key, value] of Object.entries(PRINTERIDS)) {
       if(printerID == value) {
-        Logger.log(`PrinterID : ${printerID}, Printer Name : ${key}`);
+        console.info(`PrinterID : ${printerID}, Printer Name : ${key}`);
         return key;
       }
     }
@@ -650,7 +650,7 @@ class PrinterOS {
       const url = ticket.getUrl();
       sheet.getRange(thisRow, 14).setValue(url.toString());
     } catch (err) {
-      Logger.log(`${err} : Couldn't generate a ticket....`);
+      console.error(`${err} : Couldn't generate a ticket....`);
     }
 
   }
@@ -689,9 +689,9 @@ const _FetchAll = async () => {
       jobList.reverse();
       jobList.forEach( async(jobnumber) => {
         data = await pos.GetJobInfo(jobnumber);
-        // Logger.log(data);
+        // console.info(data);
         if(SHEETS[key].getName() == key) {
-          Logger.log(key)
+          console.info(key)
           ParseJobDetails(data, SHEETS[key]);
         }
       })
@@ -718,8 +718,8 @@ const WriteAllNewDataToSheets = async () => {
     .then(FetchAndWrite(SHEETS.Nimbus))
     .then(FetchAndWrite(SHEETS.Luteus))
     .then(FetchAndWrite(SHEETS.Caerulus))
-    .catch(err => Logger.log(`${err} : : Couldn't write data too sheet. Maybe it just took too long?...`))
-    .finally(() => Logger.log(`Added New Data to All Sheets.`)) 
+    .catch(err => console.error(`${err} : : Couldn't write data too sheet. Maybe it just took too long?...`))
+    .finally(() => console.info(`Added New Data to All Sheets.`)) 
 
 }
 
@@ -743,10 +743,10 @@ const FetchAndWrite = async (sheet) => {
     })
   })
   .then(() => {
-    if(jobList.length === 0) Logger.log(`${sheet.getName()} ----> Nothing New....`);
+    if(jobList.length === 0) console.warn(`${sheet.getName()} ----> Nothing New....`);
     else if(jobList.length !== 0) {
       jobList.forEach( async(job) => {
-        Logger.log(`${sheet.getName()} ----> New Job! : ${job}`);
+        console.warn(`${sheet.getName()} ----> New Job! : ${job}`);
         data = await pos.GetJobInfo(job);
         await pos.WriteJobDetailsToSheet(data, sheet);
       });
@@ -769,7 +769,7 @@ const UpdateInfo = (jobDetails, sheet, row) => {
 
   const duration = jobDetails["printing_duration"];
   const d = Number(duration) / 3600;
-  Logger.log(`Elapsed Time : ${d}`);
+  console.info(`Elapsed Time : ${d}`);
   sheet.getRange(row, 8).setValue(d.toFixed(2).toString());
   
   const elapsed = jobDetails["print_time"];
@@ -803,7 +803,7 @@ const Update = (sheet) => {
     })
     culled.forEach( async(job) => {
       let row = SearchSpecificSheet(sheet, job);
-      Logger.log(`${sheet.getName()} @ ${row} ----> Updating Job : ${job}`);
+      console.warn(`${sheet.getName()} @ ${row} ----> Updating Job : ${job}`);
       data = await pos.GetJobInfo(job);
       await UpdateInfo(data, sheet, row);
     });
@@ -844,11 +844,11 @@ const RemoveDuplicateRecords = (sheet) => {
     }
   })
   const dups = records.filter((item, index) => records.indexOf(item) !== index);
-  Logger.log(`${sheet.getName()} : Duplicates : ${dups.length}`);
+  console.warn(`${sheet.getName()} : Duplicates : ${dups.length}`);
   // Remove
   if(dups) {
     indexes.forEach(number => {
-      Logger.log(`Sheet ${sheet.getSheetName()} @ ROW : ${number}`);
+      console.warn(`Sheet ${sheet.getSheetName()} @ ROW : ${number}`);
       sheet.deleteRow(number);
       sheet.insertRowsAfter(sheet.getMaxRows(), 1);
     });
@@ -867,7 +867,7 @@ const RemoveDuplicateUsers = async () => {
     if (uniqueElements.has(item)) {
       uniqueElements.delete(item);
     } else {
-      Logger.log(`REMOVING : ${index + 2} : ${item}`);
+      console.warn(`REMOVING : ${index + 2} : ${item}`);
       OTHERSHEETS.Users.deleteRow(index + 2);
       OTHERSHEETS.Users.insertRowAfter(OTHERSHEETS.Users.getMaxRows() - 1 );
       dups.push(item);
@@ -893,7 +893,7 @@ const GetUserCount = async () => {
     let temp = await users;
     temp = [].concat(...temp);
     count = new Set(temp).size;
-    Logger.log(`Count : ${count}`);
+    console.info(`Count : ${count}`);
     OTHERSHEETS.Metrics.getRange(17, 3, 1, 1).setValue(count);
   })
   .finally(() => {
@@ -910,12 +910,12 @@ const UpdateFilenames = (sheet) => {
     let jobIds = sheet.getRange(2, 4, sheet.getLastRow(), 1).getValues();
     jobIds = [].concat(...jobIds);
     let culled = jobIds.filter(Boolean);
-    Logger.log(culled);
+    console.info(culled);
     culled.forEach( async(jobId, index) => {
       const info = await pos.GetJobInfo(jobId);
       let filename = info["filename"];
       let split = filename.slice(0, -6);
-      Logger.log(`INDEX: ${index + 2} : FILENAME ---> ${split}`);
+      console.info(`INDEX: ${index + 2} : FILENAME ---> ${split}`);
       sheet.getRange(index + 2, 15, 1, 1).setValue(split);
     });
   })
@@ -946,15 +946,15 @@ const _testPOS = async () => {
   //     const job = await pos.GetPrintersLatestJob(PRINTERIDS.Spectrum)
   //     const jobID = job["id"];
   //     const jobDetails = await pos.GetJobInfo(jobID);
-  //     Logger.log(jobDetails);
+  //     console.info(jobDetails);
   //     const image = await pos.imgBlob;
-  //     Logger.log(image)
+  //     console.info(image)
   //   })
 
   await pos.Login()
   .then(async () => {
     const info = await pos.GetJobInfo(2365016);
-    Logger.log(JSON.stringify(info));
+    console.info(JSON.stringify(info));
   })
   .then(pos.Logout());
 
@@ -964,19 +964,19 @@ const _testPOS = async () => {
   //   date.setDate(date.getDate() - 30);
   //   const fromDate = date.toISOString().split('T')[0];
   //   const toDate = new Date().toISOString().split('T')[0];
-  //   Logger.log(`From : ${fromDate}, To : ${toDate}`);
+  //   console.info(`From : ${fromDate}, To : ${toDate}`);
   //   pos.GetFinishedJobReport(fromDate, toDate);
   // });
 
 
   // const check = await pos.CheckSession(session);
-  // Logger.log(`SESSION CHECK ----> ${check}`);
+  // console.info(`SESSION CHECK ----> ${check}`);
 
   // const printers = await pos.GetPrinters(session);
-  // Logger.log(`PRINTERS ----> ${printers}`);
+  // console.info(`PRINTERS ----> ${printers}`);
 
   // const printers = await pos.GetPrinterList("Ultimaker 3");
-  // Logger.log(`PRINTERS ----> ${printers}`);
+  // console.info(`PRINTERS ----> ${printers}`);
 
   
 
@@ -998,7 +998,7 @@ const FinalReport = async () => {
       // OTHERSHEETS.Report.getRange(2 + index, 1, 1, 1).setValue(item.lastname)
       // OTHERSHEETS.Report.getRange(2 + index, 2, 1, 1).setValue(item.firstname)
       // OTHERSHEETS.Report.getRange(2 + index, 3, 1, 1).setValue(item.email)
-      Logger.log(item);
+      console.info(item);
     })
   })
   .then(pos.Logout());

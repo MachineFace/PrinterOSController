@@ -25,7 +25,7 @@ const CountQueue = () => {
     let pageCount = sheet.createTextFinder("Queued").findAll().length;
     count = count + pageCount;
   }
-  Logger.log(`Count : ${count}`);
+  console.info(`Count : ${count}`);
   return count;
 }
 
@@ -83,7 +83,7 @@ const PopupCreateTicket = async () => {
     const url = ticket.getUrl();
     thisSheet.getRange(thisRow, 14).setValue(url.toString());
   } catch (err) {
-    Logger.log(`${err} : Couldn't create a ticket.`);
+    console.error(`${err} : Couldn't create a ticket.`);
   }
 
   ui.alert(
@@ -112,7 +112,7 @@ const BuildHTMLHELP = () => {
   html += "</ol>";
   html += "<p>" + items[items.length - 1] + "</p>";
 
-  Logger.log(html);
+  console.info(html);
   return html;
 };
 

@@ -27,7 +27,7 @@ const PickupByBarcode = () => {
       // change status to picked up
       sheet.getRange(searchRow, 1, 1, 1).setValue(STATUS.pickedUp);
       progress.setValue(`Print #${jobnumber} marked as "Picked-up". Printer: ${key}, Row: ${searchRow}`);
-      Logger.log(`Print #${jobnumber} marked as "Picked-up". Printer: ${key}, Row: ${searchRow}`);
+      console.info(`Print #${jobnumber} marked as "Picked-up". Printer: ${key}, Row: ${searchRow}`);
       return;
     }
   }
@@ -53,7 +53,7 @@ class QRCodeAndBarcodeGenerator {
   }
 
   GenerateQRCode(){
-    Logger.log(`URL : ${this.url}, Jobnumber : ${this.jobnumber}`);
+    console.info(`URL : ${this.url}, Jobnumber : ${this.jobnumber}`);
     const loc = `https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=${this.url}`;  //API call
     const postParams = {
         "method" : "GET",
@@ -65,14 +65,14 @@ class QRCodeAndBarcodeGenerator {
 
     let qrCode;
     const html = UrlFetchApp.fetch(loc, postParams);
-    Logger.log(`Response Code : ${html.getResponseCode()}`);
+    console.info(`Response Code : ${html.getResponseCode()}`);
     if (html.getResponseCode() == 200) {
         qrCode = DriveApp.createFile( Utilities.newBlob(html.getContent()).setName('QRCode' + this.jobnumber ) );
         qrCode.setTrashed(true);
     }
-    else Logger.log('Failed to GET QRCode');
+    else console.error('Failed to GET QRCode');
 
-    Logger.log(qrCode);
+    console.info(qrCode);
     return qrCode;
   }
 
@@ -99,13 +99,13 @@ class QRCodeAndBarcodeGenerator {
     let barcode;
 
     let html = UrlFetchApp.fetch(barcodeLoc, params);
-    Logger.log("Response Code : " + html.getResponseCode());
+    console.info("Response Code : " + html.getResponseCode());
     if (html.getResponseCode() == 200) {
       barcode = DriveApp.createFile( Utilities.newBlob(html.getContent()).setName(`Barcode : ${this.jobnumber}`) );
       barcode.setTrashed(true);
     } 
-    else Logger.log('Failed to GET Barcode');
-    Logger.log(barcode);
+    else console.error('Failed to GET Barcode');
+    console.info(barcode);
     return barcode;
   }
 
@@ -132,13 +132,13 @@ class QRCodeAndBarcodeGenerator {
 
     const res = UrlFetchApp.fetch(barcodeLoc, params);
     const responseCode = res.getResponseCode();
-    Logger.log(`Response Code : ${responseCode}, ${RESPONSECODES[responseCode]}`);
+    console.info(`Response Code : ${responseCode}, ${RESPONSECODES[responseCode]}`);
     if (responseCode == 200) {
       barcode = DriveApp.createFile( Utilities.newBlob(res.getContent()).setName(`Barcode : ${this.jobnumber}`) );
       barcode.setTrashed(true);
     } 
-    else Logger.log('Failed to GET Barcode');
-    Logger.log(barcode);
+    else console.error('Failed to GET Barcode');
+    console.info(barcode);
     return barcode;
   }
   
@@ -165,7 +165,7 @@ class OpenQRGenerator {
 
   async GenerateQRCode(){
     const randName = Math.floor(Math.random() * 100000).toFixed();
-    Logger.log(`URL : ${this.url}`);
+    console.info(`URL : ${this.url}`);
     const loc = `https://api.qrserver.com/v1/create-qr-code/?size=${this.size}&data=${this.url}`;  //API call
     const postParams = {
         "method" : "GET",
@@ -177,14 +177,14 @@ class OpenQRGenerator {
 
     let qrCode;
     const html = UrlFetchApp.fetch(loc, postParams);
-    Logger.log(`Response Code : ${RESPONSECODES[html.getResponseCode()]}`);
+    console.info(`Response Code : ${RESPONSECODES[html.getResponseCode()]}`);
     if (html.getResponseCode() == 200) {
       qrCode = DriveApp.createFile( Utilities.newBlob(html.getContent()).setName(`QRCode ${randName}`) );
       qrCode.setTrashed(true);
     }
-    else Logger.log(`Failed to GET QRCode`);
+    else console.error(`Failed to GET QRCode`);
 
-    Logger.log(qrCode);
+    console.info(qrCode);
     return await qrCode;
   }
 
@@ -215,7 +215,7 @@ class OpenQRGenerator {
         folder.next().addFile(docFile);
         folder.next().addFile(barcode);
       } catch (err) {
-        Logger.log(`Whoops : ${err}`);
+        console.error(`Whoops : ${err}`);
       }
 
 
@@ -224,7 +224,7 @@ class OpenQRGenerator {
       file.setSharing(DriveApp.Access.ANYONE, DriveApp.Permission.EDIT); //set sharing
     }
     //Return Document to use later
-    Logger.log(JSON.stringify(doc))
+    console.info(JSON.stringify(doc))
     return doc;
   };
 
@@ -234,6 +234,6 @@ class OpenQRGenerator {
 const _testPrint = () => {
   const data = {url : `https://bcourses.berkeley.edu/courses/1353091/pages/woodshop`, size : `1000x1000`};
   const doc = new OpenQRGenerator(data).CreatePrintableDoc();
-  Logger.log(doc);
+  console.info(doc);
 }
 

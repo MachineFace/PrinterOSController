@@ -55,7 +55,7 @@ const onChange = async (e) => {
   for(const [name, id] of Object.entries(PRINTERIDS)) {
     if(name == sheetname) hardID = id; 
   }
-  Logger.log(`Sheet : ${sheetname} : PrinterID : ${hardID}`);
+  console.info(`Sheet : ${sheetname} : PrinterID : ${hardID}`);
 
   FetchAndWrite(hardID, ss);
   RemoveDuplicateRecords(ss);

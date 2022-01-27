@@ -160,44 +160,46 @@ class CreateMessage {
       return message;
     }
     get waitlistMessage() {
-      let message = '<p>Hi ' + this.name + ',</p>';
-        message += '<p>Thank you for choosing Jacobs Project Support.<br />';
-        message += 'Your project, <b><i>' + this.projectname + '</i></b> has been temporarily waitlisted. ';
-        message += 'You will be notified when your job starts. Job Number: <b><i>' + this.jobnumber + '</i></b><br /><br />';
-        message += 'Please contact ' + this.designspecialist + ' for more information: ' + this.designspecialistemaillink + '. No action is required at this time.<br /><br />';
-        message += 'If you have any questions or need assistance please email ' + this.staff["Staff"]["link"] + '. <br/>';
-        message += '<p>Best,<br />Jacobs Hall Staff</p>';
+      let message = `<p>Hi ${this.name},</p>`;
+        message += `<p>Thank you for choosing Jacobs Project Support.<br />`;
+        message += `Your project, <b><i>${this.projectname}</i></b> has been temporarily waitlisted. `;
+        message += `You will be notified when your job starts. Job Number: <b><i>${this.jobnumber}</i></b><br /><br />`;
+        message += `Please contact ${this.designspecialist} for more information: ${this.designspecialistemaillink}. No action is required at this time.<br /><br />`;
+        message += `If you have any questions or need assistance please email ${this.staff["Staff"]["link"]}. <br/>`;
+        message += `<p>Best,<br />Jacobs Hall Staff</p>`;
       return message;
     }
     get billedMessage() {
-      let message = '<p>Hi ' + this.name + ',</p>';
-        message += '<p>Thank you for choosing Jacobs Project Support. Your project <b><i>' + this.projectname + '</b></i> is now <b>CLOSED.</b><br />';
-        message += 'Job Number: <i>' + this.jobnumber + '</i>. Your Jacobs Store account has been billed for: <br/> ';
-        message += '<p><ul>';
-        message += '<li>' + this.material1Quantity + ' of PLA </li>';  
-        message += '<li>' + this.material2Quantity + ' of Breakaway Support </li>';  
-        message += '</ul>';     // dont forget to end the bullet point list (unordered list)
-        message += '<br/>';
-        message += 'If you have not picked up your parts, they can be picked up in-person.<br/><br/>';
-        message += 'If you have any further questions or need assistance please email ' + this.staff["Staff"]["link"] + '. <br/>';
-        message += '<p>Please take a moment to take our survey so we can improve JPS : <a href="https://docs.google.com/forms/d/e/1FAIpQLSe_yCGqiGa4U51DodKWjOWPFt-ZfpxGUwaAYJqBV0GZ0q_IUQ/viewform">Take Survey</a></p><br/>';
-        message += '<p>Best,<br />Jacobs Hall Staff</p>';
+      let message = `<p>Hi ${this.name},</p>`;
+        message += `<p>Thank you for choosing Jacobs Project Support. Your project <b><i>${this.projectname}</b></i> is now <b>CLOSED.</b><br />`;
+        message += `Job Number: <i>${this.jobnumber}</i>. Your Jacobs Store account has been billed for: <br/>`;
+        message += `<p><ul>`;
+        message += `<li>${this.material1Quantity} of PLA </li>`;  
+        message += `<li>${this.material2Quantity} of Breakaway Support </li>`;  
+        message += `</ul>`;     // dont forget to end the bullet point list (unordered list)
+        message += `<br/>`;
+        message += `If you have not picked up your parts, they can be picked up in-person.<br/><br/>`;
+        message += `If you have any further questions or need assistance please email ${this.staff["Staff"]["link"]}. <br/>`;
+        message += `<p>Please take a moment to take our survey so we can improve JPS : `; 
+        message += `<a href="https://docs.google.com/forms/d/e/1FAIpQLSe_yCGqiGa4U51DodKWjOWPFt-ZfpxGUwaAYJqBV0GZ0q_IUQ/viewform">Take Survey</a>`;
+        message += `</p><br/>`;
+        message += `<p>Best,<br />Jacobs Hall Staff</p>`;
       return message;
     }
     get noAccessMessage() {
-      let message = '<p>Hi ' + this.name + ',</p>';
-        message += '<p>Thank you for choosing Jacobs Project Support. ';
-        message += 'Your project: <b><i>' + this.projectname + '</i></b> has been prevented from advancing until we have received confirmation of your approval. <br/><br/>';
-        message += 'DES INV and affiliated courses students are approved automatically upon registration submission. '; 
-        message += 'Researchers are added when we receive IOC payment approval from their PI. '; 
-        message += 'Researchers are urged to contact their PI to ensure they have appropriate approval.<br/>';
-        message += 'Information on how to gain access can be found at <a href="makerspace.jacobshall.org"><b>Here</b></a><br/><br/>';
-        message += 'Please register if you have not done so yet: <br/>';
-        message += '<a href="https://jacobsaccess.ist.berkeley.edu/jps/signup"><b>Registration</b></a> <br/><br/>';
-        message += '</p>';
-        message += 'If you have questions or need assistance please email ' + this.staff["Staff"]["link"] + '. <br/>';
-        message += '. <br />Once your registration has been updated, or your PI has fixed the issue, we will update you when your project has been started.</p>';
-        message += '<p>Best,<br />Jacobs Hall Staff</p>';
+      let message = `<p>Hi ${this.name},</p>`;
+        message += `<p>Thank you for choosing Jacobs Project Support. `;
+        message += `Your project: <b><i>${this.projectname}</i></b> has been prevented from advancing until we have received confirmation of your approval. <br/><br/>`;
+        message += `DES INV and affiliated courses students are approved automatically upon registration submission. `; 
+        message += `Researchers are added when we receive IOC payment approval from their PI. `; 
+        message += `Researchers are urged to contact their PI to ensure they have appropriate approval.<br/>`;
+        message += `Information on how to gain access can be found at <a href="makerspace.jacobshall.org"><b>Here</b></a><br/><br/>`;
+        message += `Please register if you have not done so yet: <br/>`;
+        message += `<a href="https://jacobsaccess.ist.berkeley.edu/jps/signup"><b>Registration</b></a> <br/><br/>`;
+        message += `</p>`;
+        message += `If you have questions or need assistance please email ${this.staff["Staff"]["link"]}. <br/>`;
+        message += `<br />Once your registration has been updated, or your PI has fixed the issue, we will update you when your project has been started.</p>`;
+        message += `<p>Best,<br />Jacobs Hall Staff</p>`;
       return message;
     }
 }
@@ -221,32 +223,32 @@ const _testMessages = async () => {
   })
 
 
-    Logger.log('DEFAULT' + message.defaultMessage);
-    Logger.log('RECEIVED' + message.receivedMessage);
-    Logger.log('PENDING' + message.pendingMessage);
-    Logger.log('IN-PROGRESS' + message.inProgressMessage);
-    Logger.log('COMPLETED' + message.completedMessage);
-    Logger.log('PICKEDUP' + message.pickedUpMessage);
-    Logger.log('SHIPPING QUESTION' + message.shippingQuestion);
-    Logger.log('SHIPPED' + message.shippedMessage);
-    Logger.log('FAILED' + message.failedMessage);
-    Logger.log('REJECTED' + message.rejectedByStudentMessage);
-    Logger.log('BILLED' + message.billedMessage);
+    console.info('DEFAULT' + message.defaultMessage);
+    console.info('RECEIVED' + message.receivedMessage);
+    console.warn('PENDING' + message.pendingMessage);
+    console.info('IN-PROGRESS' + message.inProgressMessage);
+    console.info('COMPLETED' + message.completedMessage);
+    console.info('PICKEDUP' + message.pickedUpMessage);
+    console.info('SHIPPING QUESTION' + message.shippingQuestion);
+    console.info('SHIPPED' + message.shippedMessage);
+    console.error('FAILED' + message.failedMessage);
+    console.error('REJECTED' + message.rejectedByStudentMessage);
+    console.info('BILLED' + message.billedMessage);
 
     return await message;
 
   // const message = new CreateMessage({});
-  // Logger.log('DEFAULT' + message.defaultMessage);
-  // Logger.log('RECEIVED' + message.receivedMessage);
-  // Logger.log('PENDING' + message.pendingMessage);
-  // Logger.log('IN-PROGRESS' + message.inProgressMessage);
-  // Logger.log('COMPLETED' + message.completedMessage);
-  // Logger.log('PICKEDUP' + message.pickedUpMessage);
-  // Logger.log('SHIPPING QUESTION' + message.shippingQuestion);
-  // Logger.log('SHIPPED' + message.shippedMessage);
-  // Logger.log('FAILED' + message.failedMessage);
-  // Logger.log('REJECTED' + message.rejectedByStudentMessage);
-  // Logger.log('BILLED' + message.billedMessage);
+  // console.info('DEFAULT' + message.defaultMessage);
+  // console.info('RECEIVED' + message.receivedMessage);
+  // console.info('PENDING' + message.pendingMessage);
+  // console.info('IN-PROGRESS' + message.inProgressMessage);
+  // console.info('COMPLETED' + message.completedMessage);
+  // console.info('PICKEDUP' + message.pickedUpMessage);
+  // console.info('SHIPPING QUESTION' + message.shippingQuestion);
+  // console.info('SHIPPED' + message.shippedMessage);
+  // console.info('FAILED' + message.failedMessage);
+  // console.info('REJECTED' + message.rejectedByStudentMessage);
+  // console.info('BILLED' + message.billedMessage);
 }
 
 

@@ -17,7 +17,7 @@ class Calculate
       culled = completionTimes.filter(Boolean);
     }
     catch (err) {
-      Logger.log(`${err} : Couldn't fetch list of times. Probably a sheet error.`);
+      console.error(`${err} : Couldn't fetch list of times. Probably a sheet error.`);
     }
 
     // Sum
@@ -29,7 +29,7 @@ class Calculate
 
     // Average the totals (a list of times in minutes)
     let average = Number.parseFloat(total / culled.length).toFixed(2);
-    Logger.log(`Total Time : ${total}, Average : ${average}`);
+    console.info(`Total Time : ${total}, Average : ${average}`);
     return average;
   }
   PrintTurnarounds () {
@@ -40,7 +40,7 @@ class Calculate
     }
 
     Object.entries(obj).forEach(([key, value], index) => {
-      Logger.log(`${index} : ${key} : ${value}`);
+      console.info(`${index} : ${key} : ${value}`);
       OTHERSHEETS.Metrics.getRange(4 + index, 1, 1, 1).setValue(key);
       OTHERSHEETS.Metrics.getRange(4 + index, 5, 1, 1).setValue(value);
     })
@@ -65,7 +65,7 @@ class Calculate
     }
 
     Object.entries(obj).forEach(([key, value], index) => {
-      Logger.log(`${index} : ${key} : ${JSON.stringify(value)}`);
+      console.info(`${index} : ${key} : ${JSON.stringify(value)}`);
       
       const ratio = Number(value.Completed / (value.Completed + value.Cancelled)).toFixed(3);
       OTHERSHEETS.Metrics.getRange(4 + index, 2, 1, 1).setValue(value.Completed);
@@ -108,7 +108,7 @@ class Calculate
         date.setDate(date.getDate() - 90);
         const fromDate = date.toISOString().split('T')[0];
         const toDate = new Date().toISOString().split('T')[0];
-        Logger.log(`From : ${fromDate}, To : ${toDate}`);
+        console.info(`From : ${fromDate}, To : ${toDate}`);
         report = await pos.GetFinishedJobReport(fromDate, toDate);
       })
       .then(() => {
@@ -138,7 +138,7 @@ class Calculate
         return [key, occurrences[key]];
       }
     });
-    Logger.log(items);
+    console.info(items);
     items.forEach( (thing, index) => {
       OTHERSHEETS.Metrics.getRange(2 + index, 23, 1, 1).setValue(thing[0]);
       OTHERSHEETS.Metrics.getRange(2 + index, 24, 1, 1).setValue(thing[1]);
@@ -151,10 +151,10 @@ class Calculate
 
     // Create a new array with only the first 10 items
     let chop = distribution.slice(0, 11);
-    Logger.log(chop);
+    console.info(chop);
 
     chop.forEach((pair, index) => {
-      Logger.log(`${pair[0]} -----> ${pair[1]}`);
+      console.info(`${pair[0]} -----> ${pair[1]}`);
       OTHERSHEETS.Metrics.getRange(27 + index, 1, 1, 1).setValue(index + 1);
       OTHERSHEETS.Metrics.getRange(27 + index, 2, 1, 1).setValue(pair[0]);
       OTHERSHEETS.Metrics.getRange(27 + index, 3, 1, 1).setValue(pair[1]);
@@ -167,7 +167,7 @@ class Calculate
       let last = sheet.getLastRow() - 1;
       count += last;
     }
-    Logger.log(`Total Count : ${count}`);
+    console.info(`Total Count : ${count}`);
     OTHERSHEETS.Metrics.getRange(19, 3, 1, 1).setValue(count);
     return count;
   }
@@ -185,7 +185,7 @@ class Calculate
     
     const count = countUnique(userList);
     OTHERSHEETS.Metrics.getRange(18, 3, 1, 1).setValue(count);
-    Logger.log(`Number of Users -----> ${count}`);
+    console.info(`Number of Users -----> ${count}`);
     return count;
   }
 
@@ -202,7 +202,7 @@ class Calculate
       });
     }
     const userSet = [...new Set(userList)];
-    Logger.log(`Number of Users who have Successfully print : ${userSet.length}`);
+    console.info(`Number of Users who have Successfully print : ${userSet.length}`);
     return userSet;
   }
   PrintUniqueUsersWhoHavePrinted () {
@@ -218,7 +218,7 @@ class Calculate
   CalculateStandardDeviation () {
     const distribution = this.CalculateDistribution();
     const n = distribution.length;
-    Logger.log(`n = ${n}`);
+    console.info(`n = ${n}`);
 
     const data = []
     distribution.forEach(item => data.push(item[1]));
@@ -226,7 +226,7 @@ class Calculate
     let mean = data.reduce((a, b) => a + b) / n;
 
     let standardDeviation = Math.sqrt(data.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / n);
-    Logger.log(`Standard Deviation for Number of Submissions : ${standardDeviation}`);
+    console.info(`Standard Deviation for Number of Submissions : ${standardDeviation}`);
     OTHERSHEETS.Metrics.getRange(43, 3, 1, 1).setValue(standardDeviation);
     return standardDeviation;
   }
@@ -234,13 +234,13 @@ class Calculate
   CalculateArithmeticMean () {
     const distribution = this.CalculateDistribution();
     const n = distribution.length;
-    Logger.log(`n = ${n}`);
+    console.info(`n = ${n}`);
 
     const data = []
     distribution.forEach(item => data.push(item[1]));
       
     let mean = data.reduce((a, b) => a + b) / n;
-    Logger.log(`Mean = ${mean}`);
+    console.info(`Mean = ${mean}`);
 
     OTHERSHEETS.Metrics.getRange(44, 3, 1, 1).setValue(mean);
     return mean;
@@ -262,7 +262,7 @@ class Calculate
       }
       temp.forEach(countFunc);
     }
-    Logger.log(count);
+    console.info(count);
     OTHERSHEETS.Metrics.getRange(20, 3, 1, 1).setValue(count.completed);
     OTHERSHEETS.Metrics.getRange(21, 3, 1, 1).setValue(count.cancelled);
     OTHERSHEETS.Metrics.getRange(22, 3, 1, 1).setValue(count.inprogress);
@@ -278,7 +278,7 @@ class Calculate
 const Metrics = () => {
   const calculate = new Calculate();
   try {
-    Logger.log(`Calculating Metrics .... `);
+    console.warn(`Calculating Metrics .... `);
     GetUserCount();
     calculate.PrintTurnarounds();
     calculate.PrintStatusCounts();
@@ -292,7 +292,7 @@ const Metrics = () => {
     writer.Debug(`Recalculated Metrics`);
   }
   catch (err) {
-    Logger.log(`${err} : Couldn't generate statistics on Metrics.`);
+    console.error(`${err} : Couldn't generate statistics on Metrics.`);
   }
 }
 
@@ -304,7 +304,7 @@ const Metrics = () => {
 const _testMetrics = () => {
   const calculate = new Calculate();
   const d = calculate.PrintTopTen();
-  Logger.log(d);
+  console.info(d);
 }
 
 
