@@ -175,7 +175,7 @@ class JobNumberGenerator {
         console.info(`Input time: ${this.date}, Set Jobnumber: ${jobnumber}`);
       }
     } catch (err) {
-      console.error(`${err} : Couldnt fix jobnumber.`);
+      console.error(`${err} : Couldn't fix jobnumber.`);
     }
     if (jobnumber == undefined || testedDate == false) {
       jobnumber = +Utilities.formatDate(new Date(), `PST`, `yyyyMMddHHmmss`);

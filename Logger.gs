@@ -59,13 +59,15 @@ class WriteLogger
  */
 const _testWriteLog = () => {
   const write = new WriteLogger();
-  for (let i = 0; i < 25; i++) {
+  console.time(`EXECUTION TIMER`);
+  for (let i = 0; i < 5; i++) {
     write.Warning(`Ooopsies ----> Warning`);
     write.Info(`Some Info`);
     write.Error(`ERROR`);
     write.Debug(`Debugging`);
     write._CleanupSheet();
   }
+  console.timeEnd(`EXECUTION TIMER`);
 }
 
 

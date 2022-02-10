@@ -33,130 +33,130 @@ class CreateMessage {
       this.staff = new StaffBuilder().get();
     }
     get defaultMessage() {
-      let message = '<p>Hi ' + this.name + ',</p>';
-        message += '<p>Thank you for applying to Jacobs Project Support.<br/><br/>';
-        message += 'A Design Specialist is reviewing you application, and will respond to you shortly.<br/><br/>';
-        message += 'If you have questions or need assistance please email ' + this.email + '. <br/></p>';
-        message += '<p>Best,<br />Jacobs Hall Staff</p>'; 
+      let message = `<p>Hi ${this.name},</p>`;
+        message += `<p>Thank you for applying to Jacobs Project Support.<br/><br/>`;
+        message += `A Design Specialist is reviewing you application, and will respond to you shortly.<br/><br/>`;
+        message += `If you have questions or need assistance please email ${this.email}. <br/></p>`;
+        message += `<p>Best,<br />Jacobs Hall Staff</p>`;
       return message; 
     }
     get receivedMessage() {
-      let message = '<p>Hi ' + this.name + ',</p>';
-        message += '<p>Thank you for choosing Jacobs Project Support.<br />';
-        message += 'Your project, <b><i>' + this.projectname + '</i></b> has been received.<br/>';
-        message += 'Your part or parts have been assigned a job number: <i>' + this.jobnumber + '</i>.<br/>';
-        message += 'If you have questions or need assistance please email ' + this.staff["Staff"]["link"] + '. <br/>';
-        message += 'We will update you when it has been started by a staff member.</p>';
-        message += '<p>Best,<br />Jacobs Hall Staff</p>';
+      let message = `<p>Hi ${this.name},</p>`;
+        message += `<p>Thank you for choosing Jacobs Project Support.<br />`;
+        message += `Your project, <b><i>${this.projectname}</i></b> has been received.<br/>`;
+        message += `Your part or parts have been assigned a job number: <i>${this.jobnumber}</i>.<br/>`;
+        message += `If you have questions or need assistance please email ${this.staff["Staff"]["link"]}. <br/>`;
+        message += `We will update you when it has been started by a staff member.</p>`;
+        message += `<p>Best,<br />Jacobs Hall Staff</p>`;
       return message;
     }
     get pendingMessage() {
-      let message = '<p>Hi ' + this.name + ',</p>';
-        message += '<p>Thank you for choosing Jacobs Project Support. Your project is awaiting an approval or rejection from you. <br />';
-        message += 'Your project: <b><i>' + this.projectname + '</i></b> with the job number <i>' + this.jobnumber + '</i>, can be approved or rejected by clicking this link and approving or rejecting:';
-        message += 'Pending approval, your Jacobs Store account will be billed for: <br/> ';
-        message += '<p><ul>'; //start bulletpoint list
-        message += '<li>' + this.material1Quantity + ' of PLA </li>';  
-        message += '<li>' + this.material2Quantity + ' of Breakaway Support </li>';  
-        message += '</ul>';     // end bulletpoint list
-        message += '</p><br/>';
-        message += 'If you have questions or need assistance please email ' + this.staff["Staff"]["link"] + '.<br/>';
-        message += '. <br />We will update you when it has been started.</p>';
-        message += '<p>Best,<br />Jacobs Hall Staff</p>';
+      let message = `<p>Hi ${this.name},</p>`;
+        message += `<p>Thank you for choosing Jacobs Project Support. Your project is awaiting an approval or rejection from you. <br />`;
+        message += `Your project: <b><i>${this.projectname}</i></b> with the job number <i>${this.jobnumber}</i>, can be approved or rejected by clicking this link and approving or rejecting:`;
+        message += `Pending approval, your Jacobs Store account will be billed for: <br/> `;
+        message += `<p><ul>`; //start bulletpoint list
+        message += `<li>${this.material1Quantity} of PLA </li>`;  
+        message += `<li>${this.material2Quantity} of Breakaway Support </li>`;  
+        message += `</ul>`;     // end bulletpoint list
+        message += `</p><br/>`;
+        message += `If you have questions or need assistance please email ${this.staff["Staff"]["link"]}.<br/>`;
+        message += `<br />We will update you when it has been started.</p>`;
+        message += `<p>Best,<br />Jacobs Hall Staff</p>`;
       return message;
     }
     get inProgressMessage() {
-      let message = '<p>Hi ' + this.name + ',</p>';
-        message += '<p>Thank you for choosing Jacobs Project Support. Your project has started. <br />';
-        message += 'Your job number: <i>' + this.jobnumber + '</i>.<br/>';
-        message += 'The part or parts requested for your project, <b><i>' + this.projectname + '</i></b> has been started by ' + this.designspecialist + '.<br/>';
-        message += 'Please email ' + this.designspecialistemaillink + ' for further details.<br/>';
-        message += 'If you have questions or need assistance please email ' + this.staff["Staff"]["link"] + '. <br/>';
-        message += '<br />We will update you when it is done.</p>';
-        message += '<p>Best,<br />Jacobs Hall Staff</p>';
+      let message = `<p>Hi ${this.name},</p>`;
+        message += `<p>Thank you for choosing Jacobs Project Support. Your project has started. <br />`;
+        message += `Your job number: <i>${this.jobnumber}</i>.<br/>`;
+        message += `The part or parts requested for your project, <b><i>${this.projectname}</i></b> has been started by ${this.designspecialist}.<br/>`;
+        message += `Please email ${this.designspecialistemaillink} for further details.<br/>`;
+        message += `If you have questions or need assistance please email ${this.staff["Staff"]["link"]}. <br/>`;
+        message += `<br />We will update you when it is done.</p>`;
+        message += `<p>Best,<br />Jacobs Hall Staff</p>`;
       return message;
     }
     get completedMessage() {
-      let message = '<p>Hi ' + this.name + ',</p>';
-        message += '<p>Thank you for choosing Jacobs Project Support.<br />';
-        message += 'The part or parts requested for your project, <b><i>' + this.projectname + '</i></b> are finished. Job Number: <i>' + this.jobnumber + '</i><br />';
-        message += 'Your parts are now available for pickup.<br />';
-        message += 'Please email ' + this.designspecialist + ' at ' + this.designspecialistemaillink + ' for further details.<br/>';
-        message += 'Your Jacobs Store account will be billed for: <br/> ';
-        message += '<p><ul>';
-        message += '<li>' + this.material1Quantity + ' of PLA </li>';  
-        message += '<li>' + this.material2Quantity + ' of Breakaway Support </li>';  
-        message += '</ul>';     // dont forget to end the bullet point list (unordered list)
-        message += '<br/><p>';
-        message += 'Completed projects can be picked up in-person, unless otherwise noted with your instructor.<br/><br/>';
-        message += '<b>Pick-Up Location:<br/>';
-        message += '<a href="https://www.google.com/maps/d/edit?mid=19_zxiFYyxGysWTUDnMZl27gPX9b--2gz&usp=sharing">Jacobs Hall : LeRoy Ave Main Entrance <br/>'; 
-        message += '2530 Ridge Rd, Berkeley, CA 94709</a><br/><br/></b>';
-        message += '<b>Pick-Up Hours:<br/>';
-        message += 'Monday - Friday: 11am - 1pm</b><br/><br/>'
-        message += 'If you have any further questions or need assistance please email ' + this.staff["Staff"]["link"] + '. <br/>';
-        message += '<p>Please take a moment to take our survey so we can improve JPS : '
-        message += '<a href="https://docs.google.com/forms/d/e/1FAIpQLSe_yCGqiGa4U51DodKWjOWPFt-ZfpxGUwaAYJqBV0GZ0q_IUQ/viewform">Take Survey</a></p><br/>';
-        message += '<p>Best,<br />Jacobs Hall Staff</p>'; 
+      let message = `<p>Hi ${this.name},</p>`;
+        message += `<p>Thank you for choosing Jacobs Project Support.<br />`;
+        message += `The part or parts requested for your project, <b><i>${this.projectname}</i></b> are finished. Job Number: <i>${this.jobnumber}</i><br />`;
+        message += `Your parts are now available for pickup.<br />`;
+        message += `Please email ${this.designspecialist} at ${this.designspecialistemaillink} for further details.<br/>`;
+        message += `Your Jacobs Store account will be billed for: <br/> `;
+        message += `<p><ul>`;
+        message += `<li>${this.material1Quantity} of PLA </li>`;  
+        message += `<li>${this.material2Quantity} of Breakaway Support </li>`;  
+        message += `</ul>`;     // dont forget to end the bullet point list (unordered list)
+        message += `<br/><p>`;
+        message += `Completed projects can be picked up in-person, unless otherwise noted with your instructor.<br/><br/>`;
+        message += `<b>Pick-Up Location:<br/>`;
+        message += `<a href="https://www.google.com/maps/d/edit?mid=19_zxiFYyxGysWTUDnMZl27gPX9b--2gz&usp=sharing">Jacobs Hall : LeRoy Ave Main Entrance <br/>`; 
+        message += `2530 Ridge Rd, Berkeley, CA 94709</a><br/><br/></b>`;
+        message += `<b>Pick-Up Hours:<br/>`;
+        message += `Monday - Friday: 11am - 1pm</b><br/><br/>`;
+        message += `If you have any further questions or need assistance please email ${this.staff["Staff"]["link"]}. <br/>`;
+        message += `<p>Please take a moment to take our survey so we can improve JPS : `;
+        message += `<a href="https://docs.google.com/forms/d/e/1FAIpQLSe_yCGqiGa4U51DodKWjOWPFt-ZfpxGUwaAYJqBV0GZ0q_IUQ/viewform">Take Survey</a></p><br/>`;
+        message += `<p>Best,<br />Jacobs Hall Staff</p>`;
       return message;
     }
     get pickedUpMessage() {
-      let message = '<p>Hi ' + this.name + ',</p>';
-        message += '<p>Thank you for choosing Jacobs Project Support.<br />';
-        message += 'The part or parts requested for your project, <b><i>' + this.projectname + '</i></b> have been picked up. Job Number: <i>' + this.jobnumber + '</i><br />';
-        message += 'Please email ' + this.designspecialist + ' at ' + this.designspecialistemaillink + ' if you have any additional questions.<br/>';
-        message += '<p>Please take a moment to take our survey so we can improve JPS : '
-        message += '<a href="https://docs.google.com/forms/d/e/1FAIpQLSe_yCGqiGa4U51DodKWjOWPFt-ZfpxGUwaAYJqBV0GZ0q_IUQ/viewform">Take Survey</a></p><br/>';
-        message += '<p>Best,<br />Jacobs Hall Staff</p>'; 
+      let message = `<p>Hi ${this.name},</p>`;
+        message += `<p>Thank you for choosing Jacobs Project Support.<br />`;
+        message += `The part or parts requested for your project, <b><i>${this.projectname}</i></b> have been picked up. Job Number: <i>${this.jobnumber}</i><br />`;
+        message += `Please email ${this.designspecialist} at ${this.designspecialistemaillink} if you have any additional questions.<br/>`;
+        message += `<p>Please take a moment to take our survey so we can improve JPS : `
+        message += `<a href="https://docs.google.com/forms/d/e/1FAIpQLSe_yCGqiGa4U51DodKWjOWPFt-ZfpxGUwaAYJqBV0GZ0q_IUQ/viewform">Take Survey</a></p><br/>`;
+        message += `<p>Best,<br />Jacobs Hall Staff</p>`;
       return message;
     }
     get shippingQuestion() {
-      let message = '<p>Hi ' + this.name + ',</p>';
-        message += '<p>Thank you for choosing Jacobs Project Support.<br />';
-        message += 'You have requested shipping for your part <b><i>' + this.projectname + '</i></b>. Job Number: <i>' + this.jobnumber + '</i><br/>';
-        message += 'In order to send your parts to you, please fill out this form:<br />';
-        message += '<a href="https://docs.google.com/forms/d/e/1FAIpQLSdgk5-CjHOWJmAGja3Vk7L8a7ddLwTsyJhGicqNK7G-I5RjIQ/viewform"><b>Shipping Form</b></a>';
-        message += 'Please contact ' + this.designspecialist + ' for more information: ' + this.designspecialistemaillink + 'for further details.<br/>';
-        message += 'If you have any questions or need assistance please email ' + this.staff["Staff"]["link"] + '. <br/>';
-        message += '<p>Best,<br />Jacobs Hall Staff</p>';
+      let message = `<p>Hi ${this.name},</p>`;
+        message += `<p>Thank you for choosing Jacobs Project Support.<br />`;
+        message += `You have requested shipping for your part <b><i>${this.projectname}</i></b>. Job Number: <i>${this.jobnumber}</i><br/>`;
+        message += `In order to send your parts to you, please fill out this form:<br />`;
+        message += `<a href="https://docs.google.com/forms/d/e/1FAIpQLSdgk5-CjHOWJmAGja3Vk7L8a7ddLwTsyJhGicqNK7G-I5RjIQ/viewform"><b>Shipping Form</b></a>`;
+        message += `Please contact ${this.designspecialist} for more information: ${this.designspecialistemaillink} for further details.<br/>`;
+        message += `If you have any questions or need assistance please email ${this.staff["Staff"]["link"]}. <br/>`;
+        message += `<p>Best,<br />Jacobs Hall Staff</p>`;
       return message;
     }
     get shippedMessage() {
-      let message = '<p>Hi ' + this.name + ',</p>';
-        message += '<p>Thank you for choosing Jacobs Project Support.<br />';
-        message += 'The part or parts requested for your project, <b><i>' + this.projectname + '</i></b> are finished. Job Number: <i>' + this.jobnumber + '</i><br/>';
-        message += 'Your parts will be shipped shortly.<br />';
-        message += 'Please contact ' + this.designspecialist + ' for more information: ' + this.designspecialistemaillink + 'for further details.<br/>';
-        message += 'If you have any questions or need assistance please email ' + this.staff["Staff"]["link"] + '. <br/>';
-        message += '<p>Best,<br />Jacobs Hall Staff</p>';
+      let message = `<p>Hi ${this.name},</p>`;
+        message += `<p>Thank you for choosing Jacobs Project Support.<br />`;
+        message += `The part or parts requested for your project, <b><i>${this.projectname}</i></b> are finished. Job Number: <i>${this.jobnumber}</i><br/>`;
+        message += `Your parts will be shipped shortly.<br />`;
+        message += `Please contact ${this.designspecialist} for more information: ${this.designspecialistemaillink} for further details.<br/>`;
+        message += `If you have any questions or need assistance please email ${this.staff["Staff"]["link"]}. <br/>`;
+        message += `<p>Best,<br />Jacobs Hall Staff</p>`;
       return message;
     }
     get failedMessage() {
-      let message = '<p>Hi ' + this.name + ',</p>';
-        message += '<p>Thank you for choosing Jacobs Project Support.<br />';
-        message += 'Your project, <b><i>' + this.projectname + '</i></b> has unfortunately failed. Job Number: <i>' + this.jobnumber + '</i><br /><br />';
-        message += 'Please contact ' + this.designspecialist + ' for more information: ' + this.designspecialistemaillink + '<br /><br />';
-        message += 'If you have any questions or need assistance please email ' + this.staff["Staff"]["link"] + '. <br/>';
-        message += '<p>Best,<br />Jacobs Hall Staff</p>';
+      let message = `<p>Hi ${this.name},</p>`;
+        message += `<p>Thank you for choosing Jacobs Project Support.<br />`;
+        message += `Your project, <b><i>${this.projectname}</i></b> has unfortunately failed. Job Number: <i>${this.jobnumber}</i><br /><br />`;
+        message += `Please contact ${this.designspecialist} for more information: ${this.designspecialistemaillink}<br /><br />`;
+        message += `If you have any questions or need assistance please email ${this.staff["Staff"]["link"]}. <br/>`;
+        message += `<p>Best,<br />Jacobs Hall Staff</p>`;
       return message;
     }
     get rejectedByStudentMessage() {
-      let message = '<p>Hi ' + this.name + ',</p>';
-        message += '<p>Thank you for choosing Jacobs Project Support.<br />';
-        message += 'You have elected not to proceed with the design process. Job Number: <i>' + this.jobnumber + '</i><br /><br />';
-        message += 'Please contact ' + this.designspecialist + ' for more information, or if you believe this to be an error: ' + this.designspecialistemaillink + '<br /><br />';
-        message += 'If you have any questions or need assistance please email ' + this.staff["Staff"]["link"] + '. <br/>';
-        message += '<p>Best,<br />Jacobs Hall Staff</p>';
+      let message = `<p>Hi ${this.name},</p>`;
+        message += `<p>Thank you for choosing Jacobs Project Support.<br />`;
+        message += `You have elected not to proceed with the design process. Job Number: <i>${this.jobnumber}</i><br /><br />`;
+        message += `Please contact ${this.designspecialist} for more information, or if you believe this to be an error: ${this.designspecialistemaillink}<br /><br />`;
+        message += `If you have any questions or need assistance please email ${this.staff["Staff"]["link"]}. <br/>`;
+        message += `<p>Best,<br />Jacobs Hall Staff</p>`;
       return message;
     }
     get rejectedByStaffMessage() {
-      let message = '<p>Hi ' + this.name + ',</p>';
-        message += '<p>Thank you for choosing Jacobs Project Support.<br />';
-        message += 'A staff member has cancelled and/or declined this job with the Project Name: <b><i>' + this.projectname + '</b></i>. Job Number: <i>' + this.jobnumber + '</i><br /><br />';
-        message += 'Please contact ' + this.designspecialist + ' for more information, or if you believe this to be an error: ' + this.designspecialistemaillink + '<br /><br />';
-        message += 'You may also choose to resubmit this job as a new submission.<br/>';
-        message += 'If you have any questions or need assistance please email ' + this.staff["Staff"]["link"] + '. <br/>';;
-        message += '<p>Best,<br />Jacobs Hall Staff</p>';
+      let message = `<p>Hi ${this.name},</p>`;
+        message += `<p>Thank you for choosing Jacobs Project Support.<br />`;
+        message += `A staff member has cancelled and/or declined this job with the Project Name: <b><i>${this.projectname}</b></i>. Job Number: <i>${this.jobnumber}</i><br /><br />`;
+        message += `Please contact ${this.designspecialist} for more information, or if you believe this to be an error: ${this.designspecialistemaillink}<br /><br />`;
+        message += `You may also choose to resubmit this job as a new submission.<br/>`;
+        message += `If you have any questions or need assistance please email ${this.staff["Staff"]["link"]}. <br/>`;
+        message += `<p>Best,<br />Jacobs Hall Staff</p>`;
       return message;
     }
     get waitlistMessage() {
@@ -212,8 +212,9 @@ class CreateMessage {
  * Unit Test for Making 'OnEdit' Messages
  */
 const _testMessages = async () => {
+  console.time(`Execution Timer`);
   const message = new CreateMessage({
-    name : 'Stu Dent',
+    name : 'Stew Dent',
     projectname : 'Pro Ject',
     jobnumber : new JobNumberGenerator({}).GenerateJobNumber(),
     material1Quantity : 500,
@@ -222,33 +223,21 @@ const _testMessages = async () => {
     designspecialistemaillink : `LinkyLink`
   })
 
+  console.warn(`DEFAULT ---> ${message.defaultMessage}`);
+  console.warn(`RECEIVED ---> ${message.receivedMessage}`);
+  console.warn(`PENDING ---> ${message.pendingMessage}`);
+  console.warn(`IN-PROGRESS ---> ${message.inProgressMessage}`);
+  console.warn(`COMPLETED ---> ${message.completedMessage}`);
+  console.warn(`PICKEDUP ---> ${message.pickedUpMessage}`);
+  console.warn(`SHIPPING QUESTION ---> ${message.shippingQuestion}`);
+  console.warn(`SHIPPED ---> ${message.shippedMessage}`);
+  console.warn(`FAILED ---> ${message.failedMessage}`);
+  console.warn(`REJECTED ---> ${message.rejectedByStudentMessage}`);
+  console.warn(`BILLED ---> ${message.billedMessage}`);
+  console.warn(`NO ACCESS ---> ${message.noAccessMessage}`);
 
-    console.info('DEFAULT' + message.defaultMessage);
-    console.info('RECEIVED' + message.receivedMessage);
-    console.warn('PENDING' + message.pendingMessage);
-    console.info('IN-PROGRESS' + message.inProgressMessage);
-    console.info('COMPLETED' + message.completedMessage);
-    console.info('PICKEDUP' + message.pickedUpMessage);
-    console.info('SHIPPING QUESTION' + message.shippingQuestion);
-    console.info('SHIPPED' + message.shippedMessage);
-    console.error('FAILED' + message.failedMessage);
-    console.error('REJECTED' + message.rejectedByStudentMessage);
-    console.info('BILLED' + message.billedMessage);
-
-    return await message;
-
-  // const message = new CreateMessage({});
-  // console.info('DEFAULT' + message.defaultMessage);
-  // console.info('RECEIVED' + message.receivedMessage);
-  // console.info('PENDING' + message.pendingMessage);
-  // console.info('IN-PROGRESS' + message.inProgressMessage);
-  // console.info('COMPLETED' + message.completedMessage);
-  // console.info('PICKEDUP' + message.pickedUpMessage);
-  // console.info('SHIPPING QUESTION' + message.shippingQuestion);
-  // console.info('SHIPPED' + message.shippedMessage);
-  // console.info('FAILED' + message.failedMessage);
-  // console.info('REJECTED' + message.rejectedByStudentMessage);
-  // console.info('BILLED' + message.billedMessage);
+  console.timeEnd(`Execution Timer`);
+  
 }
 
 

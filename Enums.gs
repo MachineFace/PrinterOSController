@@ -114,6 +114,7 @@ const SHEETS = {
   Photon : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Photon"), 
   Caerulus : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Caerulus"), 
   Luteus : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Luteus"), 
+  Purpura : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Purpura"), 
 };
 
 const OTHERSHEETS = {
@@ -125,6 +126,7 @@ const OTHERSHEETS = {
   Logger : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Logger"),
   Unique : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("UniqueUsers"),
   Report : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("REPORT"),
+  Extra : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("AREYOUSURE?"),
 }
 
 const WORKGROUPS = [
@@ -135,6 +137,7 @@ const JACOBSWORKGROUPS = [
   3275, 3285, 3286, 3296, 3414,
 ];
 
+
 const WORKGROUPS_ENUMERATED = {
   STUDENTS_GENERAL : 3275, 
   MDES : 3285, 
@@ -143,6 +146,15 @@ const WORKGROUPS_ENUMERATED = {
   L_S : 3292, 
   STAFF : 3296, 
   TEMP_INCREASE : 3414, 
+  CED_DFL_UNDERGRAD : 3473, 
+  CED_STAFF : 3474, 
+  CED_DFL_PDST : 3475,
+}
+
+//3291, 3292, 3473, 3474, 3475,
+const NOT_JACOBS_ENUMERATED = {
+  CED : 3291, 
+  L_S : 3292, 
   CED_DFL_UNDERGRAD : 3473, 
   CED_STAFF : 3474, 
   CED_DFL_PDST : 3475,

@@ -829,8 +829,9 @@ const TriggerRemoveDuplicates = () => {
 }
 const RemoveDuplicateRecords = (sheet) => {
   const records = [];
-
-  let numbers = sheet.getRange(2, 4, sheet.getLastRow() -1, 1).getValues();
+  let lastRow = sheet.getLastRow() - 1;
+  if(lastRow <= 1) lastRow = 1;
+  let numbers = sheet.getRange(2, 4, lastRow, 1).getValues();
   numbers.forEach(num => {
     if(num != null || num != undefined || num != "" || num != " ") {
       records.push(num.toString());
@@ -854,6 +855,7 @@ const RemoveDuplicateRecords = (sheet) => {
     });
   }
 }
+
 
 
 /**
@@ -1003,3 +1005,45 @@ const FinalReport = async () => {
   })
   .then(pos.Logout());
 }
+
+
+const GetUsers = async () => {
+  const pos = new PrinterOS();
+  await pos.Login()
+  .then(() => {
+    Object.values(NOT_JACOBS_ENUMERATED).forEach(async (number) => {
+      console.log(number)
+      const info = await pos.GetUsersByWorkgroup(number);
+      info.forEach(item => {
+        console.info(Object.keys(item))
+      })
+      // Object.keys(info).forEach(key => {
+      //   console.warn(key.toString())
+      // })
+      
+        // OTHERSHEETS.Extra.getRange(1,1,1,1 + index).setValue(key);
+        
+      // Object.values(info).forEach(item => {
+
+      // })
+      // console.info(JSON.stringify(info));
+    }) 
+  })
+  .then(pos.Logout());
+}
+
+const GetPrinterIDs = () => {
+  const p = new PrinterOS();
+  p.Login()
+    .then(() => {
+      const plist = p.GetPrinterList();
+  })
+    .then(() => {
+      p.Logout();
+    })
+}
+
+
+
+
+
