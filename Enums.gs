@@ -2,6 +2,22 @@
  * -----------------------------------------------------------------------------------------------------------------
  * Code Enumerations
  */
+const COLORS = {
+  green_light : `#d9ead3`, 
+  green_dark : `#93c47d`, 
+  yellow_light : `#fff2cc`,
+  yellow : `#f1c232`,
+  yellow_dark : `#f1c232`,
+  orange_light : `#fce5cd`,
+  orange_dark : `#783f04`, 
+  red_dark : `#a61c00`,  
+  red_light : `#f4cccc`, 
+  grey : `#cccccc`, 
+  grey_light : `#efefef`,
+  purple_dark : `#20124d`,
+  purle_light : `	#d9d2e9`,
+}
+
 const RESPONSECODES = {
 	200 : `OK`,
 	201 : `Created`,
@@ -100,6 +116,8 @@ const PRINTERIDS = {
   Plumbus : 75140,
   Nimbus : 75670,
   Spectrum : 79165,
+  Purpura : 87199,
+  Crystallum : 87200,
 };
 
 
@@ -115,6 +133,7 @@ const SHEETS = {
   Caerulus : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Caerulus"), 
   Luteus : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Luteus"), 
   Purpura : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Purpura"), 
+  Crystallum : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Crystallum"),
 };
 
 const OTHERSHEETS = {
@@ -126,7 +145,7 @@ const OTHERSHEETS = {
   Logger : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Logger"),
   Unique : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("UniqueUsers"),
   Report : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("REPORT"),
-  Extra : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("AREYOUSURE?"),
+  Oops : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("AREYOUSURE?"),
 }
 
 const WORKGROUPS = [

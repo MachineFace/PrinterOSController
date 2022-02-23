@@ -42,14 +42,18 @@ const PopupCreateTicket = async () => {
   let thisRow = thisSheet.getActiveRange().getRow();
 
   // If It is on a valid sheet
-  if (sheetname == "Staff List" || sheetname == "Data/Metrics" || sheetname == "Pickup Scanner") {
-    Browser.msgBox(
-      "Incorrect Sheet Active",
-      "Please select from the correct sheet. Select one cell in the row and a ticket will be created.",
-      Browser.Buttons.OK
-    );
-    return;
-  }
+  Object.values(OTHERSHEETS).forEach(sheet => {
+    const name = sheet.getSheetName();
+    if (sheetname == name) {
+      Browser.msgBox(
+        "Incorrect Sheet Active",
+        "Please select from the correct sheet. Select one cell in the row and a ticket will be created.",
+        Browser.Buttons.OK
+      );
+      return;
+    }
+  }) 
+  
 
   // Loop through to get last row and set status to received
   const printerID = thisSheet.getRange(thisRow, 2).getValue();
