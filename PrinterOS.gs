@@ -1146,7 +1146,7 @@ const GetPrinterJobs = () => {
   const p = new PrinterOS();
   p.Login()
     .then(async () => {
-      const j = await p.GetPrintersJobList(PRINTERIDS.Zardoz);
+      const j = await p.GetPrintersJobList(PRINTERIDS.Crystallum);
       console.info(j)
     })
 }
