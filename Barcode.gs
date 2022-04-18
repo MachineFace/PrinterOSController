@@ -25,7 +25,7 @@ const PickupByBarcode = () => {
       searchRow = searchFind.getRow();
       
       // change status to picked up
-      sheet.getRange(searchRow, 1, 1, 1).setValue(STATUS.pickedUp);
+      sheet.getRange(searchRow, 1, 1, 1).setValue(STATUS.pickedUp.plaintext);
       progress.setValue(`Print #${jobnumber} marked as "Picked-up". Printer: ${key}, Row: ${searchRow}`);
       console.info(`Print #${jobnumber} marked as "Picked-up". Printer: ${key}, Row: ${searchRow}`);
       return;
@@ -54,7 +54,7 @@ class QRCodeAndBarcodeGenerator {
 
   GenerateQRCode(){
     console.info(`URL : ${this.url}, Jobnumber : ${this.jobnumber}`);
-    const loc = `https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=${this.url}`;  //API call
+    const loc = `https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=${this.url}`;  // API call
     const postParams = {
         "method" : "GET",
         "headers" : { "Authorization" : "Basic" },
@@ -65,14 +65,14 @@ class QRCodeAndBarcodeGenerator {
 
     let qrCode;
     const html = UrlFetchApp.fetch(loc, postParams);
-    console.info(`Response Code : ${html.getResponseCode()}`);
+    // console.info(`Response Code : ${html.getResponseCode()}`);
     if (html.getResponseCode() == 200) {
-        qrCode = DriveApp.createFile( Utilities.newBlob(html.getContent()).setName('QRCode' + this.jobnumber ) );
-        qrCode.setTrashed(true);
+      qrCode = DriveApp.createFile( Utilities.newBlob(html.getContent()).setName('QRCode' + this.jobnumber ) );
+      qrCode.setTrashed(true);
     }
     else console.error('Failed to GET QRCode');
 
-    console.info(qrCode);
+    console.info(`QRCode Created ---> ${qrCode?.getId()?.toString()}`);
     return qrCode;
   }
 
@@ -97,15 +97,14 @@ class QRCodeAndBarcodeGenerator {
     };
     
     let barcode;
-
     let html = UrlFetchApp.fetch(barcodeLoc, params);
-    console.info("Response Code : " + html.getResponseCode());
+    // console.info("Response Code : " + html.getResponseCode());
     if (html.getResponseCode() == 200) {
       barcode = DriveApp.createFile( Utilities.newBlob(html.getContent()).setName(`Barcode : ${this.jobnumber}`) );
       barcode.setTrashed(true);
     } 
     else console.error('Failed to GET Barcode');
-    console.info(barcode);
+    console.info(`BARCODE CREATED ---> ${barcode?.getId()?.toString()}`);
     return barcode;
   }
 
@@ -129,16 +128,15 @@ class QRCodeAndBarcodeGenerator {
     };
     
     let barcode;
-
     const res = UrlFetchApp.fetch(barcodeLoc, params);
     const responseCode = res.getResponseCode();
-    console.info(`Response Code : ${responseCode}, ${RESPONSECODES[responseCode]}`);
+    // console.info(`Response Code : ${responseCode}, ${RESPONSECODES[responseCode]}`);
     if (responseCode == 200) {
       barcode = DriveApp.createFile( Utilities.newBlob(res.getContent()).setName(`Barcode : ${this.jobnumber}`) );
       barcode.setTrashed(true);
     } 
     else console.error('Failed to GET Barcode');
-    console.info(barcode);
+    console.info(`BARCODE CREATED ---> ${barcode?.getId()?.toString()}`);
     return barcode;
   }
   
@@ -168,23 +166,23 @@ class OpenQRGenerator {
     console.info(`URL : ${this.url}`);
     const loc = `https://api.qrserver.com/v1/create-qr-code/?size=${this.size}&data=${this.url}`;  //API call
     const postParams = {
-        "method" : "GET",
-        "headers" : { "Authorization" : "Basic" },
-        "contentType" : "application/json",
-        followRedirects : true,
-        muteHttpExceptions : true
+      "method" : "GET",
+      "headers" : { "Authorization" : "Basic" },
+      "contentType" : "application/json",
+      followRedirects : true,
+      muteHttpExceptions : true
     };
 
     let qrCode;
     const html = UrlFetchApp.fetch(loc, postParams);
-    console.info(`Response Code : ${RESPONSECODES[html.getResponseCode()]}`);
+    // console.info(`Response Code : ${RESPONSECODES[html.getResponseCode()]}`);
     if (html.getResponseCode() == 200) {
       qrCode = DriveApp.createFile( Utilities.newBlob(html.getContent()).setName(`QRCode ${randName}`) );
       qrCode.setTrashed(true);
     }
     else console.error(`Failed to GET QRCode`);
 
-    console.info(qrCode);
+    console.info(`QRCODE CREATED ---> ${qrCode?.getId().toString()}`);
     return await qrCode;
   }
 
@@ -224,7 +222,7 @@ class OpenQRGenerator {
       file.setSharing(DriveApp.Access.ANYONE, DriveApp.Permission.EDIT); //set sharing
     }
     //Return Document to use later
-    console.info(JSON.stringify(doc))
+    console.info(`QRCODE DOC CREATED ---> ${doc?.getId()?.toString()}`);
     return doc;
   };
 

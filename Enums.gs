@@ -2,15 +2,19 @@
  * -----------------------------------------------------------------------------------------------------------------
  * Code Enumerations
  */
+const PICKUPHOURS = `Monday - Friday: 11am - 1pm & 4pm - 6pm`;
+
 const COLORS = {
-  green_light : `#d9ead3`, 
+  green_light : `#d9ead3`,
+  green : `#00ff00`, 
   green_dark : `#93c47d`, 
   yellow_light : `#fff2cc`,
   yellow : `#f1c232`,
   yellow_dark : `#f1c232`,
   orange_light : `#fce5cd`,
   orange_dark : `#783f04`, 
-  red_dark : `#a61c00`,  
+  red_dark : `#a61c00`,
+  red_dark_1 : `	#cc0000`,  
   red_light : `#f4cccc`, 
   grey : `#cccccc`, 
   grey_light : `#efefef`,
@@ -88,21 +92,38 @@ const RESPONSECODES = {
 }
 
 const STATUS = {
-  queued : "Queued",
-  inProgress : "In-Progress",
-  complete : "Completed",
-  failed : "FAILED",
-  cancelled : "Cancelled",
-  pickedUp : "Picked Up",
-  closed : "CLOSED",
-}
-
-const POSSTATCODE = {
-  11 : "Queued", 
-  21 : "In-Progress", 
-  43 : "FAILED", 
-  45 : "Cancelled", 
-  77 : "Completed",
+  queued : {
+    plaintext : `Queued`,
+    statusCode : `11`,
+  },
+  inProgress : {
+    plaintext : `In-Progress`,
+    statusCode : `21`,
+  },
+  complete : {
+    plaintext : `Completed`,
+    statusCode : `77`,
+  },
+  failed : {
+    plaintext : `FAILED`,
+    statusCode : `43`,
+  },
+  cancelled : {
+    plaintext : `Cancelled`,
+    statusCode : `45`,
+  },
+  pickedUp : {
+    plaintext : `Picked Up`,
+    statusCode : `0`,
+  },
+  closed : {
+    plaintext : `CLOSED`,
+    statusCode : `1`
+  },
+  abandoned : {
+    plaintext : `Abandoned`,
+    statusCode : `2`
+  },
 }
 
 const PRINTERIDS = { 
@@ -118,8 +139,107 @@ const PRINTERIDS = {
   Spectrum : 79165,
   Purpura : 87199,
   Crystallum : 87200,
+  Aurum : 89128,
 };
 
+const PRINTERDATA = { 
+  Luteus : { 
+    name : `Luteus`,
+    printerID : 79606,
+    sheet : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Luteus"),
+    type : "UM3",
+  },
+  Caerulus : {
+    name : `Caerulus`,
+    printerID : 79605,
+    sheet : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Caerulus"),
+    type : "UM3",
+  },
+  Photon : {
+    name : `Photon`,
+    printerID : 75677,
+    sheet : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Photon"),
+    type : "UM3",
+  },
+  Quasar : {
+    name : `Quasar`,
+    printerID : 75675,
+    sheet : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Quasar"),
+    type : "UM3",
+  },
+  Zardoz : {
+    name : `Zardoz`,
+    printerID : 79166,
+    sheet : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Zardoz"),
+    type : "UM3 Extended",
+  },
+  Viridis : {
+    name : `Viridis`,
+    printerID : 79167,
+    sheet : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Viridis"),
+    type : "UM3",
+  },
+  Rubrum : {
+    name : `Rubrum`,
+    printerID : 79170,
+    sheet : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Rubrum"),
+    type : "UM3",
+  },
+  Plumbus : {
+    name : `Plumbus`,
+    printerID : 75140,
+    sheet : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Plumbus"),
+    type : "UM3",
+  },
+  Nimbus : {
+    name : `Nimbus`,
+    printerID : 75670,
+    sheet : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Nimbus"),
+    type : "UM3",
+  },
+  Spectrum : {
+    name : `Spectrum`,
+    printerID : 79165,
+    sheet : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Spectrum"),
+    type : "UM3 Extended",
+  },
+  Purpura : {
+    name : `Purpura`,
+    printerID : 87199,
+    sheet : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Purpura"),
+    type : "S3",
+  },
+  Crystallum : {
+    name : `Crystallum`,
+    printerID : 87200,
+    sheet : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Crystallum"),
+    type : "S3",
+  },
+  Aurum : {
+    name : `Aurum`,
+    printerID : 89128,
+    sheet : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Aurum"),
+    type : "S3",
+  },
+};
+
+const HEADERNAMES = {
+  status : `Status`,
+  printerID :	`PrinterID`,
+  printerName :	`PrinterName`,
+  jobID :	`JobID`,
+  timestamp :	`Timestamp`,
+  email :	`Email`,
+  posStatCode :	`POS Stat Code`,
+  duration : `Duration (Hours)`,
+  notes :	`Notes`,
+  elapsedTime :	`Elapsed`,
+  materials :	`Materials`,
+  cost : `Cost`,
+  picture :	`Picture`,
+  ticket : `Ticket`,
+  filename : `Filename`,												
+};
 
 const SHEETS = {
   Spectrum : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Spectrum"), 
@@ -134,6 +254,7 @@ const SHEETS = {
   Luteus : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Luteus"), 
   Purpura : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Purpura"), 
   Crystallum : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Crystallum"),
+  Aurum : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Aurum"),
 };
 
 const OTHERSHEETS = {

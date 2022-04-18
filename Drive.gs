@@ -2,7 +2,7 @@
  * -----------------------------------------------------------------------------------------------------------------
  * Class for Working with Google Drive
  */
-class Drive
+class Driver
 {
   constructor() {
     this.root = DriveApp.getRootFolder();
@@ -74,7 +74,27 @@ class Drive
  * -----------------------------------------------------------------------------------------------------------------
  * Main Cleanup Function
  */
-const CleanupDrive = () => new Drive().MoveTicketsOutOfRoot();
+const CleanupDrive = () => new Driver().MoveTicketsOutOfRoot();
+
+
+/**
+ * Get Drive ID from URL
+ */
+const GetDriveIDFromUrl = (url) => { 
+  let id = "";
+  const parts = url.split(/^(([^:\/?#]+):)?(\/\/([^\/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/);
+  if (url.indexOf('?id=') >= 0){
+    id = (parts[6].split("=")[1]).replace("&usp","");
+    return id;
+  } else {
+    id = parts[5].split("/");
+    // Using sort to get the id as it is the longest element. 
+    var sortArr = id.sort(function(a,b){return b.length - a.length});
+    id = sortArr[0];
+    return id;
+  }
+}
+
 
 
 /**
@@ -87,7 +107,7 @@ const _testDrive = () => {
   // const fromDate = date.toISOString().split('T')[0];
   // const toDate = new Date().toISOString().split('T')[0];
   // console.info(`90 Days ago : ${dateMinusNinety}, Now : ${date}`);
-  let d = new Drive().CountTickets();
+  let d = new Driver().CountTickets();
 }
 
 

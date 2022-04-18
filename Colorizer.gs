@@ -3,9 +3,12 @@
  */
 class Colorizer
 {
-  constructor({ rowNumber = 2, status = STATUS.queued }) {
-    this.rowNumber = rowNumber;
-    this.status = status;
+  constructor({ 
+    rowNumber : rowNumber, 
+    status : status,
+  }) {
+    this.rowNumber = rowNumber ? rowNumber : 2;
+    this.status = status ? status : STATUS.queued.plaintext;
     this.wholerow = SpreadsheetApp.getActiveSheet().getRange(rowNumber, 1, 1, SpreadsheetApp.getActiveSpreadsheet().getLastColumn());
     this.SetRowColorByStatus();
   }
@@ -14,37 +17,37 @@ class Colorizer
     if(this.rowNumber <= 1) return;
     try {  
       switch(this.status) {
-        case STATUS.queued:
+        case STATUS.queued.plaintext:
           this.wholerow.setFontColor(null); //unset
           this.wholerow.setFontColor(COLORS.greenish);  //Greenish
           this.wholerow.setBackground(null); //unset
           this.wholerow.setBackground(COLORS.green_light); //Light Green
           console.warn(`Status: ${this.status}, Set Color to : Green`);
           break;
-        case STATUS.inProgress:
+        case STATUS.inProgress.plaintext:
           this.wholerow.setFontColor(null); //unset
           this.wholerow.setFontColor(COLORS.orange_dark);  //Dark Yellow
           this.wholerow.setBackground(null); //unset
           this.wholerow.setBackground(COLORS.orange_light); //Light yellow
           console.warn(`Status: ${this.status}, Set Color to : Orange`);
           break;
-        case STATUS.closed:
-        case STATUS.pickedUp:
-        case STATUS.complete:
+        case STATUS.closed.plaintext:
+        case STATUS.pickedUp.plaintext:
+        case STATUS.complete.plaintext:
           this.wholerow.setFontColor(null); //unset
           this.wholerow.setFontColor(COLORS.grey);  //Gray
           this.wholerow.setBackground(null); //unset
           this.wholerow.setBackground(COLORS.grey_light); //Light Grey
           console.warn(`Status: ${this.status}, Set Color to : Grey`);
           break;
-        case STATUS.failed:
+        case STATUS.failed.plaintext:
           this.wholerow.setFontColor(null); //unset
           this.wholerow.setFontColor(COLORS.red);  //Red
           this.wholerow.setBackground(null); //unset
           this.wholerow.setBackground(COLORS.red_light); //Light Red
           console.warn(`Status: ${this.status}, Set Color to : Red`);
           break;
-        case STATUS.cancelled:
+        case STATUS.cancelled.plaintext:
           this.wholerow.setFontColor(null); //unset
           this.wholerow.setFontColor(COLORS.purple_dark);  //yellow
           this.wholerow.setBackground(null); //unset
@@ -67,4 +70,8 @@ class Colorizer
     }
     
   }
+}
+
+const _testColorizer = async () => {
+  const c = new Colorizer({ rowNumber : 2, status : STATUS.queued.plaintext });
 }

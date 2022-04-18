@@ -62,23 +62,7 @@ const SetByHeader = (sheet, columnName, row, val) => {
 };
 
 
-/**
- * Get Drive ID from URL
- */
-const GetDriveIDFromUrl = (url) => { 
-  let id = "";
-  const parts = url.split(/^(([^:\/?#]+):)?(\/\/([^\/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/);
-  if (url.indexOf('?id=') >= 0){
-    id = (parts[6].split("=")[1]).replace("&usp","");
-    return id;
-  } else {
-    id = parts[5].split("/");
-    // Using sort to get the id as it is the longest element. 
-    var sortArr = id.sort(function(a,b){return b.length - a.length});
-    id = sortArr[0];
-    return id;
-  }
-}
+
 
 /**
  * Find Image blob from File
@@ -115,15 +99,15 @@ const GetImage = async (pngFile) => {
 const Search = (value) => {
   if (value) value.toString().replace(/\s+/g, "");
   let res = {};
-  for(const [key, sheet] of Object.entries(SHEETS)) {
+  Object.values(SHEETS).forEach(sheet => {
     const finder = sheet.createTextFinder(value).findAll();
     if (finder != null) {
       temp = [];
       finder.forEach(result => temp.push(result.getRow()));
       res[sheet.getName()] = temp;
     }
-  }
-  console.info(JSON.stringify(res));
+  })
+  // console.info(JSON.stringify(res));
   return res;
 }
 
@@ -144,47 +128,8 @@ const SearchSpecificSheet = (sheet, value) => {
 
 
 
-/**
- * ----------------------------------------------------------------------------------------------------------------
- * Generate new Job number from a date
- * @param {time} date
- * @return {number} job number
- */
-class JobNumberGenerator {
-  constructor ({
-    date = new Date(),
-  }) {
-    this.date = date;
-  }
 
-  TestDate() {
-    if (Object.prototype.toString.call(this.date) !== "[object Date]") return false;
-    return !isNaN(this.date.getTime());
-  }
 
-  GenerateJobNumber() { 
-    const testedDate = this.TestDate(this.date);
-
-    let jobnumber;
-    try {
-      if ( this.date == undefined || this.date == null || this.date == "" || testedDate == false ) {
-        jobnumber = +Utilities.formatDate(new Date(), `PST`, `yyyyMMddHHmmss`);
-        console.warn(`Set Jobnumber to a new time because timestamp was missing.`);
-      } else {
-        jobnumber = +Utilities.formatDate(this.date, `PST`, `yyyyMMddhhmmss`);
-        console.info(`Input time: ${this.date}, Set Jobnumber: ${jobnumber}`);
-      }
-    } catch (err) {
-      console.error(`${err} : Couldn't fix jobnumber.`);
-    }
-    if (jobnumber == undefined || testedDate == false) {
-      jobnumber = +Utilities.formatDate(new Date(), `PST`, `yyyyMMddHHmmss`);
-    }
-    console.info(`Returned Job Number: ${jobnumber}`);
-    return jobnumber.toString();
-  }
-  
-}
 
 
 /**
@@ -192,40 +137,38 @@ class JobNumberGenerator {
  */
 const FixStatus = () => {
   console.info(`Checking Statuses....`);
-  for(const [key, sheet] of Object.entries(SHEETS)) {
-    
-    let posCodes = GetColumnDataByHeader(sheet, "POS Stat Code");
-    let statuses = GetColumnDataByHeader(sheet, "Status");
+  Object.values(SHEETS).forEach(sheet => {
+    let posCodes = GetColumnDataByHeader(sheet, HEADERNAMES.posStatCode);
+    let statuses = GetColumnDataByHeader(sheet, HEADERNAMES.status);
     posCodes.forEach( (code, index) => {
       switch(code) {
-        case 11:
-          if (statuses[index + 2] != STATUS.queued) {
-            SetByHeader(sheet, "Status", index + 2, STATUS.queued);
+        case STATUS.queued.statusCode:
+          if (statuses[index + 2] != STATUS.queued.plaintext) {
+            SetByHeader(sheet, HEADERNAMES.status, index + 2, STATUS.queued.plaintext);
             console.warn(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
           }
           break;
-        case 21:
-          if (statuses[index + 2] != STATUS.inProgress) {
-            SetByHeader(sheet, "Status", index + 2, STATUS.inProgress);
+        case STATUS.inProgress.statusCode:
+          if (statuses[index + 2] != STATUS.inProgress.plaintext) {
+            SetByHeader(sheet, HEADERNAMES.status, index + 2, STATUS.inProgress.plaintext);
             console.warn(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
           }
           break;
-        case 43:
-          if (statuses[index + 2] != STATUS.failed) {
-            SetByHeader(sheet, "Status", index + 2, STATUS.failed);
+        case STATUS.failed.statusCode:
+          if (statuses[index + 2] != STATUS.failed.plaintext) {
+            SetByHeader(sheet, HEADERNAMES.status, index + 2, STATUS.failed.plaintext);
             console.warn(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
           }
           break;
-        case 45:
-          if (statuses[index + 2] != STATUS.cancelled) {
-            SetByHeader(sheet, "Status", index + 2, STATUS.cancelled);
+        case STATUS.cancelled.statusCode:
+          if (statuses[index + 2] != STATUS.cancelled.plaintext) {
+            SetByHeader(sheet, HEADERNAMES.status, index + 2, STATUS.cancelled.plaintext);
             console.warn(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
           }
           break;
       }
     });
-
-  }
+  })
   console.warn(`Statuses Checked and Fixed....`);
 }
 
@@ -241,27 +184,8 @@ const IsValidDate = (d) => {
   return !isNaN(d.getTime());
 };
 
+const FormatDate = (date) => Utilities.formatDate(date ? date : new Date(), "PST", "MM/dd/yyyy 'at' HH:mm:ss z");
 
-
-/**
- * ----------------------------------------------------------------------------------------------------------------
- * Unit test for JobNumber
- */
-const _testJob = () => {
-  const now = new Date();
-  // const jnum = new JobNumberGenerator({date : now}).GenerateJobNumber();
-  const jnum = new JobNumberGenerator({}).GenerateJobNumber();
-  console.info(jnum)
-}
-
-/**
- * Unit test for Search
- */
-const _testSearch = () => {
-  const term = "berkdincer@berkeley.edu";
-  const search = Search(term);
-  console.info(`Search : ${search}`);
-}
 
 /**
  * Helper to make Sheets
@@ -272,6 +196,19 @@ const _helperMakeSheets = async () => {
     console.info(key);
     await ss.insertSheet().setName(key);
   }
+}
+
+
+/**
+ * ----------------------------------------------------------------------------------------------------------------
+ * Unit tests
+ */
+
+
+const _testSearch = () => {
+  const term = "berkdincer@berkeley.edu";
+  const search = Search(term);
+  console.info(`Search : ${search}`);
 }
 
 const _testGetImage = async () => {
@@ -286,16 +223,126 @@ const _testFixStatus = async () => {
   console.info(`Finished testing fixing the Status.`)
 }
 
-
 const _testGetHead = () => {
   let d = GetColumnDataByHeader(SHEETS.Spectrum, "JobID");
   console.info(d)
 }
 
 
+/**
+ * Set Dropdowns for status
+ */
+const SetStatusDropdowns = () => {
+  let statuses = [];
+  Object.values(STATUS).forEach(status => statuses.push(status.plaintext));
+  const rule = SpreadsheetApp.newDataValidation().requireValueInList(statuses);
+  Object.values(SHEETS).forEach(sheet => sheet.getRange(2, 1, sheet.getLastRow(), 1).setDataValidation(rule));
+  console.info(statuses)
+}
+
+/**
+ * @NOTIMPLEMENTED
+ */
+const SetConditionalFormatting = () => {
+  let statuses = [];
+  Object.values(STATUS).forEach(status => statuses.push(status.plaintext));
+  Object.values(SHEETS).forEach(sheet => {
+    let rules = [
+      SpreadsheetApp.newConditionalFormatRule()
+        .whenFormulaSatisfied(`=$A2="${STATUS.queued.plaintext}"`)
+        .setRanges([sheet.getRange(2, 1, sheet.getLastRow(), sheet.getLastColumn()),])
+        .setBackground(COLORS.green_light)
+        .setFontColor(COLORS.green_dark)
+        .build()
+      ,
+      SpreadsheetApp.newConditionalFormatRule()
+        .whenFormulaSatisfied(`=$A2="${STATUS.inProgress.plaintext}"`)
+        .setRanges([sheet.getRange(2, 1, sheet.getLastRow(), sheet.getLastColumn()),])
+        .setBackground(COLORS.orange_light)
+        .setFontColor(COLORS.orange_dark)
+        .build()
+      ,
+      SpreadsheetApp.newConditionalFormatRule()
+        .whenFormulaSatisfied(`=$A2="${STATUS.cancelled.plaintext}"`)
+        .setRanges([sheet.getRange(2, 1, sheet.getLastRow(), sheet.getLastColumn()),])
+        .setBackground(COLORS.purle_light)
+        .setFontColor(COLORS.purple_dark)
+        .build()
+      ,
+      SpreadsheetApp.newConditionalFormatRule()
+        .whenFormulaSatisfied(`=$A2="${STATUS.complete.plaintext}"`)
+        .setRanges([sheet.getRange(2, 1, sheet.getLastRow(), sheet.getLastColumn()),])
+        .setBackground(COLORS.grey_light)
+        .setFontColor(COLORS.grey)
+        .build()
+      ,
+      SpreadsheetApp.newConditionalFormatRule()
+        .whenFormulaSatisfied(`=$A2="${STATUS.closed.plaintext}"`)
+        .setRanges([sheet.getRange(2, 1, sheet.getLastRow(), sheet.getLastColumn()),])
+        .setBackground(COLORS.grey_light)
+        .setFontColor(COLORS.grey)
+        .build()
+      ,
+      SpreadsheetApp.newConditionalFormatRule()
+        .whenFormulaSatisfied(`=$A2="${STATUS.failed.plaintext}"`)
+        .setRanges([sheet.getRange(2, 1, sheet.getLastRow(), sheet.getLastColumn()),])
+        .setBackground(COLORS.red_light)
+        .setFontColor(COLORS.red_dark_1)
+        .build()
+      ,
+      SpreadsheetApp.newConditionalFormatRule()
+        .whenFormulaSatisfied(`=$A2="${STATUS.pickedUp.plaintext}"`)
+        .setRanges([sheet.getRange(2, 1, sheet.getLastRow(), sheet.getLastColumn()),])
+        .setBackground(COLORS.grey_light)
+        .setFontColor(COLORS.grey)
+        .build()
+      ,
+      SpreadsheetApp.newConditionalFormatRule()
+        .whenFormulaSatisfied(`=$A2="${STATUS.abandoned.plaintext}"`)
+        .setRanges([sheet.getRange(2, 1, sheet.getLastRow(), sheet.getLastColumn()),])
+        .setBackground(COLORS.yellow_light)
+        .setFontColor(COLORS.yellow_dark)
+        .build()
+      ,
+    ];
+    sheet.setConditionalFormatRules(rules);
+  });
+}
 
 
 
 
+/**
+ * Search Class
+ */
+/** 
+class Seek
+{
+  constructor() {
+  }
+  Search (value) {
+    if (value) value.toString().replace(/\s+/g, "");
+    let res = {};
+    Object.values(SHEETS).forEach(sheet => {
+      const finder = sheet.createTextFinder(value).findAll();
+      if (finder != null) {
+        let temp = [];
+        finder.forEach(result => temp.push(result.getRow()));
+        res[sheet.getName()] = temp;
+      }
+    });
+    console.warn(JSON.stringify(res));
+    return res;
+  }
+  SearchSpecificSheet (sheet, value) {
+    if (value) value.toString().replace(/\s+/g, "");
+    const finder = sheet.createTextFinder(value).findNext();
+    if (finder != null) {
+      return finder.getRow();
+    } else return false;
+  }
+}
+const _testSeek = () => new Seek().Search("Water Box");
+*/
 
 

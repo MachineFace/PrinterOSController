@@ -21,10 +21,10 @@ const PopupCountQueue = async () => {
  */
 const CountQueue = () => {
   let count = 0;
-  for(const [key, sheet] of Object.entries(SHEETS)) {
+  Object.values(SHEETS).forEach(sheet => {
     let pageCount = sheet.createTextFinder("Queued").findAll().length;
     count = count + pageCount;
-  }
+  });
   console.info(`Count : ${count}`);
   return count;
 }
@@ -84,6 +84,7 @@ const PopupCreateTicket = async () => {
       filename : filename,
       image : imageBlob,
     }).CreateTicket();
+
     const url = ticket.getUrl();
     thisSheet.getRange(thisRow, 14).setValue(url.toString());
   } catch (err) {
@@ -102,7 +103,23 @@ const PopupCreateTicket = async () => {
  * Builds HTML file for the modal pop-up from the help list.
  */
 const BuildHTMLHELP = () => {
-  let items = Help();
+  let items = [
+    "Note : All status changes trigger an email to the student except for 'CLOSED' status",
+    "New Project comes into a sheet and status will automatically be set to 'Received'.",
+    "Assign yourself as the DS / SS and fill in the materials as best you can.",
+    "Change the status to 'In-Progress' when you're ready to start the project.",
+    "Wait 30 seconds for the printable ticket to generate, and print it.",
+    "Fabricate the project.",
+    "When it's done, bag the project + staple the ticket to the bag and change the status to 'Completed'.",
+    "Select any cell in the row and choose 'Generate Bill' to bill the student. The status will change itself to 'Billed'.",
+    "If you don't need to bill the student, choose 'CLOSED' status.",
+    "If you need to cancel the job, choose 'Cancelled'. ",
+    "If the project can't be fabricated at all, choose 'FAILED', and email the student why it failed.",
+    "If you need student approval before proceeding, choose 'Pending Approval'. ",
+    "'Missing Access' will be set automatically, and you should not choose this as an option.",
+    "If the student needs to be waitlisted for more information or space, choose 'Waitlisted'. ",
+    "See Cody or Chris for additional help + protips.",
+  ];
   let html = '<h2 style="text-align:center"><b> HELP MENU </b></h2>';
   html += '<h3 style="font-family:Roboto">How to Use JPS : </h3>';
   html += "<hr>";
@@ -134,7 +151,7 @@ const PopupHelp = () => {
 
 const PopupUpdate = async () => {
   let ui = await SpreadsheetApp.getUi();
-  UpdateAll();
+  new UpdateSheet();
   ui.alert(
     `JPS Runtime Message`,
     `All Info Updated from PrinterOS Server`,
@@ -162,7 +179,7 @@ const BarMenu = () => {
     .addSeparator()
     .addItem("Count Queue", "PopupCountQueue")
     .addItem(`Create a Ticket for a User`, `PopupCreateTicket`)
-    .addItem(`Fix All Missing Tickets`, `FixMissingTickets`)
+    .addItem(`Fix All Missing Tickets`, `MissingTicketUpdater`)
     .addItem(`Fix All Missing Filenames`, `UpdateAllFilenames`)
     .addSeparator()
     .addItem("Help", "PopupHelp")

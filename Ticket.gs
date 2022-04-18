@@ -6,34 +6,34 @@
 class Ticket
 {
   constructor({
-    designspecialist = "Staff", 
-    submissiontime = new Date(), 
-    name = "Student Name", 
-    email = "Student Email", 
-    projectname = "Project Name", 
-    material1Quantity = 0, 
-    material2Quantity = 0,
-    ticketName = "PrinterOS Ticket",
-    printerID = "79165",
-    printerName = "Spectrum",
-    printDuration = 2000,
-    jobID = 12934871,
-    filename = "file.gcode",
-    image,
+    designspecialist : designspecialist, 
+    submissiontime : submissiontime, 
+    name : name, 
+    email : email, 
+    projectname : projectname, 
+    material1Quantity : material1Quantity, 
+    material2Quantity : material2Quantity,
+    ticketName : ticketName,
+    printerID : printerID,
+    printerName : printerName,
+    printDuration : printDuration,
+    jobID : jobID,
+    filename : filename,
+    image : image,
   }){
-    this.designspecialist = designspecialist;
-    this.submissiontime = submissiontime;
-    this.name = name;
-    this.email = email;
-    this.projectname = projectname;
-    this.material1Quantity = material1Quantity;
-    this.material2Quantity = material2Quantity;
-    this.ticketName = ticketName;
-    this.printerID = printerID;
-    this.printerName = printerName;
-    this.printDuration = printDuration;
-    this.jobID = jobID;
-    this.filename = filename;
+    this.designspecialist = designspecialist ? designspecialist : `Staff`;
+    this.submissiontime = submissiontime ? submissiontime : new Date();
+    this.name = name ? name : `Student Name`;
+    this.email = email ? email : `Student Email`;
+    this.projectname = projectname ? projectname : `Project Name`;
+    this.material1Quantity = material1Quantity ? material1Quantity : 0;
+    this.material2Quantity = material2Quantity ? material2Quantity : 0;
+    this.ticketName = ticketName ? ticketName : `PrinterOS Ticket`;
+    this.printerID = printerID ? printerID : `79165`;
+    this.printerName = printerName ? printerName : `Spectrum`;
+    this.printDuration = printDuration ? printDuration : 2000;
+    this.jobID = jobID ? jobID : 12934871;
+    this.filename = filename ? filename : `file.gcode`;
     this.image = image;
   }
 
@@ -48,8 +48,8 @@ class Ticket
 
   CreateTicket() {
     const jobnumber = this.jobID;
-    const folder = DriveApp.getFoldersByName(`Job Tickets`); //Set the correct folder
-    const doc = DocumentApp.create(this.ticketName); //Make Document
+    const folder = DriveApp.getFoldersByName(`Job Tickets`); // Set the correct folder
+    const doc = DocumentApp.create(this.ticketName); // Make Document
     let body = doc.getBody();
     let docId = doc.getId();
     let url = doc.getUrl();
@@ -129,9 +129,8 @@ class Ticket
       let file = DriveApp.getFileById(docId);
       file.setSharing(DriveApp.Access.ANYONE, DriveApp.Permission.EDIT); //set sharing
     }
-    //Return Document to use later
-    console.info(JSON.stringify(doc))
-    console.info(`DOC ----> ${doc.getUrl()}`)
+    // Return Document to use later
+    console.info(`DOC ----> ${doc?.getUrl()?.toString()}`)
     return doc;
   };
 }
@@ -173,10 +172,7 @@ const _testTicket = () => {
       filename : "somefile.gcode",
       image : image,
     }
-    console.info(dummyObj);
-
-    const tic = new Ticket(dummyObj).CreateTicket();
-    console.info(tic);
+    new Ticket(dummyObj).CreateTicket();
   })
   
   
