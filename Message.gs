@@ -22,7 +22,7 @@ class CreateMessage
     designspecialist : designspecialist, 
     designspecialistemaillink : designspecialistemaillink,
   }){
-    this.name = name ? name : `Student Name`;
+    this.name = name ? name : `Self-Service Printing User`;
     this.projectname = projectname ? projectname : `Project Name`;
     this.jobnumber = jobnumber ? jobnumber : `Job Number`;
 

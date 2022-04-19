@@ -229,6 +229,7 @@ const _testGetHead = () => {
 }
 
 
+
 /**
  * Set Dropdowns for status
  */
@@ -237,77 +238,11 @@ const SetStatusDropdowns = () => {
   Object.values(STATUS).forEach(status => statuses.push(status.plaintext));
   const rule = SpreadsheetApp.newDataValidation().requireValueInList(statuses);
   Object.values(SHEETS).forEach(sheet => sheet.getRange(2, 1, sheet.getLastRow(), 1).setDataValidation(rule));
-  console.info(statuses)
+  // console.info(statuses)
 }
 
-/**
- * @NOTIMPLEMENTED
- */
-const SetConditionalFormatting = () => {
-  let statuses = [];
-  Object.values(STATUS).forEach(status => statuses.push(status.plaintext));
-  Object.values(SHEETS).forEach(sheet => {
-    let rules = [
-      SpreadsheetApp.newConditionalFormatRule()
-        .whenFormulaSatisfied(`=$A2="${STATUS.queued.plaintext}"`)
-        .setRanges([sheet.getRange(2, 1, sheet.getLastRow(), sheet.getLastColumn()),])
-        .setBackground(COLORS.green_light)
-        .setFontColor(COLORS.green_dark)
-        .build()
-      ,
-      SpreadsheetApp.newConditionalFormatRule()
-        .whenFormulaSatisfied(`=$A2="${STATUS.inProgress.plaintext}"`)
-        .setRanges([sheet.getRange(2, 1, sheet.getLastRow(), sheet.getLastColumn()),])
-        .setBackground(COLORS.orange_light)
-        .setFontColor(COLORS.orange_dark)
-        .build()
-      ,
-      SpreadsheetApp.newConditionalFormatRule()
-        .whenFormulaSatisfied(`=$A2="${STATUS.cancelled.plaintext}"`)
-        .setRanges([sheet.getRange(2, 1, sheet.getLastRow(), sheet.getLastColumn()),])
-        .setBackground(COLORS.purle_light)
-        .setFontColor(COLORS.purple_dark)
-        .build()
-      ,
-      SpreadsheetApp.newConditionalFormatRule()
-        .whenFormulaSatisfied(`=$A2="${STATUS.complete.plaintext}"`)
-        .setRanges([sheet.getRange(2, 1, sheet.getLastRow(), sheet.getLastColumn()),])
-        .setBackground(COLORS.grey_light)
-        .setFontColor(COLORS.grey)
-        .build()
-      ,
-      SpreadsheetApp.newConditionalFormatRule()
-        .whenFormulaSatisfied(`=$A2="${STATUS.closed.plaintext}"`)
-        .setRanges([sheet.getRange(2, 1, sheet.getLastRow(), sheet.getLastColumn()),])
-        .setBackground(COLORS.grey_light)
-        .setFontColor(COLORS.grey)
-        .build()
-      ,
-      SpreadsheetApp.newConditionalFormatRule()
-        .whenFormulaSatisfied(`=$A2="${STATUS.failed.plaintext}"`)
-        .setRanges([sheet.getRange(2, 1, sheet.getLastRow(), sheet.getLastColumn()),])
-        .setBackground(COLORS.red_light)
-        .setFontColor(COLORS.red_dark_1)
-        .build()
-      ,
-      SpreadsheetApp.newConditionalFormatRule()
-        .whenFormulaSatisfied(`=$A2="${STATUS.pickedUp.plaintext}"`)
-        .setRanges([sheet.getRange(2, 1, sheet.getLastRow(), sheet.getLastColumn()),])
-        .setBackground(COLORS.grey_light)
-        .setFontColor(COLORS.grey)
-        .build()
-      ,
-      SpreadsheetApp.newConditionalFormatRule()
-        .whenFormulaSatisfied(`=$A2="${STATUS.abandoned.plaintext}"`)
-        .setRanges([sheet.getRange(2, 1, sheet.getLastRow(), sheet.getLastColumn()),])
-        .setBackground(COLORS.yellow_light)
-        .setFontColor(COLORS.yellow_dark)
-        .build()
-      ,
-    ];
-    sheet.setConditionalFormatRules(rules);
-  });
-}
+
+
 
 
 

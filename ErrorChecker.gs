@@ -1,9 +1,12 @@
+/**
+ * Function for determining who was overbilled
+ */
 const CheckEmails = () => {
   // Set of Everyone who printed
   let masterSet = [];
   Object.values(SHEETS).forEach(sheet => {
     // console.warn(`Checking Sheet: ${sheet.getSheetName()}`);
-    let emails = [].concat(...sheet.getRange(2, 6, sheet.getLastRow(), 1).getValues()); 
+    let emails = [].concat(...GetColumnDataByHeader(sheet, HEADERNAMES.email)); 
     emails = emails.filter(Boolean);
     const unique = [...new Set(emails)];
     masterSet.push(...unique);

@@ -43,6 +43,21 @@ const onChange = async (e) => {
   })
   console.info(`Sheet : ${sheetname} : PrinterID : ${hardID}`);
 
+  const status = GetByHeader(ss, HEADERNAMES.status, thisRow);
+  if(status == STATUS.abandoned.plaintext) {
+    const email = GetByHeader(ss, HEADERNAMES.email, thisRow);
+    const projectname = GetByHeader(ss, HEADERNAMES.filename, thisRow);
+    const jobnumber = GetByHeader(ss, HEADERNAMES.jobID, thisRow);
+    const material1Quantity = GetByHeader(ss, HEADERNAMES.materials, thisRow);
+    new Emailer({
+      email : email, 
+      status : status,
+      projectname : projectname,
+      jobnumber : jobnumber,
+      material1Quantity : material1Quantity,
+    })
+  }
+
   SetStatusDropdowns();
   FixStatus();
   FixMissingTickets();

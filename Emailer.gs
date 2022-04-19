@@ -22,7 +22,7 @@ class Emailer
     this.designspecialistemail = designspecialistemail ? designspecialistemail : `codyglen@berkeley.edu`;
     this.email = email ? email : ``;
     this.status = status ? status : STATUS.queued.plaintext;
-    this.name = name ? name : `Your Name`;
+    this.name = name ? name : `Self-Service Printing User`;
 
     this.message = new CreateMessage({
       name : name,
@@ -118,7 +118,7 @@ class Emailer
 
 
 const _testEmailer = () => {
-  Object.values(STATUSDATA).forEach(async (status) => {
+  Object.values(STATUS).forEach(async (status) => {
     await new Emailer({
       email : "codyglen@berkeley.edu",
       status : status.plaintext,
@@ -127,8 +127,6 @@ const _testEmailer = () => {
       jobnumber : 9234875,
       material1Quantity : 200,
       material2Quantity : 20,
-      designspecialist : `Cody Glen`,
-      designspecialistemaillink : `<a href="mailto:codyglen@berkeley.edu">codyglen@berkeley.edu</a>`, 
     })
   })
 }

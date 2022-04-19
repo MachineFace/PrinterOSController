@@ -34,6 +34,41 @@ const PickupByBarcode = () => {
   progress.setValue('Print Number not found. Try again.');
 } 
 
+const MarkAsAbandonedByBarcode = async () => {
+  const jobnumber = OTHERSHEETS.Scanner.getRange(3,2).getValue();
+  let progress = OTHERSHEETS.Scanner.getRange(4,2);
+
+  progress.setValue(`Searching for job number...`);
+  if (jobnumber == null || jobnumber == "") {
+    progress.setValue(`No job number provided. Select the yellow cell, scan, then press enter to make sure the cell's value has been changed.`);
+    return;
+  }
+  Object.values(SHEETS).forEach(sheet => {
+    const textFinder = sheet.createTextFinder(jobnumber);
+    const searchFind = textFinder.findNext();
+    if (searchFind != null) {
+      let searchRow = searchFind.getRow();
+      SetByHeader(sheet, HEADERNAMES.status, searchRow, STATUS.abandoned.plaintext);
+      progress.setValue(`Job number ${jobnumber} marked as abandoned. Sheet: ${sheet.getSheetName()} row: ${searchRow}`);
+      console.info(`Job number ${jobnumber} marked as abandoned. Sheet: ${sheet.getSheetName()} row: ${searchRow}`);
+
+      const email = GetByHeader(sheet, HEADERNAMES.email, searchRow);
+      const projectname = GetByHeader(sheet, HEADERNAMES.filename, searchRow);
+      const material1Quantity = GetByHeader(sheet, HEADERNAMES.materials, searchRow);
+      new Emailer({
+        email : email, 
+        status : STATUS.abandoned.plaintext,
+        projectname : projectname,
+        jobnumber : jobnumber,
+        material1Quantity : material1Quantity,
+      })
+      progress.setValue(`Owner ${email} of abandoned job: ${jobnumber} emailed..`);
+      return;
+    }
+  });
+  progress.setValue(`Job number not found. Try again.`);
+}
+
 
 /**
  * -----------------------------------------------------------------------------------------------------------------

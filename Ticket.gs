@@ -28,11 +28,11 @@ class Ticket
     this.projectname = projectname ? projectname : `Project Name`;
     this.material1Quantity = material1Quantity ? material1Quantity : 0;
     this.material2Quantity = material2Quantity ? material2Quantity : 0;
-    this.ticketName = ticketName ? ticketName : `PrinterOS Ticket`;
+    this.jobID = jobID ? jobID : 12934871;
+    this.ticketName = ticketName ? ticketName : `PrinterOSTicket-${this.jobID}`;
     this.printerID = printerID ? printerID : `79165`;
     this.printerName = printerName ? printerName : `Spectrum`;
     this.printDuration = printDuration ? printDuration : 2000;
-    this.jobID = jobID ? jobID : 12934871;
     this.filename = filename ? filename : `file.gcode`;
     this.image = image;
   }
@@ -163,6 +163,7 @@ const _testTicket = () => {
       submissiontime : new Date(),
       name : "Stu Dent",
       email : info.email,
+      jobID : info.id,
       projectname : info.filename,
       material1Quantity : 5000,
       material2Quantity : 9000,

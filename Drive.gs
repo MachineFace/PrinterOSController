@@ -2,11 +2,11 @@
  * -----------------------------------------------------------------------------------------------------------------
  * Class for Working with Google Drive
  */
-class Driver
+class DriveController
 {
   constructor() {
     this.root = DriveApp.getRootFolder();
-    this.destination = DriveApp.getFoldersByName(`Job Tickets`);
+    this.ticketFolder = DriveApp.getFoldersByName(`Job Tickets`);
     this.destinationID = DriveApp.getFolderById(`1OJj0dxsa2Sf_tIBUnKm_BDmY7vFNMXYC`);
     this.now = new Date();
     this.dateMinusOneTwenty = new Date(new Date().setDate(new Date().getDate() - 120));
@@ -24,7 +24,7 @@ class Driver
 
   MoveTicketsOutOfRoot () {
     const files = this.GetAllFileNamesInRoot();
-    console.info(`Destination ----> ${this.destination.next().getName()}`);
+    console.info(`Destination ----> ${this.ticketFolder.next().getName()}`);
     files.forEach(file => {
       let name = file.getName();
       if(name == `Job Ticket` || name == `Job Ticket-[object Object]` || name == `PrinterOS Ticket` || name.includes(`Job Ticket-`)) {
@@ -40,7 +40,7 @@ class Driver
 
   CountTickets () {
     let count = 0;
-    let files = this.destination.next().getFiles();
+    let files = this.ticketFolder.next().getFiles();
     while (files.hasNext()) {
       count++;
       files.next();
@@ -50,14 +50,14 @@ class Driver
   }
 
   TrashOldTickets () {
-    let files = this.destination.next().getFiles();
+    let files = this.ticketFolder.next().getFiles();
     while (files.hasNext()) {
       let file = files.next();
       let date = file.getDateCreated();
       if(date < this.dateMinusOneTwenty) {
-        console.warn(`Deleting ----> Name : ${file.getName()}, ID : ${file.getId()}, Date : ${file.getDateCreated()}`);
+        // console.warn(`Deleting ----> Name : ${file.getName()}, ID : ${file.getId()}, Date : ${file.getDateCreated()}`);
         file.setTrashed(true);
-        console.warn(`Removed : ${file.getId()}`);
+        console.warn(`Removed ----> Name : ${file.getName()}, ID : ${file.getId()}, Date : ${file.getDateCreated()}`);
       } 
     } 
   }
@@ -74,8 +74,9 @@ class Driver
  * -----------------------------------------------------------------------------------------------------------------
  * Main Cleanup Function
  */
-const CleanupDrive = () => new Driver().MoveTicketsOutOfRoot();
-
+const CleanupDrive = () => new DriveController().MoveTicketsOutOfRoot();
+const TrashOldTickets = () => new DriveController().TrashOldTickets();
+const CountTickets = () => new DriveController().CountTickets();
 
 /**
  * Get Drive ID from URL
@@ -103,11 +104,10 @@ const GetDriveIDFromUrl = (url) => {
  */
 const _testDrive = () => {
   // let date = new Date();
-  // let dateMinusNinety = new Date(new Date().setDate(date.getDate() - 90));
-  // const fromDate = date.toISOString().split('T')[0];
-  // const toDate = new Date().toISOString().split('T')[0];
+  // let dateMinusNinety = new Date(new Date().setDate(date.getDate() - 120));
   // console.info(`90 Days ago : ${dateMinusNinety}, Now : ${date}`);
-  let d = new Driver().CountTickets();
+  let d = new DriveController();
+  d.TrashOldTickets();
 }
 
 
