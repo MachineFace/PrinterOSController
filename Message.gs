@@ -195,6 +195,7 @@ const _testMessages = async () => {
   console.warn(`FAILED ---> ${message.failedMessage}`);
   console.warn(`BILLED ---> ${message.billedMessage}`);
   console.warn(`NO ACCESS ---> ${message.noAccessMessage}`);
+  console.warn(`ABANDONED ---> ${message.abandonedMessage}`);
 
   const message2 = new CreateMessage({});
   console.info(`DEFAULT ---> ${message2.defaultMessage}`);
@@ -205,7 +206,8 @@ const _testMessages = async () => {
   console.info(`FAILED ---> ${message2.failedMessage}`);
   console.info(`BILLED ---> ${message2.billedMessage}`);
   console.info(`NO ACCESS ---> ${message2.noAccessMessage}`);
-
+  console.warn(`ABANDONED ---> ${message.abandonedMessage}`);
+  
   console.timeEnd(`Execution Timer`);
   
 }

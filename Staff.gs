@@ -112,6 +112,55 @@ class Manager extends DesignSpecialist
 
 /**
  * ----------------------------------------------------------------------------------------------------------------
+ * Create a Design Specialist from spreadsheet and return a list
+ * @returns {[string]} DSList
+ */
+const BuildStaff = () => {
+  let staff = {};
+  let range = OTHERSHEETS.Staff.getRange(2, 1, OTHERSHEETS.Staff.getLastRow() - 1, 5).getValues();
+  let culled = range.filter(Boolean);
+
+  culled.forEach( (row, index) => {
+    let name = row[0];
+    let fullname = row[1];
+    let email = row[2];
+    let link = row[3];
+    let type = row[4];
+    // console.info(`Name : ${name}, Full : ${fullname}, Email : ${email}, Link : ${link}`);
+    if(email && !link) {
+      link = `<a href = "${email}">${email}</a>`;
+      OTHERSHEETS.Staff.getRange(OTHERSHEETS.Staff.getLastRow() - 1, 4).setValue(link);
+    }
+    if(type == "DS") {
+      let ds = new DesignSpecialist({
+        name : name, 
+        fullname : fullname, 
+        email : email
+      });
+      staff[name] = ds;
+    } else if(type == "MA") {
+      let ma = new Manager({
+        name : name, 
+        fullname : fullname, 
+        email : email
+      });
+      staff[name] = ma;
+    } else if(type == "SS") {
+      let ss = new StudentSupervisor({
+        name : name, 
+        fullname : fullname, 
+        email : email
+      });
+      staff[name] = ss;
+    }
+  });
+  console.info(staff);
+  return staff;
+}
+
+
+/**
+ * ----------------------------------------------------------------------------------------------------------------
  * Return Staff Email as a string.
  */
 const StaffEmailAsString = () => {
