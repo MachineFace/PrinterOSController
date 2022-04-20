@@ -22,12 +22,15 @@ class Emailer
     this.designspecialistemail = designspecialistemail ? designspecialistemail : `codyglen@berkeley.edu`;
     this.email = email ? email : ``;
     this.status = status ? status : STATUS.queued.plaintext;
+
     this.name = name ? name : `Self-Service Printing User`;
+    this.projectname = projectname ? projectname : `Your Project Name`;
+    this.jobnumber = jobnumber ? jobnumber : 1000000001;
 
     this.message = new CreateMessage({
-      name : name,
-      projectname : projectname ? projectname : `Your Project Name`,
-      jobnumber : jobnumber ? jobnumber : 100000001,
+      name : this.name,
+      projectname : this.projectname,
+      jobnumber : this.jobnumber,
       material1Quantity : material1Quantity ? material1Quantity : 0,
       material2Quantity : material2Quantity ? material2Quantity : 0,
       designspecialist : designspecialist ? designspecialist : `Cody Glen`,

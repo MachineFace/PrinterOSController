@@ -9,10 +9,10 @@
  */
 const PickupByBarcode = () => {
   const jobnumber = OTHERSHEETS.Scanner.getRange(3,2).getValue();
-  let progress = OTHERSHEETS.Scanner.getRange(4,2);
-  progress.setValue(`Searching for Print #${jobnumber}.......`);
+  let progressUpdate = OTHERSHEETS.Scanner.getRange(4,2);
+  progressUpdate.setValue(`Searching for Print #${jobnumber}.......`);
   if (jobnumber == null || jobnumber == "") {
-    progress.setValue(`No Print Number provided! Select the yellow cell, scan, then press enter to make sure the cell's value has been changed.`);
+    progressUpdate.setValue(`No Print Number provided! Select the yellow cell, scan, then press enter to make sure the cell's value has been changed.`);
     return;
   }
 
@@ -26,47 +26,55 @@ const PickupByBarcode = () => {
       
       // change status to picked up
       sheet.getRange(searchRow, 1, 1, 1).setValue(STATUS.pickedUp.plaintext);
-      progress.setValue(`Print #${jobnumber} marked as "Picked-up". Printer: ${key}, Row: ${searchRow}`);
+      progressUpdate.setValue(`Print #${jobnumber} marked as "Picked-up". Printer: ${key}, Row: ${searchRow}`);
       console.info(`Print #${jobnumber} marked as "Picked-up". Printer: ${key}, Row: ${searchRow}`);
       return;
     }
   }
-  progress.setValue('Print Number not found. Try again.');
+  progressUpdate.setValue('Print Number not found. Try again.');
 } 
 
+
+/**
+ * Mark a job as abandoned and send an email to that student
+ */
 const MarkAsAbandonedByBarcode = async () => {
   const jobnumber = OTHERSHEETS.Scanner.getRange(3,2).getValue();
-  let progress = OTHERSHEETS.Scanner.getRange(4,2);
-
-  progress.setValue(`Searching for job number...`);
-  if (jobnumber == null || jobnumber == "") {
-    progress.setValue(`No job number provided. Select the yellow cell, scan, then press enter to make sure the cell's value has been changed.`);
+  let progressUpdate = OTHERSHEETS.Scanner.getRange(4,2);
+  progressUpdate.setValue(`Searching for job number...`);
+  let res = {};
+  if (!jobnumber) {
+    progressUpdate.setValue(`No job number provided. Select the yellow cell, scan, then press enter to make sure the cell's value has been changed.`);
     return;
+  } else {
+    res = FindOne(jobnumber);
   }
-  Object.values(SHEETS).forEach(sheet => {
-    const textFinder = sheet.createTextFinder(jobnumber);
-    const searchFind = textFinder.findNext();
-    if (searchFind != null) {
-      let searchRow = searchFind.getRow();
-      SetByHeader(sheet, HEADERNAMES.status, searchRow, STATUS.abandoned.plaintext);
-      progress.setValue(`Job number ${jobnumber} marked as abandoned. Sheet: ${sheet.getSheetName()} row: ${searchRow}`);
-      console.info(`Job number ${jobnumber} marked as abandoned. Sheet: ${sheet.getSheetName()} row: ${searchRow}`);
+  if(res == null) {
+    progressUpdate.setValue(`Job number not found. Try again.`);
+  } else {
+    let sheet = SHEETS[res.sheetName];
+    let row = res.row;
+    let email = res.email;
+    let projectname = res.filename;
+    let material1Quantity = res.materials;
+    SetByHeader(sheet, HEADERNAMES.status, row, STATUS.abandoned.plaintext);
+    progressUpdate.setValue(`Job number ${jobnumber} marked as abandoned. Sheet: ${sheet.getSheetName()} row: ${row}`);
+    console.info(`Job number ${jobnumber} marked as abandoned. Sheet: ${sheet.getSheetName()} row: ${row}`);
 
-      const email = GetByHeader(sheet, HEADERNAMES.email, searchRow);
-      const projectname = GetByHeader(sheet, HEADERNAMES.filename, searchRow);
-      const material1Quantity = GetByHeader(sheet, HEADERNAMES.materials, searchRow);
-      new Emailer({
-        email : email, 
-        status : STATUS.abandoned.plaintext,
-        projectname : projectname,
-        jobnumber : jobnumber,
-        material1Quantity : material1Quantity,
-      })
-      progress.setValue(`Owner ${email} of abandoned job: ${jobnumber} emailed..`);
-      return;
-    }
-  });
-  progress.setValue(`Job number not found. Try again.`);
+    progressUpdate.setValue(`Emailing ${email}......`);
+    await new Emailer({
+      email : email, 
+      status : STATUS.abandoned.plaintext,
+      projectname : projectname,
+      jobnumber : jobnumber,
+      material1Quantity : material1Quantity,
+    })
+    progressUpdate.setValue(`Owner ${email} of abandoned job: ${jobnumber} emailed..`);
+    return;
+
+  }
+
+    
 }
 
 

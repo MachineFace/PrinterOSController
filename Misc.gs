@@ -42,6 +42,34 @@ const GetColumnDataByHeader = (sheet, columnName) => {
 };
 
 
+/**
+ * ----------------------------------------------------------------------------------------------------------------
+ * Return the values of a row by the number
+ * @param {sheet} sheet
+ * @param {number} row
+ * @returns {dict} {header, value}
+ */
+const GetRowData = (sheet, row) => {
+  let dict = {};
+  try {
+    let headers = sheet.getRange(1, 1, 1, sheet.getMaxColumns()).getValues()[0];
+    headers.forEach( (name, index) => {
+      headers[index] = Object.keys(HEADERNAMES).find(key => HEADERNAMES[key] === name);
+    })
+    let data = sheet.getRange(row, 1, 1, sheet.getMaxColumns()).getValues()[0];
+    headers.forEach( (header, index) => {
+      dict[header] = data[index];
+    });
+    dict[`sheetName`] = sheet.getSheetName();
+    dict[`row`] = row;
+    // console.info(dict);
+    return dict;
+  } catch (err) {
+    console.error(`${err} : GetRowData failed - Sheet: ${sheet} Row: ${row}`);
+  }
+}
+
+
 
 /**
  * ----------------------------------------------------------------------------------------------------------------
@@ -109,6 +137,30 @@ const Search = (value) => {
   })
   // console.info(JSON.stringify(res));
   return res;
+}
+
+
+/**
+ * Search all Sheets for one specific value
+ * @required {string} value
+ * @returns {[sheet, [number]]} [sheetname, row]
+ */
+const FindOne = (value) => {
+  if (value) value.toString().replace(/\s+/g, "");
+  let res = {};
+  for(const [key, sheet] of Object.entries(SHEETS)) {
+    const finder = sheet.createTextFinder(value).findNext();
+    if (finder != null) {
+      // res[key] = finder.getRow();
+      res = GetRowData(sheet, finder.getRow());
+    }
+  }
+  return res;
+}
+const _testFindOne = () => {
+  num = 2503333;
+  const res = FindOne(num);
+  console.info(res);
 }
 
 /**
