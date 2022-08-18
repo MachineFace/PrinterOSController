@@ -11,8 +11,7 @@ class Emailer
     name : name,
     projectname : projectname,
     jobnumber : jobnumber,
-    material1Quantity : material1Quantity,
-    material2Quantity : material2Quantity,
+    weight : weight,
     designspecialist :designspecialist,
     designspecialistemail : designspecialistemail,
     designspecialistemaillink : designspecialistemaillink, 
@@ -26,13 +25,13 @@ class Emailer
     this.name = name ? name : `Self-Service Printing User`;
     this.projectname = projectname ? projectname : `Your Project Name`;
     this.jobnumber = jobnumber ? jobnumber : 1000000001;
+    this.weight = weight ? weight : 0.0;
 
     this.message = new CreateMessage({
       name : this.name,
       projectname : this.projectname,
       jobnumber : this.jobnumber,
-      material1Quantity : material1Quantity ? material1Quantity : 0,
-      material2Quantity : material2Quantity ? material2Quantity : 0,
+      weight : this.weight,
       designspecialist : designspecialist ? designspecialist : `Cody Glen`,
       designspecialistemaillink : designspecialistemaillink ? designspecialistemaillink : `<a href="${this.designspecialistemail}">${this.designspecialistemail}</a>`,
     });
@@ -128,8 +127,7 @@ const _testEmailer = () => {
       name : `Dingus Dongus`,
       projectname : `Dingus Project`,
       jobnumber : 9234875,
-      material1Quantity : 200,
-      material2Quantity : 20,
+      weight : 200,
     })
   })
 }

@@ -1,6 +1,8 @@
 /**
  * Colorizer Class for coloring rows.
+ * @NOTIMPLEMENTED
  */
+/**
 class Colorizer
 {
   constructor({ 
@@ -75,11 +77,12 @@ class Colorizer
 const _testColorizer = async () => {
   const c = new Colorizer({ rowNumber : 2, status : STATUS.queued.plaintext });
 }
-
+*/
 
 
 /**
  * Set the Conditional Formatting for each page
+ * @TRIGGERED
  */
 const SetConditionalFormatting = () => {
   let statuses = [];
@@ -104,7 +107,7 @@ const SetConditionalFormatting = () => {
         .whenFormulaSatisfied(`=$A2="${STATUS.cancelled.plaintext}"`)
         .setRanges([sheet.getRange(2, 1, sheet.getMaxRows(), sheet.getMaxColumns()),])
         .setBackground(COLORS.purle_light)
-        .setFontColor(COLORS.purple_dark)
+        .setFontColor(COLORS.purple)
         .build()
       ,
       SpreadsheetApp.newConditionalFormatRule()
@@ -125,7 +128,7 @@ const SetConditionalFormatting = () => {
         .whenFormulaSatisfied(`=$A2="${STATUS.failed.plaintext}"`)
         .setRanges([sheet.getRange(2, 1, sheet.getMaxRows(), sheet.getMaxColumns()),])
         .setBackground(COLORS.red_light)
-        .setFontColor(COLORS.red_dark_1)
+        .setFontColor(COLORS.red)
         .build()
       ,
       SpreadsheetApp.newConditionalFormatRule()

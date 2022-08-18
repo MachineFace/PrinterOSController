@@ -34,6 +34,9 @@ class PrinterOS {
       username : this.username,
       password : this.password,
     }
+    // this.session = this.poster.Post(this.root, repo, payload);
+    // console.info(`SESSION -----> ${session}`)
+    // return this.session;
     const params = {
       "method" : "POST",
       "payload" : payload,
@@ -357,6 +360,74 @@ class PrinterOS {
     }
   }
 
+  /**
+   * Get Material Weight
+   * @param {number} jobID
+   * @returns {number} Weight
+   */
+  async GetMaterialWeight(jobID) {
+    const repo = "/get_job_info";
+    const payload = {
+      "session" : this.session,
+      "job_id" : jobID,
+    }
+    const params = {
+      "method" : "POST",
+      "payload" : payload,
+      followRedirects : true,
+      muteHttpExceptions : true
+    };
+
+    const html = await UrlFetchApp.fetch(this.root + repo, params);
+    const responseCode = html.getResponseCode();
+
+    // console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+
+    if(responseCode == 200) {
+      const response = html.getContentText();
+      const result = JSON.parse(response)["result"];
+      if(result == true) {
+        const weight = JSON.parse(response)["message"].weight ? JSON.parse(response)["message"].weight : 0.0;
+        return weight;
+      } else return false;
+    }
+  }
+
+  /**
+   * Calculate Cost of a Job
+   * @param {number} JobId
+   * @param {number} Unit Cost
+   * @returns {number} Total Cost
+   */
+  async CalculateCost(jobID) {
+    const repo = "/get_job_info";
+    const payload = {
+      "session" : this.session,
+      "job_id" : jobID,
+    }
+    const params = {
+      "method" : "POST",
+      "payload" : payload,
+      followRedirects : true,
+      muteHttpExceptions : true
+    };
+
+    const html = await UrlFetchApp.fetch(this.root + repo, params);
+    const responseCode = html.getResponseCode();
+
+    // console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+
+    if(responseCode == 200) {
+      const response = html.getContentText();
+      const result = JSON.parse(response)["result"];
+      if(result == true) {
+        const weight = JSON.parse(response)["message"].weight ? JSON.parse(response)["message"].weight : 0.0;
+        const price = Number(weight * COSTMULTIPLIER).toFixed(2);
+        return price;
+      } else return false;
+    }
+  }
+
 
   /**
    * Get WorkGroup Numbers
@@ -591,71 +662,6 @@ class PrinterOS {
     }
   }
 
-  async WriteJobDetailsToSheet (data, sheet) {
-    // Loop through to get last row and set status to received
-    const thisRow = sheet.getLastRow() + 1;
-    // console.info(`DATA: ${JSON.stringify(data)}`);
-    try {
-      const printerID = data["printer_id"];
-      sheet.getRange(thisRow, 2).setValue(printerID);
-      const printerName = this.GetPrinterNameFromID(printerID);
-      sheet.getRange(thisRow, 3).setValue(printerName);
-      const jobID = data["id"];
-      sheet.getRange(thisRow, 4).setValue(jobID);
-      const timestamp = data["datetime"];
-      sheet.getRange(thisRow, 5).setValue(timestamp.toString());
-      const email = data["email"];
-      sheet.getRange(thisRow, 6).setValue(email.toString());
-      const status = data["status_id"];
-      sheet.getRange(thisRow, 7).setValue(status.toString());
-      const duration = data["printing_duration"];
-      const d = +Number.parseFloat(duration) / 3600;
-      sheet.getRange(thisRow, 8).setValue(d.toFixed(2).toString());
-
-      const elapsed = data["print_time"];
-      sheet.getRange(thisRow, 10).setValue(elapsed.toString());
-      const materials = data["material_type"];
-      sheet.getRange(thisRow, 11).setValue(materials.toString());
-      const cost = data["cost"];
-      sheet.getRange(thisRow, 12).setValue(cost.toString());
-
-      const filename = data["filename"];
-      sheet.getRange(thisRow, 15).setValue(filename.toString());
-
-      const picture = data["picture"];
-      sheet.getRange(thisRow, 13).setValue(picture.toString());
-      
-      if(status == 11 || status == "11") SetByHeader(sheet, HEADERNAMES.status, thisRow, STATUS.queued.plaintext);
-      else if(status == 21 || status == "21") SetByHeader(sheet, HEADERNAMES.status, thisRow, STATUS.inProgress.plaintext); 
-      else if(status == 43 || status == "43") SetByHeader(sheet, HEADERNAMES.status, thisRow, STATUS.failed.plaintext);
-      else if(status == 45 || status == "45") SetByHeader(sheet, HEADERNAMES.status, thisRow, STATUS.cancelled.plaintext);
-      else if(status == 77 || status == "77") SetByHeader(sheet, HEADERNAMES.status, thisRow, STATUS.complete.plaintext);
-      else SetByHeader(sheet, HEADERNAMES.status, thisRow, STATUS.queued.plaintext);
-    } catch (err) {
-      console.error(`${err} : Couldn't write to sheet....`);
-    }
-
-    try {
-      let imageBLOB = await GetImage(picture);
-      const ticket = await new Ticket({
-        submissionTime : timestamp,
-        email : email,
-        printerName : printerName,
-        printerID : printerID,
-        printDuration : duration,
-        material1Quantity : materials,
-        jobID : jobID,
-        filename : filename,
-        image : imageBLOB, 
-      }).CreateTicket();
-      const url = ticket.getUrl();
-      sheet.getRange(thisRow, 14).setValue(url.toString());
-    } catch (err) {
-      console.error(`${err} : Couldn't generate a ticket....`);
-    }
-
-  }
-
   _CountUnique (iterable) {
     return new Set(iterable).size;
   }
@@ -663,7 +669,100 @@ class PrinterOS {
 }
 
 
+/**
+ * @NOTIMPLEMENTED
+ */
+class APICall {
+  constructor () {
+    this.root = 'https://cloud.3dprinteros.com/apiglobal';
+    this.username = "jacobsprojectsupport@berkeley.edu";
+    this.password = "Jacobsde$ign1";
+    this.session;
+  }
+  
+  async Get (root, repo) {
+    await this._Login();
+    const params = {
+      "method" : "GET",
+      followRedirects : true,
+      muteHttpExceptions : true
+    };
 
+    const html = await UrlFetchApp.fetch(`${root}${repo}`, params);
+    const responseCode = html.getResponseCode();
+    // console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+
+    if(responseCode == 200) {
+      const response = html.getContentText();
+      const result = JSON.parse(response)["result"];
+      if(result == true) {
+        return JSON.parse(response)["message"];
+      } else return false;
+    }
+    await this._Logout();
+  }
+
+  async Post (repo, payload,) {
+    await this._Login()
+    const params = {
+      "method" : "POST",
+      "payload" : payload,
+      followRedirects : true,
+      muteHttpExceptions : true
+    };
+
+    const html = await UrlFetchApp.fetch(`${this.root}${repo}`, params);
+    const responseCode = html.getResponseCode();
+    // console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+
+    if(responseCode == 200) {
+      const response = html.getContentText();
+      const result = JSON.parse(response)["result"];
+      if(result == true) {
+        return JSON.parse(response)["message"];
+      } else return false;
+    }
+    await this._Logout();
+  }
+
+  async _Login() {
+    const repo = "/login/";
+    const payload = {
+      username : this.username,
+      password : this.password,
+    }
+    let res = await this.Post(repo, payload);
+    console.info(`SESSION -----> ${res[`session`]}`);
+    this.session = res[`session`];
+    return res[`session`];
+  }
+
+  async _Logout() {
+    const repo = "/logout/";
+    const payload = { session : this.session };
+    let res = await this.Post(repo, payload);
+    console.warn(`Logging Out ---> ${res}`)
+    return res;
+  }
+
+  async CheckSession() {
+    this._Login()
+    .then( async() => {
+      const repo = "/check_session"
+      const payload = {
+        "session" : this.session,
+      }
+      let res = await this.Post(repo, payload);
+      console.warn(`Checking Session ----> ${res}`);
+      return await res;
+    })
+    .then(this._Logout());
+  }
+}
+const _testAPICall = () => {
+  const p = new APICall();
+  p._Login();
+}
 
 
 /**
@@ -702,20 +801,6 @@ const _FetchAll = async () => {
 
 } 
 */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * Remove Dup Users
@@ -761,7 +846,7 @@ const UpdateAllFilenames = () => {
           let filename = info["filename"];
           let split = filename.slice(0, -6);
           console.info(`INDEX: ${index + 2} : FILENAME ---> ${split}`);
-          sheet.getRange(index + 2, 15, 1, 1).setValue(split);
+          SetByHeader(sheet, HEADERNAMES.filename, index + 2, split);
         });
       })
       .finally(pos.Logout());
@@ -794,9 +879,12 @@ const FinalReport = async () => {
 */
 
 
+
+
 /**
  * -----------------------------------------------------------------------------------------------------------------
  * Get Printer IDs
+ * @NEEDED for adding new printers
  */
 const GetPrinterIDs = () => {
   const p = new PrinterOS();
@@ -812,12 +900,45 @@ const GetPrinterJobs = () => {
   const p = new PrinterOS();
   p.Login()
     .then(async () => {
-      const j = await p.GetPrintersJobList(PRINTERDATA.Aurum.printerID);
+      const j = await p.CalculateCost(2643420)
       console.info(j)
     })
 }
 
 
+
+
+const UpdateSingleSheetMaterials = (sheet) => {
+  try {
+    console.info(`Updating Materials and Costs for ---> ${sheet.getSheetName()}`);
+    const pos = new PrinterOS();
+    pos.Login()
+    .then(() => {
+      let jobIds = GetColumnDataByHeader(sheet, HEADERNAMES.jobID);
+      let culled = jobIds.filter(Boolean);
+      console.info(culled);
+      culled.forEach( async(jobId, index) => {
+        const weight = await pos.GetMaterialWeight(jobId);
+        const price = Number(weight * COSTMULTIPLIER).toFixed(2);
+        // console.info(`Weight = ${weight}, Price = ${price}`);
+        SetByHeader(sheet, HEADERNAMES.weight, index + 2, weight);
+        SetByHeader(sheet, HEADERNAMES.cost, index + 2, price);
+      });
+    })
+    .finally(() => {
+      pos.Logout();
+      console.info(`Successfully Updated ${sheet.getSheetName()}`);
+    });
+  } catch(err){
+    console.error(`${err} : Couldn't update ${sheet.getSheetName()} with filename. Maybe it just took too long?...`);
+  } 
+}
+const TryUpdateSingleSheetCosts = () => {
+  UpdateSingleSheetMaterials(SHEETS.Zardoz);
+}
+const UpdateAllMaterialCosts = () => {
+  Object.values(SHEETS).forEach(sheet => UpdateSingleSheetMaterials(sheet));
+}
 
 
 

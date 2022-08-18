@@ -6,45 +6,32 @@
 class Ticket
 {
   constructor({
-    designspecialist : designspecialist, 
-    submissiontime : submissiontime, 
-    name : name, 
-    email : email, 
-    projectname : projectname, 
-    material1Quantity : material1Quantity, 
-    material2Quantity : material2Quantity,
-    ticketName : ticketName,
-    printerID : printerID,
-    printerName : printerName,
-    printDuration : printDuration,
-    jobID : jobID,
-    filename : filename,
+    designspecialist : designspecialist = `Staff`, 
+    submissiontime : submissiontime = new Date(), 
+    name : name = `Student Name`, 
+    email : email = `Student Email`, 
+    projectname : projectname = `Project Name`, 
+    weight : weight = 0.0, 
+    printerID : printerID = `79165`,
+    printerName : printerName = `Spectrum`,
+    jobID : jobID = 12934871,
+    ticketName : ticketName = `PrinterOSTicket-${jobID}`,
+    filename : filename = `file.gcode`,
     image : image,
   }){
-    this.designspecialist = designspecialist ? designspecialist : `Staff`;
-    this.submissiontime = submissiontime ? submissiontime : new Date();
-    this.name = name ? name : `Student Name`;
-    this.email = email ? email : `Student Email`;
-    this.projectname = projectname ? projectname : `Project Name`;
-    this.material1Quantity = material1Quantity ? material1Quantity : 0;
-    this.material2Quantity = material2Quantity ? material2Quantity : 0;
-    this.jobID = jobID ? jobID : 12934871;
-    this.ticketName = ticketName ? ticketName : `PrinterOSTicket-${this.jobID}`;
-    this.printerID = printerID ? printerID : `79165`;
-    this.printerName = printerName ? printerName : `Spectrum`;
-    this.printDuration = printDuration ? printDuration : 2000;
-    this.filename = filename ? filename : `file.gcode`;
+    this.designspecialist = designspecialist;
+    this.submissiontime = submissiontime;
+    this.name = name;
+    this.email = email;
+    this.projectname = projectname;
+    this.weight = weight;
+    this.jobID = jobID;
+    this.ticketName = ticketName;
+    this.printerID = printerID;
+    this.printerName = printerName;
+    this.filename = filename;
     this.image = image;
   }
-
-  _ReplaceTextToImage(body, searchText, image) {
-    var next = body.findText(searchText);
-    if (!next) return;
-    var r = next.getElement();
-    r.asText().setText("");
-    var img = r.getParent().asParagraph().insertInlineImage(0, image);
-    return next;
-  };
 
   CreateTicket() {
     const jobnumber = this.jobID;
@@ -94,8 +81,7 @@ class Ticket
           ["Design Specialist:", this.designspecialist],
           ["Job Number:", this.jobID.toString()],
           ["Student Email:", this.email.toString()],
-          ["Elapsed time : ", this.printDuration.toString()],
-          ["Materials:", `PLA : ${this.material1Quantity + this.material2Quantity}`],
+          ["Materials:", `PLA : ${this.weight} grams`],
           ["Filename:", `${this.filename}`],
         ])
         .setAttributes({
@@ -155,9 +141,6 @@ const _testTicket = () => {
     info = await pos.GetJobInfo(jobID);
     image = await pos.imgBlob;
     console.info(info);
-    console.info(image);
-  })
-  .then(() => {
     const dummyObj = {
       designspecialist : "Staff",
       submissiontime : new Date(),
@@ -165,16 +148,14 @@ const _testTicket = () => {
       email : info.email,
       jobID : info.id,
       projectname : info.filename,
-      material1Quantity : 5000,
-      material2Quantity : 9000,
+      weight : info.weight,
       printerID : "123876",
       printerName : "Dingus",
-      printDuration : info.print_time,
       filename : "somefile.gcode",
       image : image,
     }
-    new Ticket(dummyObj).CreateTicket();
-  })
+    let ticket = new Ticket(dummyObj).CreateTicket();
+  });
   
   
 }
@@ -188,26 +169,24 @@ const _testTicket = () => {
  */
 const FixMissingTickets = () => {
   console.info(`Checking Tickets....`);
-  for(const [key, sheet] of Object.entries(SHEETS)) {
-    let ticketCells = sheet.getRange(2, 14, sheet.getLastRow() -1, 1).getValues();
-    ticketCells = [].concat(...ticketCells);
+  Object.values(SHEETS).forEach(sheet => {
+    let ticketCells = GetColumnDataByHeader(sheet, HEADERNAMES.ticket);
     ticketCells.forEach( async (cell, index) => {
       if(!cell) {
         let thisRow = index + 2;
         console.warn(`Sheet : ${sheet.getSheetName()}, Index : ${thisRow} is Missing a Ticket! Creating new Ticket....`);
         
-        const printerID = GetByHeader(sheet, "PrinterID", thisRow);
-        const printerName = GetByHeader(sheet, "PrinterName", thisRow);
-        const jobID = GetByHeader(sheet, "JobID", thisRow);
-        const timestamp = GetByHeader(sheet, "Timestamp", thisRow);
-        const email = GetByHeader(sheet, "Email", thisRow);
-        const status = GetByHeader(sheet, "POS Stat Code", thisRow);
-        const duration = GetByHeader(sheet, "Duration (Hours)", thisRow);
-        const elapsed = GetByHeader(sheet, "Elapsed", thisRow);
-        const materials = GetByHeader(sheet, "Materials", thisRow);
-        const cost = GetByHeader(sheet, "Cost", thisRow);
-        const filename = GetByHeader(sheet, "Filename", thisRow);
-        const picture = GetByHeader(sheet, "Picture", thisRow);
+        const printerID = GetByHeader(sheet, HEADERNAMES.printerID, thisRow);
+        const printerName = GetByHeader(sheet, HEADERNAMES.printerName, thisRow);
+        const jobID = GetByHeader(sheet, HEADERNAMES.jobID, thisRow);
+        const timestamp = GetByHeader(sheet, HEADERNAMES.timestamp, thisRow);
+        const email = GetByHeader(sheet, HEADERNAMES.email, thisRow);
+        const status = GetByHeader(sheet, HEADERNAMES.posStatCode, thisRow);
+        const duration = GetByHeader(sheet, HEADERNAMES.duration, thisRow);
+        const weight = GetByHeader(sheet, HEADERNAMES.weight, thisRow);
+        const cost = GetByHeader(sheet, HEADERNAMES.cost, thisRow);
+        const filename = GetByHeader(sheet, HEADERNAMES.filename, thisRow);
+        const picture = GetByHeader(sheet, HEADERNAMES.picture, thisRow);
         
         let imageBLOB = await GetImage(picture);
 
@@ -216,18 +195,17 @@ const FixMissingTickets = () => {
           email : email,
           printerName : printerName,
           printerID : printerID,
-          printDuration : duration,
-          material1Quantity : materials,
+          weight : weight,
           jobID : jobID,
           filename: filename,
           image : imageBLOB, 
         }).CreateTicket();
         const url = ticket.getUrl();
-        sheet.getRange(thisRow, 14).setValue(url.toString());
+        SetByHeader(sheet, HEADERNAMES.ticket, thisRow, url.toString());
         console.warn(`Ticket Created....`);
       }
     });
-  }
+  });
   console.info(`Tickets Checked and Fixed....`);
 
 }

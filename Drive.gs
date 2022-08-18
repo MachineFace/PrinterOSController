@@ -1,6 +1,7 @@
 /**
  * -----------------------------------------------------------------------------------------------------------------
  * Class for Working with Google Drive
+ * @TRIGGERED once a week
  */
 class DriveController
 {

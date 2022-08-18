@@ -22,19 +22,15 @@ class CleanupSheet
     const records = [];
     let lastRow = sheet.getLastRow() - 1;
     if(lastRow <= 1) lastRow = 1;
-    let numbers = sheet.getRange(2, 4, lastRow, 1).getValues();
+    let numbers = GetColumnDataByHeader(sheet, HEADERNAMES.jobID);
     numbers.forEach(num => {
-      if(num != null || num != undefined || num != "" || num != " ") {
-        records.push(num.toString());
-      }
+      if(num != null || num != undefined || num != "" || num != " ") records.push(num.toString());
     });
     
     let indexes = [];
     records.forEach( (item, index) => {
-      if(records.indexOf(item) !== index) {
-        indexes.push(index + 2);
-      }
-    })
+      if(records.indexOf(item) !== index) indexes.push(index + 2);
+    });
     const dups = records.filter((item, index) => records.indexOf(item) !== index);
     console.warn(`${sheet.getName()} : Duplicates : ${dups.length}`);
     // Remove
@@ -96,6 +92,7 @@ const RunCleanup = () => new CleanupSheet();
 /**
  * -----------------------------------------------------------------------------------------------------------------
  * Remove Duplicate Records
+ * @TRIGGERED
  */
 const TriggerRemoveDuplicates = () => {
   Object.values(SHEETS).forEach(sheet => {
@@ -124,4 +121,29 @@ const TriggerRemoveDuplicates = () => {
       console.error(`${err} : Couldn't remove duplicates. Maybe it just took too long?...`);
     }
   });
+}
+
+
+
+/**
+ * Clean the junk out of the filename
+ */
+const FileNameCleanup = (filename) => {
+  const regex = /[0-9_]/g;
+  const regex2 = /\b[.]gcode\b/g;
+  if(!filename) return;
+  else {
+    filename = filename.toString();
+    const nonums = filename.replace(regex,``);
+    const clipped = nonums.replace(regex2, ``);
+    return clipped;
+  }
+}
+
+const _testFilenameCleanup = () => {
+  filenames = GetColumnDataByHeader(SHEETS.Spectrum, HEADERNAMES.filename);
+  filenames.forEach(filename => {
+    const cleanup = FileNameCleanup(filename);
+    console.info(cleanup)
+  })
 }

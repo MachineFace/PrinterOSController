@@ -48,13 +48,13 @@ const onChange = async (e) => {
     const email = GetByHeader(ss, HEADERNAMES.email, thisRow);
     const projectname = GetByHeader(ss, HEADERNAMES.filename, thisRow);
     const jobnumber = GetByHeader(ss, HEADERNAMES.jobID, thisRow);
-    const material1Quantity = GetByHeader(ss, HEADERNAMES.materials, thisRow);
+    const weight = GetByHeader(ss, HEADERNAMES.weight, thisRow);
     new Emailer({
       email : email, 
       status : status,
       projectname : projectname,
       jobnumber : jobnumber,
-      material1Quantity : material1Quantity,
+      weight : weight,
     })
   }
 
@@ -62,9 +62,6 @@ const onChange = async (e) => {
   FixStatus();
   FixMissingTickets();
   
-  // const status = spreadSheet.getRange(thisRow, 1, 1, 1).getValue();
-  // new Colorizer({ rowNumber : thisRow, status : status, });
-
 }
 
 

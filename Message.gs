@@ -6,8 +6,7 @@
  * @param {string} projectname
  * @param {number} jobnumber
  * @param {string} approvalURL
- * @param {number} material1Quantity
- * @param {number} material2Quantity
+ * @param {number} weight
  * @param {string} designspecialist
  * @param {string} designspecialistemaillink
  */
@@ -17,8 +16,7 @@ class CreateMessage
     name : name, 
     projectname : projectname, 
     jobnumber : jobnumber, 
-    material1Quantity : material1Quantity, 
-    material2Quantity : material2Quantity,
+    weight : weight, 
     designspecialist : designspecialist, 
     designspecialistemaillink : designspecialistemaillink,
   }){
@@ -26,8 +24,7 @@ class CreateMessage
     this.projectname = projectname ? projectname : `Project Name`;
     this.jobnumber = jobnumber ? jobnumber : `Job Number`;
 
-    this.material1Quantity = material1Quantity ? material1Quantity : 0;
-    this.material2Quantity = material2Quantity ? material2Quantity : 0;
+    this.weight = weight ? weight : 0.0;
 
     this.designspecialist = designspecialist ? designspecialist : `Design Specialist`;
     this.designspecialistemaillink = designspecialistemaillink ? designspecialistemaillink : `Link`;
@@ -70,8 +67,7 @@ class CreateMessage
       message += `Please email ${this.designspecialist} at ${this.designspecialistemaillink} for further details.<br/>`;
       message += `Your Jacobs Store account will be billed for: <br/> `;
       message += `<p><ul>`;
-      message += `<li>${this.material1Quantity} of PLA </li>`;  
-      message += `<li>${this.material2Quantity} of Breakaway Support </li>`;  
+      message += `<li>${this.weight} grams of PLA </li>`;  
       message += `</ul>`;     // dont forget to end the bullet point list (unordered list)
       message += `<br/><p>`;
       message += `Completed projects can be picked up in-person, unless otherwise noted with your instructor.<br/><br/>`;
@@ -138,8 +134,7 @@ class CreateMessage
       message += `<p>Thank you for choosing Jacobs Project Support. Your project <b><i>${this.projectname}</b></i> is now <b>CLOSED.</b><br />`;
       message += `Job Number: <i>${this.jobnumber}</i>. Your Jacobs Store account has been billed for: <br/>`;
       message += `<p><ul>`;
-      message += `<li>${this.material1Quantity} of PLA </li>`;  
-      message += `<li>${this.material2Quantity} of Breakaway Support </li>`;  
+      message += `<li>${this.weight} grams of PLA </li>`;  
       message += `</ul>`;     // dont forget to end the bullet point list (unordered list)
       message += `<br/>`;
       message += `If you have not picked up your parts, they can be picked up in-person.<br/><br/>`;
@@ -181,8 +176,7 @@ const _testMessages = async () => {
     name : 'Stew Dent',
     projectname : 'Pro Ject',
     jobnumber : new JobNumberGenerator({}).GenerateJobNumber(),
-    material1Quantity : 500,
-    material2Quantity : 35,
+    weight : 523,
     designspecialist : `Mike Spec`,
     designspecialistemaillink : `LinkyLink`
   })

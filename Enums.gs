@@ -3,23 +3,35 @@
  * Code Enumerations
  */
 const PICKUPHOURS = `Monday - Friday: 11am - 1pm & 4pm - 6pm`;
+const COSTMULTIPLIER = 0.04;
 
 const COLORS = {
   green_light : `#d9ead3`,
-  green : `#00ff00`, 
+  green : `74d975`, 
   green_dark : `#93c47d`, 
+  green_dark_2 : `#38761d`,
   yellow_light : `#fff2cc`,
   yellow : `#f1c232`,
   yellow_dark : `#f1c232`,
+  yellow_dark_2 : `#bf9000`,
   orange_light : `#fce5cd`,
-  orange_dark : `#783f04`, 
-  red_dark : `#a61c00`,
-  red_dark_1 : `	#cc0000`,  
+  orange_bright : `#ff9900`,
+  orange : `#f6b26b`,
+  orange_dark : `#e69138`, 
+  orange_dark_2 : `#b45f06`,
   red_light : `#f4cccc`, 
-  grey : `#cccccc`, 
-  grey_light : `#efefef`,
-  purple_dark : `#20124d`,
+  red : `	#ff0000`,  
+  red_dark : `#cc0000`,
+  red_dark_2 : `#990000`,
+  red_dark_berry_2 : `#85200c`,
   purle_light : `	#d9d2e9`,
+  purple : `#b4a7d6`,
+  purple_dark : `#20124d`,
+  purple_dark_2 : `#351c75`,
+  grey_light : `#efefef`,
+  grey : `#cccccc`, 
+  grey_dark : `#999999`,
+  black : `#000000`,
 }
 
 const RESPONSECODES = {
@@ -233,12 +245,11 @@ const HEADERNAMES = {
   posStatCode :	`POS Stat Code`,
   duration : `Duration (Hours)`,
   notes :	`Notes`,
-  elapsedTime :	`Elapsed`,
-  materials :	`Materials`,
-  cost : `Cost`,
   picture :	`Picture`,
   ticket : `Ticket`,
-  filename : `Filename`,												
+  filename : `Filename`,
+  weight : `Material (grams)`,
+  cost : `Cost ($)`,												
 };
 
 const SHEETS = {
@@ -300,7 +311,7 @@ const NOT_JACOBS_ENUMERATED = {
   CED_DFL_PDST : 3475,
 }
 
-
+const THISGID = `1AWjs1PMJTRDXAeqhDgpGoUWQOJioNOcwbBCUAjsa6Zk`;
 
 
 const PAGESIZES = {
