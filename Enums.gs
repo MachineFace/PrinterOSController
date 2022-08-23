@@ -2,6 +2,7 @@
  * -----------------------------------------------------------------------------------------------------------------
  * Code Enumerations
  */
+const SERVICENAME = `PrinterOS Controller`;
 const PICKUPHOURS = `Monday - Friday: 11am - 1pm & 4pm - 6pm`;
 const COSTMULTIPLIER = 0.04;
 
@@ -277,7 +278,6 @@ const OTHERSHEETS = {
   Logger : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Logger"),
   Unique : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("UniqueUsers"),
   Report : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("REPORT"),
-  Oops : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("AREYOUSURE?"),
 }
 
 const WORKGROUPS = [
@@ -312,6 +312,7 @@ const NOT_JACOBS_ENUMERATED = {
 }
 
 const THISGID = `1AWjs1PMJTRDXAeqhDgpGoUWQOJioNOcwbBCUAjsa6Zk`;
+const TICKETGID = `1IsDlacmdVS-eOH1PMMjILIqaEU_I4fk-`;
 
 
 const PAGESIZES = {

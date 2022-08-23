@@ -8,12 +8,10 @@ class PrinterOS {
     // this.google_secret = "6X5vHouCqFT6GeiPp3Cjmr93";
     // this.cody_UID = "0df1ff70722211ebbc93fbb2f3299051";
     // this.uid = 'ccee6140208011eca4f4fbb2f3299051';
+    // this.password = 'tXnPVw0zkmRcuEJkBrxv';
     // this.username = "jacobsprojectsupport@berkeley.edu";
     // this.password = "Jacobsde$ign1";
-    // this.password = 'tXnPVw0zkmRcuEJkBrxv';
     this.root = 'https://cloud.3dprinteros.com/apiglobal';
-    this.username = "jacobsprojectsupport@berkeley.edu";
-    this.password = "Jacobsde$ign1";
     this.session;
     this.printerNames = [];
     this.printerIDs = [];
@@ -31,12 +29,9 @@ class PrinterOS {
   async Login() {
     const repo = "/login/";
     const payload = {
-      username : this.username,
-      password : this.password,
+      username : `jacobsprojectsupport@berkeley.edu`,
+      password : `Jacobsde$ign1`,
     }
-    // this.session = this.poster.Post(this.root, repo, payload);
-    // console.info(`SESSION -----> ${session}`)
-    // return this.session;
     const params = {
       "method" : "POST",
       "payload" : payload,
@@ -46,18 +41,18 @@ class PrinterOS {
 
     const html = await UrlFetchApp.fetch(this.root + repo, params);
     const responseCode = html.getResponseCode();
-    // console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
-    if(responseCode == 200) {
-      const response = html.getContentText();
-      const result = JSON.parse(response)["result"];
-      if(result == true) {
-        const session = JSON.parse(response)["message"]["session"];
-        console.info(`SESSION -----> ${session}`)
-        this.session = session;
-        return session;
-      } else return false;
+    if(responseCode != 200) return false; 
+    const response = html.getContentText();
+    const result = JSON.parse(response)["result"];
+    if(result == false) return false; 
+    else {
+      const session = JSON.parse(response)["message"]["session"];
+      console.info(`SESSION -----> ${session}`)
+      this.session = session;
+      return session;
     }
+    
   }
 
   /**
@@ -75,11 +70,12 @@ class PrinterOS {
     const html = await UrlFetchApp.fetch(this.root + repo, params);
     const responseCode = html.getResponseCode();
 
-    if(responseCode == 200) {
+    if(responseCode != 200) return false 
+    else {
       const response = html.getContentText();
       return JSON.parse(response)["result"];
       // console.warn(`Logged Out : ${result}`);
-    } else return false;
+    }
   }
   
 
@@ -102,14 +98,15 @@ class PrinterOS {
     const responseCode = html.getResponseCode();
 
     // console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
-
-    if(responseCode == 200) {
+    if(responseCode != 200) return false 
+    else {
       const response = html.getContentText();
       const result = JSON.parse(response)["result"];
-      if(result == true) {
+      if(result == false) return false;
+      else {
         console.info(`CHECK SESSION ---> : ${JSON.parse(response)["message"]}`);
         return JSON.parse(response)["message"];
-      } else return false;
+      }
     }
 
   }
@@ -132,17 +129,19 @@ class PrinterOS {
       muteHttpExceptions : true
     };
 
-    const html = await UrlFetchApp.fetch(this.root + repo, params);
+    const html = await UrlFetchApp.fetch(`${this.root}${repo}`, params);
     const responseCode = html.getResponseCode();
 
     // console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
     const printerListOut = [];
 
-    if(responseCode == 200) {
+    if(responseCode != 200) return false; 
+    else {
       const response = html.getContentText();
       const result = JSON.parse(response)["result"];
-      if(result == true) {
+      if(result == false) return false;
+      else {
         const printerlist = JSON.parse(response)["message"];
         printerlist.forEach(p => {
           const data = JSON.stringify(p);
@@ -152,7 +151,7 @@ class PrinterOS {
           // console.info(JSON.stringify(p));
           // printerListOut.push(JSON.stringify(p));
         })
-      } else return false;
+      }
     }
     console.info(this.printerIDs);
     console.info(this.printerIPs);
@@ -186,21 +185,22 @@ class PrinterOS {
 
     // console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
-    if(responseCode == 200) {
-      const response = html.getContentText();
-      const result = JSON.parse(response)["result"];
-      if(result == true) {
-        const printerlist = JSON.parse(response)["message"];
-        printerlist.forEach(p => {
-          this.printerIDs.push(p["id"]);
-          this.printerIPs.push(p["local_ip"]);
-          this.printerNames.push(p["name"]);
-          console.info(JSON.stringify(p));
-          list.push(JSON.stringify(p));
-        });
-        return list;
-      } else return false;
-    }
+    if(responseCode != 200) return false; 
+    const response = html.getContentText();
+    const result = JSON.parse(response)["result"];
+    if(result == false) return false; 
+
+    const printerlist = JSON.parse(response)["message"];
+    printerlist.forEach(p => {
+      this.printerIDs.push(p["id"]);
+      this.printerIPs.push(p["local_ip"]);
+      this.printerNames.push(p["name"]);
+      console.info(JSON.stringify(p));
+      list.push(JSON.stringify(p));
+    });
+    return list;
+
+    
   }
 
   /**
@@ -225,14 +225,12 @@ class PrinterOS {
 
     // console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
-    if(responseCode == 200) {
-      const response = html.getContentText();
-      const result = JSON.parse(response)["result"];
-      if(result == true) {
-        const types = JSON.parse(response)["message"];
-        return types;
-      } else return false;
-    }
+    if(responseCode != 200) return false; 
+    const response = html.getContentText();
+    const result = JSON.parse(response)["result"];
+    if(result == false) return false;
+    const types = JSON.parse(response)["message"];
+    return types;
   }
 
 
@@ -247,33 +245,30 @@ class PrinterOS {
    */
   async GetPrintersJobList (printerID)  {
     const repo = "/get_printer_jobs";
-    const payload = {
-      "session" : this.session,
-      "printer_id" : printerID,
-    }
     const params = {
       "method" : "POST",
-      "payload" : payload,
+      "payload" : {
+        "session" : this.session,
+        "printer_id" : printerID,
+      },
       followRedirects : true,
       muteHttpExceptions : true
     };
 
-    const html = await UrlFetchApp.fetch(this.root + repo, params);
+    const html = await UrlFetchApp.fetch(`${this.root}${repo}`, params);
     const responseCode = html.getResponseCode();
 
     // console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
-    if(responseCode == 200) {
-      const response = html.getContentText();
-      const result = JSON.parse(response)["result"];
-      if(result == true) {
-        const data = JSON.parse(response)["message"];
-        // data.forEach(p => {
-        //   console.info(JSON.stringify(p));
-        // })
-        return data;
-      } else return false;
-    }
+    if(responseCode != 200) return false;
+    const response = html.getContentText();
+    const result = JSON.parse(response)["result"];
+    if(result == false) return false;
+    const data = JSON.parse(response)["message"];
+    // data.forEach(p => {
+    //   console.info(JSON.stringify(p));
+    // })
+    return data;
   }
 
 
@@ -282,13 +277,12 @@ class PrinterOS {
    */
   async GetPrintersLatestJob (printerID)  {
     const repo = "/get_printer_jobs";
-    const payload = {
-      "session" : this.session,
-      "printer_id" : printerID,
-    }
     const params = {
       "method" : "POST",
-      "payload" : payload,
+      "payload" : {
+        "session" : this.session,
+        "printer_id" : printerID,
+      },
       followRedirects : true,
       muteHttpExceptions : true
     };
@@ -297,14 +291,11 @@ class PrinterOS {
     const responseCode = html.getResponseCode();
 
     // console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
-
-    if(responseCode == 200) {
-      const response = html.getContentText();
-      const result = JSON.parse(response)["result"];
-      if(result == true) {
-        return JSON.parse(response)["message"][0];
-      } else return false;
-    }
+    if(responseCode != 200) return false; 
+    const response = responseCode == 200 ? html.getContentText() : false;
+    const result = JSON.parse(response)["result"];
+    if(result == false) return false; 
+    return JSON.parse(response)["message"][0];
   }
 
 
@@ -346,18 +337,17 @@ class PrinterOS {
 
     // console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
-    if(responseCode == 200) {
-      const response = html.getContentText();
-      const result = JSON.parse(response)["result"];
-      if(result == true) {
-        const res = JSON.parse(response)["message"];
-        this.picture = res.picture;
-        this.imgBlob = this.GetJobImage();
-        res["imageBLOB"] = this.imgBlob;
-        this.jobdata = res;
-        return res;
-      } else return false;
-    }
+    if(responseCode != 200) return false; 
+    const response = html.getContentText();
+    const result = JSON.parse(response)["result"];
+    if(result == false) return false; 
+
+    const res = JSON.parse(response)["message"];
+    this.picture = res.picture;
+    this.imgBlob = this.GetJobImage();
+    res["imageBLOB"] = this.imgBlob;
+    this.jobdata = res;
+    return res;
   }
 
   /**
@@ -383,14 +373,12 @@ class PrinterOS {
 
     // console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
-    if(responseCode == 200) {
-      const response = html.getContentText();
-      const result = JSON.parse(response)["result"];
-      if(result == true) {
-        const weight = JSON.parse(response)["message"].weight ? JSON.parse(response)["message"].weight : 0.0;
-        return weight;
-      } else return false;
-    }
+    if(responseCode != 200) return false; 
+    const response = html.getContentText();
+    const result = JSON.parse(response)["result"];
+    if(result == false) return false; 
+    const weight = JSON.parse(response)["message"].weight ? JSON.parse(response)["message"].weight : 0.0;
+    return weight;
   }
 
   /**
@@ -417,15 +405,14 @@ class PrinterOS {
 
     // console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
-    if(responseCode == 200) {
-      const response = html.getContentText();
-      const result = JSON.parse(response)["result"];
-      if(result == true) {
-        const weight = JSON.parse(response)["message"].weight ? JSON.parse(response)["message"].weight : 0.0;
-        const price = Number(weight * COSTMULTIPLIER).toFixed(2);
-        return price;
-      } else return false;
-    }
+    if(responseCode != 200) return false; 
+    const response = html.getContentText();
+    const result = JSON.parse(response)["result"];
+    if(result == false) return false; 
+    const weight = JSON.parse(response)["message"].weight ? JSON.parse(response)["message"].weight : 0.0;
+    const price = Number(weight * COSTMULTIPLIER).toFixed(2);
+    return price;
+    
   }
 
 
@@ -477,14 +464,12 @@ class PrinterOS {
     const responseCode = html.getResponseCode();
 
     // console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
-
-    if(responseCode == 200) {
-      const response = html.getContentText();
-      const result = JSON.parse(response)["result"];
-      if(result == true) {
-        return JSON.parse(response)["message"];
-      } else return false;
-    }
+    if(responseCode != 200) return false; 
+    const response = html.getContentText();
+    const result = JSON.parse(response)["result"];
+    if(result == false) return false; 
+    return JSON.parse(response)["message"];
+    
   }
 
 
@@ -539,15 +524,13 @@ class PrinterOS {
     const responseCode = html.getResponseCode();
 
     // console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
-
-    if(responseCode == 200) {
-      const response = html.getContentText();
-      const result = JSON.parse(response)["result"];
-      if(result == true) {
-        const stuff = JSON.parse(response);
-        return stuff;
-      } else return false;
-    }
+    if(responseCode != 200) return false;
+    const response = html.getContentText();
+    const result = JSON.parse(response)["result"];
+    if(result == false) return false; 
+    const stuff = JSON.parse(response);
+    console.info(stuff);
+    return stuff;
   }
 
   /**
@@ -579,14 +562,11 @@ class PrinterOS {
     const responseCode = html.getResponseCode();
 
     // console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
-
-    if(responseCode == 200) {
-      const response = html.getContentText();
-      const result = JSON.parse(response)["result"];
-      if(result == true) {
-        return JSON.parse(response)["message"];
-      } else return false;
-    }
+    if(responseCode != 200) return false; 
+    const response = html.getContentText();
+    const result = JSON.parse(response)["result"];
+    if(result == false) return false; 
+    return JSON.parse(response)["message"];
   }
 
 
@@ -614,16 +594,14 @@ class PrinterOS {
     const responseCode = html.getResponseCode();
 
     // console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
-
-    if(responseCode == 200) {
-      const response = html.getContentText();
-      const result = JSON.parse(response)["result"];
-      if(result == true) {
-        const res = JSON.parse(response)["message"];
-        return res;
-      } else return false;
-    }
+    if(responseCode != 200) return false; 
+    const response = html.getContentText();
+    const result = JSON.parse(response)["result"];
+    if(result == false) return false; 
+    const res = JSON.parse(response)["message"];
+    return res;
   }
+
 
   /**
    * Get an Image
@@ -643,21 +621,19 @@ class PrinterOS {
     const html = await UrlFetchApp.fetch(repo, params);
     const responseCode = html.getResponseCode();
 
-    if(responseCode == 200) {
-      const folder = DriveApp.getFoldersByName(`Job Tickets`);
-      const blob = html.getBlob().setName(`IMAGE_${this.picture}`);
-      return blob;
-    } else return false;
+    if(responseCode != 200) return false; 
+    const blob = html.getBlob().setName(`IMAGE_${this.picture}`);
+    return blob;
   }
 
   /**
    * Helper Function to find the name from an ID
    */
   GetPrinterNameFromID (printerID) {
-    for (const [key, value] of Object.entries(PRINTERIDS)) {
-      if(printerID == value) {
-        console.info(`PrinterID : ${printerID}, Printer Name : ${key}`);
-        return key;
+    for (const [name, id] of Object.entries(PRINTERIDS)) {
+      if(printerID == id) {
+        console.info(`PrinterID : ${printerID}, Printer Name : ${name}`);
+        return name;
       }
     }
   }
@@ -668,102 +644,13 @@ class PrinterOS {
 
 }
 
-
-/**
- * @NOTIMPLEMENTED
- */
-class APICall {
-  constructor () {
-    this.root = 'https://cloud.3dprinteros.com/apiglobal';
-    this.username = "jacobsprojectsupport@berkeley.edu";
-    this.password = "Jacobsde$ign1";
-    this.session;
-  }
-  
-  async Get (root, repo) {
-    await this._Login();
-    const params = {
-      "method" : "GET",
-      followRedirects : true,
-      muteHttpExceptions : true
-    };
-
-    const html = await UrlFetchApp.fetch(`${root}${repo}`, params);
-    const responseCode = html.getResponseCode();
-    // console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
-
-    if(responseCode == 200) {
-      const response = html.getContentText();
-      const result = JSON.parse(response)["result"];
-      if(result == true) {
-        return JSON.parse(response)["message"];
-      } else return false;
-    }
-    await this._Logout();
-  }
-
-  async Post (repo, payload,) {
-    await this._Login()
-    const params = {
-      "method" : "POST",
-      "payload" : payload,
-      followRedirects : true,
-      muteHttpExceptions : true
-    };
-
-    const html = await UrlFetchApp.fetch(`${this.root}${repo}`, params);
-    const responseCode = html.getResponseCode();
-    // console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
-
-    if(responseCode == 200) {
-      const response = html.getContentText();
-      const result = JSON.parse(response)["result"];
-      if(result == true) {
-        return JSON.parse(response)["message"];
-      } else return false;
-    }
-    await this._Logout();
-  }
-
-  async _Login() {
-    const repo = "/login/";
-    const payload = {
-      username : this.username,
-      password : this.password,
-    }
-    let res = await this.Post(repo, payload);
-    console.info(`SESSION -----> ${res[`session`]}`);
-    this.session = res[`session`];
-    return res[`session`];
-  }
-
-  async _Logout() {
-    const repo = "/logout/";
-    const payload = { session : this.session };
-    let res = await this.Post(repo, payload);
-    console.warn(`Logging Out ---> ${res}`)
-    return res;
-  }
-
-  async CheckSession() {
-    this._Login()
-    .then( async() => {
-      const repo = "/check_session"
-      const payload = {
-        "session" : this.session,
-      }
-      let res = await this.Post(repo, payload);
-      console.warn(`Checking Session ----> ${res}`);
-      return await res;
+const _testPOS = () => {
+  const p = new PrinterOS();
+  p.Login()
+    .then(() => {
+      p.GetLatestJobsForAllPrinters();
     })
-    .then(this._Logout());
-  }
 }
-const _testAPICall = () => {
-  const p = new APICall();
-  p._Login();
-}
-
 
 /**
  * -----------------------------------------------------------------------------------------------------------------
@@ -772,31 +659,29 @@ const _testAPICall = () => {
 
 /**
  * Helper Function to write to a sheet
- */
-/** 
-const _FetchAll = async () => {
+ * @NOTIMPLEMENTED
+ *
+const _TestFetchAll = async () => {
   let jobList = [];
   const pos = new PrinterOS();
   for(const [key,printer] of Object.entries(PRINTERDATA)) {
     pos.Login()
-    .then( async () => {
-      const jobs = await pos.GetPrintersJobList(printer.printerID);
-      jobs.forEach(job => {
-        jobList.push(job["id"]);
+      .then( async () => {
+        const jobs = await pos.GetPrintersJobList(printer.printerID);
+        jobs.forEach(job => jobList.push(job["id"]));
       })
-    })
-    .then(() => {
-      jobList.reverse();
-      jobList.forEach( async(jobnumber) => {
-        data = await pos.GetJobInfo(jobnumber);
-        // console.info(data);
-        if(SHEETS[key].getName() == printer.name) {
-          // console.info(key)
-          ParseJobDetails(data, SHEETS[key]);
-        }
+      .then(() => {
+        jobList.reverse();
+        jobList.forEach( async(jobnumber) => {
+          data = await pos.GetJobInfo(jobnumber);
+          console.info(data);
+          // if(SHEETS[key].getName() == printer.name) {
+          //   // console.info(key)
+          //   ParseJobDetails(data, SHEETS[key]);
+          // }
+        })
       })
-    })
-    .finally(() => pos.Logout());
+      .finally(() => pos.Logout());
   }
 
 } 
@@ -934,7 +819,7 @@ const UpdateSingleSheetMaterials = (sheet) => {
   } 
 }
 const TryUpdateSingleSheetCosts = () => {
-  UpdateSingleSheetMaterials(SHEETS.Zardoz);
+  UpdateSingleSheetMaterials(SHEETS.Spectrum);
 }
 const UpdateAllMaterialCosts = () => {
   Object.values(SHEETS).forEach(sheet => UpdateSingleSheetMaterials(sheet));

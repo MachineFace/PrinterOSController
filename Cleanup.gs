@@ -106,9 +106,8 @@ const TriggerRemoveDuplicates = () => {
           indexes.push(index + 2);
         }
       })
-      console.info(`SHEET : ${sheet.getSheetName()}, Indexes : ${indexes}`);
       const dups = culled.filter((item, index) => culled.indexOf(item) !== index);
-      console.warn(`${sheet.getName()} : Duplicates : ${dups.length}`);
+      console.warn(`${sheet.getName()} : Number of Duplicates : ${dups.length}`);
       // Remove
       if(dups) {
         indexes.forEach(number => {

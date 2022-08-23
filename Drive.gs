@@ -7,8 +7,7 @@ class DriveController
 {
   constructor() {
     this.root = DriveApp.getRootFolder();
-    this.ticketFolder = DriveApp.getFoldersByName(`Job Tickets`);
-    this.destinationID = DriveApp.getFolderById(`1OJj0dxsa2Sf_tIBUnKm_BDmY7vFNMXYC`);
+    this.ticketFolder = DriveApp.getFolderById(`1IsDlacmdVS-eOH1PMMjILIqaEU_I4fk-`);
     this.now = new Date();
     this.dateMinusOneTwenty = new Date(new Date().setDate(new Date().getDate() - 120));
   }
@@ -25,12 +24,12 @@ class DriveController
 
   MoveTicketsOutOfRoot () {
     const files = this.GetAllFileNamesInRoot();
-    console.info(`Destination ----> ${this.ticketFolder.next().getName()}`);
+    console.info(`Destination ----> ${this.ticketFolder.getName()}`);
     files.forEach(file => {
       let name = file.getName();
-      if(name == `Job Ticket` || name == `Job Ticket-[object Object]` || name == `PrinterOS Ticket` || name.includes(`Job Ticket-`)) {
+      if(name.includes(`Job Ticket`) || name.includes(`Job Ticket-[object Object]`) || name.includes(`PrinterOS Ticket`) || name.includes(`Job Ticket-`) || name.includes(`PrinterOSTicket`)) {
         console.warn(`Moving ----> Name : ${name}, ID : ${file.getId()}`);
-        file.moveTo(this.destinationID);
+        file.moveTo(this.ticketFolder);
         console.warn(`Moved ----> Name : ${name}, ID : ${file.getId()}`);
       } else {
         console.error(`No files moved....`);
@@ -108,7 +107,9 @@ const _testDrive = () => {
   // let dateMinusNinety = new Date(new Date().setDate(date.getDate() - 120));
   // console.info(`90 Days ago : ${dateMinusNinety}, Now : ${date}`);
   let d = new DriveController();
-  d.TrashOldTickets();
+  // d.TrashOldTickets();
+  d.GetAllFileNamesInRoot();
+  
 }
 
 

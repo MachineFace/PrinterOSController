@@ -25,18 +25,19 @@ class Ticket
     this.email = email;
     this.projectname = projectname;
     this.weight = weight;
+    this.cost = weight ? Number(weight * COSTMULTIPLIER).toFixed(2) : 0.0;
     this.jobID = jobID;
     this.ticketName = ticketName;
     this.printerID = printerID;
     this.printerName = printerName;
     this.filename = filename;
     this.image = image;
+    this.folder = DriveApp.getFolderById(TICKETGID);
   }
 
   CreateTicket() {
     const jobnumber = this.jobID;
-    const folder = DriveApp.getFoldersByName(`Job Tickets`); // Set the correct folder
-    const doc = DocumentApp.create(this.ticketName); // Make Document
+    let doc = DocumentApp.create(this.ticketName); // Make Document
     let body = doc.getBody();
     let docId = doc.getId();
     let url = doc.getUrl();
@@ -82,6 +83,7 @@ class Ticket
           ["Job Number:", this.jobID.toString()],
           ["Student Email:", this.email.toString()],
           ["Materials:", `PLA : ${this.weight} grams`],
+          [`Estimated Cost @ $0.04/gram:`, `$${this.cost}`],
           ["Filename:", `${this.filename}`],
         ])
         .setAttributes({
@@ -100,20 +102,15 @@ class Ticket
 
       // Remove File from root and Add that file to a specific folder
       try {
-        while(folder.hasNext()){
-          const docFile = DriveApp.getFileById(docId);
-          DriveApp.removeFile(docFile);
-          folder.next().addFile(docFile);
-          folder.next().addFile(barcode);
-        }
+        const docFile = DriveApp.getFileById(docId);
+        docFile.moveTo(this.folder);
+        barcode.moveTo(this.folder);
+        // Set permissions to 'anyone can edit' for that file
+        docFile.setSharing(DriveApp.Access.ANYONE, DriveApp.Permission.EDIT); //set sharing
       } catch (err) {
         console.error(`Whoops : ${err}`);
       }
-
-
-      // Set permissions to 'anyone can edit' for that file
-      let file = DriveApp.getFileById(docId);
-      file.setSharing(DriveApp.Access.ANYONE, DriveApp.Permission.EDIT); //set sharing
+      
     }
     // Return Document to use later
     console.info(`DOC ----> ${doc?.getUrl()?.toString()}`)
@@ -163,6 +160,46 @@ const _testTicket = () => {
 
 
 
+
+/**
+ * Fix Tickets for a Single Sheet
+ */
+const FixMissingTicketsForSingleSheet = (sheet) => {
+  let ticketCells = GetColumnDataByHeader(sheet, HEADERNAMES.ticket);
+  ticketCells.forEach( async (cell, index) => {
+    if(!cell) {
+      let thisRow = index + 2;
+      console.warn(`Sheet : ${sheet.getSheetName()}, Index : ${thisRow} is Missing a Ticket! Creating new Ticket....`);
+      
+      const printerID = GetByHeader(sheet, HEADERNAMES.printerID, thisRow);
+      const printerName = GetByHeader(sheet, HEADERNAMES.printerName, thisRow);
+      const jobID = GetByHeader(sheet, HEADERNAMES.jobID, thisRow);
+      const timestamp = GetByHeader(sheet, HEADERNAMES.timestamp, thisRow);
+      const email = GetByHeader(sheet, HEADERNAMES.email, thisRow);
+      const weight = GetByHeader(sheet, HEADERNAMES.weight, thisRow);
+      const filename = GetByHeader(sheet, HEADERNAMES.filename, thisRow);
+      const picture = GetByHeader(sheet, HEADERNAMES.picture, thisRow);
+      
+      let imageBLOB = await GetImage(picture);
+
+      const ticket = await new Ticket({
+        submissionTime : timestamp,
+        email : email,
+        printerName : printerName,
+        printerID : printerID,
+        weight : weight,
+        jobID : jobID,
+        filename: filename,
+        image : imageBLOB, 
+      }).CreateTicket();
+      const url = ticket.getUrl();
+      SetByHeader(sheet, HEADERNAMES.ticket, thisRow, url.toString());
+      console.warn(`Ticket Created....`);
+    }
+  });
+}
+
+
 /**
  * -----------------------------------------------------------------------------------------------------------------
  * Check and Fix Missing Tickets
@@ -170,43 +207,10 @@ const _testTicket = () => {
 const FixMissingTickets = () => {
   console.info(`Checking Tickets....`);
   Object.values(SHEETS).forEach(sheet => {
-    let ticketCells = GetColumnDataByHeader(sheet, HEADERNAMES.ticket);
-    ticketCells.forEach( async (cell, index) => {
-      if(!cell) {
-        let thisRow = index + 2;
-        console.warn(`Sheet : ${sheet.getSheetName()}, Index : ${thisRow} is Missing a Ticket! Creating new Ticket....`);
-        
-        const printerID = GetByHeader(sheet, HEADERNAMES.printerID, thisRow);
-        const printerName = GetByHeader(sheet, HEADERNAMES.printerName, thisRow);
-        const jobID = GetByHeader(sheet, HEADERNAMES.jobID, thisRow);
-        const timestamp = GetByHeader(sheet, HEADERNAMES.timestamp, thisRow);
-        const email = GetByHeader(sheet, HEADERNAMES.email, thisRow);
-        const status = GetByHeader(sheet, HEADERNAMES.posStatCode, thisRow);
-        const duration = GetByHeader(sheet, HEADERNAMES.duration, thisRow);
-        const weight = GetByHeader(sheet, HEADERNAMES.weight, thisRow);
-        const cost = GetByHeader(sheet, HEADERNAMES.cost, thisRow);
-        const filename = GetByHeader(sheet, HEADERNAMES.filename, thisRow);
-        const picture = GetByHeader(sheet, HEADERNAMES.picture, thisRow);
-        
-        let imageBLOB = await GetImage(picture);
-
-        const ticket = await new Ticket({
-          submissionTime : timestamp,
-          email : email,
-          printerName : printerName,
-          printerID : printerID,
-          weight : weight,
-          jobID : jobID,
-          filename: filename,
-          image : imageBLOB, 
-        }).CreateTicket();
-        const url = ticket.getUrl();
-        SetByHeader(sheet, HEADERNAMES.ticket, thisRow, url.toString());
-        console.warn(`Ticket Created....`);
-      }
-    });
+    FixMissingTicketsForSingleSheet(sheet);
   });
   console.info(`Tickets Checked and Fixed....`);
-
 }
-
+const _testTicketFixer = () => {
+  FixMissingTicketsForSingleSheet(SHEETS.Caerulus);
+}

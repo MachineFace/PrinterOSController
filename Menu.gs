@@ -36,7 +36,7 @@ const PopUpMarkAsAbandoned = async () => {
       })
       console.warn(`Owner ${email} of abandoned job: ${jobnumber} emailed...`);
       ui.alert(
-        `Marked as Abandoned`, 
+        `${SERVICENAME} : Marked as Abandoned`, 
         `${email}, Job: ${jobnumber} emailed... Sheet: ${sheet.getSheetName()} row: ${row}`, 
         ui.ButtonSet.OK
       );
@@ -63,7 +63,7 @@ const PopUpMarkAsPickedUp = async () => {
     let res = FindOne(jobnumber);
     if(!res) {
       ui.alert(
-        `PrinterOS`,
+        `${SERVICENAME} `,
         `Jobnumber : ${jobnumber} NOT FOUND. Maybe try JPS.`,
         ui.ButtonSet.OK
       );
@@ -93,7 +93,7 @@ const PopupCountQueue = async () => {
   let ui = await SpreadsheetApp.getUi();
   let count = await CountQueue();
   ui.alert(
-    `JPS Runtime Message`,
+    `${SERVICENAME} Message`,
     `Prints Currently in Queue : ${count}`,
     ui.ButtonSet.OK
   );
@@ -173,7 +173,7 @@ const PopupCreateTicket = async () => {
   }
 
   ui.alert(
-    `JPS Runtime Message`,
+    `${SERVICENAME} Message`,
     `Ticket Created for : ${email}, @ Index : ${thisRow}, Job Number : ${jobID}`,
     ui.ButtonSet.OK
   );
@@ -223,7 +223,7 @@ const BuildHTMLHELP = () => {
  */
 const PopupHelp = () => {
   let ui = SpreadsheetApp.getUi();
-  let title = `JPS Runtime HELP`;
+  let title = `${SERVICENAME} HELP`;
   let htmlOutput = HtmlService.createHtmlOutput(BuildHTMLHELP())
     .setWidth(640)
     .setHeight(480);
@@ -234,7 +234,7 @@ const PopupUpdate = async () => {
   let ui = await SpreadsheetApp.getUi();
   new UpdateSheet();
   ui.alert(
-    `JPS Runtime Message`,
+    `${SERVICENAME} Message`,
     `All Info Updated from PrinterOS Server`,
     ui.ButtonSet.OK
   );
@@ -244,7 +244,7 @@ const PopupRemoveDuplicates = async () => {
   let ui = await SpreadsheetApp.getUi();
   TriggerRemoveDuplicates();
   ui.alert(
-    `JPS Runtime Message`,
+    `${SERVICENAME}  Message`,
     `All Duplicate Info from PrinterOS Server removed.`,
     ui.ButtonSet.OK
   );
@@ -255,8 +255,19 @@ const PopupFetchNewForSingleSheet = async () => {
   let thisSheet = SpreadsheetApp.getActiveSheet();
   FetchNewDataforSingleSheet(thisSheet);
   ui.alert(
-    `JPS Runtime Message`,
+    `${SERVICENAME} Message`,
     `Fetching new Data for ${thisSheet.getSheetName()} from PrinterOS Server`,
+    ui.ButtonSet.OK
+  );
+}
+
+PopupFixMissingTicketsForThisSheet = async () => {
+  let ui = await SpreadsheetApp.getUi();
+  let thisSheet = SpreadsheetApp.getActiveSheet();
+  FixMissingTicketsForSingleSheet(thisSheet);
+  ui.alert(
+    `${SERVICENAME} Message`,
+    `Fixing Missing Tickets for ${thisSheet.getSheetName()} from PrinterOS Server`,
     ui.ButtonSet.OK
   );
 }
@@ -314,7 +325,7 @@ const PopupRemoveUsersNotInBillingList = async () => {
   let ui = await SpreadsheetApp.getUi();
   await RemoveStudentsWhoDidntPrint();
   ui.alert(
-    `Billing Cleanup`,
+    `${SERVICENAME} Billing Cleanup`,
     `All Users Who haven't printed with us REMOVED from Billing REPORT`,
     ui.ButtonSet.OK
   );
@@ -324,7 +335,7 @@ const PopupCalcBilling = async () => {
   let ui = await SpreadsheetApp.getUi();
   await CalculateMaterialCostForBilling();
   ui.alert(
-    `Billing`,
+    `${SERVICENAME} Billing`,
     `Calculated Printing Costs for ALL our Users.`,
     ui.ButtonSet.OK
   );
@@ -345,6 +356,7 @@ const BarMenu = () => {
     .addItem(`Count Queue`, `PopupCountQueue`)
     .addItem(`Create a Ticket for a User`, `PopupCreateTicket`)
     .addItem(`Fix All Missing Tickets`, `MissingTicketUpdater`)
+    .addItem(`Fix Missing Tickets for THIS Sheet`, `PopupFixMissingTicketsForThisSheet`)
     .addItem(`Fix All Missing Filenames`, `UpdateAllFilenames`)
     .addSeparator()
     .addItem(`Recompute Metrics`, `Metrics`)
