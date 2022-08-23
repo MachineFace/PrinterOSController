@@ -119,8 +119,8 @@ const MarkAsAbandonedByBarcode = async () => {
 class QRCodeAndBarcodeGenerator {
   constructor(
     {
-      url = 'jps.jacobshall.org/', 
-      jobnumber = Math.floor(Math.random() * 100000).toFixed(),
+      url : url = 'jps.jacobshall.org/', 
+      jobnumber : jobnumber = Math.floor(Math.random() * 100000).toFixed(),
     }) {
     this.url = url;
     this.jobnumber = jobnumber;
@@ -130,22 +130,23 @@ class QRCodeAndBarcodeGenerator {
     console.info(`URL : ${this.url}, Jobnumber : ${this.jobnumber}`);
     const loc = `https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=${this.url}`;  // API call
     const postParams = {
-        "method" : "GET",
-        "headers" : { "Authorization" : "Basic" },
-        "contentType" : "application/json",
-        followRedirects : true,
-        muteHttpExceptions : true
+      "method" : "GET",
+      "headers" : { "Authorization" : "Basic" },
+      "contentType" : "application/json",
+      followRedirects : true,
+      muteHttpExceptions : true
     };
 
     let qrCode;
     const html = UrlFetchApp.fetch(loc, postParams);
     // console.info(`Response Code : ${html.getResponseCode()}`);
-    if (html.getResponseCode() == 200) {
-      qrCode = DriveApp.createFile( Utilities.newBlob(html.getContent()).setName('QRCode' + this.jobnumber ) );
-      qrCode.setTrashed(true);
+    if (html.getResponseCode() != 200) {
+      console.error('Failed to GET QRCode');
+      return false; 
     }
-    else console.error('Failed to GET QRCode');
-
+    qrCode = DriveApp.createFile( Utilities.newBlob(html.getContent()).setName(`QRCode${this.jobnumber}`));
+    qrCode.setTrashed(true);
+  
     console.info(`QRCode Created ---> ${qrCode?.getId()?.toString()}`);
     return qrCode;
   }
@@ -226,18 +227,20 @@ class QRCodeAndBarcodeGenerator {
  * @return
  */
 class OpenQRGenerator {
-  constructor(
-    {
-      url = 'jps.jacobshall.org/',
-      size = `80x80`, // MAX: 1000x1000
-    }) {
+  constructor({
+    filename : filename = `file`,
+    url : url = 'jps.jacobshall.org/',
+    size : size = `80x80`, // MAX: 1000x1000
+  }) {
+    this.filename = filename ? filename : `file`,
     this.url = url;
     this.size = size;
+
   }
 
   async GenerateQRCode(){
-    const randName = Math.floor(Math.random() * 100000).toFixed();
-    console.info(`URL : ${this.url}`);
+    const filename = this.filename = `file` ? Math.floor(Math.random() * 100000).toFixed() : this.filename;
+    // console.info(`URL : ${this.url}`);
     const loc = `https://api.qrserver.com/v1/create-qr-code/?size=${this.size}&data=${this.url}`;  //API call
     const postParams = {
       "method" : "GET",
@@ -250,62 +253,59 @@ class OpenQRGenerator {
     let qrCode;
     const html = UrlFetchApp.fetch(loc, postParams);
     // console.info(`Response Code : ${RESPONSECODES[html.getResponseCode()]}`);
-    if (html.getResponseCode() == 200) {
-      qrCode = DriveApp.createFile( Utilities.newBlob(html.getContent()).setName(`QRCode ${randName}`) );
-      qrCode.setTrashed(true);
+    if (html.getResponseCode() != 200) {
+      console.error(`Failed to GET QRCode`);
+      return false; 
     }
-    else console.error(`Failed to GET QRCode`);
-
-    console.info(`QRCODE CREATED ---> ${qrCode?.getId().toString()}`);
-    return await qrCode;
+    const blob = Utilities.newBlob(html.getContent()).setName(`QRCode ${filename}`);
+    qrCode = await DriveApp.getFolderById(TICKETGID).createFile(blob)
+    console.info(`QRCODE CREATED ---> ${qrCode?.getUrl().toString()}`);
+    return qrCode;
   }
 
-  async CreatePrintableDoc() {
-    const folder = DriveApp.getFoldersByName(`Job Tickets`); // Set the correct folder
-    const doc = DocumentApp.create('QRCode'); // Make Document
+  async CreatePrintableQRCode() {
+    const filename = this.filename = `file` ? `QRCode-${Number(Math.floor(Math.random() * 100000)).toFixed()}` : this.filename;
+    const folder = DriveApp.getFolderById(TICKETGID);
+    let doc = DocumentApp.create(filename); // Make Document
     let body = doc.getBody();
     let docId = doc.getId();
-    let url = doc.getUrl();
-
-    const qr = new this.GenerateQRCode();
+    
+    const qr = await this.GenerateQRCode();
 
     // Append Document with Info
     if (doc != undefined || doc != null || doc != NaN) {
-      let header = doc
-        .addHeader()
-        .appendTable([[`img1`]])
-        .setAttributes({
-          [DocumentApp.Attribute.BORDER_WIDTH]: 0,
-          [DocumentApp.Attribute.BORDER_COLOR]: `#ffffff`,
-        });
-      this.ReplaceTextToImage(header, `img1`, qr);
+      body
+        .setPageWidth(PAGESIZES.letter.width)
+        .setPageHeight(PAGESIZES.letter.height)
+        .setMarginTop(2)
+        .setMarginBottom(2)
+        .setMarginLeft(2)
+        .setMarginRight(2);
+
+      body.insertImage(0, qr)
+        .setWidth(PAGESIZES.letter.width - 50)
+        .setHeight(PAGESIZES.letter.width - 50);      
 
       // Remove File from root and Add that file to a specific folder
       try {
         const docFile = DriveApp.getFileById(docId);
-        DriveApp.removeFile(docFile);
-        folder.next().addFile(docFile);
-        folder.next().addFile(barcode);
+        docFile.moveTo(folder);
+        docFile.setSharing(DriveApp.Access.ANYONE, DriveApp.Permission.EDIT); //set sharing
       } catch (err) {
         console.error(`Whoops : ${err}`);
       }
-
-
-      // Set permissions to 'anyone can edit' for that file
-      let file = DriveApp.getFileById(docId);
-      file.setSharing(DriveApp.Access.ANYONE, DriveApp.Permission.EDIT); //set sharing
+      
     }
-    //Return Document to use later
-    console.info(`QRCODE DOC CREATED ---> ${doc?.getId()?.toString()}`);
-    return doc;
+    // Return Document to use later
+    console.info(`DOC ----> ${doc?.getUrl()?.toString()}`)
+    return await doc;
   };
 
 }
 
 
-const _testPrint = () => {
-  const data = {url : `https://bcourses.berkeley.edu/courses/1353091/pages/woodshop`, size : `1000x1000`};
-  const doc = new OpenQRGenerator(data).CreatePrintableDoc();
-  console.info(doc);
+const _testPrint = async () => {
+  const data = {url : `https://docs.google.com/forms/d/e/1FAIpQLSfLTLKre-6ZPU0qsxTkbvmfqm56p_Y_ajoRD1tKALLMvPfdMQ/viewform`, size : `1000x1000`};
+  const doc = await new OpenQRGenerator(data).CreatePrintableQRCode();
 }
 

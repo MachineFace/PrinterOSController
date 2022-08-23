@@ -111,11 +111,10 @@ const GetImage = async (pngFile) => {
   const responseCode = html.getResponseCode();
   console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
-  if(responseCode == 200) {
-    const folder = DriveApp.getFoldersByName(`Job Tickets`);
-    const blob = html.getBlob().setName(`IMAGE_${pngFile}`);
-    return blob;
-  } else return false;
+  if(responseCode != 200) return false; 
+  const folder = DriveApp.getFoldersByName(`Job Tickets`);
+  const blob = html.getBlob().setName(`IMAGE_${pngFile}`);
+  return blob;
 }
 
 
@@ -125,7 +124,7 @@ const GetImage = async (pngFile) => {
  * @returns {[sheet, [values]]} list of sheets with lists of indexes
  */
 const Search = (value) => {
-  if (value) value.toString().replace(/\s+/g, "");
+  value ? value.toString().replace(/\s+/g, "") : ``;
   let res = {};
   Object.values(SHEETS).forEach(sheet => {
     const finder = sheet.createTextFinder(value).findAll();
