@@ -50,7 +50,7 @@ class DriveController
   }
 
   TrashOldTickets () {
-    let files = this.ticketFolder.next().getFiles();
+    let files = this.ticketFolder.getFiles();
     while (files.hasNext()) {
       let file = files.next();
       let date = file.getDateCreated();

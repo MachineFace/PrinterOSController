@@ -129,20 +129,25 @@ const TriggerRemoveDuplicates = () => {
  */
 const FileNameCleanup = (filename) => {
   const regex = /[0-9_]/g;
-  const regex2 = /\b[.]gcode\b/g;
+  const regex2 = /[.]gcode/g;
+  const regex3 = /\b[.]modified\b/g;
   if(!filename) return;
-  else {
-    filename = filename.toString();
-    const nonums = filename.replace(regex,``);
-    const clipped = nonums.replace(regex2, ``);
-    return clipped;
-  }
+
+  const fixed = filename
+    .toString()
+    .replace(regex,``)
+    .replace(regex2, ``)
+    .replace(regex3, ``)
+    .replace(regex2, ``)
+  return TitleCase(fixed).replace(` `, ``);
 }
 
 const _testFilenameCleanup = () => {
-  filenames = GetColumnDataByHeader(SHEETS.Spectrum, HEADERNAMES.filename);
+  filenames = GetColumnDataByHeader(SHEETS.Plumbus, HEADERNAMES.filename);
+
   filenames.forEach(filename => {
+    console.info(`BEFORE --> ${filename}`);
     const cleanup = FileNameCleanup(filename);
-    console.info(cleanup)
+    console.info(`AFTER --> ${cleanup}`)
   })
 }

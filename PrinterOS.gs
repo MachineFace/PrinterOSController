@@ -94,7 +94,7 @@ class PrinterOS {
       muteHttpExceptions : true
     };
 
-    const html = await UrlFetchApp.fetch(this.root + repo, params);
+    const html = await UrlFetchApp.fetch(`${this.root}${repo}`, params);
     const responseCode = html.getResponseCode();
 
     // console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);

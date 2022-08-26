@@ -16,8 +16,6 @@ class Emailer
     designspecialistemail : designspecialistemail,
     designspecialistemaillink : designspecialistemaillink, 
   }) {
-    this.gmailName = `Jacobs Self-Service Printing Bot`;
-    this.supportAlias = GmailApp.getAliases()[0];
     this.designspecialistemail = designspecialistemail ? designspecialistemail : `codyglen@berkeley.edu`;
     this.email = email ? email : ``;
     this.status = status ? status : STATUS.queued.plaintext;
@@ -41,72 +39,72 @@ class Emailer
   SendEmail () {
     switch (this.status) {
       case STATUS.queued.plaintext:
-        GmailApp.sendEmail(this.email, `${this.gmailName} : Queued`, "", {
+        GmailApp.sendEmail(this.email, `${GMAIL_SERVICE_NAME} : Queued`, "", {
           htmlBody: this.message.queuedMessage,
-          from: this.supportAlias,
+          from: SUPPORT_ALIAS,
           cc: this.designspecialistemail,
           bcc: "",
-          name: this.gmailName,
+          name: GMAIL_SERVICE_NAME,
         });
         console.warn(`Student ${this.name} emailed ${this.status} message...`);
         break;
       case STATUS.inProgress.plaintext:
-        GmailApp.sendEmail(this.email, `${this.gmailName} : Project Started`, "", {
+        GmailApp.sendEmail(this.email, `${GMAIL_SERVICE_NAME} : Project Started`, "", {
             htmlBody: this.message.inProgressMessage,
-            from: this.supportAlias,
+            from: SUPPORT_ALIAS,
             cc: this.designspecialistemail,
             bcc: "",
-            name: this.gmailName,
+            name: GMAIL_SERVICE_NAME,
         });
         console.warn(`Student ${this.name} emailed ${this.status} message...`);
         break;
       case STATUS.complete.plaintext:
-        GmailApp.sendEmail(this.email, `${this.gmailName} : Project Completed`, "", {
+        GmailApp.sendEmail(this.email, `${GMAIL_SERVICE_NAME} : Project Completed`, "", {
             htmlBody: this.message.completedMessage,
-            from: this.supportAlias,
+            from: SUPPORT_ALIAS,
             cc: this.designspecialistemail,
             bcc: "",
-            name: this.gmailName,
+            name: GMAIL_SERVICE_NAME,
         });
         console.warn(`Student ${this.name} emailed ${this.status} message...`);
         break;
       case STATUS.failed.plaintext:
-        GmailApp.sendEmail(this.email, `${this.gmailName} : Project has Failed`, "", {
+        GmailApp.sendEmail(this.email, `${GMAIL_SERVICE_NAME} : Project has Failed`, "", {
             htmlBody: this.message.failedMessage,
-            from: this.supportAlias,
+            from: SUPPORT_ALIAS,
             cc: this.designspecialistemail,
             bcc: "",
-            name: this.gmailName,
+            name: GMAIL_SERVICE_NAME,
         });
         console.warn(`Student ${this.name} emailed ${this.status} message...`);
         break;
       case STATUS.cancelled.plaintext:
-        GmailApp.sendEmail(this.email, `${this.gmailName} : Project has been Cancelled`, "", {
+        GmailApp.sendEmail(this.email, `${GMAIL_SERVICE_NAME} : Project has been Cancelled`, "", {
             htmlBody: this.message.cancelledMessage,
-            from: this.supportAlias,
+            from: SUPPORT_ALIAS,
             cc: this.designspecialistemail,
             bcc: "",
-            name: this.gmailName,
+            name: GMAIL_SERVICE_NAME,
         });
         console.warn(`Student ${this.name} emailed ${this.status} message...`);
         break;
       case STATUS.closed.plaintext:
-        GmailApp.sendEmail(this.email, `${this.gmailName} : Project Closed`, "", {
+        GmailApp.sendEmail(this.email, `${GMAIL_SERVICE_NAME} : Project Closed`, "", {
           htmlBody: this.message.completedMessage,
-          from: this.supportAlias,
+          from: SUPPORT_ALIAS,
           cc: this.designspecialistemail,
           bcc: "",
-          name: this.gmailName,
+          name: GMAIL_SERVICE_NAME,
         });
         console.warn(`Student ${this.name} emailed ${this.status} message...`);
         break;
       case STATUS.abandoned.plaintext:
-        GmailApp.sendEmail(this.email, `${this.gmailName} : Project hasn't been picked up yet!`, "", {
+        GmailApp.sendEmail(this.email, `${GMAIL_SERVICE_NAME} : Project hasn't been picked up yet!`, "", {
           htmlBody: this.message.abandonedMessage,
-          from: this.supportAlias,
+          from: SUPPORT_ALIAS,
           cc: this.designspecialistemail,
           bcc: "",
-          name: this.gmailName,
+          name: GMAIL_SERVICE_NAME,
         });
         console.warn(`Student ${this.name} emailed ${this.status} message...`);
         break;

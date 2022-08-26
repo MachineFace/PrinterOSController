@@ -6,9 +6,9 @@
 class DesignSpecialist
 {
   constructor({
-    name = `DS`, 
-    fullname = `Design Specialist`, 
-    email = `jacobsprojectsupport@berkeley.edu`
+    name : name = `DS`, 
+    fullname : fullname = `Design Specialist`, 
+    email : email = `jacobsprojectsupport@berkeley.edu`
   }) {
     this.name = name;
     this.fullname = fullname;
@@ -131,27 +131,16 @@ const BuildStaff = () => {
       link = `<a href = "${email}">${email}</a>`;
       OTHERSHEETS.Staff.getRange(OTHERSHEETS.Staff.getLastRow() - 1, 4).setValue(link);
     }
-    if(type == "DS") {
-      let ds = new DesignSpecialist({
-        name : name, 
-        fullname : fullname, 
-        email : email
-      });
-      staff[name] = ds;
-    } else if(type == "MA") {
-      let ma = new Manager({
-        name : name, 
-        fullname : fullname, 
-        email : email
-      });
-      staff[name] = ma;
-    } else if(type == "SS") {
-      let ss = new StudentSupervisor({
-        name : name, 
-        fullname : fullname, 
-        email : email
-      });
-      staff[name] = ss;
+    switch(type) {
+      case `DS`:
+        staff[name] = new DesignSpecialist({ name : name, fullname : fullname, email : email });
+        break;
+      case `SS`:
+        staff[name] = new StudentSupervisor({name : name, fullname : fullname, email : email});
+        break;
+      case `MA`:
+        staff[name] = new Manager({name : name, fullname : fullname, email : email});
+        break;
     }
   });
   console.info(staff);
@@ -187,9 +176,17 @@ class StaffBuilder
     const data = OTHERSHEETS.Staff.getRange(2, 1, OTHERSHEETS.Staff.getLastRow() -1, 5).getValues();
     data.forEach( item => {
       let name = item[0], fullname = item[1], email = item[2], emaillink = item[3], type = item[4];
-      if(type === 'DS') this.staff[name] = new DesignSpecialist({name : name, fullname : fullname, email : email});
-      if(type === 'SS') this.staff[name] = new StudentSupervisor({name : name, fullname : fullname, email : email});
-      if(type === 'MA') this.staff[name] = new Manager({name : name, fullname : fullname, email : email});
+      switch(type) {
+        case `DS`:
+          this.staff[name] = new DesignSpecialist({name : name, fullname : fullname, email : email});
+          break;
+        case `SS`:
+          this.staff[name] = new StudentSupervisor({name : name, fullname : fullname, email : email});
+          break;
+        case `MA`:
+          this.staff[name] = new Manager({name : name, fullname : fullname, email : email});
+          break;
+      }
     });
   }
 

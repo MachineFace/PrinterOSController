@@ -2,6 +2,9 @@
  * -----------------------------------------------------------------------------------------------------------------
  * Code Enumerations
  */
+const SUPPORT_ALIAS = GmailApp.getAliases()[0];
+const GMAIL_SERVICE_NAME = "Jacobs Self-Service Printing Bot";
+
 const SERVICENAME = `PrinterOS Controller`;
 const PICKUPHOURS = `Monday - Friday: 11am - 1pm & 4pm - 6pm`;
 const COSTMULTIPLIER = 0.04;

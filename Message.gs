@@ -13,19 +13,17 @@
 class CreateMessage 
 {
   constructor({
-    name : name, 
-    projectname : projectname, 
-    jobnumber : jobnumber, 
-    weight : weight, 
-    designspecialist : designspecialist, 
-    designspecialistemaillink : designspecialistemaillink,
+    name : name = `${GMAIL_SERVICE_NAME} User`, 
+    projectname : projectname = `Project Name`, 
+    jobnumber : jobnumber = 1000001, 
+    weight : weight = 0, 
+    designspecialist : designspecialist = `Staff`, 
+    designspecialistemaillink : designspecialistemaillink = `url`,
   }){
-    this.name = name ? name : `Self-Service Printing User`;
-    this.projectname = projectname ? projectname : `Project Name`;
-    this.jobnumber = jobnumber ? jobnumber : `Job Number`;
-
+    this.name = name;
+    this.projectname = projectname;
+    this.jobnumber = jobnumber;
     this.weight = weight ? weight : 0.0;
-
     this.designspecialist = designspecialist ? designspecialist : `Design Specialist`;
     this.designspecialistemaillink = designspecialistemaillink ? designspecialistemaillink : `Link`;
     this.staff = new StaffBuilder().get();
@@ -175,7 +173,6 @@ const _testMessages = async () => {
   const message = new CreateMessage({
     name : 'Stew Dent',
     projectname : 'Pro Ject',
-    jobnumber : new JobNumberGenerator({}).GenerateJobNumber(),
     weight : 523,
     designspecialist : `Mike Spec`,
     designspecialistemaillink : `LinkyLink`

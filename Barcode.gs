@@ -117,11 +117,10 @@ const MarkAsAbandonedByBarcode = async () => {
  * @return
  */
 class QRCodeAndBarcodeGenerator {
-  constructor(
-    {
-      url : url = 'jps.jacobshall.org/', 
-      jobnumber : jobnumber = Math.floor(Math.random() * 100000).toFixed(),
-    }) {
+  constructor({
+    url : url = 'jps.jacobshall.org/', 
+    jobnumber : jobnumber = Math.floor(Math.random() * 100000).toFixed(),
+  }) {
     this.url = url;
     this.jobnumber = jobnumber;
   }
