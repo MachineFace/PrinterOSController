@@ -82,7 +82,7 @@ class WriteToSheet
     const weight = data["weight"] ? Number(data["weight"]).toFixed(2) : 0.0;
     SetByHeader(sheet, HEADERNAMES.weight, thisRow, weight);
 
-    const cost = weight ? Number(weight * COSTMULTIPLIER).toFixed(2) : 0.0;
+    const cost = weight ? PrintCost(weight) : 0.0;
     SetByHeader(sheet, HEADERNAMES.cost, thisRow, cost);
 
     this.UpdateStatus(statCode, sheet, thisRow);
@@ -350,7 +350,7 @@ const FetchNewDataforSingleSheet = (sheet) => {
           const weight = data["weight"] ? data["weight"].toString() : 0.0;
           SetByHeader(sheet, HEADERNAMES.weight, thisRow, weight);
 
-          const cost = weight ? Number(weight * COSTMULTIPLIER).toFixed(2) : 0.0;
+          const cost = weight ? PrintCost(weight) : 0.0;
           SetByHeader(sheet, HEADERNAMES.cost, thisRow, cost);
 
           // const filename = data["filename"] ? data["filename"].slice(0, -6).toString() : "";

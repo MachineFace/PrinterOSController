@@ -40,7 +40,7 @@ const _testBillingPerSheet = () => {
 
 
 
-
+/** 
 const SaveAsCSV = () => {
   let sheet = OTHERSHEETS.Report;
   let folder = DriveApp.createFolder(`${gmailName.replace(/ /g,'')}_${new Date().getTime()}`);
@@ -86,8 +86,24 @@ const ConvertRangeToCsvFile = (sheet) => {
     Browser.msgBox(err);
   }
 }
+*/
 
 
+/**
+ * Calculate PrintCost
+ * @param {number} weight
+ * @return {number} value
+ */
+const PrintCost = (weight) => {
+  weight = weight instanceof Number || weight > 0.0 ? weight : 0.0;
+  return Number(weight * COSTMULTIPLIER).toFixed(2);
+}
+
+
+const _testComputeCost = () => {
+  let p =  PrintCost(123.0);
+  console.info(p)
+}
 
 
 

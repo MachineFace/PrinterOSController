@@ -25,7 +25,7 @@ class Ticket
     this.email = email;
     this.projectname = projectname;
     this.weight = weight;
-    this.cost = weight ? Number(weight * COSTMULTIPLIER).toFixed(2) : 0.0;
+    this.cost = weight ? PrintCost(weight) : 0.0;
     this.jobID = jobID;
     this.ticketName = ticketName;
     this.printerID = printerID;

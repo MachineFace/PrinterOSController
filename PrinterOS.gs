@@ -410,7 +410,7 @@ class PrinterOS {
     const result = JSON.parse(response)["result"];
     if(result == false) return false; 
     const weight = JSON.parse(response)["message"].weight ? JSON.parse(response)["message"].weight : 0.0;
-    const price = Number(weight * COSTMULTIPLIER).toFixed(2);
+    const price = PrintCost(weight);
     return price;
     
   }
@@ -804,7 +804,7 @@ const UpdateSingleSheetMaterials = (sheet) => {
       console.info(culled);
       culled.forEach( async(jobId, index) => {
         const weight = await pos.GetMaterialWeight(jobId);
-        const price = Number(weight * COSTMULTIPLIER).toFixed(2);
+        const price = PrintCost(weight);
         // console.info(`Weight = ${weight}, Price = ${price}`);
         SetByHeader(sheet, HEADERNAMES.weight, index + 2, weight);
         SetByHeader(sheet, HEADERNAMES.cost, index + 2, price);

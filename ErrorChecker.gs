@@ -178,7 +178,7 @@ const CalculateMaterialCostForBilling = () => {
   materialUsed.forEach( (value, index) => {
     let row = index + 2;
     let grams = value * 1000;
-    let cost = Number(value * 10).toFixed(2);
+    let cost = PrintCost(weight);
     console.info(`Row: ${row}, Grams: ${grams}, Cost: ${cost}`)
     SetByHeader(OTHERSHEETS.Report, `Computed Material Cost (∑,$)`, row, cost);
   })
