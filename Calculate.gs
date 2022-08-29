@@ -11,8 +11,9 @@ class Calculate
   CalculateAverageTurnaround (sheet) {
     let culled = [];
     try {
-      let completionTimes = GetColumnDataByHeader(sheet, HEADERNAMES.duration);
-      culled = completionTimes.filter(Boolean);
+      let completionTimes = GetColumnDataByHeader(sheet, HEADERNAMES.duration)
+        .filter(Boolean);
+        culled.push(...completionTimes);
     }
     catch (err) {
       console.error(`${err} : Couldn't fetch list of times. Probably a sheet error.`);
@@ -26,7 +27,7 @@ class Calculate
     });
 
     // Average the totals (a list of times in minutes)
-    let average = Number.parseFloat(total / culled.length).toFixed(2);
+    let average = Number(total / culled.length).toFixed(2);
     console.info(`Total Time : ${total}, Average : ${average}`);
     return average;
   }
@@ -46,9 +47,9 @@ class Calculate
 
   SumStatuses (sheet) {
     let count = {};
-    let statuses = GetColumnDataByHeader(sheet, HEADERNAMES.status);
-    let culled = statuses.filter(Boolean);
-    culled.forEach( key => {
+    let statuses = GetColumnDataByHeader(sheet, HEADERNAMES.status)
+      .filter(Boolean);
+    statuses.forEach( key => {
       count[key] = ++count[key] || 1;
     });
     return count;
@@ -74,10 +75,13 @@ class Calculate
 
   CalculateDistribution () {
     let userList = [];
+    let staff = GetColumnDataByHeader(OTHERSHEETS.Staff, `EMAIL`);
     Object.values(SHEETS).forEach(sheet => {
-      let users = GetColumnDataByHeader(sheet, HEADERNAMES.email);
-      let culled = users.filter(Boolean);
-      culled.forEach( user => userList.push(user));
+      let users = GetColumnDataByHeader(sheet, HEADERNAMES.email)
+        .filter(Boolean);
+      users.forEach( user => {
+        if(staff.indexOf(user) == -1) userList.push(user);
+      });
     });
     let occurrences = userList.reduce( (acc, curr) => {
       return acc[curr] ? ++acc[curr] : acc[curr] = 1, acc
@@ -126,9 +130,9 @@ class Calculate
     const countUnique = (iterable) => new Set(iterable).size;
     let userList = [];
     Object.values(SHEETS).forEach(sheet => {
-      let users = GetColumnDataByHeader(sheet, HEADERNAMES.email);
-      let culled = users.filter(Boolean);
-      culled.forEach( user => userList.push(user));
+      let users = GetColumnDataByHeader(sheet, HEADERNAMES.email)
+        .filter(Boolean);
+      users.forEach( user => userList.push(user));
     });
     const count = countUnique(userList);
     OTHERSHEETS.Metrics.getRange(22, 2, 1, 1).setValue(`Unique Users`);
@@ -152,10 +156,10 @@ class Calculate
   StatusCounts () {
     let count = {};
     Object.values(SHEETS).forEach(sheet => {
-      let statuses = GetColumnDataByHeader(sheet, HEADERNAMES.status);
-      let culled = statuses.filter(Boolean);
+      let statuses = GetColumnDataByHeader(sheet, HEADERNAMES.status)
+        .filter(Boolean);
       let temp = [];
-      culled.forEach( (stat, index) => {
+      statuses.forEach( (stat, index) => {
         temp.push(Object.keys(STATUS).find(key => STATUS[key].plaintext === stat));
       })
       let countFunc = (keys) => count[keys] = ++count[keys] || 1;
@@ -208,7 +212,7 @@ class Calculate
     console.info(`Standard Deviation for Number of Submissions : +/-${standardDeviation}`);
 
     OTHERSHEETS.Metrics.getRange(43, 2, 1, 1).setValue(`Standard Deviation for Number of Submissions per User`);
-    OTHERSHEETS.Metrics.getRange(43, 3, 1, 1).setValue(`+/- ${standardDeviation}`);
+    OTHERSHEETS.Metrics.getRange(43, 3, 1, 1).setValue(`+/- ${Number(standardDeviation).toFixed(2)}`);
     return standardDeviation;
   }
 
@@ -224,7 +228,7 @@ class Calculate
     console.info(`Mean = ${mean}`);
 
     OTHERSHEETS.Metrics.getRange(44, 2, 1, 1).setValue(`Arithmetic Mean for user submissions`);
-    OTHERSHEETS.Metrics.getRange(44, 3, 1, 1).setValue(mean);
+    OTHERSHEETS.Metrics.getRange(44, 3, 1, 1).setValue(Number(mean).toFixed(2));
     return mean;
   }
 
@@ -353,7 +357,7 @@ const Metrics = () => {
  */
 const _testMetrics = () => {
   const c = new Calculate();
-  console.info(c.SumSingleSheetCost(SHEETS.Spectrum));
+  console.info(c.PrintTopTen());
 }
 
 
