@@ -77,9 +77,9 @@ class Calculate
     let userList = [];
     let staff = GetColumnDataByHeader(OTHERSHEETS.Staff, `EMAIL`);
     Object.values(SHEETS).forEach(sheet => {
-      let users = GetColumnDataByHeader(sheet, HEADERNAMES.email)
-        .filter(Boolean);
-      users.forEach( user => {
+      GetColumnDataByHeader(sheet, HEADERNAMES.email)
+        .filter(Boolean)
+        .forEach( user => {
         if(staff.indexOf(user) == -1) userList.push(user);
       });
     });
@@ -130,9 +130,9 @@ class Calculate
     const countUnique = (iterable) => new Set(iterable).size;
     let userList = [];
     Object.values(SHEETS).forEach(sheet => {
-      let users = GetColumnDataByHeader(sheet, HEADERNAMES.email)
-        .filter(Boolean);
-      users.forEach( user => userList.push(user));
+      GetColumnDataByHeader(sheet, HEADERNAMES.email)
+        .filter(Boolean)
+        .forEach( user => userList.push(user));
     });
     const count = countUnique(userList);
     OTHERSHEETS.Metrics.getRange(22, 2, 1, 1).setValue(`Unique Users`);
@@ -357,7 +357,7 @@ const Metrics = () => {
  */
 const _testMetrics = () => {
   const c = new Calculate();
-  console.info(c.PrintTopTen());
+  console.info(c.CountUniqueUsers());
 }
 
 

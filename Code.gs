@@ -30,10 +30,12 @@ const onChange = async (e) => {
   // Skip the first 2 rows of data.
   if (thisRow <= 1) return;
 
-  let thisSheetName = ss.getSheetName();
-  Object.values(OTHERSHEETS).forEach(sheet => {
-    if(thisSheetName == sheet.getSheetName()) return;
-  });
+  // Ignore Edits on background sheets like Logger and StoreItems 
+  let forbiddenSheets = Object.values(OTHERSHEETS);
+  if (forbiddenSheets.includes(ss)) {
+    console.info(`${ss.getSheetName()} is forbidden from editing... Skipping.`);
+    return;
+  }
     
   let hardID;
   Object.values(PRINTERDATA).forEach(printer => {
@@ -61,7 +63,6 @@ const onChange = async (e) => {
   FixMissingTickets();
   
 }
-
 
 
 

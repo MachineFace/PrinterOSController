@@ -130,29 +130,28 @@ class PrinterOS {
     };
 
     const html = await UrlFetchApp.fetch(`${this.root}${repo}`, params);
-    const responseCode = html.getResponseCode();
+    const responseCode = Number(html.getResponseCode());
 
-    // console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+    console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
     const printerListOut = [];
 
-    if(responseCode != 200) return false; 
+    const response = html.getContentText();
+    const result = JSON.parse(response)["result"];
+    console.info(`RES: ${result}`)
+    if(result == false) return false;
     else {
-      const response = html.getContentText();
-      const result = JSON.parse(response)["result"];
-      if(result == false) return false;
-      else {
-        const printerlist = JSON.parse(response)["message"];
-        printerlist.forEach(p => {
-          const data = JSON.stringify(p);
-          this.printerIDs.push(p["id"]);
-          this.printerIPs.push(p["local_ip"]);
-          this.printerNames.push(p["name"]);
-          // console.info(JSON.stringify(p));
-          // printerListOut.push(JSON.stringify(p));
-        })
-      }
+      const printerlist = JSON.parse(response)["message"];
+      printerlist.forEach(p => {
+        const data = JSON.stringify(p);
+        this.printerIDs.push(p["id"]);
+        this.printerIPs.push(p["local_ip"]);
+        this.printerNames.push(p["name"]);
+        // console.info(JSON.stringify(p));
+        // printerListOut.push(JSON.stringify(p));
+      })
     }
+    
     console.info(this.printerIDs);
     console.info(this.printerIPs);
     console.info(this.printerNames);
@@ -825,5 +824,14 @@ const UpdateAllMaterialCosts = () => {
   Object.values(SHEETS).forEach(sheet => UpdateSingleSheetMaterials(sheet));
 }
 
+
+const GetPrinterData = () => {
+  const p = new PrinterOS();
+  p.Login()
+    .then(async () => {
+      let printers = await p.GetPrinters();
+      console.info(printers)
+    })
+}
 
 
