@@ -65,7 +65,7 @@ class Calculate
       console.info(`${index} : ${key} : ${JSON.stringify(value)}`);
 
       let ratio = Number(value.Completed / (value.Completed + value.Cancelled)).toFixed(3);
-      ratio instanceof Number ? ratio : 0;
+      ratio = `${Number(ratio * 100).toFixed(1)} %`;
       OTHERSHEETS.Metrics.getRange(4 + index, 2, 1, 1).setValue(value.Completed);
       OTHERSHEETS.Metrics.getRange(4 + index, 3, 1, 1).setValue(value.Cancelled);
       OTHERSHEETS.Metrics.getRange(4 + index, 4, 1, 1).setValue(ratio);
@@ -357,7 +357,7 @@ const Metrics = () => {
  */
 const _testMetrics = () => {
   const c = new Calculate();
-  console.info(c.CountUniqueUsers());
+  console.info(c.PrintStatusCounts());
 }
 
 
