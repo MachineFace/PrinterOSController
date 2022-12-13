@@ -206,6 +206,7 @@ const PRINTERDATA = {
     printerID : 75140,
     sheet : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Plumbus"),
     type : "UM3",
+    ip : '192.168.1.140',
   },
   Nimbus : {
     name : `Nimbus`,

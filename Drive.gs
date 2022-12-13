@@ -51,13 +51,27 @@ class DriveController
 
   TrashOldTickets () {
     let files = this.ticketFolder.getFiles();
+    console.info(`Folder Permissions: ${this.ticketFolder.getSharingAccess()}, Owner: ${this.ticketFolder.getOwner()}`);
     while (files.hasNext()) {
       let file = files.next();
       let date = file.getDateCreated();
       if(date < this.dateMinusOneTwenty) {
-        // console.warn(`Deleting ----> Name : ${file.getName()}, ID : ${file.getId()}, Date : ${file.getDateCreated()}`);
-        file.setTrashed(true);
-        console.warn(`Removed ----> Name : ${file.getName()}, ID : ${file.getId()}, Date : ${file.getDateCreated()}`);
+        console.warn(`Attempting delete ----> Name : ${file.getName()}, ID : ${file.getId()}, Date : ${file.getDateCreated()}, Owner: ${file.getOwner()}`);
+        try {
+          file.setTrashed(true);
+          console.warn(`Removed ----> Name : ${file.getName()}, ID : ${file.getId()}, Date : ${file.getDateCreated()}`);
+        } catch(err) {
+          console.error(`Whoops: Couldn't delete ${file.getName()}, ${err}`);
+          try {
+            DriveApp.removeFile(file.getId());
+          } catch(error) {
+            console.error(`Whoops: REALLY Couldn't delete ${file.getName()}, ${error}`);
+          }
+        } finally {
+          console.info(`This file has been handled....`);
+        }
+        
+        
       } 
     } 
   }

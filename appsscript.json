@@ -21,11 +21,6 @@
         "userSymbol": "Sheets",
         "serviceId": "sheets",
         "version": "v4"
-      },
-      {
-        "userSymbol": "DriveActivity",
-        "serviceId": "driveactivity",
-        "version": "v2"
       }
     ],
     "libraries": [
@@ -42,7 +37,6 @@
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/documents",
     "https://www.googleapis.com/auth/drive",
-    "https://www.googleapis.com/auth/drive.readonly",
     "https://www.googleapis.com/auth/gmail.settings.basic",
     "https://www.googleapis.com/auth/gmail.readonly ",
     "https://www.googleapis.com/auth/gmail.modify",
