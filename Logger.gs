@@ -53,22 +53,7 @@ class WriteLogger
   
 }
 
-/**
- * -----------------------------------------------------------------------------------------------------------------
- * Testing for Logger Class
- */
-const _testWriteLog = () => {
-  const write = new WriteLogger();
-  console.time(`EXECUTION TIMER`);
-  for (let i = 0; i < 5; i++) {
-    write.Warning(`Ooopsies ----> Warning`);
-    write.Info(`Some Info`);
-    write.Error(`ERROR`);
-    write.Debug(`Debugging`);
-    write._CleanupSheet();
-  }
-  console.timeEnd(`EXECUTION TIMER`);
-}
+
 
 
 

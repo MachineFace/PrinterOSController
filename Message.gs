@@ -164,44 +164,7 @@ class CreateMessage
 
 
 
-/**
- * -----------------------------------------------------------------------------------------------------------------
- * Unit Test for Making 'OnEdit' Messages
- */
-const _testMessages = async () => {
-  console.time(`Execution Timer`);
-  const message = new CreateMessage({
-    name : 'Stew Dent',
-    projectname : 'Pro Ject',
-    weight : 523,
-    designspecialist : `Mike Spec`,
-    designspecialistemaillink : `LinkyLink`
-  })
 
-  console.warn(`DEFAULT ---> ${message.defaultMessage}`);
-  console.warn(`QUEUED ---> ${message.queuedMessage}`);
-  console.warn(`IN-PROGRESS ---> ${message.inProgressMessage}`);
-  console.warn(`COMPLETED ---> ${message.completedMessage}`);
-  console.warn(`PICKEDUP ---> ${message.pickedUpMessage}`);
-  console.warn(`FAILED ---> ${message.failedMessage}`);
-  console.warn(`BILLED ---> ${message.billedMessage}`);
-  console.warn(`NO ACCESS ---> ${message.noAccessMessage}`);
-  console.warn(`ABANDONED ---> ${message.abandonedMessage}`);
-
-  const message2 = new CreateMessage({});
-  console.info(`DEFAULT ---> ${message2.defaultMessage}`);
-  console.info(`QUEUED ---> ${message2.queuedMessage}`);
-  console.info(`IN-PROGRESS ---> ${message2.inProgressMessage}`);
-  console.info(`COMPLETED ---> ${message2.completedMessage}`);
-  console.info(`PICKEDUP ---> ${message2.pickedUpMessage}`);
-  console.info(`FAILED ---> ${message2.failedMessage}`);
-  console.info(`BILLED ---> ${message2.billedMessage}`);
-  console.info(`NO ACCESS ---> ${message2.noAccessMessage}`);
-  console.warn(`ABANDONED ---> ${message.abandonedMessage}`);
-  
-  console.timeEnd(`Execution Timer`);
-  
-}
 
 
 

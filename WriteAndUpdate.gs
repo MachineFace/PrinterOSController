@@ -291,12 +291,7 @@ class UpdateMissingTickets
 const MissingTicketUpdater = () => new UpdateMissingTickets();
 
 
-const _testWriter = () => {
-  const w = new WriteToSheet();
-}
-const _testUpdater = () => {
-  const u = new UpdateSheet();
-}
+
 
 
 
@@ -408,7 +403,5 @@ const FetchNewDataforSingleSheet = (sheet) => {
     })
     .finally(() => pos.Logout());
 }
-const _testFetchSingle = () => {
-  FetchNewDataforSingleSheet(SHEETS.Zardoz);
-}
+
 

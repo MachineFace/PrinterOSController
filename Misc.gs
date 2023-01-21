@@ -156,11 +156,7 @@ const FindOne = (value) => {
   }
   return res;
 }
-const _testFindOne = () => {
-  num = 2503333;
-  const res = FindOne(num);
-  console.info(res);
-}
+
 
 /**
  * Search a Specific Sheets for a value
@@ -221,6 +217,7 @@ const FixStatus = () => {
     });
   })
   console.warn(`Statuses Checked and Fixed....`);
+  return 0;
 }
 
 
@@ -256,28 +253,6 @@ const _helperMakeSheets = async () => {
  */
 
 
-const _testSearch = () => {
-  const term = "berkdincer@berkeley.edu";
-  const search = Search(term);
-  console.info(`Search : ${search}`);
-}
-
-const _testGetImage = async () => {
-  let png = GetByHeader(SHEETS.Spectrum, "Picture", 10);
-  console.info(png)
-  let blob = await GetImage(png);
-}
-
-const _testFixStatus = async () => {
-  console.info(`Testing fixing the Status....`);
-  FixStatus();
-  console.info(`Finished testing fixing the Status.`)
-}
-
-const _testGetHead = () => {
-  let d = GetColumnDataByHeader(SHEETS.Spectrum, "JobID");
-  console.info(d)
-}
 
 
 
@@ -290,6 +265,7 @@ const SetStatusDropdowns = () => {
   const rule = SpreadsheetApp.newDataValidation().requireValueInList(statuses);
   Object.values(SHEETS).forEach(sheet => sheet.getRange(2, 1, sheet.getLastRow(), 1).setDataValidation(rule));
   // console.info(statuses)
+  return 0;
 }
 
 

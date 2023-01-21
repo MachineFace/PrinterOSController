@@ -303,8 +303,5 @@ class OpenQRGenerator {
 }
 
 
-const _testPrint = async () => {
-  const data = {url : `https://docs.google.com/forms/d/e/1FAIpQLSfLTLKre-6ZPU0qsxTkbvmfqm56p_Y_ajoRD1tKALLMvPfdMQ/viewform`, size : `1000x1000`};
-  const doc = await new OpenQRGenerator(data).CreatePrintableQRCode();
-}
+
 

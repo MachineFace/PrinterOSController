@@ -178,6 +178,7 @@ class Calculate
 
     OTHERSHEETS.Metrics.getRange(28, 2, 1, 1).setValue(`Queued Prints`);
     OTHERSHEETS.Metrics.getRange(28, 3, 1, 1).setValue(count.queued);
+    return count;
   }
 
   
@@ -264,6 +265,7 @@ class Calculate
     console.info(`SUM for ${sheet.getSheetName()} = ${sum} grams`);
     return sum;
   }
+  
   SumMaterials () {
     let count = [];
     Object.values(SHEETS).forEach(sheet => count.push(this.SumSingleSheetMaterials(sheet)));

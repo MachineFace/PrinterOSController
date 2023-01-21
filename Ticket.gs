@@ -118,46 +118,6 @@ class Ticket
   };
 }
 
-/**
- * -----------------------------------------------------------------------------------------------------------------
- * datetime=**, extruders=[**], id=**, print_time=**, gif_image=**, heated_bed_temperature=**, cost=**, raft=**, email=**, notes=**, material_type=**, filename=**.gcode, file_id=**,
- * picture=**.png, heated_bed=**, status_id=**, printing_duration=**, layer_height=**, file_size=**, printer_id=**, supports=**, weight=**
- */
-const _testTicket = () => {
-  let jobID;
-  let info;
-  let image;
-  const pos = new PrinterOS();
-  pos.Login()
-  .then( async () => {
-    const jobs = await pos.GetPrintersJobList(79165);
-    jobID = jobs[0].id;
-    console.info(jobID);
-  })
-  .then( async () => {
-    info = await pos.GetJobInfo(jobID);
-    image = await pos.imgBlob;
-    console.info(info);
-    const dummyObj = {
-      designspecialist : "Staff",
-      submissiontime : new Date(),
-      name : "Stu Dent",
-      email : info.email,
-      jobID : info.id,
-      projectname : info.filename,
-      weight : info.weight,
-      printerID : "123876",
-      printerName : "Dingus",
-      filename : "somefile.gcode",
-      image : image,
-    }
-    let ticket = new Ticket(dummyObj).CreateTicket();
-  });
-  
-  
-}
-
-
 
 
 
@@ -197,6 +157,7 @@ const FixMissingTicketsForSingleSheet = (sheet) => {
       console.warn(`Ticket Created....`);
     }
   });
+  return 0;
 }
 
 
@@ -210,7 +171,6 @@ const FixMissingTickets = () => {
     FixMissingTicketsForSingleSheet(sheet);
   });
   console.info(`Tickets Checked and Fixed....`);
+  return 0;
 }
-const _testTicketFixer = () => {
-  FixMissingTicketsForSingleSheet(SHEETS.Caerulus);
-}
+
