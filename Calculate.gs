@@ -9,6 +9,9 @@ class Calculate
   }
 
   CalculateAverageTurnaround (sheet) {
+    if(CheckSheetIsForbidden(sheet) == true) {
+      return new Error(`Sheet is FORBIDDEN.`);
+    }
     let culled = [];
     try {
       let completionTimes = GetColumnDataByHeader(sheet, HEADERNAMES.duration)
@@ -46,6 +49,9 @@ class Calculate
   }
 
   SumStatuses (sheet) {
+    if(CheckSheetIsForbidden(sheet) == true) {
+      return new Error(`Bad sheet.`);
+    }
     let count = {};
     let statuses = GetColumnDataByHeader(sheet, HEADERNAMES.status)
       .filter(Boolean);
@@ -255,6 +261,9 @@ class Calculate
   }
 
   SumSingleSheetMaterials(sheet) {
+    if(CheckSheetIsForbidden(sheet) == true) {
+      return new Error(`Sheet is FORBIDDEN.`);
+    }
     let weights = GetColumnDataByHeader(sheet, HEADERNAMES.weight);
     let statuses = GetColumnDataByHeader(sheet, HEADERNAMES.status);
     for(let i = 0; i < weights.length; i++) {
@@ -288,6 +297,9 @@ class Calculate
   }
 
   SumSingleSheetCost(sheet) {
+    if(CheckSheetIsForbidden(sheet) == true) {
+      return new Error(`Sheet is FORBIDDEN.`);
+    }
     let cost = GetColumnDataByHeader(sheet, HEADERNAMES.cost);
     let statuses = GetColumnDataByHeader(sheet, HEADERNAMES.status);
     for(let i = 0; i < cost.length; i++) {

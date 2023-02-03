@@ -289,16 +289,23 @@ const _gasTCalculationTesting = async () => {
   } 
   const test = new GasTap();
   const calc = new Calculate();
-
+  
   // ------------------------------------------------------------------------------------------------------------------------------
   await test(`Calc Average Turnaround`, (t) => {
     const x = calc.CalculateAverageTurnaround(SHEETS.Aurum);
     t.notEqual(x, undefined || null || NaN, `Average Turnaround SHOULD NOT return null or undefined: ${x}`);
+    t.equal(!isNaN(x), true, `CalculateAverageTurnaround SHOULD return a number: ${JSON.stringify(GetObjectType(x))}`)
+    const y = calc.CalculateAverageTurnaround(OTHERSHEETS.Logger);
+    t.equal(isNaN(y), true, `CalculateAverageTurnaround SHOULD return NaN: ${y}`);
+    const z = calc.CalculateAverageTurnaround(`Fuck`);
+    t.equal(isNaN(z), true, `CalculateAverageTurnaround SHOULD return NaN: ${z}`);
   });
 
   await test(`SumStatuses`, (t) => {
     const x = calc.SumStatuses(SHEETS.Aurum);
     t.notEqual(x, undefined || null || NaN, `SumStatuses SHOULD NOT return null or undefined: ${JSON.stringify(x)}`);
+    const y = calc.SumStatuses(OTHERSHEETS.Logger);
+    t.equal(isNaN(y), true, `SumStatuses SHOULD return NaN for forbidden sheet: ${y}`);
   });
 
   await test(`Calc Distribution`, (t) => {
@@ -306,19 +313,23 @@ const _gasTCalculationTesting = async () => {
     t.notEqual(x, undefined || null, `Distribution should not return undefined: ${x.slice(0, 3)}`);
   });
 
+  
   await test(`GetUserCount`, (t) => {
     const x = calc.GetUserCount();
     t.notEqual(x, undefined || null, `GetUserCount should not return undefined: ${x}`);
   });
 
+
   await test(`CountUniqueUsers`, (t) => {
     const x = calc.CountUniqueUsers();
     t.notEqual(x, undefined || null, `CountUniqueUsers should not return undefined: ${x}`);
+    t.equal(!isNaN(x), true, `CountUniqueUsers SHOULD return a number: ${JSON.stringify(GetObjectType(x))}`)
   });
-  
+
   await test(`CountTotalSubmissions`, (t) => {
     const x = calc.CountTotalSubmissions();
     t.notEqual(x, undefined || null, `CountTotalSubmissions should not return undefined: ${x}`);
+    t.equal(!isNaN(x), true, `CountTotalSubmissions SHOULD return a number: ${JSON.stringify(GetObjectType(x))}`)
   });
 
   await test(`StatusCounts`, (t) => {
@@ -334,33 +345,39 @@ const _gasTCalculationTesting = async () => {
   await test(`Calc Standard Deviation`, (t) => {
     const x = calc.CalculateStandardDeviation();
     t.notEqual(x, undefined || null, `Standard Deviation should not return undefined or null. ${x}`);
+    t.equal(!isNaN(x), true, `CalculateStandardDeviation SHOULD return a number: ${JSON.stringify(GetObjectType(x))}`)
   });
 
   await test(`Calculate Arithmetic Mean`, (t) => {
     const x = calc.CalculateArithmeticMean();
     t.notEqual(x, undefined || null, `Arithmetic Mean SHOULD NOT return undefined or null. ${x}`);
+    t.equal(!isNaN(x), true, `CalculateArithmeticMean SHOULD return a number: ${JSON.stringify(GetObjectType(x))}`)
   });
 
   await test(`SumSingleSheetMaterials`, (t) => {
     const x = calc.SumSingleSheetMaterials(SHEETS.Aurum);
     t.notEqual(x, undefined || null, `SumSingleSheetMaterials SHOULD NOT return undefined or null. ${x}`);
+    t.equal(!isNaN(x), true, `SumSingleSheetMaterials SHOULD return a number: ${JSON.stringify(GetObjectType(x))}`)
   });
 
   await test(`SumMaterials`, (t) => {
     const x = calc.SumMaterials();
     t.notEqual(x, undefined || null, `SumMaterials SHOULD NOT return undefined or null. ${x}`);
+    t.equal(!isNaN(x), true, `SumMaterials SHOULD return a number: ${JSON.stringify(GetObjectType(x))}`)
   });
 
   await test(`SumSingleSheetCost`, (t) => {
     const x = calc.SumSingleSheetCost(SHEETS.Aurum);
     t.notEqual(x, undefined || null, `SumSingleSheetCost SHOULD NOT return undefined or null. ${x}`);
+    t.equal(!isNaN(x), true, `SumSingleSheetCost SHOULD return a number: ${JSON.stringify(GetObjectType(x))}`)
   });
 
   await test(`SumCosts`, (t) => {
     const x = calc.SumCosts();
     t.notEqual(x, undefined || null, `SumCosts SHOULD NOT return undefined or null. ${x}`);
+    t.equal(!isNaN(x), true, `SumCosts SHOULD return a number: ${JSON.stringify(GetObjectType(x))}`)
   });
-
+  
   await test.finish();
   if (test.totalFailed() > 0) throw "Some test(s) failed!";
 }
@@ -430,8 +447,8 @@ const _gasTEmailTesting = async () => {
   const test = new GasTap();
 
   await test(`Emailer`, t => {
-    Object.values(STATUS).forEach(async (status) => {
-      const em = await new Emailer({
+    Object.values(STATUS).forEach( status => {
+      const em = new Emailer({
         email : "codyglen@berkeley.edu",
         status : status.plaintext,
         name : `Dingus Dongus`,
@@ -439,7 +456,7 @@ const _gasTEmailTesting = async () => {
         jobnumber : 9234875,
         weight : 200,
       });
-      t.notThrow(() => em,`Emailer SHOULD NOT throw error.`);
+      t.notThrow(() => em,`Emailer SHOULD NOT throw error. ${em}`);
     });
   });
 
@@ -448,7 +465,9 @@ const _gasTEmailTesting = async () => {
 }
 
 
-
+/**
+ * Test Updating with GasT
+ */
 const _gasTUpdateTesting = async () => {
   if ((typeof GasTap) === 'undefined') { 
     eval(UrlFetchApp.fetch('https://raw.githubusercontent.com/huan/gast/master/src/gas-tap-lib.js').getContentText())
@@ -506,12 +525,21 @@ const _gasTUpdateTesting = async () => {
  * Test All with GasT
  */
 const _gasTTestAll = async () => {
-  _gasTMessagingAndStaffTesting();
-  _gasTTicketTesting();
-  _gasTMiscTesting();
-  _gasTCalculationTesting();
-  _gasTLoggerTesting();
-  _gasTEmailTesting();
+  console.time(`TESTING TIMER`);
+  Promise.all([
+    await _gasTMessagingAndStaffTesting(),
+    await _gasTTicketTesting(),
+    await _gasTMiscTesting(),
+    await _gasTCalculationTesting(),
+    await _gasTLoggerTesting(),
+    await _gasTEmailTesting(),
+    await _gasTUpdateTesting(),
+  ])
+  .then(console.info('Test Success'))
+  .catch(Error => {
+    console.error(Error + ' Failure');
+  });
+  console.timeEnd(`TESTING TIMER`);
 }
 
 

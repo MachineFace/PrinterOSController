@@ -44,11 +44,12 @@ class PrinterOS {
 
     if(responseCode != 200) return false; 
     const response = html.getContentText();
-    const result = JSON.parse(response)["result"];
+
+    const result = JSON.parse(response)?.result;
     if(result == false) return false; 
     else {
-      const session = JSON.parse(response)["message"]["session"];
-      console.info(`SESSION -----> ${session}`)
+      const session = JSON.parse(response)?.message?.session;
+      console.info(`(${session}) Session Started: ${result}`);
       this.session = session;
       return session;
     }
@@ -73,8 +74,9 @@ class PrinterOS {
     if(responseCode != 200) return false 
     else {
       const response = html.getContentText();
-      return JSON.parse(response)["result"];
-      // console.warn(`Logged Out : ${result}`);
+      const result = JSON.parse(response)?.result;
+      console.warn(`(${this.session}) Session Closed: ${result}`);
+      return ;
     }
   }
   
@@ -96,16 +98,17 @@ class PrinterOS {
 
     const html = await UrlFetchApp.fetch(`${this.root}${repo}`, params);
     const responseCode = html.getResponseCode();
-
     // console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+
     if(responseCode != 200) return false 
     else {
       const response = html.getContentText();
-      const result = JSON.parse(response)["result"];
+      const result = JSON.parse(response)?.result;
       if(result == false) return false;
       else {
-        console.info(`CHECK SESSION ---> : ${JSON.parse(response)["message"]}`);
-        return JSON.parse(response)["message"];
+        const message = JSON.parse(response)?.message;
+        console.info(`(${this.session}) Session Valid? : ${message}`);
+        return message;
       }
     }
 
@@ -130,46 +133,44 @@ class PrinterOS {
     };
 
     const html = await UrlFetchApp.fetch(`${this.root}${repo}`, params);
-    const responseCode = Number(html.getResponseCode());
+    const responseCode = html.getResponseCode();
+    // console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
-    console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
-
-    const printerListOut = [];
+    let printerListOut = [];
 
     const response = html.getContentText();
-    const result = JSON.parse(response)["result"];
-    console.info(`RES: ${result}`)
+    const result = JSON.parse(response)?.result;
+
     if(result == false) return false;
     else {
-      const printerlist = JSON.parse(response)["message"];
+      const printerlist = JSON.parse(response)?.message;
       printerlist.forEach(p => {
         const data = JSON.stringify(p);
-        this.printerIDs.push(p["id"]);
-        this.printerIPs.push(p["local_ip"]);
-        this.printerNames.push(p["name"]);
-        // console.info(JSON.stringify(p));
-        // printerListOut.push(JSON.stringify(p));
+        this.printerIDs.push(p.id);
+        this.printerIPs.push(p.local_ip);
+        this.printerNames.push(p.name);
+        printerListOut.push(data);
       })
     }
     
     console.info(this.printerIDs);
     console.info(this.printerIPs);
     console.info(this.printerNames);
+    printerListOut.forEach(item => console.info(item));
     return printerListOut;
   }
 
   /**
-   * Get Printer List
+   * Get Printer's Data
    * @required {obj} session
    * @param {string} printer_type (optional, printer short type, ex. K_PORTRAIT)
    * @param {int} printer_id (optional, printer id)
    */
-  async GetPrinterList (printer_type, printer_id) {
-    const list = [];
+  async GetPrinterData (printer_id) {
+    printer_id = printer_id ? printer_id : 79170;
     const repo = "/get_printers_list";
     const payload = {
       "session" : this.session,
-      "printer_type" : printer_type,
       "printer_id" : printer_id,
     }
     const params = {
@@ -181,23 +182,21 @@ class PrinterOS {
 
     const html = await UrlFetchApp.fetch(this.root + repo, params);
     const responseCode = html.getResponseCode();
-
     // console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
     if(responseCode != 200) return false; 
     const response = html.getContentText();
-    const result = JSON.parse(response)["result"];
+    const result = JSON.parse(response)?.result;
     if(result == false) return false; 
 
-    const printerlist = JSON.parse(response)["message"];
+    const printerlist = JSON.parse(response)?.message;
     printerlist.forEach(p => {
-      this.printerIDs.push(p["id"]);
-      this.printerIPs.push(p["local_ip"]);
-      this.printerNames.push(p["name"]);
-      console.info(JSON.stringify(p));
-      list.push(JSON.stringify(p));
+      this.printerIDs.push(p.id);
+      this.printerIPs.push(p.local_ip);
+      this.printerNames.push(p.name);
     });
-    return list;
+    console.info(printerlist);
+    return printerlist;
 
     
   }
@@ -221,14 +220,14 @@ class PrinterOS {
 
     const html = await UrlFetchApp.fetch(this.root + repo, params);
     const responseCode = html.getResponseCode();
-
     // console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
     if(responseCode != 200) return false; 
     const response = html.getContentText();
-    const result = JSON.parse(response)["result"];
+    const result = JSON.parse(response)?.result;
     if(result == false) return false;
-    const types = JSON.parse(response)["message"];
+    const types = JSON.parse(response)?.message;
+    types.forEach(t => console.info(t));
     return types;
   }
 
@@ -243,6 +242,7 @@ class PrinterOS {
    * response. You need to send prev_time: “time” in next request to get only live updates)
    */
   async GetPrintersJobList (printerID)  {
+    printerID = printerID ? printerID : 79165;
     const repo = "/get_printer_jobs";
     const params = {
       "method" : "POST",
@@ -256,17 +256,14 @@ class PrinterOS {
 
     const html = await UrlFetchApp.fetch(`${this.root}${repo}`, params);
     const responseCode = html.getResponseCode();
-
     // console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
     if(responseCode != 200) return false;
     const response = html.getContentText();
-    const result = JSON.parse(response)["result"];
+    const result = JSON.parse(response)?.result;
     if(result == false) return false;
-    const data = JSON.parse(response)["message"];
-    // data.forEach(p => {
-    //   console.info(JSON.stringify(p));
-    // })
+    const data = JSON.parse(response)?.message;
+    data.forEach(p => console.info(JSON.stringify(p)));
     return data;
   }
 
@@ -275,6 +272,7 @@ class PrinterOS {
    * Get Latest Job on this Printer.
    */
   async GetPrintersLatestJob (printerID)  {
+    printerID = printerID ? printerID : 79165;
     const repo = "/get_printer_jobs";
     const params = {
       "method" : "POST",
@@ -288,13 +286,15 @@ class PrinterOS {
 
     const html = await UrlFetchApp.fetch(this.root + repo, params);
     const responseCode = html.getResponseCode();
-
     // console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+
     if(responseCode != 200) return false; 
     const response = responseCode == 200 ? html.getContentText() : false;
-    const result = JSON.parse(response)["result"];
+    const result = JSON.parse(response)?.result;
     if(result == false) return false; 
-    return JSON.parse(response)["message"][0];
+    const job = JSON.parse(response)?.message[0];
+    console.info(job);
+    return job;
   }
 
 
@@ -304,11 +304,11 @@ class PrinterOS {
   async GetLatestJobsForAllPrinters () {
     const jobIDS = [];
     for (const [key, value] of Object.entries(PRINTERIDS)) {
-      const latestjobID = await this.GetPrintersLatestJob(value);
+      const latestjob = await this.GetPrintersLatestJob(value);
       console.info(`Printer ----> ${key}`);
-      jobIDS.push(latestjobID["id"]);
+      console.info(latestjob);
+      jobIDS.push(latestjob?.id);
     }
-    jobIDS.forEach(async (jobID) => console.info(jobID));
     return jobIDS;
   }
 
@@ -333,18 +333,18 @@ class PrinterOS {
 
     const html = await UrlFetchApp.fetch(this.root + repo, params);
     const responseCode = html.getResponseCode();
-
     // console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
     if(responseCode != 200) return false; 
     const response = html.getContentText();
-    const result = JSON.parse(response)["result"];
+    const result = JSON.parse(response)?.result;
     if(result == false) return false; 
 
-    const res = JSON.parse(response)["message"];
-    this.picture = res.picture;
+    const res = JSON.parse(response)?.message;
+    console.info(res);
+    this.picture = res?.picture;
     this.imgBlob = this.GetJobImage();
-    res["imageBLOB"] = this.imgBlob;
+    res.imageBLOB = this.imgBlob;
     this.jobdata = res;
     return res;
   }
@@ -369,14 +369,14 @@ class PrinterOS {
 
     const html = await UrlFetchApp.fetch(this.root + repo, params);
     const responseCode = html.getResponseCode();
-
     // console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
     if(responseCode != 200) return false; 
     const response = html.getContentText();
-    const result = JSON.parse(response)["result"];
+    const result = JSON.parse(response)?.result;
     if(result == false) return false; 
-    const weight = JSON.parse(response)["message"].weight ? JSON.parse(response)["message"].weight : 0.0;
+    const weight = JSON.parse(response)?.message?.weight ? JSON.parse(response)?.message?.weight : 0.0;
+    // console.info(`Weight: ${weight}`)
     return weight;
   }
 
@@ -401,15 +401,15 @@ class PrinterOS {
 
     const html = await UrlFetchApp.fetch(this.root + repo, params);
     const responseCode = html.getResponseCode();
-
     // console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
     if(responseCode != 200) return false; 
     const response = html.getContentText();
-    const result = JSON.parse(response)["result"];
+    const result = JSON.parse(response)?.result;
     if(result == false) return false; 
-    const weight = JSON.parse(response)["message"].weight ? JSON.parse(response)["message"].weight : 0.0;
-    const price = PrintCost(weight);
+    const weight = JSON.parse(response)?.message?.weight ? JSON.parse(response)?.message?.weight : 0.0;
+    const price = this._PrintCost(weight);
+    // console.info(`Price: ${price}`);
     return price;
     
   }
@@ -419,25 +419,34 @@ class PrinterOS {
    * Get WorkGroup Numbers
    */
   async GetWorkGroups () {
-    
-    let date = new Date();
-    date.setDate(date.getDate() - 1);
-    const fromDate = date.toISOString().split('T')[0];
-    const toDate = new Date().toISOString().split('T')[0];
-    console.info(`From : ${fromDate}, To : ${toDate}`);
-    const res = await this.GetAdminReport(fromDate, toDate);
+    let list = [];
+    const repo = `/get_workgroups_simple_list/`;
+    const payload = {
+      "session" : this.session,
+    }
+    const params = {
+      "method" : "POST",
+      "payload" : payload,
+      followRedirects : true,
+      muteHttpExceptions : true
+    };
 
-    let workgroups = [];
-    res.forEach(entry => {
-      if(entry[16] != null) workgroups.push(entry[16]);
+    const html = await UrlFetchApp.fetch(this.root + repo, params);
+    const responseCode = html.getResponseCode();
+    // console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+
+    if(responseCode != 200) return false; 
+    const response = html.getContentText();
+    const result = JSON.parse(response)?.result;
+    if(result == false) return false;
+    const workgroups = JSON.parse(response)?.message;
+    workgroups.forEach(w => {
+      // console.info(`Workgroup: ${JSON.stringify(w)}`);
+      list.push(w.id);
     });
-    workgroups.shift();
-    workgroups.pop();
-    workgroups = [].concat(...workgroups);
-    let unique = [...new Set(workgroups)]
-    console.info(unique);
-    return unique;
-
+    list = [...new Set(list)]
+    console.info(`LIST: ${list}`)
+    return list;
   }
 
 
@@ -447,6 +456,7 @@ class PrinterOS {
    * @param {int} workgroupID
    */
   async GetUsersByWorkgroup (workgroupID) {
+    workgroupID = workgroupID ? workgroupID : 4006;
     const repo = "/get_workgroup_users";
     const payload = {
       "session" : this.session,
@@ -461,13 +471,15 @@ class PrinterOS {
 
     const html = await UrlFetchApp.fetch(this.root + repo, params);
     const responseCode = html.getResponseCode();
-
     // console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+
     if(responseCode != 200) return false; 
     const response = html.getContentText();
-    const result = JSON.parse(response)["result"];
+    const result = JSON.parse(response)?.result;
     if(result == false) return false; 
-    return JSON.parse(response)["message"];
+    const users = JSON.parse(response)?.message;
+    console.info(users);
+    return users;
     
   }
 
@@ -487,6 +499,52 @@ class PrinterOS {
     })
     console.info(users)
     return users;
+  }
+
+  // @NOTIMPLEMENTED
+  async CreateNewUser (email, firstname, lastname, ) {
+    /**
+     * Create organization user 
+     * email (text) - email address of new user
+     * gdpr: (integer, required) - GDPR access role 
+     *    (1 - confirmation about proceeding user email and IP address; 
+     *    (3 - confirmation about proceeding user email and IP address + confirmation about using user’s personal data across the system)
+          (GDPR is the European General Data Protection Regulation (https://gdpr-info.eu/). 
+          (3DPrinterOS Cloud is GDPR complaint that's why we need to get a permissions from user to store his data (email, IP address, last name, first name) on registration
+    * firstname (text, optional) - first name of new user
+    * lastname (text, optional) - last name of new user
+    * company (text, optional) - company of new user
+    * access_role (integer, optional) - new user access role in organization (0 - org member, 1 - org admin, 2 - workgroup admin)
+    * Response:
+    * Fail: {result: false, message: error_text}
+    * Success: {result: true, message: {}}
+    */
+    const repo = `/create_organization_user`;
+    const payload = {
+      "session" : this.session,
+      "email" : email,
+      "gdpr" : 1,
+      "firstname" : firstname,
+      "lastname" : lastname,
+      "company" : "UC Berkeley",
+    }
+    const params = {
+      "method" : "POST",
+      "payload" : payload,
+      followRedirects : true,
+      muteHttpExceptions : true
+    };
+
+    const html = await UrlFetchApp.fetch(this.root + repo, params);
+    const responseCode = html.getResponseCode();
+
+    // console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+    if(responseCode != 200) return false; 
+    const response = html.getContentText();
+    const result = JSON.parse(response)?.result;
+    if(result == false) return false; 
+    return JSON.parse(response)?.message;
+
   }
 
 
@@ -525,80 +583,11 @@ class PrinterOS {
     // console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
     if(responseCode != 200) return false;
     const response = html.getContentText();
-    const result = JSON.parse(response)["result"];
+    const result = JSON.parse(response)?.result;
     if(result == false) return false; 
     const stuff = JSON.parse(response);
     console.info(stuff);
     return stuff;
-  }
-
-  /**
-   * Get a Custom Admin Report
-   * @required {obj} session
-   * @param {string} from (optional, Y-m-d date string, for ex 2019-06-01; default is today-31 days)
-   * @param {string} to (optional Y-m-d date string, for ex 2019-06-01; default is today; max range for from-to is 365 days)
-   * @param {string} type (optional, type of response: json or csv; default is csv)
-   * @param {int} workgroups (optional, 1 or 0; add to response fields connected with workgroups: Workgroup IDs, Workgroup Names, and Workgroup Passwords; default is 0; id user is in multiple workgroups   
-   * @param {int} all_fields (optional, 1 or 0; show all available fields or only fields that were selected in organizational settings tab; default is 0)
-   */
-  async GetAdminReport(fromDate, toDate ) {
-    const repo = "/get_custom_report";
-    const payload = {
-      "session" : this.session,
-      "from" : fromDate,
-      "to" : toDate,
-      "type" : "json",
-      "workgroups" : 1,
-      "all_fields" : 1,
-    }
-    const params = {
-      "method" : "POST",
-      "payload" : payload,
-      followRedirects : true,
-      muteHttpExceptions : true
-    };
-    const html = await UrlFetchApp.fetch(this.root + repo, params);
-    const responseCode = html.getResponseCode();
-
-    // console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
-    if(responseCode != 200) return false; 
-    const response = html.getContentText();
-    const result = JSON.parse(response)["result"];
-    if(result == false) return false; 
-    return JSON.parse(response)["message"];
-  }
-
-
-  /**
-   * Get Finished Job Report
-   * session
-   * from (optional, string; Y-m-d date string, for ex 2019-06-01; default is today-31 days)
-   * to (optional, string; Y-m-d date string, for ex 2019-06-01; default is today; max range for from-to is 365 days)
-   */
-  async GetFinishedJobReport(fromDate, toDate) {
-    const repo = "/get_finished_jobs_report";
-    const payload = {
-      "session" : this.session,
-      "from" : fromDate,
-      "to" : toDate,
-    }
-    const params = {
-      "method" : "POST",
-      "payload" : payload,
-      followRedirects : true,
-      muteHttpExceptions : true
-    };
-
-    const html = await UrlFetchApp.fetch(this.root + repo, params);
-    const responseCode = html.getResponseCode();
-
-    // console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
-    if(responseCode != 200) return false; 
-    const response = html.getContentText();
-    const result = JSON.parse(response)["result"];
-    if(result == false) return false; 
-    const res = JSON.parse(response)["message"];
-    return res;
   }
 
 
@@ -629,6 +618,7 @@ class PrinterOS {
    * Helper Function to find the name from an ID
    */
   GetPrinterNameFromID (printerID) {
+    printerID = printerID ? printerID : 79165;
     for (const [name, id] of Object.entries(PRINTERIDS)) {
       if(printerID == id) {
         console.info(`PrinterID : ${printerID}, Printer Name : ${name}`);
@@ -641,14 +631,30 @@ class PrinterOS {
     return new Set(iterable).size;
   }
 
+  _PrintCost (weight) {
+    weight = weight instanceof Number || weight > 0.0 ? weight : 0.0;
+    return Number(weight * COSTMULTIPLIER).toFixed(2);
+  }
+
 }
 
 const _testPOS = () => {
   const p = new PrinterOS();
   p.Login()
-    .then(() => {
-      p.GetLatestJobsForAllPrinters();
-    })
+    // .then(() => p.GetPrinters())
+    // .then(() => p.GetPrinterData())
+    // .then(() => p.GetPrinterTypes())
+    // .then(() => p.GetPrintersJobList())
+    // .then(() => p.GetPrintersLatestJob())
+    // .then(() => p.GetLatestJobsForAllPrinters())
+    // .then(() => p.GetJobInfo(3046311))
+    // .then(() => p.GetMaterialWeight(3046311))
+    // .then(() => p.CalculateCost(3046311))
+    // .then(() => p.GetWorkGroups())
+    // .then(() => p.GetUsersByWorkgroup())
+    .then(() => p.GetPrinterNameFromID())
+    // .then(() => p.GetLatestJobsForAllPrinters())
+    .then(() => p.Logout())
 }
 
 /**
@@ -743,24 +749,6 @@ const _testFilename = async () => {
   UpdateAllFilenames();
 }
 
-/**
-const FinalReport = async () => {
-  const pos = new PrinterOS();
-  await pos.Login()
-  .then(async () => {
-    const fromDate = new Date(2021, 8, 1);
-    const toDate = new Date(2021, 12, 15);
-    const info = await pos.GetFinishedJobReport(fromDate, toDate);
-    info.forEach( (item, index) => {
-      // OTHERSHEETS.Report.getRange(2 + index, 1, 1, 1).setValue(item.lastname)
-      // OTHERSHEETS.Report.getRange(2 + index, 2, 1, 1).setValue(item.firstname)
-      // OTHERSHEETS.Report.getRange(2 + index, 3, 1, 1).setValue(item.email)
-      console.info(item);
-    })
-  })
-  .then(pos.Logout());
-}
-*/
 
 
 
@@ -774,7 +762,7 @@ const GetPrinterIDs = () => {
   const p = new PrinterOS();
   p.Login()
     .then(() => {
-      const plist = p.GetPrinterList();
+      const plist = p.GetPrinterData();
       console.info(JSON.stringify(plist));
   })
   .then(() => p.Logout())
@@ -833,5 +821,10 @@ const GetPrinterData = () => {
       console.info(printers)
     })
 }
+
+
+
+
+
 
 

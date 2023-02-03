@@ -175,7 +175,69 @@ const SearchSpecificSheet = (sheet, value) => {
 
 
 
+/**
+ * Check if this sheet is forbidden
+ * @param {sheet} sheet to check
+ * @returns {bool} false if sheet is allowed
+ * @returns {bool} true if forbidden
+ */
+const CheckSheetIsForbidden = (someSheet) => {
+  // Check if it's even a sheet
+  if (someSheet !== Object(someSheet)) {
+    console.error(`A non-sheet argument was passed to a function that requires a sheet.`);
+    return true;
+  }
+  let forbiddenNames = Object.keys(OTHERSHEETS);
+  const index = forbiddenNames.indexOf(someSheet.getName());
+  if(index == -1 || index == undefined) {
+    console.info(`Sheet is NOT FORBIDDEN : ${someSheet.getName()}`)
+    return false;
+  } else {
+    console.error(`SHEET FORBIDDEN : ${forbiddenNames[index]}`);
+    return true;
+  }
+}
 
+
+
+/**
+ * return an object describing what was passed
+ * @param {*} ob the thing to analyze
+ * @return {object} object information
+ */
+const GetObjectType = (ob) => {
+  let stringify;
+  try {
+    // test for an object
+    if (ob !== Object(ob)) {
+        return {
+          type : typeof ob,
+          value : ob,
+          length : typeof ob === `string` ? ob.length : null 
+        } ;
+    }
+    else {
+      try {
+        stringify = JSON.stringify(ob);
+        console.warn(stringify);
+      }
+      catch (err) {
+        stringify = `{ "result" : "unable to stringify" }`
+        console.error(stringify);
+      }
+      return {
+        type : typeof ob ,
+        value : stringify,
+        name : ob.constructor ? ob.constructor.name : null,
+        nargs : ob.constructor ? ob.constructor.arity : null,
+        length : Array.isArray(ob) ? ob.length:null
+      };       
+    }
+  }
+  catch (err) {
+    return { type : `indeterminate type`, } ;
+  }
+}
 
 
 
