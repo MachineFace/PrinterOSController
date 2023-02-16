@@ -5,6 +5,102 @@
 
 
 /**
+ * Test PrinterOS with GasT
+ */
+const _gasTPrinterOSTesting = async () => {
+  if ((typeof GasTap) === 'undefined') { 
+    eval(UrlFetchApp.fetch('https://raw.githubusercontent.com/huan/gast/master/src/gas-tap-lib.js').getContentText())
+  } 
+  const test = new GasTap();
+  const p = new PrinterOS();
+  /*
+  await test(`PrinterOS Self-Test`, (t) => {
+    t.notThrow(() => p, `PrinterOS instance SHOULD NOT throw error: ${JSON.stringify(p)}`);
+  });
+
+  await test(`Login`, (t) => {
+    const x = p.Login();
+    t.notThrow(() => x, `Login SHOULD NOT throw error: ${x}`);
+  });
+
+  await test(`Logout`, (t) => {
+    const x = p.Logout();
+    t.notThrow(() => x, `Logout SHOULD NOT throw error: ${x}`);
+  });
+
+  await test(`GetPrinters`, (t) => {
+    const x = p.Login()
+      .then(() => p.GetPrinters())
+      .then(() => p.Logout());
+    t.notThrow(() => x, `GetPrinters SHOULD NOT throw error: ${x}`);
+  });
+
+  await test(`GetPrinterData`, (t) => {
+    const x = p.Login()
+      .then(() => p.GetPrinterData())
+      .then(() => p.Logout());
+    t.notThrow(() => x, `GetPrinterData SHOULD NOT throw error: ${x}`);
+  });
+
+  await test(`GetPrinterTypes`, (t) => {
+    const x = p.Login()
+      .then(() => p.GetPrinterTypes())
+      .then(() => p.Logout());
+    t.notThrow(() => x, `GetPrinterTypes SHOULD NOT throw error: ${x}`);
+  });
+
+  await test(`GetPrintersJobList`, (t) => {
+    const x = p.Login()
+      .then(() => p.GetPrintersJobList())
+      .then(() => p.Logout());
+    t.notThrow(() => x, `GetPrintersJobList SHOULD NOT throw error: ${x}`);
+  });
+
+  await test(`GetPrintersLatestJob`, (t) => {
+    const x = p.Login()
+      .then(() => p.GetPrintersLatestJob())
+      .then(() => p.Logout());
+    t.notThrow(() => x, `GetPrintersLatestJob SHOULD NOT throw error: ${x}`);
+  });
+
+  await test(`GetLatestJobsForAllPrinters`, (t) => {
+    const x = p.Login()
+      .then(() => p.GetLatestJobsForAllPrinters())
+      .then(() => p.Logout());
+    t.notThrow(() => x, `GetLatestJobsForAllPrinters SHOULD NOT throw error: ${x}`);
+  });
+  */
+
+  await test(`GetJobInfo`, (t) => {
+    const x = p.Login()
+      .then(() => p.GetJobInfo(3046311))
+      .then(() => p.Logout());
+    t.notThrow(() => x, `GetJobInfo SHOULD NOT throw error: ${x}`);
+  });
+
+  /*
+  p.Login()
+    // .then(() => p.GetPrinters())
+    // .then(() => p.GetPrinterData())
+    // .then(() => p.GetPrinterTypes())
+    // .then(() => p.GetPrintersJobList())
+    // .then(() => p.GetPrintersLatestJob())
+    // .then(() => p.GetLatestJobsForAllPrinters())
+    // .then(() => p.GetJobInfo(3046311))
+    // .then(() => p.GetMaterialWeight(3046311))
+    // .then(() => p.CalculateCost(3046311))
+    .then(() => p.GetWorkGroups())
+    .then(() => p.GetUsersByWorkgroup(3275))
+    // .then(() => p.GetUsers())
+    // .then(() => p.GetPrinterNameFromID())
+    // .then(() => p.GetLatestJobsForAllPrinters())
+    .then(() => p.Logout())
+  */
+  await test.finish();
+  if (test.totalFailed() > 0) throw "Some test(s) failed!";
+}
+
+/**
  * Test with GasT
  */
 const _gasTMessagingAndStaffTesting = async () => {

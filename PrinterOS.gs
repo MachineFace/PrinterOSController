@@ -441,7 +441,7 @@ class PrinterOS {
     if(result == false) return false;
     const workgroups = JSON.parse(response)?.message;
     workgroups.forEach(w => {
-      // console.info(`Workgroup: ${JSON.stringify(w)}`);
+      console.info(`Workgroup: ${JSON.stringify(w)}`);
       list.push(w.id);
     });
     list = [...new Set(list)]
@@ -456,7 +456,7 @@ class PrinterOS {
    * @param {int} workgroupID
    */
   async GetUsersByWorkgroup (workgroupID) {
-    workgroupID = workgroupID ? workgroupID : 4006;
+    workgroupID = workgroupID ? workgroupID : 3275;
     const repo = "/get_workgroup_users";
     const payload = {
       "session" : this.session,
@@ -493,7 +493,7 @@ class PrinterOS {
     WORKGROUPS.forEach( async (group) => {
       const res = await this.GetUsersByWorkgroup(group);
       let usergroup = [];
-      res.forEach(user => usergroup.push(user["email"]));
+      res.forEach(user => usergroup.push(user?.email));
       usergroup = [].concat(...usergroup);
       console.info(countUnique(usergroup))
     })
@@ -501,51 +501,6 @@ class PrinterOS {
     return users;
   }
 
-  // @NOTIMPLEMENTED
-  async CreateNewUser (email, firstname, lastname, ) {
-    /**
-     * Create organization user 
-     * email (text) - email address of new user
-     * gdpr: (integer, required) - GDPR access role 
-     *    (1 - confirmation about proceeding user email and IP address; 
-     *    (3 - confirmation about proceeding user email and IP address + confirmation about using user’s personal data across the system)
-          (GDPR is the European General Data Protection Regulation (https://gdpr-info.eu/). 
-          (3DPrinterOS Cloud is GDPR complaint that's why we need to get a permissions from user to store his data (email, IP address, last name, first name) on registration
-    * firstname (text, optional) - first name of new user
-    * lastname (text, optional) - last name of new user
-    * company (text, optional) - company of new user
-    * access_role (integer, optional) - new user access role in organization (0 - org member, 1 - org admin, 2 - workgroup admin)
-    * Response:
-    * Fail: {result: false, message: error_text}
-    * Success: {result: true, message: {}}
-    */
-    const repo = `/create_organization_user`;
-    const payload = {
-      "session" : this.session,
-      "email" : email,
-      "gdpr" : 1,
-      "firstname" : firstname,
-      "lastname" : lastname,
-      "company" : "UC Berkeley",
-    }
-    const params = {
-      "method" : "POST",
-      "payload" : payload,
-      followRedirects : true,
-      muteHttpExceptions : true
-    };
-
-    const html = await UrlFetchApp.fetch(this.root + repo, params);
-    const responseCode = html.getResponseCode();
-
-    // console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
-    if(responseCode != 200) return false; 
-    const response = html.getContentText();
-    const result = JSON.parse(response)?.result;
-    if(result == false) return false; 
-    return JSON.parse(response)?.message;
-
-  }
 
 
   /**
@@ -555,7 +510,7 @@ class PrinterOS {
     let users = [];
     JACOBSWORKGROUPS.forEach( async(group) => {
       const res = await this.GetUsersByWorkgroup(group)
-      .then(console.info(res["email"]));
+      .then(console.info(res?.email));
       // res.forEach(user => users.push(res["email"]));
     })
     users = [].concat(...users);
@@ -567,7 +522,7 @@ class PrinterOS {
 
 
   /**
-   * Get Printers in Cloud - No input params
+   * Get Printers in Cloud
    */
   async GetPrintersInCloud () {
     const repo = "/get_printer_types_detailed";
@@ -614,6 +569,55 @@ class PrinterOS {
     return blob;
   }
 
+  // @NOTIMPLEMENTED
+  async GetLiveCamera (printerId) {
+    printerId = printerId ? printerId : 87200;
+    /**
+     * 
+      Response:
+      Fail: {result: false, message: error_text}
+      Success: {
+        "result":true,
+        "message": {
+          "webcam_image": “text, base64 encoded image, jpeg",
+          "camera_type":"text, camera type",
+          "number":"int, selected camera number, 0 if not selected",
+          "camera_info": associative array for hdcamera retrieving, null if not hdcamera mode,
+          "camera_token": token for hdcamera, false if not hdcamera mode,
+          "camera_sid": sid for hdcamera, false if not hdcamera mode
+          }
+        }
+      To show image in javascript (with jquery, for non HD camera mode) you can use similar code:
+      Html: <img class="camera-image" width="640" height="480">
+      Js: $(‘img.camera-image’).attr('src', 'data:image/jpeg;base64,' + val.webcam_image)
+     */
+
+    const repo = `/get_live_view`;
+    const payload = {
+      "session" : this.session,
+      "printer_id" : printerId,
+    }
+    const params = {
+      "method" : "POST",
+      "payload" : payload,
+      followRedirects : true,
+      muteHttpExceptions : true
+    };
+
+    const html = await UrlFetchApp.fetch(this.root + repo, params)
+    const responseCode = html.getResponseCode();
+    console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+    if(responseCode != 200) return false; 
+
+    const response = html.getContentText();
+    console.info(response)
+    const result = JSON.parse(response)?.result;
+    if(result == false) return false; 
+    const res = JSON.parse(response)?.message;
+    const stream = res?.webcam_image;
+    return stream;
+  }
+
   /**
    * Helper Function to find the name from an ID
    */
@@ -638,24 +642,13 @@ class PrinterOS {
 
 }
 
-const _testPOS = () => {
-  const p = new PrinterOS();
-  p.Login()
-    // .then(() => p.GetPrinters())
-    // .then(() => p.GetPrinterData())
-    // .then(() => p.GetPrinterTypes())
-    // .then(() => p.GetPrintersJobList())
-    // .then(() => p.GetPrintersLatestJob())
-    // .then(() => p.GetLatestJobsForAllPrinters())
-    // .then(() => p.GetJobInfo(3046311))
-    // .then(() => p.GetMaterialWeight(3046311))
-    // .then(() => p.CalculateCost(3046311))
-    // .then(() => p.GetWorkGroups())
-    // .then(() => p.GetUsersByWorkgroup())
-    .then(() => p.GetPrinterNameFromID())
-    // .then(() => p.GetLatestJobsForAllPrinters())
-    .then(() => p.Logout())
-}
+// const _testWebcam = () => {
+//   const p = new PrinterOS();
+//   p.Login()
+//     .then(() => p.GetLiveCamera(89128))
+//     .then(() => p.Logout());
+// }
+
 
 /**
  * -----------------------------------------------------------------------------------------------------------------
