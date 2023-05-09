@@ -130,19 +130,12 @@ const FixMissingTicketsForSingleSheet = (sheet) => {
     if(!cell) {
       let thisRow = index + 2;
       console.warn(`Sheet : ${sheet.getSheetName()}, Index : ${thisRow} is Missing a Ticket! Creating new Ticket....`);
-      
-      const printerID = GetByHeader(sheet, HEADERNAMES.printerID, thisRow);
-      const printerName = GetByHeader(sheet, HEADERNAMES.printerName, thisRow);
-      const jobID = GetByHeader(sheet, HEADERNAMES.jobID, thisRow);
-      const timestamp = GetByHeader(sheet, HEADERNAMES.timestamp, thisRow);
-      const email = GetByHeader(sheet, HEADERNAMES.email, thisRow);
-      const weight = GetByHeader(sheet, HEADERNAMES.weight, thisRow);
-      const filename = GetByHeader(sheet, HEADERNAMES.filename, thisRow);
-      const picture = GetByHeader(sheet, HEADERNAMES.picture, thisRow);
+      const rowData = GetRowData(sheet, thisRow);
+      let { status, printerID, printerName, jobID, timestamp, email, posStatCode, duration, notes, picture, ticket, filename, weight, cost, } = rowData;
       
       let imageBLOB = await GetImage(picture);
 
-      const ticket = await new Ticket({
+      const t = await new Ticket({
         submissionTime : timestamp,
         email : email,
         printerName : printerName,
@@ -152,7 +145,7 @@ const FixMissingTicketsForSingleSheet = (sheet) => {
         filename: filename,
         image : imageBLOB, 
       }).CreateTicket();
-      const url = ticket.getUrl();
+      const url = t.getUrl();
       SetByHeader(sheet, HEADERNAMES.ticket, thisRow, url.toString());
       console.warn(`Ticket Created....`);
     }

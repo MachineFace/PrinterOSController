@@ -95,31 +95,34 @@ const RunCleanup = () => new CleanupSheet();
  * @TRIGGERED
  */
 const TriggerRemoveDuplicates = () => {
-  Object.values(SHEETS).forEach(sheet => {
-    try {
-      console.warn(`Removing duplicate records on ---> ${sheet.getSheetName()}`);
-      let jobIDs = GetColumnDataByHeader(sheet, HEADERNAMES.jobID);
-      let culled = jobIDs.filter(Boolean);
-      indexes = [];
-      culled.forEach( (item, index) => {
-        if(culled.indexOf(item) !== index) {
-          indexes.push(index + 2);
-        }
-      })
-      const dups = culled.filter((item, index) => culled.indexOf(item) !== index);
-      console.warn(`${sheet.getName()} : Number of Duplicates : ${dups.length}`);
-      // Remove
-      if(dups) {
-        indexes.forEach(number => {
-          console.warn(`Sheet ${sheet.getSheetName()} @ ROW : ${number}`);
-          sheet.deleteRow(number);
-          sheet.insertRowsAfter(sheet.getMaxRows(), 1);
-        });
-      }
-    } catch (err) {
-      console.error(`${err} : Couldn't remove duplicates. Maybe it just took too long?...`);
-    }
+  Object.values(SHEETS).forEach(async (sheet) => {
+    await RemoveDuplicatesOnSingleSheet(sheet);
   });
+}
+const RemoveDuplicatesOnSingleSheet = (sheet) => {
+  sheet = sheet ? sheet : SHEETS.Spectrum;
+  console.warn(`Removing duplicate records on ---> ${sheet.getSheetName()}`);
+  let indexes = [];
+  try {
+    let jobIDs = GetColumnDataByHeader(sheet, HEADERNAMES.jobID).filter(Boolean);
+    jobIDs.forEach( (item, index) => {
+      if(jobIDs.indexOf(item) !== index) {
+        indexes.push(index + 2);
+      }
+    })
+    const dups = jobIDs.filter((item, index) => jobIDs.indexOf(item) !== index);
+    console.warn(`${sheet.getName()} : Number of Duplicates : ${dups.length}`);
+    // Remove
+    if(dups) {
+      indexes.forEach(number => {
+        console.warn(`Sheet ${sheet.getSheetName()} @ ROW : ${number}`);
+        sheet.deleteRow(number);
+        sheet.insertRowsAfter(sheet.getMaxRows(), 1);
+      });
+    }
+  } catch (err) {
+    console.error(`${err} : Couldn't remove duplicates. Maybe it just took too long?...`);
+  }
 }
 
 

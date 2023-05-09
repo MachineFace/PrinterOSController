@@ -29,8 +29,8 @@ class PrinterOS {
   async Login() {
     const repo = "/login/";
     const payload = {
-      username : `jacobsprojectsupport@berkeley.edu`,
-      password : `Jacobsde$ign1`,
+      username : PropertiesService.getScriptProperties().getProperty(`POS_username`),
+      password : PropertiesService.getScriptProperties().getProperty(`POS_password`),
     }
     const params = {
       "method" : "POST",

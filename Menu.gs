@@ -125,33 +125,18 @@ const PopupCreateTicket = async () => {
   let thisRow = thisSheet.getActiveRange().getRow();
 
   // If It is on a valid sheet
-  Object.values(OTHERSHEETS).forEach(sheet => {
-    const name = sheet.getSheetName();
-    if (sheetname == name) {
-      Browser.msgBox(
-        `Incorrect Sheet Active`,
-        `Please select from the correct sheet. Select one cell in the row and a ticket will be created.`,
-        Browser.Buttons.OK
-      );
-      return;
-    }
-  }) 
-  
+  if(CheckSheetIsForbidden(thisSheet)) {
+    Browser.msgBox(
+      `Incorrect Sheet Active`,
+      `Please select from the correct sheet. Select one cell in the row and a ticket will be created.`,
+      Browser.Buttons.OK
+    );
+    return;
+  }
 
-  // Loop through to get last row and set status to received
-  const printerID = GetByHeader(thisSheet, HEADERNAMES.printerID, thisRow);
-  const printerName = GetByHeader(thisSheet, HEADERNAMES.printerName, thisRow);
-  const jobID = GetByHeader(thisSheet, HEADERNAMES.jobID, thisRow);
-  const timestamp = GetByHeader(thisSheet, HEADERNAMES.timestamp, thisRow);
-  const email = GetByHeader(thisSheet, HEADERNAMES.email, thisRow);
-  const status = GetByHeader(thisSheet, HEADERNAMES.status, thisRow);
-  const duration = GetByHeader(thisSheet, HEADERNAMES.duration, thisRow);
-  const weight = GetByHeader(thisSheet, HEADERNAMES.weight, thisRow);
-  const cost = GetByHeader(thisSheet, HEADERNAMES.cost, thisRow);
-  const filename = GetByHeader(thisSheet, HEADERNAMES.filename, thisRow);
-  const png = GetByHeader(thisSheet, HEADERNAMES.picture, thisRow);
-  
-  const imageBlob = await GetImage(png);
+  const rowData = GetRowData(sheet, thisRow);
+  let { status, printerID, printerName, jobID, timestamp, email, posStatCode, duration, notes, picture, ticket, filename, weight, cost, } = rowData;
+  const imageBlob = await GetImage(picture);
   
   try {
     const ticket = await new Ticket({

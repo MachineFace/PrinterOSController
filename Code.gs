@@ -31,12 +31,8 @@ const onChange = async (e) => {
   if (thisRow <= 1) return;
 
   // Ignore Edits on background sheets like Logger and StoreItems 
-  let forbiddenSheets = Object.values(OTHERSHEETS);
-  if (forbiddenSheets.includes(ss)) {
-    console.info(`${ss.getSheetName()} is forbidden from editing... Skipping.`);
-    return;
-  }
-    
+  if (CheckSheetIsForbidden(ss)) return;
+
   let hardID;
   Object.values(PRINTERDATA).forEach(printer => {
     if(sheetname == printer.name) hardID = printer.printerID;
@@ -45,15 +41,14 @@ const onChange = async (e) => {
 
   const status = GetByHeader(ss, HEADERNAMES.status, thisRow);
   if(status == STATUS.abandoned.plaintext) {
-    const email = GetByHeader(ss, HEADERNAMES.email, thisRow);
-    const projectname = GetByHeader(ss, HEADERNAMES.filename, thisRow);
-    const jobnumber = GetByHeader(ss, HEADERNAMES.jobID, thisRow);
-    const weight = GetByHeader(ss, HEADERNAMES.weight, thisRow);
+    const rowData = GetRowData(ss, thisRow);
+    let { status, printerID, printerName, jobID, timestamp, email, posStatCode, duration, notes, picture, ticket, filename, weight, cost, } = rowData;
+
     new Emailer({
       email : email, 
       status : status,
-      projectname : projectname,
-      jobnumber : jobnumber,
+      projectname : filename,
+      jobnumber : jobID,
       weight : weight,
     })
   }

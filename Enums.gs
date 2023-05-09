@@ -317,6 +317,7 @@ const NOT_JACOBS_ENUMERATED = {
 
 const THISGID = `1AWjs1PMJTRDXAeqhDgpGoUWQOJioNOcwbBCUAjsa6Zk`;
 const TICKETGID = `1IsDlacmdVS-eOH1PMMjILIqaEU_I4fk-`;
+const PRINTEROSCALENDAR = `https://calendar.google.com/calendar/u/0/r/settings/calendar/Y180YTI1ZjZlZDc2NTdmOGY2NWVhYzc4ODI3OGVmNzE2YTE1YjE1NmRhZmNjNTEzMDViZDRjZTJhMTM2MjNmNWM4QGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20?tab=mc&pli=1`;
 
 
 const PAGESIZES = {

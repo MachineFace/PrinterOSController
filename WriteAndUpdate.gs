@@ -259,33 +259,31 @@ class UpdateMissingTickets
       if(!item) indexes.push(index + 2);
     })
     console.warn(`${sheet.getSheetName()} ---> Missing Tickets: ${indexes}`);
-    this.UpdateRow(indexes, sheet);
-  }
-  UpdateRow(indexes, sheet) {
-    let rowData = [];
-    let headers = [].concat(...sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues());
-    // console.info(headers);
     indexes.forEach(async (index) => {
-      rowData = [].concat(...sheet.getRange(index, 1, 1, sheet.getLastColumn()).getValues());
-      // console.info(rowData);
-      try {
-        let imageBLOB = await GetImage(rowData[12]);
-        const ticket = await new Ticket({
-          submissionTime : rowData[4],
-          email : rowData[5],
-          printerName : rowData[2],
-          printerID : rowData[1],
-          weight : rowData[15],
-          jobID : rowData[3],
-          filename : rowData[14],
-          image : imageBLOB, 
-        }).CreateTicket();
-        const url = ticket.getUrl();
-        SetByHeader(sheet, HEADERNAMES.ticket, index, url.toString());
-      } catch (err) {
-        console.error(`${err} : Couldn't generate a ticket....`);
-      }
-    })
+      this.UpdateRow(index, sheet);
+    });
+  }
+  async UpdateRow(index, sheet) {
+    const rowData = await GetRowData(sheet, index);
+    let { status, printerID, printerName, jobID, timestamp, email, posStatCode, duration, notes, picture, ticket, filename, weight, cost, } = rowData;
+    let imageBLOB = await GetImage(picture);
+
+    try {
+      const t = await new Ticket({
+        submissionTime : timestamp,
+        email : email,
+        printerName : printerName,
+        printerID : printerID,
+        weight : weight,
+        jobID : jobID,
+        filename : filename,
+        image : imageBLOB, 
+      }).CreateTicket();
+      const url = t.getUrl();
+      SetByHeader(sheet, HEADERNAMES.ticket, index, url.toString());
+    } catch (err) {
+      console.error(`${err} : Couldn't generate a ticket....`);
+    }
   }
 }
 const MissingTicketUpdater = () => new UpdateMissingTickets();
