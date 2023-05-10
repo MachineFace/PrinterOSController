@@ -17,23 +17,88 @@ class CalendarFactory {
     return await calendars;
   }
 
-  async ReadCalendar() {
-    const desc = this.calendar.getDescription();
-    console.info(`Desc: ${desc}`);
-    this.calendar.setDescription(`This is a calendar to track printer allocation using the PrinterOS service.`);
+  async GetEvents() {
+    const events = this.calendar.getEvents(new Date(2019, 1, 1, 0, 0, 0), new Date());
+    console.info(`Count: ${events.length}`);
+    events.forEach(event => {
+      console.info(`ID: ${event.getId()} \nTitle: ${event.getTitle()}`);
+    });
+    return await events;
   }
 
-  CreateEvent(printer, startTime, endTime, user, ) {
-    let event = this.calendar
-      .createEvent(printer, startTime, endTime)
-      .setColor(10)
-      .setDescription(`User: ${user}`)
-      .setLocation(`${printer}`)
-    console.info(event.getId());
+  async CreateEvent( rowdata ) {
+    const title = `${rowdata?.printerName}, JobID: ${rowdata?.jobID}, Email: ${rowdata?.email}, Filename:${rowdata?.filename}`;
+    const startTime =  new Date();
+    const endTime = this._CalculateCompletionTime(startTime, rowdata?.duration);
+    const color = PRINTERDATA[rowdata?.printerName].color;
+    const location = `Jacobs Hall Rm 234 \n${rowdata?.printerName}`;
+    let description = `${GMAIL_SERVICE_NAME} \n`;
+
+    Object.entries(rowdata).forEach(entry => {
+      let headername = HEADERNAMES[entry[0]];
+      let value = entry[1];
+      description += `${headername}: ${value}\n`;
+    });
+
+    let event = await this.calendar
+      .createEvent(title, startTime, endTime)
+      .setDescription(description)
+      .setLocation(location)
+      .setColor(color)
+    await console.info(event.getId());
+    return await event;
   }
+
+  async DeleteEvent( jobID ) {
+    this.GetEvents().then(events => {
+      events.forEach(event => {
+        const eventID = event.getId();
+        let jID = event.getTitle()
+          .split(",")[1]
+          .replace(`JobID: `, ``);
+        if(jID == jobID) {
+          console.info(`Found Event: ${eventID} for JobID: ${jobID}, Deleting....`);
+          this.calendar
+            .getEventById(eventID)
+            .deleteEvent();
+          console.info(`Event: ${eventID}, Deleted`);
+        }
+      });
+    });
+  }
+
+  _CalculateCompletionTime(start, duration) {
+    start = start instanceof Date ? start : new Date();
+    const s = new Date(start).getTime();
+    const d = duration * 3600000;
+    const date = new Date(s + d);
+    return date;
+  }
+
 }
 
 const _testCalendars = () => {
   let c = new CalendarFactory();
-  c.CreateEvent(`SomePrinter`, new Date(2023, 5, 9, 6, 25, 10), new Date(2023, 5, 10, 6, 25, 10), `Some dummy user.`);
+  // c.CreateEvent(GetRowData(SHEETS.Spectrum, 131));
+  // c.CreateEvent(GetRowData(SHEETS.Luteus, 227));
+  // c.CreateEvent(GetRowData(SHEETS.Zardoz, 150));
+  // c.GetEvents();
+  c.DeleteEvent(3271817);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

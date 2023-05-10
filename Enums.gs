@@ -3,7 +3,7 @@
  * Code Enumerations
  */
 const SUPPORT_ALIAS = GmailApp.getAliases()[0];
-const GMAIL_SERVICE_NAME = "Jacobs Self-Service Printing Bot";
+const GMAIL_SERVICE_NAME = `Jacobs Self-Service Printing Bot`;
 
 const SERVICENAME = `PrinterOS Controller`;
 const PICKUPHOURS = `Monday - Friday: 11am - 1pm & 4pm - 6pm`;
@@ -36,6 +36,20 @@ const COLORS = {
   grey : `#cccccc`, 
   grey_dark : `#999999`,
   black : `#000000`,
+}
+
+const EVENTCOLORS = {
+  PALE_BLUE	: 1,
+  PALE_GREEN : 2,
+  MAUVE : 3,
+  PALE_RED : 4,
+  YELLOW : 5,
+  ORANGE : 6,
+  CYAN : 7,
+  GRAY : 8,
+  BLUE : 9,
+  GREEN : 10,
+  RED : 11,
 }
 
 const RESPONSECODES = {
@@ -164,42 +178,49 @@ const PRINTERDATA = {
     printerID : 79606,
     sheet : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Luteus"),
     type : "UM3",
+    color : EVENTCOLORS.BLUE,
   },
   Caerulus : {
     name : `Caerulus`,
     printerID : 79605,
     sheet : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Caerulus"),
     type : "UM3",
+    color : EVENTCOLORS.CYAN,
   },
   Photon : {
     name : `Photon`,
     printerID : 75677,
     sheet : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Photon"),
     type : "UM3",
+    color : EVENTCOLORS.GRAY,
   },
   Quasar : {
     name : `Quasar`,
     printerID : 75675,
     sheet : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Quasar"),
     type : "UM3",
+    color : EVENTCOLORS.GREEN,
   },
   Zardoz : {
     name : `Zardoz`,
     printerID : 79166,
     sheet : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Zardoz"),
     type : "UM3 Extended",
+    color : EVENTCOLORS.MAUVE,
   },
   Viridis : {
     name : `Viridis`,
     printerID : 79167,
     sheet : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Viridis"),
     type : "UM3",
+    color : EVENTCOLORS.ORANGE,
   },
   Rubrum : {
     name : `Rubrum`,
     printerID : 79170,
     sheet : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Rubrum"),
     type : "UM3",
+    color : EVENTCOLORS.PALE_BLUE,
   },
   Plumbus : {
     name : `Plumbus`,
@@ -207,36 +228,42 @@ const PRINTERDATA = {
     sheet : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Plumbus"),
     type : "UM3",
     ip : '192.168.1.140',
+    color : EVENTCOLORS.PALE_GREEN,
   },
   Nimbus : {
     name : `Nimbus`,
     printerID : 75670,
     sheet : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Nimbus"),
     type : "UM3",
+    color : EVENTCOLORS.PALE_RED,
   },
   Spectrum : {
     name : `Spectrum`,
     printerID : 79165,
     sheet : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Spectrum"),
     type : "UM3 Extended",
+    color : EVENTCOLORS.RED,
   },
   Purpura : {
     name : `Purpura`,
     printerID : 87199,
     sheet : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Purpura"),
     type : "S3",
+    color : EVENTCOLORS.YELLOW,
   },
   Crystallum : {
     name : `Crystallum`,
     printerID : 87200,
     sheet : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Crystallum"),
     type : "S3",
+    color : EVENTCOLORS.BLUE,
   },
   Aurum : {
     name : `Aurum`,
     printerID : 89128,
     sheet : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Aurum"),
     type : "S3",
+    color : EVENTCOLORS.CYAN,
   },
 };
 

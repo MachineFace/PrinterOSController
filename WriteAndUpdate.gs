@@ -108,6 +108,8 @@ class WriteToSheet
   }
 
   UpdateStatus (statusCode, sheet, row) {
+    const c = new CalendarFactory();
+    const rowData = GetRowData(sheet, row);
     switch(statusCode) {
       case STATUS.queued.statusCode:
         SetByHeader(sheet, HEADERNAMES.status, row, STATUS.queued.plaintext);
@@ -116,14 +118,17 @@ class WriteToSheet
       case STATUS.inProgress.statusCode:
         SetByHeader(sheet, HEADERNAMES.status, row, STATUS.inProgress.plaintext);
         console.warn(`Status changed to: ${STATUS.inProgress.plaintext}`);
+        c.CreateEvent(rowData);
         break;
       case STATUS.failed.statusCode:
         SetByHeader(sheet, HEADERNAMES.status, row, STATUS.failed.plaintext);
         console.warn(`Status changed to: ${STATUS.failed.plaintext}`);
+        c.DeleteEvent(rowData?.jobId);
         break;
       case STATUS.cancelled.statusCode:
         SetByHeader(sheet, HEADERNAMES.status, row, STATUS.cancelled.plaintext);
         console.warn(`Status changed to: ${STATUS.cancelled.plaintext}`);
+        c.DeleteEvent(rowData?.jobId);
         break;
       case STATUS.complete.statusCode:
         SetByHeader(sheet, HEADERNAMES.status, row, STATUS.complete.plaintext);
@@ -205,6 +210,8 @@ class UpdateSheet
 
   }
   UpdateStatus (statusCode, sheet, row) {
+    const c = new CalendarFactory();
+    const rowData = GetRowData(sheet, row);
     switch(statusCode) {
       case STATUS.queued.statusCode:
         SetByHeader(sheet, HEADERNAMES.status, row, STATUS.queued.plaintext);
@@ -213,14 +220,17 @@ class UpdateSheet
       case STATUS.inProgress.statusCode:
         SetByHeader(sheet, HEADERNAMES.status, row, STATUS.inProgress.plaintext);
         console.warn(`Status changed to: ${STATUS.inProgress.plaintext}`);
+        c.CreateEvent(rowData);
         break;
       case STATUS.failed.statusCode:
         SetByHeader(sheet, HEADERNAMES.status, row, STATUS.failed.plaintext);
         console.warn(`Status changed to: ${STATUS.failed.plaintext}`);
+        c.DeleteEvent(rowData?.jobId);
         break;
       case STATUS.cancelled.statusCode:
         SetByHeader(sheet, HEADERNAMES.status, row, STATUS.cancelled.plaintext);
         console.warn(`Status changed to: ${STATUS.cancelled.plaintext}`);
+        c.DeleteEvent(rowData?.jobId);
         break;
       case STATUS.complete.statusCode:
         SetByHeader(sheet, HEADERNAMES.status, row, STATUS.complete.plaintext);
