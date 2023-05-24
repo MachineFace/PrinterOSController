@@ -9,7 +9,7 @@ const SERVICENAME = `PrinterOS Controller`;
 const PICKUPHOURS = `Monday - Friday: 11am - 1pm & 4pm - 6pm`;
 const COSTMULTIPLIER = 0.04;
 
-const COLORS = {
+const COLORS = Object.freeze({
   green_light : `#d9ead3`,
   green : `74d975`, 
   green_dark : `#93c47d`, 
@@ -36,9 +36,10 @@ const COLORS = {
   grey : `#cccccc`, 
   grey_dark : `#999999`,
   black : `#000000`,
-}
+});
 
-const EVENTCOLORS = {
+
+const EVENTCOLORS = Object.freeze({
   PALE_BLUE	: 1,
   PALE_GREEN : 2,
   MAUVE : 3,
@@ -50,9 +51,9 @@ const EVENTCOLORS = {
   BLUE : 9,
   GREEN : 10,
   RED : 11,
-}
+});
 
-const RESPONSECODES = {
+const RESPONSECODES = Object.freeze({
 	200 : `OK`,
 	201 : `Created`,
 	202 : `Accepted`,
@@ -119,9 +120,9 @@ const RESPONSECODES = {
 	511 : `Network Authentication Required`,
 	598 : `Network read timeout error`,
 	599 : `Network connect timeout error`,
-}
+});
 
-const STATUS = {
+const STATUS = Object.freeze({
   queued : {
     plaintext : `Queued`,
     statusCode : `11`,
@@ -154,9 +155,9 @@ const STATUS = {
     plaintext : `Abandoned`,
     statusCode : `2`
   },
-}
+});
 
-const PRINTERIDS = { 
+const PRINTERIDS = Object.freeze({ 
   Luteus : 79606,
   Caerulus : 79605,
   Photon : 75677,
@@ -170,9 +171,9 @@ const PRINTERIDS = {
   Purpura : 87199,
   Crystallum : 87200,
   Aurum : 89128,
-};
+});
 
-const PRINTERDATA = { 
+const PRINTERDATA = Object.freeze({ 
   Luteus : { 
     name : `Luteus`,
     printerID : 79606,
@@ -265,9 +266,9 @@ const PRINTERDATA = {
     type : "S3",
     color : EVENTCOLORS.CYAN,
   },
-};
+});
 
-const HEADERNAMES = {
+const HEADERNAMES = Object.freeze({
   status : `Status`,
   printerID :	`PrinterID`,
   printerName :	`PrinterName`,
@@ -282,9 +283,9 @@ const HEADERNAMES = {
   filename : `Filename`,
   weight : `Material (grams)`,
   cost : `Cost ($)`,												
-};
+});
 
-const SHEETS = {
+const SHEETS = Object.freeze({
   Spectrum : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Spectrum"), 
   Zardoz : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Zardoz"), 
   Nimbus : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Nimbus"), 
@@ -298,9 +299,9 @@ const SHEETS = {
   Purpura : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Purpura"), 
   Crystallum : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Crystallum"),
   Aurum : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Aurum"),
-};
+});
 
-const OTHERSHEETS = {
+const OTHERSHEETS = Object.freeze({
   Scanner : SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Pickup Scanner'),
   Summary : SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Summary'),
   Staff : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("StaffList"),
@@ -309,7 +310,7 @@ const OTHERSHEETS = {
   Logger : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Logger"),
   Unique : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("UniqueUsers"),
   Report : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("REPORT"),
-}
+});
 
 const WORKGROUPS = [
   3275, 3285, 3286, 3291, 3292, 3296, 3414, 3473, 3474, 3475,
@@ -320,7 +321,7 @@ const JACOBSWORKGROUPS = [
 ];
 
 
-const WORKGROUPS_ENUMERATED = {
+const WORKGROUPS_ENUMERATED = Object.freeze({
   STUDENTS_GENERAL : 3275, 
   MDES : 3285, 
   ENG : 3286, 
@@ -331,38 +332,36 @@ const WORKGROUPS_ENUMERATED = {
   CED_DFL_UNDERGRAD : 3473, 
   CED_STAFF : 3474, 
   CED_DFL_PDST : 3475,
-}
+});
 
 //3291, 3292, 3473, 3474, 3475,
-const NOT_JACOBS_ENUMERATED = {
+const NOT_JACOBS_ENUMERATED = Object.freeze({
   CED : 3291, 
   L_S : 3292, 
   CED_DFL_UNDERGRAD : 3473, 
   CED_STAFF : 3474, 
   CED_DFL_PDST : 3475,
-}
-
-const THISGID = `1AWjs1PMJTRDXAeqhDgpGoUWQOJioNOcwbBCUAjsa6Zk`;
-const TICKETGID = `1IsDlacmdVS-eOH1PMMjILIqaEU_I4fk-`;
-const PRINTEROSCALENDAR = `https://calendar.google.com/calendar/u/0/r/settings/calendar/Y180YTI1ZjZlZDc2NTdmOGY2NWVhYzc4ODI3OGVmNzE2YTE1YjE1NmRhZmNjNTEzMDViZDRjZTJhMTM2MjNmNWM4QGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20?tab=mc&pli=1`;
+});
 
 
-const PAGESIZES = {
-  /**
-    * INPUTS
-    * -argument-     :-inches-      :-mm-     :-points-
-    * letter_size    :8.5"x11"      :216x279  :612.283x790.866
-    * tabloid_size   :11"x17"       :279x432  :790.866x1224.57
-    * legal_size     :8.5"x14"      :216x356  :612.283x1009.13
-    * statement_size :5.5"x8.5"     :140x216  :396.85x612.283
-    * executive_size :7.25"x10.5"   :184x267  :521.575x756.85
-    * folio_size     :8.5"x13"      :216x330  :612.283x935.433
-    * a3_size        :11.69"x16.54" :297x420  :841.89x1190.55
-    * a4_size        :8.27"x11.69"  :210x297  :595.276x841.89
-    * a5_size        :5.83"x8.27"   :148x210  :419.528x595.276
-    * b4_size        :9.84"x13.9"   :250x353  :708.661x1000.63
-    * b5_size        :6.93"x9.84"   :176x250  :498.898x708.661
-  */
+
+
+/**
+  * INPUTS
+  * -argument-     :-inches-      :-mm-     :-points-
+  * letter_size    :8.5"x11"      :216x279  :612.283x790.866
+  * tabloid_size   :11"x17"       :279x432  :790.866x1224.57
+  * legal_size     :8.5"x14"      :216x356  :612.283x1009.13
+  * statement_size :5.5"x8.5"     :140x216  :396.85x612.283
+  * executive_size :7.25"x10.5"   :184x267  :521.575x756.85
+  * folio_size     :8.5"x13"      :216x330  :612.283x935.433
+  * a3_size        :11.69"x16.54" :297x420  :841.89x1190.55
+  * a4_size        :8.27"x11.69"  :210x297  :595.276x841.89
+  * a5_size        :5.83"x8.27"   :148x210  :419.528x595.276
+  * b4_size        :9.84"x13.9"   :250x353  :708.661x1000.63
+  * b5_size        :6.93"x9.84"   :176x250  :498.898x708.661
+*/
+const PAGESIZES = Object.freeze({
   letter: {width: 612.283, height: 790.866},
   tabloid: {width: 790.866,height: 1224.57},
   statement: {width: 396.85, height: 612.283},
@@ -371,5 +370,10 @@ const PAGESIZES = {
   a5: {width: 419.528, height: 595.276},
   custom: {width: 204.000, height: 566.000},
 
-}
+});
+
+
+
+
+
 

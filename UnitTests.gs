@@ -13,7 +13,7 @@ const _gasTPrinterOSTesting = async () => {
   } 
   const test = new GasTap();
   const p = new PrinterOS();
-  /*
+  
   await test(`PrinterOS Self-Test`, (t) => {
     t.notThrow(() => p, `PrinterOS instance SHOULD NOT throw error: ${JSON.stringify(p)}`);
   });
@@ -69,7 +69,6 @@ const _gasTPrinterOSTesting = async () => {
       .then(() => p.Logout());
     t.notThrow(() => x, `GetLatestJobsForAllPrinters SHOULD NOT throw error: ${x}`);
   });
-  */
 
   await test(`GetJobInfo`, (t) => {
     const x = p.Login()

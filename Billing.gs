@@ -100,10 +100,6 @@ const PrintCost = (weight) => {
 }
 
 
-const _testComputeCost = () => {
-  let p =  PrintCost(123.0);
-  console.info(p)
-}
 
 
 

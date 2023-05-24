@@ -17,17 +17,21 @@ class CalendarFactory {
     return await calendars;
   }
 
-  async GetEvents() {
+  GetEvents() {
     const events = this.calendar.getEvents(new Date(2019, 1, 1, 0, 0, 0), new Date());
     console.info(`Count: ${events.length}`);
     events.forEach(event => {
       console.info(`ID: ${event.getId()} \nTitle: ${event.getTitle()}`);
     });
-    return await events;
+    return events;
   }
 
   async CreateEvent( rowdata ) {
     const title = `${rowdata?.printerName}, JobID: ${rowdata?.jobID}, Email: ${rowdata?.email}, Filename:${rowdata?.filename}`;
+
+    // Skip if it exists
+    if(this._CheckIfEventExists(rowdata?.jobID) == true) return;
+
     const startTime =  new Date();
     const endTime = this._CalculateCompletionTime(startTime, rowdata?.duration);
     const color = PRINTERDATA[rowdata?.printerName].color;
@@ -45,26 +49,76 @@ class CalendarFactory {
       .setDescription(description)
       .setLocation(location)
       .setColor(color)
-    await console.info(event.getId());
+    console.info(event.getId());
+    this._DeleteDuplicateEvents();
     return await event;
   }
 
   async DeleteEvent( jobID ) {
-    this.GetEvents().then(events => {
-      events.forEach(event => {
-        const eventID = event.getId();
-        let jID = event.getTitle()
+    const events = this.GetEvents();
+    events.forEach(event => {
+      const eventID = event.getId();
+      let jID = event.getTitle()
+        .replace(` `, ``)
+        .split(",")[1]
+        .replace(`JobID: `, ``);
+      if(jID == jobID) {
+        console.info(`Found Event: ${eventID} for JobID: ${jobID}, Deleting....`);
+        this.calendar
+          .getEventById(eventID)
+          .deleteEvent();
+        console.info(`Event: ${eventID}, Deleted`);
+      }
+    });
+  }
+
+  async DeleteAllEvents() {
+    const events = GetEvents();
+    events.forEach(event => {
+      console.info(`Deleting Event: ${event.getTitle()}....`);
+      this.calendar
+        .getEventById(event.getId())
+        .deleteEvent();
+    });
+  }
+
+  _DeleteDuplicateEvents() {
+    let singletons = {};
+    const events = this.GetEvents();
+    events.forEach(event => {
+      const eventID = event.getId();
+      let jID = event.getTitle()
+        .replace(` `, ``)
+        .split(",")[1]
+        .replace(`JobID: `, ``);
+      singletons[jID] = eventID;
+    });
+    console.info(JSON.stringify(singletons));
+    events.forEach(event => {
+      if(Object.values(singletons).indexOf(event.getId()) == -1) {
+        console.error(`Gonna delete this one: ${event.getId()}`);
+        let dupID = event.getTitle()
+          .replace(` `, ``)
           .split(",")[1]
           .replace(`JobID: `, ``);
-        if(jID == jobID) {
-          console.info(`Found Event: ${eventID} for JobID: ${jobID}, Deleting....`);
-          this.calendar
-            .getEventById(eventID)
-            .deleteEvent();
-          console.info(`Event: ${eventID}, Deleted`);
-        }
-      });
-    });
+        this.DeleteEvent(dupID);
+      }
+    })
+  }
+
+  _CheckIfEventExists(jobID) {
+    const events = this.GetEvents();
+    for(let i = 0; i < events.length; i++) {
+      const eventID = events[i].getId();
+      let jID = events[i].getTitle()
+        .replace(` `, ``)
+        .split(",")[1]
+        .replace(`JobID: `, ``);
+        console.info(`JobID: ${jID}`);
+      if(jID != jobID) return false;
+      console.info(`Found Event: ${eventID} for JobID: ${jobID}....`);
+      return true;
+    }
   }
 
   _CalculateCompletionTime(start, duration) {
@@ -75,6 +129,7 @@ class CalendarFactory {
     return date;
   }
 
+
 }
 
 const _testCalendars = () => {
@@ -83,7 +138,11 @@ const _testCalendars = () => {
   // c.CreateEvent(GetRowData(SHEETS.Luteus, 227));
   // c.CreateEvent(GetRowData(SHEETS.Zardoz, 150));
   // c.GetEvents();
-  c.DeleteEvent(3271817);
+  // c.DeleteEvent(3271817);
+  // c.DeleteAllEvents();
+  // const ch = c._CheckIfEventExists(`3250283`);
+  const ch = c._DeleteDuplicateEvents();
+  // console.info(ch);
 }
 
 

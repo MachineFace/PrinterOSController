@@ -4,14 +4,7 @@
  */
 class PrinterOS {
   constructor(){
-    // this.googleID = "576527286089-l5pr801cmggb0hisn5kcisanbsiv14ul.apps.googleusercontent.com";
-    // this.google_secret = "6X5vHouCqFT6GeiPp3Cjmr93";
-    // this.cody_UID = "0df1ff70722211ebbc93fbb2f3299051";
-    // this.uid = 'ccee6140208011eca4f4fbb2f3299051';
-    // this.password = 'tXnPVw0zkmRcuEJkBrxv';
-    // this.username = "jacobsprojectsupport@berkeley.edu";
-    // this.password = "Jacobsde$ign1";
-    this.root = 'https://cloud.3dprinteros.com/apiglobal';
+    this.root = `https://cloud.3dprinteros.com/apiglobal`;
     this.session;
     this.printerNames = [];
     this.printerIDs = [];
@@ -28,15 +21,14 @@ class PrinterOS {
    */
   async Login() {
     const repo = "/login/";
-    const payload = {
-      username : PropertiesService.getScriptProperties().getProperty(`POS_username`),
-      password : PropertiesService.getScriptProperties().getProperty(`POS_password`),
-    }
     const params = {
       "method" : "POST",
-      "payload" : payload,
-      followRedirects : true,
-      muteHttpExceptions : false,
+      "followRedirects" : true,
+      "muteHttpExceptions" : false,
+      "payload" : {
+        username : PropertiesService.getScriptProperties().getProperty(`POS_username`),
+        password : PropertiesService.getScriptProperties().getProperty(`POS_password`),
+      },
     };
 
     const html = await UrlFetchApp.fetch(this.root + repo, params);
@@ -47,13 +39,12 @@ class PrinterOS {
 
     const result = JSON.parse(response)?.result;
     if(result == false) return false; 
-    else {
-      const session = JSON.parse(response)?.message?.session;
-      console.info(`(${session}) Session Started: ${result}`);
-      this.session = session;
-      return session;
-    }
-    
+
+    const session = JSON.parse(response)?.message?.session;
+    console.info(`(${session}) Session Started: ${result}`);
+    this.session = session;
+    return session;
+
   }
 
   /**
@@ -62,8 +53,8 @@ class PrinterOS {
   async Logout() {
     const repo = "/logout/";
     const params = {
-      "method" : "POST",
-      "payload" : { session : this.session },
+      method : "POST",
+      payload : { session : this.session },
       followRedirects : true,
       muteHttpExceptions : false,
     };
@@ -79,39 +70,34 @@ class PrinterOS {
       return ;
     }
   }
-  
 
   /**
    * Check PrinterOS Session
    */
   async CheckSession() {
     const repo = "/check_session"
-    const payload = {
-      "session" : this.session,
-    }
     const params = {
-      "method" : "POST",
-      "payload" : payload,
+      method : "POST",
       followRedirects : true,
-      muteHttpExceptions : true
+      muteHttpExceptions : true,
+      payload : {
+        "session" : this.session,
+      },
     };
+    try {
+      const response = await UrlFetchApp.fetch(`${this.root}${repo}`, params);
+      const responseCode = response.getResponseCode();
+      console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+      if(responseCode != 200) return false;
 
-    const html = await UrlFetchApp.fetch(`${this.root}${repo}`, params);
-    const responseCode = html.getResponseCode();
-    // console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
-
-    if(responseCode != 200) return false 
-    else {
-      const response = html.getContentText();
-      const result = JSON.parse(response)?.result;
+      const result = JSON.parse(response.getContentText())?.result;
       if(result == false) return false;
-      else {
-        const message = JSON.parse(response)?.message;
-        console.info(`(${this.session}) Session Valid? : ${message}`);
-        return message;
-      }
+      const message = result?.message;
+      console.info(`(${this.session}) Session Valid? : ${message}`);
+      return message;
+    } catch(err) {
+      console.error(`"CheckSession()" Failed: ${err}`);
     }
-
   }
 
   /**
@@ -122,19 +108,18 @@ class PrinterOS {
    */
   async GetPrinters() {
     const repo = "/get_organization_printers_list";
-    const payload = {
-      "session" : this.session,
-    }
     const params = {
       "method" : "POST",
-      "payload" : payload,
-      followRedirects : true,
-      muteHttpExceptions : true
+      "payload" : {
+        "session" : this.session,
+      },
+      "followRedirects" : true,
+      "muteHttpExceptions" : true
     };
 
     const html = await UrlFetchApp.fetch(`${this.root}${repo}`, params);
     const responseCode = html.getResponseCode();
-    // console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+    console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
 
     let printerListOut = [];
 
@@ -142,16 +127,16 @@ class PrinterOS {
     const result = JSON.parse(response)?.result;
 
     if(result == false) return false;
-    else {
-      const printerlist = JSON.parse(response)?.message;
-      printerlist.forEach(p => {
-        const data = JSON.stringify(p);
-        this.printerIDs.push(p.id);
-        this.printerIPs.push(p.local_ip);
-        this.printerNames.push(p.name);
-        printerListOut.push(data);
-      })
-    }
+
+    const printerlist = JSON.parse(response)?.message;
+    printerlist.forEach(p => {
+      const data = JSON.stringify(p);
+      this.printerIDs.push(p.id);
+      this.printerIPs.push(p.local_ip);
+      this.printerNames.push(p.name);
+      printerListOut.push(data);
+    })
+    
     
     console.info(this.printerIDs);
     console.info(this.printerIPs);
@@ -169,15 +154,14 @@ class PrinterOS {
   async GetPrinterData (printer_id) {
     printer_id = printer_id ? printer_id : 79170;
     const repo = "/get_printers_list";
-    const payload = {
-      "session" : this.session,
-      "printer_id" : printer_id,
-    }
     const params = {
       "method" : "POST",
-      "payload" : payload,
-      followRedirects : true,
-      muteHttpExceptions : true
+      "followRedirects" : true,
+      "muteHttpExceptions" : true,
+      "payload" : {
+        "session" : this.session,
+        "printer_id" : printer_id,
+      },
     };
 
     const html = await UrlFetchApp.fetch(this.root + repo, params);
@@ -208,14 +192,13 @@ class PrinterOS {
    */
   async GetPrinterTypes () {
     const repo = "/get_printer_types";
-    const payload = {
-      "session" : this.session,
-    }
     const params = {
       "method" : "POST",
-      "payload" : payload,
-      followRedirects : true,
-      muteHttpExceptions : true
+      "followRedirects" : true,
+      "muteHttpExceptions" : true,
+      "payload" : {
+        "session" : this.session,
+      },
     };
 
     const html = await UrlFetchApp.fetch(this.root + repo, params);
@@ -231,7 +214,6 @@ class PrinterOS {
     return types;
   }
 
-
   /**
    * Get a Specific Printer's Job List
    * @required {obj} session
@@ -246,12 +228,12 @@ class PrinterOS {
     const repo = "/get_printer_jobs";
     const params = {
       "method" : "POST",
+      "followRedirects" : true,
+      "muteHttpExceptions" : true,
       "payload" : {
         "session" : this.session,
         "printer_id" : printerID,
       },
-      followRedirects : true,
-      muteHttpExceptions : true
     };
 
     const html = await UrlFetchApp.fetch(`${this.root}${repo}`, params);
@@ -267,7 +249,6 @@ class PrinterOS {
     return data;
   }
 
-
   /**
    * Get Latest Job on this Printer.
    */
@@ -276,12 +257,12 @@ class PrinterOS {
     const repo = "/get_printer_jobs";
     const params = {
       "method" : "POST",
+      "followRedirects" : true,
+      "muteHttpExceptions" : true,
       "payload" : {
         "session" : this.session,
         "printer_id" : printerID,
       },
-      followRedirects : true,
-      muteHttpExceptions : true
     };
 
     const html = await UrlFetchApp.fetch(this.root + repo, params);
@@ -297,7 +278,6 @@ class PrinterOS {
     return job;
   }
 
-
   /**
    * Get Latest Job from All Printers
    */
@@ -312,7 +292,6 @@ class PrinterOS {
     return jobIDS;
   }
 
-
   /**
    * Get a Specific Job Details
    * @param {obj} session
@@ -320,15 +299,14 @@ class PrinterOS {
    */
   async GetJobInfo(jobID) {
     const repo = "/get_job_info";
-    const payload = {
-      "session" : this.session,
-      "job_id" : jobID,
-    }
     const params = {
       "method" : "POST",
-      "payload" : payload,
-      followRedirects : true,
-      muteHttpExceptions : true
+      "followRedirects" : true,
+      "muteHttpExceptions" : true,
+      "payload" : {
+        "session" : this.session,
+        "job_id" : jobID,
+      },
     };
 
     const html = await UrlFetchApp.fetch(this.root + repo, params);
@@ -356,15 +334,14 @@ class PrinterOS {
    */
   async GetMaterialWeight(jobID) {
     const repo = "/get_job_info";
-    const payload = {
-      "session" : this.session,
-      "job_id" : jobID,
-    }
     const params = {
       "method" : "POST",
-      "payload" : payload,
-      followRedirects : true,
-      muteHttpExceptions : true
+      "followRedirects" : true,
+      "muteHttpExceptions" : true,
+      "payload" : {
+        "session" : this.session,
+        "job_id" : jobID,
+      },
     };
 
     const html = await UrlFetchApp.fetch(this.root + repo, params);
@@ -388,15 +365,14 @@ class PrinterOS {
    */
   async CalculateCost(jobID) {
     const repo = "/get_job_info";
-    const payload = {
-      "session" : this.session,
-      "job_id" : jobID,
-    }
     const params = {
       "method" : "POST",
-      "payload" : payload,
-      followRedirects : true,
-      muteHttpExceptions : true
+      "followRedirects" : true,
+      "muteHttpExceptions" : true,
+      "payload" : {
+        "session" : this.session,
+        "job_id" : jobID,
+      },
     };
 
     const html = await UrlFetchApp.fetch(this.root + repo, params);
@@ -414,21 +390,19 @@ class PrinterOS {
     
   }
 
-
   /**
    * Get WorkGroup Numbers
    */
   async GetWorkGroups () {
     let list = [];
     const repo = `/get_workgroups_simple_list/`;
-    const payload = {
-      "session" : this.session,
-    }
     const params = {
       "method" : "POST",
-      "payload" : payload,
-      followRedirects : true,
-      muteHttpExceptions : true
+      "followRedirects" : true,
+      "muteHttpExceptions" : true,
+      "payload" : {
+        "session" : this.session,
+      },
     };
 
     const html = await UrlFetchApp.fetch(this.root + repo, params);
@@ -449,7 +423,6 @@ class PrinterOS {
     return list;
   }
 
-
   /**
    * Get Users by Workgroup Assignment
    * @param {obj} session
@@ -458,15 +431,14 @@ class PrinterOS {
   async GetUsersByWorkgroup (workgroupID) {
     workgroupID = workgroupID ? workgroupID : 3275;
     const repo = "/get_workgroup_users";
-    const payload = {
-      "session" : this.session,
-      "workgroup_id" : workgroupID,
-    }
     const params = {
       "method" : "POST",
-      "payload" : payload,
-      followRedirects : true,
-      muteHttpExceptions : true
+      "followRedirects" : true,
+      "muteHttpExceptions" : true,
+      "payload" : {
+        "session" : this.session,
+        "workgroup_id" : workgroupID,
+      },
     };
 
     const html = await UrlFetchApp.fetch(this.root + repo, params);
@@ -482,7 +454,6 @@ class PrinterOS {
     return users;
     
   }
-
 
   /**
    * Get Users
@@ -501,8 +472,6 @@ class PrinterOS {
     return users;
   }
 
-
-
   /**
    * Get User Counts and Print to Data / Metrics
    */
@@ -520,7 +489,6 @@ class PrinterOS {
     return count;
   }
 
-
   /**
    * Get Printers in Cloud
    */
@@ -528,8 +496,8 @@ class PrinterOS {
     const repo = "/get_printer_types_detailed";
     const params = {
       "method" : "POST",
-      followRedirects : true,
-      muteHttpExceptions : true
+      "followRedirects" : true,
+      "muteHttpExceptions" : true,
     };
 
     const html = await UrlFetchApp.fetch(this.root + repo, params);
@@ -545,7 +513,6 @@ class PrinterOS {
     return stuff;
   }
 
-
   /**
    * Get an Image
    */
@@ -556,9 +523,9 @@ class PrinterOS {
 
     const params = {
       "method" : "GET",
-      contentType : "image/png",
-      followRedirects : true,
-      muteHttpExceptions : true
+      "contentType" : "image/png",
+      "followRedirects" : true,
+      "muteHttpExceptions" : true,
     };
 
     const html = await UrlFetchApp.fetch(repo, params);
@@ -567,55 +534,6 @@ class PrinterOS {
     if(responseCode != 200) return false; 
     const blob = html.getBlob().setName(`IMAGE_${this.picture}`);
     return blob;
-  }
-
-  // @NOTIMPLEMENTED
-  async GetLiveCamera (printerId) {
-    printerId = printerId ? printerId : 87200;
-    /**
-     * 
-      Response:
-      Fail: {result: false, message: error_text}
-      Success: {
-        "result":true,
-        "message": {
-          "webcam_image": “text, base64 encoded image, jpeg",
-          "camera_type":"text, camera type",
-          "number":"int, selected camera number, 0 if not selected",
-          "camera_info": associative array for hdcamera retrieving, null if not hdcamera mode,
-          "camera_token": token for hdcamera, false if not hdcamera mode,
-          "camera_sid": sid for hdcamera, false if not hdcamera mode
-          }
-        }
-      To show image in javascript (with jquery, for non HD camera mode) you can use similar code:
-      Html: <img class="camera-image" width="640" height="480">
-      Js: $(‘img.camera-image’).attr('src', 'data:image/jpeg;base64,' + val.webcam_image)
-     */
-
-    const repo = `/get_live_view`;
-    const payload = {
-      "session" : this.session,
-      "printer_id" : printerId,
-    }
-    const params = {
-      "method" : "POST",
-      "payload" : payload,
-      followRedirects : true,
-      muteHttpExceptions : true
-    };
-
-    const html = await UrlFetchApp.fetch(this.root + repo, params)
-    const responseCode = html.getResponseCode();
-    console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
-    if(responseCode != 200) return false; 
-
-    const response = html.getContentText();
-    console.info(response)
-    const result = JSON.parse(response)?.result;
-    if(result == false) return false; 
-    const res = JSON.parse(response)?.message;
-    const stream = res?.webcam_image;
-    return stream;
   }
 
   /**
@@ -642,71 +560,11 @@ class PrinterOS {
 
 }
 
-// const _testWebcam = () => {
-//   const p = new PrinterOS();
-//   p.Login()
-//     .then(() => p.GetLiveCamera(89128))
-//     .then(() => p.Logout());
-// }
-
-
-/**
- * -----------------------------------------------------------------------------------------------------------------
- */
-
-
-/**
- * Helper Function to write to a sheet
- * @NOTIMPLEMENTED
- *
-const _TestFetchAll = async () => {
-  let jobList = [];
-  const pos = new PrinterOS();
-  for(const [key,printer] of Object.entries(PRINTERDATA)) {
-    pos.Login()
-      .then( async () => {
-        const jobs = await pos.GetPrintersJobList(printer.printerID);
-        jobs.forEach(job => jobList.push(job["id"]));
-      })
-      .then(() => {
-        jobList.reverse();
-        jobList.forEach( async(jobnumber) => {
-          data = await pos.GetJobInfo(jobnumber);
-          console.info(data);
-          // if(SHEETS[key].getName() == printer.name) {
-          //   // console.info(key)
-          //   ParseJobDetails(data, SHEETS[key]);
-          // }
-        })
-      })
-      .finally(() => pos.Logout());
-  }
-
-} 
-*/
-
-/**
- * Remove Dup Users
- */
-/** 
-const RemoveDuplicateUsers = async () => {
-  let ids = GetColumnDataByHeader(OTHERSHEETS.Users, "ID");
-  let dups = [];
-  const uniqueElements = new Set(ids);
-  ids.filter( (item, index) => {
-    if (uniqueElements.has(item)) {
-      uniqueElements.delete(item);
-    } else {
-      console.warn(`REMOVING : ${index + 2} : ${item}`);
-      OTHERSHEETS.Users.deleteRow(index + 2);
-      OTHERSHEETS.Users.insertRowAfter(OTHERSHEETS.Users.getMaxRows() - 1 );
-      dups.push(item);
-    }
-  });
+const _testPOS = () => {
+  const p = new PrinterOS();
+  p.Login()
+    .then(p.GetPrinters());
 }
-*/
-
-
 
 
 
@@ -817,6 +675,50 @@ const GetPrinterData = () => {
 
 
 
+/** 
+// Configure the service
+const PrinterOS_Service = () => {
+  const service = OAuth2.createService(`PrinterOS`)
+    .setAuthorizationBaseUrl(`https://cloud.3dprinteros.com/apiglobal`)
+    .setTokenUrl(`https://cloud.3dprinteros.com/apiglobal/login`)
+    .setClientId(PropertiesService.getScriptProperties().getProperty(`POS_username`))
+    .setClientSecret(PropertiesService.getScriptProperties().getProperty(`POS_password`))
+    .setCallbackFunction((request) => {
+      const service = GetPrinterOSService();
+      const isAuthorized = service.handleCallback(request);
+      if (isAuthorized) { 
+        return HtmlService
+          .createTemplateFromFile("auth_success")
+          .evaluate();
+      } else {
+        return HtmlService
+          .createTemplateFromFile("auth_error")
+          .evaluate();
+      }
+    })
+    .setPropertyStore(PropertiesService.getUserProperties())
+    .setCache(CacheService.getUserCache())
+    .setLock(LockService.getUserLock())
+    // .setScope('user-library-read playlist-read-private playlist-read-collaborative playlist-modify-public playlist-modify-private');
+  // if (!service.hasAccess()) {
+  //   throw new Error(`Missing PrinterOS Bot authorization.`);
+  // }
+  console.info(`Access: ${service.hasAccess()}`);
+  return service;
+}
+
+const _tPS = () => {
+  const pos = PrinterOS_Service();
+  console.info(JSON.stringify(pos, 4, null))
+}
+
+// Logs the redirect URI to register. You can also get this from File > Project Properties
+const GetRedirectUri = () => {
+  const redirectURI = PrinterOS_Service().getRedirectUri();
+  console.log(redirectURI);
+  return redirectURI;
+}
+*/
 
 
 

@@ -1,8 +1,7 @@
 /**
  * Write all new Data To Sheet
  */
-class WriteToSheet
-{
+class WriteToSheet {
   constructor() {
     this.WriteAllNewDataToSheets();
   }
@@ -146,8 +145,7 @@ class WriteToSheet
 /**
  * Update Data on Sheet
  */
-class UpdateSheet
-{
+class UpdateSheet {
   constructor () {
     this.UpdateAll();
   }
@@ -251,8 +249,7 @@ const WriteAllNewDataToSheets = () => new WriteToSheet();
 const UpdateAll = () => new UpdateSheet();
 
 
-class UpdateMissingTickets
-{
+class UpdateMissingTickets {
   constructor() {
     this.UpdateAllTickets();
   }

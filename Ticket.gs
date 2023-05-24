@@ -32,7 +32,7 @@ class Ticket
     this.printerName = printerName;
     this.filename = filename;
     this.image = image;
-    this.folder = DriveApp.getFolderById(TICKETGID);
+    this.folder = DriveApp.getFolderById(PropertiesService.getScriptProperties().getProperty(`TICKETGID`));
   }
 
   CreateTicket() {

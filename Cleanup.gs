@@ -95,15 +95,15 @@ const RunCleanup = () => new CleanupSheet();
  * @TRIGGERED
  */
 const TriggerRemoveDuplicates = () => {
-  Object.values(SHEETS).forEach(async (sheet) => {
-    await RemoveDuplicatesOnSingleSheet(sheet);
+  Object.values(SHEETS).forEach(sheet => {
+    RemoveDuplicatesOnSingleSheet(sheet);
   });
 }
 const RemoveDuplicatesOnSingleSheet = (sheet) => {
-  sheet = sheet ? sheet : SHEETS.Spectrum;
-  console.warn(`Removing duplicate records on ---> ${sheet.getSheetName()}`);
   let indexes = [];
   try {
+    if(typeof sheet != `object`) throw new Error(`Did not pass a good sheet.`);
+    console.warn(`Removing duplicate records on ---> ${sheet.getSheetName()}`);
     let jobIDs = GetColumnDataByHeader(sheet, HEADERNAMES.jobID).filter(Boolean);
     jobIDs.forEach( (item, index) => {
       if(jobIDs.indexOf(item) !== index) {
@@ -113,17 +113,20 @@ const RemoveDuplicatesOnSingleSheet = (sheet) => {
     const dups = jobIDs.filter((item, index) => jobIDs.indexOf(item) !== index);
     console.warn(`${sheet.getName()} : Number of Duplicates : ${dups.length}`);
     // Remove
-    if(dups) {
-      indexes.forEach(number => {
-        console.warn(`Sheet ${sheet.getSheetName()} @ ROW : ${number}`);
-        sheet.deleteRow(number);
-        sheet.insertRowsAfter(sheet.getMaxRows(), 1);
-      });
-    }
+    if(dups.length == 0) return 0; 
+    indexes.forEach(number => {
+      console.warn(`Sheet ${sheet.getSheetName()} @ ROW : ${number}`);
+      sheet.deleteRow(number);
+      sheet.insertRowsAfter(sheet.getMaxRows(), 1);
+    });
+    return 0;
   } catch (err) {
     console.error(`${err} : Couldn't remove duplicates. Maybe it just took too long?...`);
+    return 1;
   }
 }
+
+
 
 
 
