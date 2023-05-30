@@ -2,13 +2,12 @@
  * -----------------------------------------------------------------------------------------------------------------
  * Calculate Metrics
  */
-class Calculate
-{
+class Calculate {
   constructor() {
 
   }
 
-  CalculateAverageTurnaround (sheet) {
+  CalculateAverageTurnaround(sheet) {
     if(CheckSheetIsForbidden(sheet) == true) {
       return new Error(`Sheet is FORBIDDEN.`);
     }
@@ -34,7 +33,7 @@ class Calculate
     console.info(`Total Time : ${total}, Average : ${average}`);
     return average;
   }
-  PrintTurnarounds () {
+  PrintTurnarounds() {
     let obj = {}
     for(const [key, value] of Object.entries(SHEETS)) {
       let turnaround = this.CalculateAverageTurnaround(value);
@@ -48,7 +47,7 @@ class Calculate
     })
   }
 
-  SumStatuses (sheet) {
+  SumStatuses(sheet) {
     if(CheckSheetIsForbidden(sheet) == true) {
       return new Error(`Bad sheet.`);
     }
@@ -60,7 +59,7 @@ class Calculate
     });
     return count;
   }
-  PrintStatusCounts () {
+  PrintStatusCounts() {
     let obj = {};
     for(const [key, value] of Object.entries(SHEETS)) {
       let counts = this.SumStatuses(value);
@@ -79,7 +78,7 @@ class Calculate
     return obj;
   }
 
-  CalculateDistribution () {
+  CalculateDistribution() {
     let userList = [];
     let staff = GetColumnDataByHeader(OTHERSHEETS.Staff, `EMAIL`);
     Object.values(SHEETS).forEach(sheet => {
@@ -99,7 +98,7 @@ class Calculate
     return items;  
   }
 
-  async GetUserCount () {
+  async GetUserCount() {
     let count;
     let users = [];
     const pos = new PrinterOS();
@@ -123,7 +122,7 @@ class Calculate
     })
     return await count;
   }
-  PrintUniqueUsersWhoHavePrinted () {
+  PrintUniqueUsersWhoHavePrinted() {
     const users = this.CountUniqueUsersWhoHavePrinted();
     OTHERSHEETS.Unique.getRange(1, 3, 1, 1).setValue(`Total Successful Students : `);
     OTHERSHEETS.Unique.getRange(1, 4, 1, 1).setValue(users.length);
@@ -132,7 +131,7 @@ class Calculate
     OTHERSHEETS.Metrics.getRange(21, 3, 1, 1).setValue(users.length);
   }
 
-  CountUniqueUsers () {
+  CountUniqueUsers() {
     const countUnique = (iterable) => new Set(iterable).size;
     let userList = [];
     Object.values(SHEETS).forEach(sheet => {
@@ -147,7 +146,7 @@ class Calculate
     return count;
   }
 
-  CountTotalSubmissions () {
+  CountTotalSubmissions() {
     let count = 0;
     Object.values(SHEETS).forEach(sheet => {
       let last = sheet.getLastRow() - 1;
@@ -159,7 +158,7 @@ class Calculate
     return count;
   }
 
-  StatusCounts () {
+  StatusCounts() {
     let count = {};
     Object.values(SHEETS).forEach(sheet => {
       let statuses = GetColumnDataByHeader(sheet, HEADERNAMES.status)
@@ -186,9 +185,8 @@ class Calculate
     OTHERSHEETS.Metrics.getRange(28, 3, 1, 1).setValue(count.queued);
     return count;
   }
-
   
-  CountUniqueUsersWhoHavePrinted () {
+  CountUniqueUsersWhoHavePrinted() {
     const countUnique = (iterable) => new Set(iterable);
     let userList = [];
     Object.values(SHEETS).forEach(sheet => {
@@ -202,9 +200,8 @@ class Calculate
     console.info(`Number of Users who have Successfully print : ${userSet.length}`);
     return userSet;
   }
-  
 
-  CalculateStandardDeviation () {
+  CalculateStandardDeviation() {
     const distribution = this.CalculateDistribution();
     const n = distribution.length;
     console.info(`n = ${n}`);
@@ -223,7 +220,7 @@ class Calculate
     return standardDeviation;
   }
 
-  CalculateArithmeticMean () {
+  CalculateArithmeticMean() {
     const distribution = this.CalculateDistribution();
     const n = distribution.length;
     console.info(`n = ${n}`);
@@ -239,7 +236,7 @@ class Calculate
     return mean;
   }
 
-  PrintTopTen () {
+  PrintTopTen() {
     const distribution = this.CalculateDistribution();
 
     // Create a new array with only the first 10 items
@@ -254,7 +251,7 @@ class Calculate
     })
   }
 
-  CountCategorical (list) {
+  CountCategorical(list) {
     let count = {};
     list.forEach( key => count[key] = ++count[key] || 1);
     return count;
@@ -275,7 +272,7 @@ class Calculate
     return sum;
   }
   
-  SumMaterials () {
+  SumMaterials() {
     let count = [];
     Object.values(SHEETS).forEach(sheet => count.push(this.SumSingleSheetMaterials(sheet)));
     console.info(count)
@@ -310,7 +307,7 @@ class Calculate
     console.info(`SUM for ${sheet.getSheetName()} = $${sum}`);
     return sum;
   }
-  SumCosts () {
+  SumCosts() {
     let count = [];
     Object.values(SHEETS).forEach(sheet => count.push(this.SumSingleSheetCost(sheet)));
     console.info(count);

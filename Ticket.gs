@@ -3,8 +3,7 @@
  * -----------------------------------------------------------------------------------------------------------------
  * Ticket Class
  */
-class Ticket
-{
+class Ticket {
   constructor({
     designspecialist : designspecialist = `Staff`, 
     submissiontime : submissiontime = new Date(), 

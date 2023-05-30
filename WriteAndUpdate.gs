@@ -1,4 +1,7 @@
+
+
 /**
+ * -----------------------------------------------------------------------------------------------------------------
  * Write all new Data To Sheet
  */
 class WriteToSheet {
@@ -6,7 +9,7 @@ class WriteToSheet {
     this.WriteAllNewDataToSheets();
   }
 
-  async WriteAllNewDataToSheets () {
+  async WriteAllNewDataToSheets() {
     Object.values(SHEETS).forEach( async (sheet) => {
       try {
         console.warn(`Fetching New Data from PrinterOS ---> ${sheet.getSheetName()}`);
@@ -17,7 +20,7 @@ class WriteToSheet {
     })
   }
 
-  async FetchAndWrite (sheet) {
+  async FetchAndWrite(sheet) {
     // let machineID = PRINTERDATA[sheet.getSheetName()];
     let machineID = PRINTERIDS[sheet.getSheetName()];
     let jobList = [];
@@ -48,7 +51,7 @@ class WriteToSheet {
     .finally(() => pos.Logout());
   }
   
-  async WriteJobDetailsToSheet (data, sheet) {
+  async WriteJobDetailsToSheet(data, sheet) {
     const thisRow = sheet.getLastRow() + 1;
     const printerID = data["printer_id"];
     SetByHeader(sheet, HEADERNAMES.printerID, thisRow, printerID);
@@ -106,7 +109,7 @@ class WriteToSheet {
 
   }
 
-  UpdateStatus (statusCode, sheet, row) {
+  UpdateStatus(statusCode, sheet, row) {
     const c = new CalendarFactory();
     const rowData = GetRowData(sheet, row);
     switch(statusCode) {
@@ -142,7 +145,10 @@ class WriteToSheet {
 
 }
 
+
+
 /**
+ * -----------------------------------------------------------------------------------------------------------------
  * Update Data on Sheet
  */
 class UpdateSheet {
@@ -150,10 +156,9 @@ class UpdateSheet {
     this.UpdateAll();
   }
   /**
-   * -----------------------------------------------------------------------------------------------------------------
    * Update Info on the sheet.
    */
-  async UpdateAll () {
+  async UpdateAll() {
     // this.Update(SHEETS.Photon);
     Object.values(SHEETS).forEach( async (sheet) => {
       try {
@@ -164,7 +169,7 @@ class UpdateSheet {
       }
     });
   }
-  async Update (sheet) {
+  async Update(sheet) {
     let numbers = GetColumnDataByHeader(sheet, HEADERNAMES.jobID);
     let statuses = GetColumnDataByHeader(sheet, HEADERNAMES.posStatCode);
     let culled = [];
@@ -192,8 +197,8 @@ class UpdateSheet {
     })
     .finally(pos.Logout());
   }
-  async UpdateInfo (jobDetails, sheet, row) {
 
+  async UpdateInfo(jobDetails, sheet, row) {
     const status = jobDetails["status_id"];
     SetByHeader(sheet, HEADERNAMES.posStatCode, row, status.toString());
 
@@ -205,9 +210,9 @@ class UpdateSheet {
     SetByHeader(sheet, HEADERNAMES.filename, row, filename.toString());
 
     this.UpdateStatus(status, sheet, row);
-
   }
-  UpdateStatus (statusCode, sheet, row) {
+
+  UpdateStatus(statusCode, sheet, row) {
     const c = new CalendarFactory();
     const rowData = GetRowData(sheet, row);
     switch(statusCode) {
@@ -249,17 +254,30 @@ const WriteAllNewDataToSheets = () => new WriteToSheet();
 const UpdateAll = () => new UpdateSheet();
 
 
+/**
+ * -----------------------------------------------------------------------------------------------------------------
+ * Update All Missing Tickets
+ */
 class UpdateMissingTickets {
   constructor() {
     this.UpdateAllTickets();
   }
+
+  /**
+   * Update All Tickets
+   */
   async UpdateAllTickets () {
     // this.UpdateSheetTickets(SHEETS.Crystallum);
     Object.values(SHEETS).forEach(async (sheet) => {
       await this.UpdateSheetTickets(sheet);
     });
   }
-  async UpdateSheetTickets (sheet) {
+
+  /**
+   * Update Sheet Tickets
+   * @param {sheet} sheet
+   */
+  async UpdateSheetTickets(sheet) {
     let indexes = [];
     let tickets = GetColumnDataByHeader(sheet, HEADERNAMES.ticket);
     tickets.forEach( (item, index) => {
@@ -267,10 +285,17 @@ class UpdateMissingTickets {
     })
     console.warn(`${sheet.getSheetName()} ---> Missing Tickets: ${indexes}`);
     indexes.forEach(async (index) => {
-      this.UpdateRow(index, sheet);
+      this._UpdateRow(index, sheet);
     });
   }
-  async UpdateRow(index, sheet) {
+
+  /**
+   * Update Row 
+   * @private
+   * @param {number} row index
+   * @param {sheet} sheet
+   */
+  async _UpdateRow(index, sheet) {
     const rowData = await GetRowData(sheet, index);
     let { status, printerID, printerName, jobID, timestamp, email, posStatCode, duration, notes, picture, ticket, filename, weight, cost, } = rowData;
     let imageBLOB = await GetImage(picture);
@@ -293,6 +318,7 @@ class UpdateMissingTickets {
     }
   }
 }
+
 const MissingTicketUpdater = () => new UpdateMissingTickets();
 
 

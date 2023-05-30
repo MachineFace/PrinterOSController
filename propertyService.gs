@@ -8,7 +8,7 @@ try {
     GMAIL_SERVICE_NAME : `Jacobs Self-Service Printing Bot`,
     SERVICENAME : `PrinterOS Controller`,
     THISGID : `1AWjs1PMJTRDXAeqhDgpGoUWQOJioNOcwbBCUAjsa6Zk`,
-    TICKETGID : `1IsDlacmdVS-eOH1PMMjILIqaEU_I4fk-`,
+    TICKET_FOLDER_GID : `1IsDlacmdVS-eOH1PMMjILIqaEU_I4fk-`, 
     POS_username : `jacobsprojectsupport@berkeley.edu`,
     POS_password : `Jacobsde$ign1`,
     CALENDAR_ID : `c_4a25f6ed7657f8f65eac788278ef716a15b156dafcc51305bd4ce2a13623f5c8@group.calendar.google.com`,

@@ -3,11 +3,10 @@
  * Class for Working with Google Drive
  * @TRIGGERED once a week
  */
-class DriveController
-{
+class DriveController {
   constructor() {
     this.root = DriveApp.getRootFolder();
-    this.ticketFolder = DriveApp.getFolderById(`1IsDlacmdVS-eOH1PMMjILIqaEU_I4fk-`);
+    this.ticketFolder = DriveApp.getFolderById(PropertiesService.getScriptProperties().getProperty(`TICKET_FOLDER_GID`));
     this.now = new Date();
     this.dateMinusOneTwenty = new Date(new Date().setDate(new Date().getDate() - 120));
   }
@@ -104,7 +103,7 @@ const GetDriveIDFromUrl = (url) => {
   } else {
     id = parts[5].split("/");
     // Using sort to get the id as it is the longest element. 
-    var sortArr = id.sort(function(a,b){return b.length - a.length});
+    var sortArr = id.sort((a,b) => b.length - a.length);
     id = sortArr[0];
     return id;
   }

@@ -1,5 +1,6 @@
 
 /**
+ * -----------------------------------------------------------------------------------------------------------------
  * Factory for creating calendar events 
  */
 class CalendarFactory {
@@ -82,6 +83,7 @@ class CalendarFactory {
     });
   }
 
+  /** @private */
   _DeleteDuplicateEvents() {
     let singletons = {};
     const events = this.GetEvents();
@@ -106,6 +108,7 @@ class CalendarFactory {
     })
   }
 
+  /** @private */
   _CheckIfEventExists(jobID) {
     const events = this.GetEvents();
     for(let i = 0; i < events.length; i++) {
@@ -121,6 +124,7 @@ class CalendarFactory {
     }
   }
 
+  /** @private */
   _CalculateCompletionTime(start, duration) {
     start = start instanceof Date ? start : new Date();
     const s = new Date(start).getTime();

@@ -50,11 +50,6 @@ const CheckEmails = () => {
     OTHERSHEETS.Oops.getRange(2 + index, 2, 1, 1).setValue(user.money);
   });
   
-  // billedSet.forEach(email => {
-  //   masterSet.find(email => {
-
-  //   })
-  // })
 }
 
 /**

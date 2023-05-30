@@ -2,8 +2,7 @@
  * ----------------------------------------------------------------------------------------------------------------
  * Sheet Cleanup Class
  */
-class CleanupSheet
-{
+class CleanupSheet {
   constructor() {
     this.RemoveAllDuplicateRecords();
     this.FixStatuses();

@@ -17,7 +17,7 @@ class PrinterOS {
 
   /**
    * Login Classic : Username and Password
-   * returns : session
+   * @returns {string} session
    */
   async Login() {
     const repo = "/login/";
@@ -73,6 +73,7 @@ class PrinterOS {
 
   /**
    * Check PrinterOS Session
+   * @returns {string} bool
    */
   async CheckSession() {
     const repo = "/check_session"
@@ -110,11 +111,11 @@ class PrinterOS {
     const repo = "/get_organization_printers_list";
     const params = {
       "method" : "POST",
+      "followRedirects" : true,
+      "muteHttpExceptions" : true,
       "payload" : {
         "session" : this.session,
       },
-      "followRedirects" : true,
-      "muteHttpExceptions" : true
     };
 
     const html = await UrlFetchApp.fetch(`${this.root}${repo}`, params);
@@ -151,7 +152,7 @@ class PrinterOS {
    * @param {string} printer_type (optional, printer short type, ex. K_PORTRAIT)
    * @param {int} printer_id (optional, printer id)
    */
-  async GetPrinterData (printer_id) {
+  async GetPrinterData(printer_id) {
     printer_id = printer_id ? printer_id : 79170;
     const repo = "/get_printers_list";
     const params = {
@@ -190,7 +191,7 @@ class PrinterOS {
    * @required {obj} session
    * @returns types
    */
-  async GetPrinterTypes () {
+  async GetPrinterTypes() {
     const repo = "/get_printer_types";
     const params = {
       "method" : "POST",
@@ -223,7 +224,7 @@ class PrinterOS {
    * @param {int} prev_time (optional, parameter for live update. Can be used to get only changed jobs between two requests. For first request need to send add prev_time: 0, and you will have “time” parameter in   
    * response. You need to send prev_time: “time” in next request to get only live updates)
    */
-  async GetPrintersJobList (printerID)  {
+  async GetPrintersJobList(printerID)  {
     printerID = printerID ? printerID : 79165;
     const repo = "/get_printer_jobs";
     const params = {
@@ -252,7 +253,7 @@ class PrinterOS {
   /**
    * Get Latest Job on this Printer.
    */
-  async GetPrintersLatestJob (printerID)  {
+  async GetPrintersLatestJob(printerID)  {
     printerID = printerID ? printerID : 79165;
     const repo = "/get_printer_jobs";
     const params = {
@@ -281,7 +282,7 @@ class PrinterOS {
   /**
    * Get Latest Job from All Printers
    */
-  async GetLatestJobsForAllPrinters () {
+  async GetLatestJobsForAllPrinters() {
     const jobIDS = [];
     for (const [key, value] of Object.entries(PRINTERIDS)) {
       const latestjob = await this.GetPrintersLatestJob(value);
@@ -393,7 +394,7 @@ class PrinterOS {
   /**
    * Get WorkGroup Numbers
    */
-  async GetWorkGroups () {
+  async GetWorkGroups() {
     let list = [];
     const repo = `/get_workgroups_simple_list/`;
     const params = {
@@ -428,7 +429,7 @@ class PrinterOS {
    * @param {obj} session
    * @param {int} workgroupID
    */
-  async GetUsersByWorkgroup (workgroupID) {
+  async GetUsersByWorkgroup(workgroupID) {
     workgroupID = workgroupID ? workgroupID : 3275;
     const repo = "/get_workgroup_users";
     const params = {
@@ -459,7 +460,7 @@ class PrinterOS {
    * Get Users
    * returns : {name= **, balance= **, monthly_quota= **, email= **, id= **}
    */
-  async GetUsers () {
+  async GetUsers() {
     let users = [];
     WORKGROUPS.forEach( async (group) => {
       const res = await this.GetUsersByWorkgroup(group);
@@ -475,7 +476,7 @@ class PrinterOS {
   /**
    * Get User Counts and Print to Data / Metrics
    */
-  async GetUserCount () {
+  async GetUserCount() {
     let users = [];
     JACOBSWORKGROUPS.forEach( async(group) => {
       const res = await this.GetUsersByWorkgroup(group)
@@ -492,7 +493,7 @@ class PrinterOS {
   /**
    * Get Printers in Cloud
    */
-  async GetPrintersInCloud () {
+  async GetPrintersInCloud() {
     const repo = "/get_printer_types_detailed";
     const params = {
       "method" : "POST",
@@ -539,7 +540,7 @@ class PrinterOS {
   /**
    * Helper Function to find the name from an ID
    */
-  GetPrinterNameFromID (printerID) {
+  GetPrinterNameFromID(printerID) {
     printerID = printerID ? printerID : 79165;
     for (const [name, id] of Object.entries(PRINTERIDS)) {
       if(printerID == id) {
@@ -549,11 +550,13 @@ class PrinterOS {
     }
   }
 
-  _CountUnique (iterable) {
+  /** @private */
+  _CountUnique(iterable) {
     return new Set(iterable).size;
   }
 
-  _PrintCost (weight) {
+  /** @private */
+  _PrintCost(weight) {
     weight = weight instanceof Number || weight > 0.0 ? weight : 0.0;
     return Number(weight * COSTMULTIPLIER).toFixed(2);
   }

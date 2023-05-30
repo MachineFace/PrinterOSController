@@ -10,8 +10,7 @@
  * @param {string} designspecialist
  * @param {string} designspecialistemaillink
  */
-class CreateMessage 
-{
+class CreateMessage {
   constructor({
     name : name = `${GMAIL_SERVICE_NAME} User`, 
     projectname : projectname = `Project Name`, 

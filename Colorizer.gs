@@ -3,8 +3,7 @@
  * @NOTIMPLEMENTED
  */
 /**
-class Colorizer
-{
+class Colorizer {
   constructor({ 
     rowNumber : rowNumber, 
     status : status,
@@ -149,3 +148,8 @@ const SetConditionalFormatting = () => {
     sheet.setConditionalFormatRules(rules);
   });
 }
+
+
+
+
+

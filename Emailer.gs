@@ -3,8 +3,7 @@
  * @required {string} Student Email
  * @required {string} Status
  */
-class Emailer
-{
+class Emailer {
   constructor({ 
     email : email, 
     status : status,

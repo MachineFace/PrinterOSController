@@ -2,11 +2,15 @@
  * ----------------------------------------------------------------------------------------------------------------
  * Class for Writing a Log
  */
-class WriteLogger
-{
+class WriteLogger {
   constructor() { 
     this.sheet = OTHERSHEETS.Logger;
   }
+
+  /**
+   * Error Message
+   * @param {string} message
+   */
   Error(message) {
     try{
       const text = [new Date().toUTCString(), "ERROR!", message, ];
@@ -18,6 +22,11 @@ class WriteLogger
       console.error(`Whoops ---> ${err}`);
     }
   }
+
+  /**
+   * Warning Message
+   * @param {string} message
+   */
   Warning(message) {
     try{
       const text = [new Date().toUTCString(), "WARNING", message, ];
@@ -29,6 +38,11 @@ class WriteLogger
       console.error(`Whoops ---> ${err}`);
     }
   }
+
+  /**
+   * Info Message
+   * @param {string} message
+   */
   Info(message) {
     try {
       const text = [new Date().toUTCString(), "INFO", message, ];
@@ -40,6 +54,11 @@ class WriteLogger
       console.error(`Whoops ---> ${err}`);
     }
   }
+
+  /**
+   * Debug Message
+   * @param {string} message
+   */
   Debug(message) {
     try {
       const text = [new Date().toUTCString(), "DEBUG", message, ];
@@ -51,6 +70,8 @@ class WriteLogger
       console.error(`Whoops ---> ${err}`);
     }
   }
+
+  /** @private */
   _PopItem() {
     try {
       if(this.sheet.getLastRow() >= 500) this.sheet.deleteRow(2);
@@ -58,6 +79,8 @@ class WriteLogger
       console.error(`Whoops ---> ${err}`);
     }
   }
+
+  /** @private */
   _CleanupSheet() {
     try {
       if(this.sheet.getLastRow() > 2000) {
@@ -71,6 +94,6 @@ class WriteLogger
 }
 
 
-
+const _testLog = () => new WriteLogger().Error()
 
 
