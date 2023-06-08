@@ -99,32 +99,24 @@ const TriggerRemoveDuplicates = () => {
   });
 }
 const RemoveDuplicatesOnSingleSheet = (sheet) => {
-  let indexes = [];
   try {
     if(typeof sheet != `object`) throw new Error(`Did not pass a good sheet.`);
-    console.warn(`Removing duplicate records on ---> ${sheet.getSheetName()}`);
-    let jobIDs = GetColumnDataByHeader(sheet, HEADERNAMES.jobID).filter(Boolean);
-    jobIDs.forEach( (item, index) => {
-      if(jobIDs.indexOf(item) !== index) {
-        indexes.push(index + 2);
-      }
-    })
-    const dups = jobIDs.filter((item, index) => jobIDs.indexOf(item) !== index);
-    console.warn(`${sheet.getName()} : Number of Duplicates : ${dups.length}`);
-    // Remove
-    if(dups.length == 0) return 0; 
-    indexes.forEach(number => {
-      console.warn(`Sheet ${sheet.getSheetName()} @ ROW : ${number}`);
-      sheet.deleteRow(number);
-      sheet.insertRowsAfter(sheet.getMaxRows(), 1);
-    });
+
+    let idSet = new Set();
+    GetColumnDataByHeader(sheet, HEADERNAMES.jobID)
+      .forEach( (item, index) => {
+        if(item && idSet.has(item)) {
+          console.warn(`Sheet ${sheet.getSheetName()} @ ROW : ${index + 2}`);
+          sheet.deleteRow(index + 2);
+          sheet.insertRowsAfter(sheet.getMaxRows(), 1);
+        } else idSet.add(item);
+      });
     return 0;
   } catch (err) {
-    console.error(`${err} : Couldn't remove duplicates. Maybe it just took too long?...`);
+    console.error(`"RemoveDuplicatesOnSingleSheet()" failed : ${err}`);
     return 1;
   }
 }
-
 
 
 

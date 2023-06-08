@@ -182,19 +182,17 @@ const SearchSpecificSheet = (sheet, value) => {
  * @returns {bool} true if forbidden
  */
 const CheckSheetIsForbidden = (someSheet) => {
-  // Check if it's even a sheet
-  if (someSheet !== Object(someSheet)) {
-    console.error(`A non-sheet argument was passed to a function that requires a sheet.`);
+  try {
+    if (typeof(someSheet) !== `object`) throw new Error(`A non-sheet argument was passed to a function that requires a sheet.`);
+    
+    let forbiddenNames = Object.keys(OTHERSHEETS);
+    const index = forbiddenNames.indexOf(someSheet.getName());
+
+    if(index == -1 || index == undefined) return false;
     return true;
-  }
-  let forbiddenNames = Object.keys(OTHERSHEETS);
-  const index = forbiddenNames.indexOf(someSheet.getName());
-  if(index == -1 || index == undefined) {
-    console.info(`Sheet is NOT FORBIDDEN : ${someSheet.getName()}`)
-    return false;
-  } else {
-    console.error(`SHEET FORBIDDEN : ${forbiddenNames[index]}`);
-    return true;
+  } catch(err) {
+    console.error(`"CheckSheetIsForbidden()" failed : ${err}`);
+    return 1;
   }
 }
 
