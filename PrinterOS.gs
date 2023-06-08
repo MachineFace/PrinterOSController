@@ -17,7 +17,7 @@ class PrinterOS {
 
   /**
    * Login Classic : Username and Password
-   * @returns {string} session
+   * @return {string} session
    */
   async Login() {
     const repo = "/login/";
@@ -30,21 +30,24 @@ class PrinterOS {
         password : PropertiesService.getScriptProperties().getProperty(`POS_password`),
       },
     };
+    try {
+      const response = await UrlFetchApp.fetch(this.root + repo, params);
+      const responseCode = response.getResponseCode();
+      if(responseCode != 200) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
 
-    const html = await UrlFetchApp.fetch(this.root + repo, params);
-    const responseCode = html.getResponseCode();
+      const content = response.getContentText();
 
-    if(responseCode != 200) return false; 
-    const response = html.getContentText();
+      const result = JSON.parse(content)?.result;
+      if(!result) return result; 
 
-    const result = JSON.parse(response)?.result;
-    if(result == false) return false; 
-
-    const session = JSON.parse(response)?.message?.session;
-    console.info(`(${session}) Session Started: ${result}`);
-    this.session = session;
-    return session;
-
+      const session = JSON.parse(content)?.message?.session;
+      console.info(`(${session}) Session Started: ${result}`);
+      this.session = session;
+      return session;
+    } catch(err) {
+      console.error(`"Login()" failed : ${err}`);
+      return 1;
+    }
   }
 
   /**
@@ -59,21 +62,23 @@ class PrinterOS {
       muteHttpExceptions : false,
     };
 
-    const html = await UrlFetchApp.fetch(this.root + repo, params);
-    const responseCode = html.getResponseCode();
-
-    if(responseCode != 200) return false 
-    else {
-      const response = html.getContentText();
-      const result = JSON.parse(response)?.result;
+    try {
+      const response = await UrlFetchApp.fetch(this.root + repo, params);
+      const responseCode = response.getResponseCode();
+      if(responseCode != 200) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
+      const content = response.getContentText();
+      const result = JSON.parse(content)?.result;
       console.warn(`(${this.session}) Session Closed: ${result}`);
-      return ;
+      return;
+    } catch(err) {
+      console.error(`"Logout()" failed : ${err}`);
+      return 1;
     }
   }
 
   /**
    * Check PrinterOS Session
-   * @returns {string} bool
+   * @return {string} bool
    */
   async CheckSession() {
     const repo = "/check_session"
@@ -88,11 +93,10 @@ class PrinterOS {
     try {
       const response = await UrlFetchApp.fetch(`${this.root}${repo}`, params);
       const responseCode = response.getResponseCode();
-      console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
-      if(responseCode != 200) return false;
+      if(responseCode != 200) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
 
       const result = JSON.parse(response.getContentText())?.result;
-      if(result == false) return false;
+      if(!result) return result?.message;
       const message = result?.message;
       console.info(`(${this.session}) Session Valid? : ${message}`);
       return message;
@@ -118,32 +122,36 @@ class PrinterOS {
       },
     };
 
-    const html = await UrlFetchApp.fetch(`${this.root}${repo}`, params);
-    const responseCode = html.getResponseCode();
-    console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+    try {
+      const response = await UrlFetchApp.fetch(`${this.root}${repo}`, params);
+      const responseCode = response.getResponseCode();
+      if(responseCode != 200) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
+      const content = response.getContentText();
 
-    let printerListOut = [];
 
-    const response = html.getContentText();
-    const result = JSON.parse(response)?.result;
+      const result = JSON.parse(content)?.result;
+      if(result == false) return false;
+      const printerlist = JSON.parse(content)?.message;
 
-    if(result == false) return false;
-
-    const printerlist = JSON.parse(response)?.message;
-    printerlist.forEach(p => {
-      const data = JSON.stringify(p);
-      this.printerIDs.push(p.id);
-      this.printerIPs.push(p.local_ip);
-      this.printerNames.push(p.name);
-      printerListOut.push(data);
-    })
-    
-    
-    console.info(this.printerIDs);
-    console.info(this.printerIPs);
-    console.info(this.printerNames);
-    printerListOut.forEach(item => console.info(item));
-    return printerListOut;
+      let printerListOut = [];
+      printerlist.forEach(p => {
+        const data = JSON.stringify(p);
+        this.printerIDs.push(p.id);
+        this.printerIPs.push(p.local_ip);
+        this.printerNames.push(p.name);
+        printerListOut.push(data);
+      })
+      
+      
+      console.info(this.printerIDs);
+      console.info(this.printerIPs);
+      console.info(this.printerNames);
+      printerListOut.forEach(item => console.info(item));
+      return printerListOut;
+    } catch(err) {
+      console.error(`"GetPrinters()" failed : ${err}`);
+      return 1;
+    }
   }
 
   /**
@@ -165,31 +173,33 @@ class PrinterOS {
       },
     };
 
-    const html = await UrlFetchApp.fetch(this.root + repo, params);
-    const responseCode = html.getResponseCode();
-    // console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+    try {
+      const response = await UrlFetchApp.fetch(this.root + repo, params);
+      const responseCode = response.getResponseCode();
+      if(responseCode != 200) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
+      const content = response.getContentText();
 
-    if(responseCode != 200) return false; 
-    const response = html.getContentText();
-    const result = JSON.parse(response)?.result;
-    if(result == false) return false; 
+      const result = JSON.parse(content)?.result;
+      if(result == false) return false; 
 
-    const printerlist = JSON.parse(response)?.message;
-    printerlist.forEach(p => {
-      this.printerIDs.push(p.id);
-      this.printerIPs.push(p.local_ip);
-      this.printerNames.push(p.name);
-    });
-    console.info(printerlist);
-    return printerlist;
-
-    
+      const printerlist = JSON.parse(content)?.message;
+      printerlist.forEach(p => {
+        this.printerIDs.push(p.id);
+        this.printerIPs.push(p.local_ip);
+        this.printerNames.push(p.name);
+      });
+      console.info(printerlist);
+      return printerlist;
+    } catch(err) {
+      console.error(`"GetPrinterData()" failed : ${err}`);
+      return 1;
+    }
   }
 
   /**
    * Get Printer Types in Cloud
    * @required {obj} session
-   * @returns types
+   * @return types
    */
   async GetPrinterTypes() {
     const repo = "/get_printer_types";
@@ -201,18 +211,20 @@ class PrinterOS {
         "session" : this.session,
       },
     };
+    try {
+      const response = await UrlFetchApp.fetch(this.root + repo, params);
+      const responseCode = response.getResponseCode();
+      if(responseCode != 200) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
 
-    const html = await UrlFetchApp.fetch(this.root + repo, params);
-    const responseCode = html.getResponseCode();
-    // console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
-
-    if(responseCode != 200) return false; 
-    const response = html.getContentText();
-    const result = JSON.parse(response)?.result;
-    if(result == false) return false;
-    const types = JSON.parse(response)?.message;
-    types.forEach(t => console.info(t));
-    return types;
+      const content = response.getContentText();
+      const result = JSON.parse(content)?.result;
+      if(result == false) return false;
+      const types = JSON.parse(content)?.message;
+      types.forEach(t => console.info(t));
+      return types;
+    } catch(err) {
+      console.error(`"GetPrinterTypes()" failed: ${err}`);
+    }
   }
 
   /**
@@ -237,17 +249,22 @@ class PrinterOS {
       },
     };
 
-    const html = await UrlFetchApp.fetch(`${this.root}${repo}`, params);
-    const responseCode = html.getResponseCode();
-    // console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+    try {
+      const response = await UrlFetchApp.fetch(`${this.root}${repo}`, params);
+      const responseCode = response.getResponseCode();
+      if(responseCode != 200) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
+      const content = response.getContentText();
 
-    if(responseCode != 200) return false;
-    const response = html.getContentText();
-    const result = JSON.parse(response)?.result;
-    if(result == false) return false;
-    const data = JSON.parse(response)?.message;
-    data.forEach(p => console.info(JSON.stringify(p)));
-    return data;
+      const result = JSON.parse(content)?.result;
+      if(result == false) return false;
+
+      const data = JSON.parse(content)?.message;
+      data.forEach(p => console.info(JSON.stringify(p)));
+      return data;
+    } catch(err) {
+      console.error(`"GetPrintersJobList()" failed : ${err}`);
+      return 1;
+    }
   }
 
   /**
@@ -266,31 +283,39 @@ class PrinterOS {
       },
     };
 
-    const html = await UrlFetchApp.fetch(this.root + repo, params);
-    const responseCode = html.getResponseCode();
-    // console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+    try {
+      const response = await UrlFetchApp.fetch(this.root + repo, params);
+      const responseCode = response.getResponseCode();
+      if(responseCode != 200) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
+      const content = response.getContentText();
 
-    if(responseCode != 200) return false; 
-    const response = responseCode == 200 ? html.getContentText() : false;
-    const result = JSON.parse(response)?.result;
-    if(result == false) return false; 
-    const job = JSON.parse(response)?.message[0];
-    console.info(job);
-    return job;
+      const result = JSON.parse(content)?.result;
+      if(result == false) return false; 
+      const job = JSON.parse(content)?.message[0];
+      console.info(job);
+      return job;
+    } catch(err) {
+      console.error(`"GetPrintersLatestJob()" failed : ${err}`);
+      return 1;
+    }
   }
 
   /**
    * Get Latest Job from All Printers
    */
   async GetLatestJobsForAllPrinters() {
-    const jobIDS = [];
-    for (const [key, value] of Object.entries(PRINTERIDS)) {
-      const latestjob = await this.GetPrintersLatestJob(value);
-      console.info(`Printer ----> ${key}`);
-      console.info(latestjob);
-      jobIDS.push(latestjob?.id);
+    try {
+      let jobIDS = [];
+      for (const [key, value] of Object.entries(PRINTERIDS)) {
+        const latestjob = await this.GetPrintersLatestJob(value);
+        console.info(`Printer ----> ${key}, ${latestjob}`);
+        jobIDS.push(latestjob?.id);
+      }
+      return jobIDS;
+    } catch(err) {
+      console.error(`"GetLatestJobsForAllPrinters()" failed : ${err}`);
+      return 1;
     }
-    return jobIDS;
   }
 
   /**
@@ -309,29 +334,32 @@ class PrinterOS {
         "job_id" : jobID,
       },
     };
+    try {
+      const response = await UrlFetchApp.fetch(this.root + repo, params);
+      const responseCode = response.getResponseCode();
+      if(responseCode != 200) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
 
-    const html = await UrlFetchApp.fetch(this.root + repo, params);
-    const responseCode = html.getResponseCode();
-    // console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+      const content = response.getContentText();
+      const result = JSON.parse(content)?.result;
+      if(result == false) return false; 
 
-    if(responseCode != 200) return false; 
-    const response = html.getContentText();
-    const result = JSON.parse(response)?.result;
-    if(result == false) return false; 
-
-    const res = JSON.parse(response)?.message;
-    console.info(res);
-    this.picture = res?.picture;
-    this.imgBlob = this.GetJobImage();
-    res.imageBLOB = this.imgBlob;
-    this.jobdata = res;
-    return res;
+      const res = JSON.parse(content)?.message;
+      console.info(res);
+      this.picture = res?.picture;
+      this.imgBlob = this.GetJobImage();
+      res.imageBLOB = this.imgBlob;
+      this.jobdata = res;
+      return res;
+    } catch(err) {
+      console.error(`"GetJobInfo()" failed : ${err}`);
+      return 1;
+    }
   }
 
   /**
    * Get Material Weight
    * @param {number} jobID
-   * @returns {number} Weight
+   * @return {number} Weight
    */
   async GetMaterialWeight(jobID) {
     const repo = "/get_job_info";
@@ -345,24 +373,28 @@ class PrinterOS {
       },
     };
 
-    const html = await UrlFetchApp.fetch(this.root + repo, params);
-    const responseCode = html.getResponseCode();
-    // console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+    try {
+      const response = await UrlFetchApp.fetch(this.root + repo, params);
+      const responseCode = response.getResponseCode();
+      if(responseCode != 200) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
 
-    if(responseCode != 200) return false; 
-    const response = html.getContentText();
-    const result = JSON.parse(response)?.result;
-    if(result == false) return false; 
-    const weight = JSON.parse(response)?.message?.weight ? JSON.parse(response)?.message?.weight : 0.0;
-    // console.info(`Weight: ${weight}`)
-    return weight;
+      const content = response.getContentText();
+      const result = JSON.parse(content)?.result;
+      if(result == false) return false; 
+      const weight = JSON.parse(content)?.message?.weight ? JSON.parse(content)?.message?.weight : 0.0;
+      console.info(`Weight: ${weight}`);
+      return weight;
+    } catch(err) {
+      console.error(`"GetMaterialWeight()" failed : ${err}`);
+      return 1;
+    }
   }
 
   /**
    * Calculate Cost of a Job
    * @param {number} JobId
    * @param {number} Unit Cost
-   * @returns {number} Total Cost
+   * @return {number} Total Cost
    */
   async CalculateCost(jobID) {
     const repo = "/get_job_info";
@@ -376,26 +408,31 @@ class PrinterOS {
       },
     };
 
-    const html = await UrlFetchApp.fetch(this.root + repo, params);
-    const responseCode = html.getResponseCode();
-    // console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+    try {
+      const response = await UrlFetchApp.fetch(this.root + repo, params);
+      const responseCode = response.getResponseCode();
+      if(responseCode != 200) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
+      const content = response.getContentText();
 
-    if(responseCode != 200) return false; 
-    const response = html.getContentText();
-    const result = JSON.parse(response)?.result;
-    if(result == false) return false; 
-    const weight = JSON.parse(response)?.message?.weight ? JSON.parse(response)?.message?.weight : 0.0;
-    const price = this._PrintCost(weight);
-    // console.info(`Price: ${price}`);
-    return price;
+      const result = JSON.parse(content)?.result;
+      if(result == false) return false; 
+
+      const weight = JSON.parse(content)?.message?.weight ? JSON.parse(content)?.message?.weight : 0.0;
+      const price = this._PrintCost(weight);
+      // console.info(`Price: ${price}`);
+      return price;
+    } catch(err) {
+      console.error(`"CalculateCost()" failed : ${err}`);
+      return 1;
+    }
     
   }
 
   /**
    * Get WorkGroup Numbers
+   * @return {[number]} list of numbers
    */
   async GetWorkGroups() {
-    let list = [];
     const repo = `/get_workgroups_simple_list/`;
     const params = {
       "method" : "POST",
@@ -406,22 +443,27 @@ class PrinterOS {
       },
     };
 
-    const html = await UrlFetchApp.fetch(this.root + repo, params);
-    const responseCode = html.getResponseCode();
-    // console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+    try {
+      const response = await UrlFetchApp.fetch(this.root + repo, params);
+      const responseCode = response.getResponseCode();
+      if(responseCode != 200) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
+      const content = response.getContentText();
 
-    if(responseCode != 200) return false; 
-    const response = html.getContentText();
-    const result = JSON.parse(response)?.result;
-    if(result == false) return false;
-    const workgroups = JSON.parse(response)?.message;
-    workgroups.forEach(w => {
-      console.info(`Workgroup: ${JSON.stringify(w)}`);
-      list.push(w.id);
-    });
-    list = [...new Set(list)]
-    console.info(`LIST: ${list}`)
-    return list;
+      const result = JSON.parse(content)?.result;
+      if(result == false) return false;
+
+      const workgroups = JSON.parse(content)?.message;
+      let list = [];
+      workgroups.forEach(w => {
+        console.info(`Workgroup: ${JSON.stringify(w)}`);
+        list.push(w.id);
+      });
+      list = [...new Set(list)];
+      return list;
+    } catch(err) {
+      console.error(`"GetWorkGroups()" failed : ${err}`);
+      return 1;
+    }
   }
 
   /**
@@ -442,18 +484,22 @@ class PrinterOS {
       },
     };
 
-    const html = await UrlFetchApp.fetch(this.root + repo, params);
-    const responseCode = html.getResponseCode();
-    // console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
+    try {
+      const response = await UrlFetchApp.fetch(this.root + repo, params);
+      const responseCode = response.getResponseCode();
+      if(responseCode != 200) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
+      const content = response.getContentText();
 
-    if(responseCode != 200) return false; 
-    const response = html.getContentText();
-    const result = JSON.parse(response)?.result;
-    if(result == false) return false; 
-    const users = JSON.parse(response)?.message;
-    console.info(users);
-    return users;
-    
+      const result = JSON.parse(content)?.result;
+      if(result == false) return false; 
+
+      const users = JSON.parse(content)?.message;
+      console.info(users);
+      return users;
+    } catch(err) {
+      console.error(`"GetUsersByWorkgroup()" failed : ${err}`);
+      return 1;
+    }
   }
 
   /**
@@ -463,11 +509,11 @@ class PrinterOS {
   async GetUsers() {
     let users = [];
     WORKGROUPS.forEach( async (group) => {
-      const res = await this.GetUsersByWorkgroup(group);
       let usergroup = [];
+      const res = await this.GetUsersByWorkgroup(group);
       res.forEach(user => usergroup.push(user?.email));
       usergroup = [].concat(...usergroup);
-      console.info(countUnique(usergroup))
+      console.info([...new Set(usergroup)]);
     })
     console.info(users)
     return users;
@@ -501,27 +547,29 @@ class PrinterOS {
       "muteHttpExceptions" : true,
     };
 
-    const html = await UrlFetchApp.fetch(this.root + repo, params);
-    const responseCode = html.getResponseCode();
+    try {
+      const response = await UrlFetchApp.fetch(this.root + repo, params);
+      const responseCode = response.getResponseCode();
+      if(responseCode != 200) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
+      const content = response.getContentText();
 
-    // console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
-    if(responseCode != 200) return false;
-    const response = html.getContentText();
-    const result = JSON.parse(response)?.result;
-    if(result == false) return false; 
-    const stuff = JSON.parse(response);
-    console.info(stuff);
-    return stuff;
+      const result = JSON.parse(content)?.result;
+      if(result == false) return false;
+
+      const stuff = JSON.parse(content);
+      console.info(stuff);
+      return stuff;
+    } catch(err) {
+      console.error(`"GetPrintersInCloud()" failed : ${err}`);
+      return 1;
+    }
   }
 
   /**
    * Get an Image
    */
   async GetJobImage() {
-    // console.info(`IMAGE ----> ${this.picture}`);
-    let image;
     const repo = `https://live3dprinteros.blob.core.windows.net/render/${this.picture}`;
-
     const params = {
       "method" : "GET",
       "contentType" : "image/png",
@@ -529,12 +577,17 @@ class PrinterOS {
       "muteHttpExceptions" : true,
     };
 
-    const html = await UrlFetchApp.fetch(repo, params);
-    const responseCode = html.getResponseCode();
+    try {
+      const html = await UrlFetchApp.fetch(repo, params);
+      const responseCode = html.getResponseCode();
+      if(responseCode != 200) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
 
-    if(responseCode != 200) return false; 
-    const blob = html.getBlob().setName(`IMAGE_${this.picture}`);
-    return blob;
+      const blob = html.getBlob().setName(`IMAGE_${this.picture}`);
+      return blob;
+    } catch(err) {
+      console.error(`"GetJobImage()" failed : ${err}`);
+      return 1;
+    }
   }
 
   /**
@@ -563,11 +616,7 @@ class PrinterOS {
 
 }
 
-const _testPOS = () => {
-  const p = new PrinterOS();
-  p.Login()
-    .then(p.GetPrinters());
-}
+
 
 
 
@@ -723,6 +772,15 @@ const GetRedirectUri = () => {
 }
 */
 
-
+const _testPOS = async () => {
+  const p = new PrinterOS();
+  await p.Login()
+    // .then(async () => await p.GetPrinters())
+    // .then(async () => p.GetPrinterData(PRINTERIDS.Spectrum))
+    // .then(p.CheckSession())
+    // .then(async () => await p.GetWorkGroups())
+    .then(p.Users)
+    .then(async () => await p.Logout())
+}
 
 
