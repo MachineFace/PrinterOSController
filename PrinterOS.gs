@@ -4,13 +4,21 @@
  */
 class PrinterOS {
   constructor(){
+    /** @private */
     this.root = `https://cloud.3dprinteros.com/apiglobal`;
+    /** @private */
     this.session;
+    /** @private */
     this.printerNames = [];
+    /** @private */
     this.printerIDs = [];
+    /** @private */
     this.printerIPs = [];
+    /** @private */
     this.jobdata;
+    /** @private */
     this.picture;
+    /** @private */
     this.imgBlob;
   }
   
@@ -22,10 +30,11 @@ class PrinterOS {
   async Login() {
     const repo = "/login/";
     const params = {
-      "method" : "POST",
-      "followRedirects" : true,
-      "muteHttpExceptions" : false,
-      "payload" : {
+      method : "POST",
+      contentType : "application/x-www-form-urlencoded",
+      followRedirects : true,
+      muteHttpExceptions : false,
+      payload : {
         username : PropertiesService.getScriptProperties().getProperty(`POS_username`),
         password : PropertiesService.getScriptProperties().getProperty(`POS_password`),
       },
@@ -34,7 +43,6 @@ class PrinterOS {
       const response = await UrlFetchApp.fetch(this.root + repo, params);
       const responseCode = response.getResponseCode();
       if(responseCode != 200) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
-
       const content = response.getContentText();
 
       const result = JSON.parse(content)?.result;
@@ -52,11 +60,13 @@ class PrinterOS {
 
   /**
    * Logout
+   * return {bool} 0 or 1
    */
   async Logout() {
     const repo = "/logout/";
     const params = {
       method : "POST",
+      contentType : "application/x-www-form-urlencoded",
       payload : { session : this.session },
       followRedirects : true,
       muteHttpExceptions : false,
@@ -69,7 +79,7 @@ class PrinterOS {
       const content = response.getContentText();
       const result = JSON.parse(content)?.result;
       console.warn(`(${this.session}) Session Closed: ${result}`);
-      return;
+      return 0;
     } catch(err) {
       console.error(`"Logout()" failed : ${err}`);
       return 1;
@@ -102,6 +112,7 @@ class PrinterOS {
       return message;
     } catch(err) {
       console.error(`"CheckSession()" Failed: ${err}`);
+      return 1;
     }
   }
 
@@ -127,7 +138,6 @@ class PrinterOS {
       const responseCode = response.getResponseCode();
       if(responseCode != 200) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
       const content = response.getContentText();
-
 
       const result = JSON.parse(content)?.result;
       if(result == false) return false;
@@ -157,11 +167,9 @@ class PrinterOS {
   /**
    * Get Printer's Data
    * @required {obj} session
-   * @param {string} printer_type (optional, printer short type, ex. K_PORTRAIT)
    * @param {int} printer_id (optional, printer id)
    */
-  async GetPrinterData(printer_id) {
-    printer_id = printer_id ? printer_id : 79170;
+  async GetPrinterData(printer_id = 79165) {
     const repo = "/get_printers_list";
     const params = {
       "method" : "POST",
@@ -224,6 +232,7 @@ class PrinterOS {
       return types;
     } catch(err) {
       console.error(`"GetPrinterTypes()" failed: ${err}`);
+      return 1;
     }
   }
 
@@ -236,8 +245,7 @@ class PrinterOS {
    * @param {int} prev_time (optional, parameter for live update. Can be used to get only changed jobs between two requests. For first request need to send add prev_time: 0, and you will have “time” parameter in   
    * response. You need to send prev_time: “time” in next request to get only live updates)
    */
-  async GetPrintersJobList(printerID)  {
-    printerID = printerID ? printerID : 79165;
+  async GetPrintersJobList(printerID = 79165)  {
     const repo = "/get_printer_jobs";
     const params = {
       "method" : "POST",
@@ -269,9 +277,9 @@ class PrinterOS {
 
   /**
    * Get Latest Job on this Printer.
+   * @return {object} job data
    */
-  async GetPrintersLatestJob(printerID)  {
-    printerID = printerID ? printerID : 79165;
+  async GetPrintersLatestJob(printerID = 79165)  {
     const repo = "/get_printer_jobs";
     const params = {
       "method" : "POST",
@@ -320,8 +328,8 @@ class PrinterOS {
 
   /**
    * Get a Specific Job Details
-   * @param {obj} session
-   * @param {int} jobID
+   * @required {int} jobID
+   * @return {object} job data
    */
   async GetJobInfo(jobID) {
     const repo = "/get_job_info";
@@ -471,8 +479,7 @@ class PrinterOS {
    * @param {obj} session
    * @param {int} workgroupID
    */
-  async GetUsersByWorkgroup(workgroupID) {
-    workgroupID = workgroupID ? workgroupID : 3275;
+  async GetUsersByWorkgroup(workgroupID = 3275) {
     const repo = "/get_workgroup_users";
     const params = {
       "method" : "POST",
@@ -523,17 +530,20 @@ class PrinterOS {
    * Get User Counts and Print to Data / Metrics
    */
   async GetUserCount() {
-    let users = [];
-    JACOBSWORKGROUPS.forEach( async(group) => {
-      const res = await this.GetUsersByWorkgroup(group)
-      .then(console.info(res?.email));
-      // res.forEach(user => users.push(res["email"]));
-    })
-    users = [].concat(...users);
-    let count = new Set(users).size;
-    console.info(`Count : ${count}`);
-    // OTHERSHEETS.Metrics.getRange(17, 3, 1, 1).setValue(count);
-    return count;
+    try {
+      let users = [];
+      JACOBSWORKGROUPS.forEach( async(group) => {
+        const res = await this.GetUsersByWorkgroup(group)
+        console.info(res?.email);
+        res.forEach(user => users.push(user.email));
+      })
+      let count = new Set(users).size;
+      console.info(`Count : ${count}`);
+      return count;
+    } catch(err) {
+      console.error(`"GetUserCount()" failed : ${err}`);
+      return 1;
+    }
   }
 
   /**
@@ -593,24 +603,26 @@ class PrinterOS {
   /**
    * Helper Function to find the name from an ID
    */
-  GetPrinterNameFromID(printerID) {
-    printerID = printerID ? printerID : 79165;
-    for (const [name, id] of Object.entries(PRINTERIDS)) {
-      if(printerID == id) {
-        console.info(`PrinterID : ${printerID}, Printer Name : ${name}`);
-        return name;
+  GetPrinterNameFromID(printerID = 79165) {
+    try {
+      for (const [name, id] of Object.entries(PRINTERIDS)) {
+        if(printerID == id) {
+          console.info(`PrinterID : ${printerID}, Printer Name : ${name}`);
+          return name;
+        }
       }
+    } catch(err) {
+      console.error(`"GetPrinterNameFromID()" failed : ${err}`);
+      return 1;
     }
   }
 
-  /** @private */
-  _CountUnique(iterable) {
-    return new Set(iterable).size;
-  }
 
-  /** @private */
-  _PrintCost(weight) {
-    weight = weight instanceof Number || weight > 0.0 ? weight : 0.0;
+  /** 
+   * Print Cost
+   * @private
+   */
+  _PrintCost(weight = 0.0) {
     return Number(weight * COSTMULTIPLIER).toFixed(2);
   }
 
@@ -625,97 +637,76 @@ class PrinterOS {
  * Update all Filenames
  */
 const UpdateAllFilenames = () => {
-  Object.values(SHEETS).forEach(sheet => {
-    try {
+  try {
+    Object.values(SHEETS).forEach(sheet => {
       console.info(`Updating ${sheet.getSheetName()}`);
       const pos = new PrinterOS();
       pos.Login()
-      .then(() => {
-        let jobIds = GetColumnDataByHeader(sheet, HEADERNAMES.jobID);
-        let culled = jobIds.filter(Boolean);
-        console.info(culled);
-        culled.forEach( async(jobId, index) => {
-          const info = await pos.GetJobInfo(jobId);
-          let filename = info["filename"];
-          let split = filename.slice(0, -6);
-          console.info(`INDEX: ${index + 2} : FILENAME ---> ${split}`);
-          SetByHeader(sheet, HEADERNAMES.filename, index + 2, split);
-        });
-      })
-      .finally(pos.Logout());
-    } catch(err){
-      console.error(`${err} : Couldn't update ${sheet.getSheetName()} with filename. Maybe it just took too long?...`);
-    } 
-  });
+        .then(() => {
+          GetColumnDataByHeader(sheet, HEADERNAMES.jobID)
+            .filter(Boolean)
+            .forEach( async(jobId, index) => {
+              const info = await pos.GetJobInfo(jobId);
+              let filename = info["filename"];
+              let split = filename.slice(0, -6);
+              console.info(`INDEX: ${index + 2} : FILENAME ---> ${split}`);
+              SetByHeader(sheet, HEADERNAMES.filename, index + 2, split);
+            });
+        })
+        .finally(pos.Logout());
+    });
+  } catch(err){
+    console.error(`"UpdateAllFilenames()" failed : ${err} : Couldn't update ${sheet.getSheetName()} with filename.`);
+  } 
 }
-const _testFilename = async () => {
-  UpdateAllFilenames();
-}
+const _testFilename = async () => UpdateAllFilenames();
+
+
 
 
 
 
 
 /**
- * -----------------------------------------------------------------------------------------------------------------
- * Get Printer IDs
- * @NEEDED for adding new printers
+ * Update Single Sheet Materials
+ * @return {boolean} successful
  */
-const GetPrinterIDs = () => {
-  const p = new PrinterOS();
-  p.Login()
-    .then(() => {
-      const plist = p.GetPrinterData();
-      console.info(JSON.stringify(plist));
-  })
-  .then(() => p.Logout())
-}
-
-const GetPrinterJobs = () => {
-  const p = new PrinterOS();
-  p.Login()
-    .then(async () => {
-      const j = await p.CalculateCost(2643420)
-      console.info(j)
-    })
-}
-
-
-
-
 const UpdateSingleSheetMaterials = (sheet) => {
   try {
     console.info(`Updating Materials and Costs for ---> ${sheet.getSheetName()}`);
     const pos = new PrinterOS();
     pos.Login()
-    .then(() => {
-      let jobIds = GetColumnDataByHeader(sheet, HEADERNAMES.jobID);
-      let culled = jobIds.filter(Boolean);
-      console.info(culled);
-      culled.forEach( async(jobId, index) => {
-        const weight = await pos.GetMaterialWeight(jobId);
-        const price = PrintCost(weight);
-        // console.info(`Weight = ${weight}, Price = ${price}`);
-        SetByHeader(sheet, HEADERNAMES.weight, index + 2, weight);
-        SetByHeader(sheet, HEADERNAMES.cost, index + 2, price);
+      .then(() => {
+        GetColumnDataByHeader(sheet, HEADERNAMES.jobID)
+          .filter(Boolean)
+          .forEach( async(jobId, index) => {
+            const weight = await pos.GetMaterialWeight(jobId);
+            const price = PrintCost(weight);
+            // console.info(`Weight = ${weight}, Price = ${price}`);
+            SetByHeader(sheet, HEADERNAMES.weight, index + 2, weight);
+            SetByHeader(sheet, HEADERNAMES.cost, index + 2, price);
+          });
+      })
+      .finally(() => {
+        pos.Logout();
+        console.info(`Successfully Updated ${sheet.getSheetName()}`);
       });
-    })
-    .finally(() => {
-      pos.Logout();
-      console.info(`Successfully Updated ${sheet.getSheetName()}`);
-    });
+    return 0;
   } catch(err){
-    console.error(`${err} : Couldn't update ${sheet.getSheetName()} with filename. Maybe it just took too long?...`);
+    console.error(`"UpdateSingleSheetMaterials()" failed ${err} : Couldn't update ${sheet.getSheetName()} with filename.`);
+    return 1;
   } 
 }
-const TryUpdateSingleSheetCosts = () => {
-  UpdateSingleSheetMaterials(SHEETS.Spectrum);
-}
-const UpdateAllMaterialCosts = () => {
-  Object.values(SHEETS).forEach(sheet => UpdateSingleSheetMaterials(sheet));
-}
+
+/**
+ * Update All Material Costs
+ */
+const UpdateAllMaterialCosts = () => Object.values(SHEETS).forEach(sheet => UpdateSingleSheetMaterials(sheet));
 
 
+/**
+ * Fetch All Printer Data from Organization
+ */
 const GetPrinterData = () => {
   const p = new PrinterOS();
   p.Login()
@@ -727,60 +718,16 @@ const GetPrinterData = () => {
 
 
 
-/** 
-// Configure the service
-const PrinterOS_Service = () => {
-  const service = OAuth2.createService(`PrinterOS`)
-    .setAuthorizationBaseUrl(`https://cloud.3dprinteros.com/apiglobal`)
-    .setTokenUrl(`https://cloud.3dprinteros.com/apiglobal/login`)
-    .setClientId(PropertiesService.getScriptProperties().getProperty(`POS_username`))
-    .setClientSecret(PropertiesService.getScriptProperties().getProperty(`POS_password`))
-    .setCallbackFunction((request) => {
-      const service = GetPrinterOSService();
-      const isAuthorized = service.handleCallback(request);
-      if (isAuthorized) { 
-        return HtmlService
-          .createTemplateFromFile("auth_success")
-          .evaluate();
-      } else {
-        return HtmlService
-          .createTemplateFromFile("auth_error")
-          .evaluate();
-      }
-    })
-    .setPropertyStore(PropertiesService.getUserProperties())
-    .setCache(CacheService.getUserCache())
-    .setLock(LockService.getUserLock())
-    // .setScope('user-library-read playlist-read-private playlist-read-collaborative playlist-modify-public playlist-modify-private');
-  // if (!service.hasAccess()) {
-  //   throw new Error(`Missing PrinterOS Bot authorization.`);
-  // }
-  console.info(`Access: ${service.hasAccess()}`);
-  return service;
-}
 
-const _tPS = () => {
-  const pos = PrinterOS_Service();
-  console.info(JSON.stringify(pos, 4, null))
-}
-
-// Logs the redirect URI to register. You can also get this from File > Project Properties
-const GetRedirectUri = () => {
-  const redirectURI = PrinterOS_Service().getRedirectUri();
-  console.log(redirectURI);
-  return redirectURI;
-}
-*/
-
-const _testPOS = async () => {
-  const p = new PrinterOS();
-  await p.Login()
-    // .then(async () => await p.GetPrinters())
-    // .then(async () => p.GetPrinterData(PRINTERIDS.Spectrum))
-    // .then(p.CheckSession())
-    // .then(async () => await p.GetWorkGroups())
-    .then(p.Users)
-    .then(async () => await p.Logout())
-}
+// const _testPOS = async () => {
+//   const p = new PrinterOS();
+//   await p.Login()
+//     // .then(async () => await p.GetPrinters())
+//     // .then(async () => p.GetPrinterData(PRINTERIDS.Spectrum))
+//     // .then(p.CheckSession())
+//     // .then(async () => await p.GetWorkGroups())
+//     // .then(p.Users)
+//     .then(async () => await p.Logout())
+// }
 
 

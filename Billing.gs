@@ -1,5 +1,9 @@
 
-
+/**
+ * Get Billing per Sheet
+ * @param {sheet} sheet
+ * @return {object} data
+ */
 const BillingPerSheet = (sheet) => {
   let data = {}
   let statuses = GetColumnDataByHeader(sheet, HEADERNAMES.status);
@@ -94,8 +98,7 @@ const ConvertRangeToCsvFile = (sheet) => {
  * @param {number} weight
  * @return {number} value
  */
-const PrintCost = (weight) => {
-  weight = weight instanceof Number || weight > 0.0 ? weight : 0.0;
+const PrintCost = (weight = 0.0) => {
   return Number(weight * COSTMULTIPLIER).toFixed(2);
 }
 

@@ -15,16 +15,23 @@ class CreateMessage {
     name : name = `${GMAIL_SERVICE_NAME} User`, 
     projectname : projectname = `Project Name`, 
     jobnumber : jobnumber = 1000001, 
-    weight : weight = 0, 
+    weight : weight = 0.0, 
     designspecialist : designspecialist = `Staff`, 
     designspecialistemaillink : designspecialistemaillink = `url`,
   }){
+    /** @private */
     this.name = name;
+    /** @private */
     this.projectname = projectname;
+    /** @private */
     this.jobnumber = jobnumber;
-    this.weight = weight ? weight : 0.0;
-    this.designspecialist = designspecialist ? designspecialist : `Design Specialist`;
-    this.designspecialistemaillink = designspecialistemaillink ? designspecialistemaillink : `Link`;
+    /** @private */
+    this.weight = weight;
+    /** @private */
+    this.designspecialist = designspecialist;
+    /** @private */
+    this.designspecialistemaillink = designspecialistemaillink;
+    /** @private */
     this.staff = new StaffBuilder().get();
   }
   get defaultMessage() {

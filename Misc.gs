@@ -13,11 +13,15 @@
  */
 const GetByHeader = (sheet, columnName, row) => {
   try {
-    let data = sheet.getDataRange().getValues();
-    let col = data[0].indexOf(columnName);
+    if (typeof(someSheet) !== `object` || columnName === null || columnName === undefined || row === null || row === undefined) {
+      throw new Error(`Bad inputs to function. Sheet: ${sheet} Col: ${columnName} Row: ${row}`)
+    }
+    const data = sheet.getDataRange().getValues();
+    const col = data[0].indexOf(columnName);
     if (col != -1) return data[row - 1][col];
-  } catch (err) {
-    console.error(`${err} : GetByHeader failed - Sheet: ${sheet} Col Name specified: ${columnName} Row: ${row}`);
+  } catch(err) {
+    console.error(`"GetByHeader()" failed : ${err}`);
+    return 1;
   }
 };
 
@@ -31,13 +35,18 @@ const GetByHeader = (sheet, columnName, row) => {
  */
 const GetColumnDataByHeader = (sheet, columnName) => {
   try {
+    if (typeof(someSheet) !== `object` || columnName === null || columnName === undefined) {
+      throw new Error(`Bad inputs to function. Sheet: ${sheet} Col: ${columnName}`)
+    }
     const data = sheet.getDataRange().getValues();
     const col = data[0].indexOf(columnName);
-    let colData = data.map(d => d[col]);
-    colData.splice(0, 1);
+    let colData = data
+      .map(d => d[col])
+      .splice(0, 1);
     if (col != -1) return colData;
   } catch (err) {
-    console.error(`${err} : GetByHeader failed - Sheet: ${sheet} Col Name specified: ${columnName}`);
+    console.error(`"GetColumnDataByHeader()" failed : ${err}`);
+    return 1;
   }
 };
 
@@ -52,6 +61,9 @@ const GetColumnDataByHeader = (sheet, columnName) => {
 const GetRowData = (sheet, row) => {
   let dict = {};
   try {
+    if (typeof(someSheet) !== `object` || row === null || row === undefined) {
+      throw new Error(`Bad inputs to function. Sheet: ${sheet} Row: ${row}`)
+    }
     let headers = sheet.getRange(1, 1, 1, sheet.getMaxColumns()).getValues()[0];
     headers.forEach( (name, index) => {
       headers[index] = Object.keys(HEADERNAMES).find(key => HEADERNAMES[key] === name);
@@ -65,7 +77,8 @@ const GetRowData = (sheet, row) => {
     console.info(dict);
     return dict;
   } catch (err) {
-    console.error(`${err} : GetRowData failed - Sheet: ${sheet} Row: ${row}`);
+    console.error(`"GetRowData()" failed : ${err}`);
+    return 1;
   }
 }
 
@@ -81,11 +94,16 @@ const GetRowData = (sheet, row) => {
  */
 const SetByHeader = (sheet, columnName, row, val) => {
   try {
+    if (typeof(someSheet) !== `object` || columnName === null || columnName === undefined || row === null || row === undefined || val === null || val === undefined) {
+      throw new Error(`Bad inputs to function. Sheet: ${sheet} Col: ${columnName} Row: ${row} Value: ${val}`);
+    }
     const data = sheet.getDataRange().getValues();
     const col = data[0].indexOf(columnName) + 1;
     sheet.getRange(row, col).setValue(val);
-  } catch (err) {
-    console.error(`${err} : setByHeader failed - Sheet: ${sheet} Row: ${row} Col: ${col} Value: ${val}`);
+    return 0;
+  } catch(err) {
+    console.error(`"SetByHeader()" failed : ${err}`);
+    return 1;
   }
 };
 
@@ -94,27 +112,31 @@ const SetByHeader = (sheet, columnName, row, val) => {
 
 /**
  * Find Image blob from File
+ * @param {png} file
  */
 const GetImage = async (pngFile) => {
   let image;
   const repo = `https://live3dprinteros.blob.core.windows.net/render/${pngFile}`;
+  const folder = DriveApp.getFoldersByName(`Job Tickets`);
 
   const params = {
-    "method" : "GET",
+    method : "GET",
     contentType : "image/png",
     followRedirects : true,
     muteHttpExceptions : true
   };
 
-  const html = await UrlFetchApp.fetch(repo, params);
+  try {
+    const response = await UrlFetchApp.fetch(repo, params);
+    const responseCode = response.getResponseCode();
+    if(responseCode != 200) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
 
-  const responseCode = html.getResponseCode();
-  console.info(`Response Code ---> : ${responseCode} : ${RESPONSECODES[responseCode]}`);
-
-  if(responseCode != 200) return false; 
-  const folder = DriveApp.getFoldersByName(`Job Tickets`);
-  const blob = html.getBlob().setName(`IMAGE_${pngFile}`);
-  return blob;
+    const blob = response.getBlob().setName(`IMAGE_${pngFile}`);
+    return blob;
+  } catch(err) {
+    console.error(`"GetImage()" failed : ${err}`);
+    return 1;
+  }
 }
 
 
@@ -124,18 +146,24 @@ const GetImage = async (pngFile) => {
  * @returns {[sheet, [values]]} list of sheets with lists of indexes
  */
 const Search = (value) => {
-  value ? value.toString().replace(/\s+/g, "") : ``;
-  let res = {};
-  Object.values(SHEETS).forEach(sheet => {
-    const finder = sheet.createTextFinder(value).findAll();
-    if (finder != null) {
-      temp = [];
-      finder.forEach(result => temp.push(result.getRow()));
-      res[sheet.getName()] = temp;
-    }
-  })
-  // console.info(JSON.stringify(res));
-  return res;
+  try {
+    if (value === null || value === undefined) throw new Error(`Bad inputs to function. Value: ${value}`);
+    value = value.toString().replace(/\s+/g, "");
+    let res = {};
+    Object.values(SHEETS).forEach(sheet => {
+      const finder = sheet.createTextFinder(value).findAll();
+      if (finder != null) {
+        temp = [];
+        finder.forEach(result => temp.push(result.getRow()));
+        res[sheet.getName()] = temp;
+      }
+    })
+    // console.info(JSON.stringify(res));
+    return res;
+  } catch(err) {
+    console.error(`"Search()" failed : ${err}`);
+    return 1;
+  }
 }
 
 
@@ -185,11 +213,9 @@ const CheckSheetIsForbidden = (someSheet) => {
   try {
     if (typeof(someSheet) !== `object`) throw new Error(`A non-sheet argument was passed to a function that requires a sheet.`);
     
-    let forbiddenNames = Object.keys(OTHERSHEETS);
-    const index = forbiddenNames.indexOf(someSheet.getName());
-
-    if(index == -1 || index == undefined) return false;
-    return true;
+    let forbiddenNames = [];
+    Object.values(OTHERSHEETS).forEach(sheet => forbiddenNames.push(sheet.getSheetName()));
+    return !forbiddenNames.includes(someSheet.getName());
   } catch(err) {
     console.error(`"CheckSheetIsForbidden()" failed : ${err}`);
     return 1;
@@ -243,41 +269,46 @@ const GetObjectType = (ob) => {
  * Fix Statuses
  */
 const FixStatus = () => {
-  console.info(`Checking Statuses....`);
-  Object.values(SHEETS).forEach(sheet => {
-    let posCodes = GetColumnDataByHeader(sheet, HEADERNAMES.posStatCode);
-    let statuses = GetColumnDataByHeader(sheet, HEADERNAMES.status);
-    posCodes.forEach( (code, index) => {
-      switch(code) {
-        case STATUS.queued.statusCode:
-          if (statuses[index + 2] != STATUS.queued.plaintext) {
-            SetByHeader(sheet, HEADERNAMES.status, index + 2, STATUS.queued.plaintext);
-            console.warn(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
-          }
-          break;
-        case STATUS.inProgress.statusCode:
-          if (statuses[index + 2] != STATUS.inProgress.plaintext) {
-            SetByHeader(sheet, HEADERNAMES.status, index + 2, STATUS.inProgress.plaintext);
-            console.warn(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
-          }
-          break;
-        case STATUS.failed.statusCode:
-          if (statuses[index + 2] != STATUS.failed.plaintext) {
-            SetByHeader(sheet, HEADERNAMES.status, index + 2, STATUS.failed.plaintext);
-            console.warn(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
-          }
-          break;
-        case STATUS.cancelled.statusCode:
-          if (statuses[index + 2] != STATUS.cancelled.plaintext) {
-            SetByHeader(sheet, HEADERNAMES.status, index + 2, STATUS.cancelled.plaintext);
-            console.warn(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
-          }
-          break;
-      }
-    });
-  })
-  console.warn(`Statuses Checked and Fixed....`);
-  return 0;
+  try {
+    console.info(`Checking Statuses....`);
+    Object.values(SHEETS).forEach(sheet => {
+      let posCodes = GetColumnDataByHeader(sheet, HEADERNAMES.posStatCode);
+      let statuses = GetColumnDataByHeader(sheet, HEADERNAMES.status);
+      posCodes.forEach( (code, index) => {
+        switch(code) {
+          case STATUS.queued.statusCode:
+            if (statuses[index + 2] != STATUS.queued.plaintext) {
+              SetByHeader(sheet, HEADERNAMES.status, index + 2, STATUS.queued.plaintext);
+              console.warn(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
+            }
+            break;
+          case STATUS.inProgress.statusCode:
+            if (statuses[index + 2] != STATUS.inProgress.plaintext) {
+              SetByHeader(sheet, HEADERNAMES.status, index + 2, STATUS.inProgress.plaintext);
+              console.warn(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
+            }
+            break;
+          case STATUS.failed.statusCode:
+            if (statuses[index + 2] != STATUS.failed.plaintext) {
+              SetByHeader(sheet, HEADERNAMES.status, index + 2, STATUS.failed.plaintext);
+              console.warn(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
+            }
+            break;
+          case STATUS.cancelled.statusCode:
+            if (statuses[index + 2] != STATUS.cancelled.plaintext) {
+              SetByHeader(sheet, HEADERNAMES.status, index + 2, STATUS.cancelled.plaintext);
+              console.warn(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
+            }
+            break;
+        }
+      });
+    })
+    console.warn(`Statuses Checked and Fixed....`);
+    return 0;
+  } catch(err) {
+    console.error(`"FixStatuses()" failed : ${err}`);
+    return 1;
+  }
 }
 
 
@@ -297,7 +328,7 @@ const FormatDate = (date) => Utilities.formatDate(date ? date : new Date(), "PST
 
 /**
  * Helper to make Sheets
- */
+ * @NOTIMPLEMENTED
 const _helperMakeSheets = async () => {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   for(const [key, value] of Object.entries(PRINTERIDS)) {
@@ -305,12 +336,7 @@ const _helperMakeSheets = async () => {
     await ss.insertSheet().setName(key);
   }
 }
-
-
-/**
- * ----------------------------------------------------------------------------------------------------------------
- * Unit tests
- */
+*/
 
 
 
@@ -347,38 +373,5 @@ const TitleCase = (str) => {
 
 
 
-
-/**
- * Search Class
- */
-/** 
-class Seek
-{
-  constructor() {
-  }
-  Search (value) {
-    if (value) value.toString().replace(/\s+/g, "");
-    let res = {};
-    Object.values(SHEETS).forEach(sheet => {
-      const finder = sheet.createTextFinder(value).findAll();
-      if (finder != null) {
-        let temp = [];
-        finder.forEach(result => temp.push(result.getRow()));
-        res[sheet.getName()] = temp;
-      }
-    });
-    console.warn(JSON.stringify(res));
-    return res;
-  }
-  SearchSpecificSheet (sheet, value) {
-    if (value) value.toString().replace(/\s+/g, "");
-    const finder = sheet.createTextFinder(value).findNext();
-    if (finder != null) {
-      return finder.getRow();
-    } else return false;
-  }
-}
-const _testSeek = () => new Seek().Search("Water Box");
-*/
 
 

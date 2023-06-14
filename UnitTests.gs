@@ -486,15 +486,14 @@ const _gasTLoggerTesting = async () => {
   } 
   const test = new GasTap();
 
-  await test(`WriteLogger`, (t) => {
+  await test(`Logger`, (t) => {
     console.time(`EXECUTION TIMER`);
-    const write = new WriteLogger();
 
-    const w = write.Warning(`Ooopsies ----> Warning`);
-    const i = write.Info(`Some Info`);
-    const e = write.Error(`ERROR`);
-    const d = write.Debug(`Debugging`);
-    const c = write._CleanupSheet();
+
+    const w = Log.Warning(`Ooopsies ----> Warning`);
+    const i = Log.Info(`Some Info`);
+    const e = Log.Error(`ERROR`);
+    const d = Log.Debug(`Debugging`);
     
 
     console.timeEnd(`EXECUTION TIMER`);
@@ -502,7 +501,6 @@ const _gasTLoggerTesting = async () => {
     t.notThrow(() => i,`Info SHOULD NOT throw error.`);
     t.notThrow(() => e,`Error SHOULD NOT throw error.`);
     t.notThrow(() => d,`Debug SHOULD NOT throw error.`);
-    t.notThrow(() => c,`_CleanupSheet SHOULD NOT throw error.`);
   });
 
   await test(`SetConditionalFormatting`, t => {
@@ -630,8 +628,9 @@ const _gasTTestAll = async () => {
     await _gasTUpdateTesting(),
   ])
   .then(console.info('Test Success'))
-  .catch(Error => {
-    console.error(Error + ' Failure');
+  .catch(err => {
+    console.error(`"TestAll()" failed : ${err}`);
+    return 1;
   });
   console.timeEnd(`TESTING TIMER`);
 }

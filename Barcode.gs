@@ -15,7 +15,7 @@ const PickupByBarcode = () => {
   if (jobnumber == null || jobnumber == "" || jobnumber instanceof String) {
     progressUpdate.setValue(`No Print Number provided! Select the yellow cell, scan, then press enter to make sure the cell's value has been changed.`);
     ui.alert(
-      `PrinterOS`,
+      `${SERVICENAME}`,
       `Jobnumber : ${jobnumber} was goofy. Please fix and try again...`,
       ui.ButtonSet.OK
     );
@@ -33,7 +33,7 @@ const PickupByBarcode = () => {
       progressUpdate.setValue(`Print #${jobnumber} marked as "Picked-up". Printer: ${key}, Row: ${searchRow}`);
       console.info(`Print #${jobnumber} marked as "Picked-up". Printer: ${key}, Row: ${searchRow}`);
       ui.alert(
-        `PrinterOS`,
+        `${SERVICENAME}`,
         `Print #${jobnumber} marked as "Picked-up". Printer: ${key}, Row: ${searchRow}`,
         ui.ButtonSet.OK
       );
@@ -42,7 +42,7 @@ const PickupByBarcode = () => {
   }
   progressUpdate.setValue('Print Number not found. Try again.');
   ui.alert(
-    `PrinterOS`,
+    `${SERVICENAME}`,
     `Print #${jobnumber} not found.. Please try again....`,
     ui.ButtonSet.OK
   );
@@ -61,51 +61,47 @@ const MarkAsAbandonedByBarcode = async () => {
   if (!jobnumber || jobnumber instanceof String) {
     progressUpdate.setValue(`No job number provided. Select the yellow cell, scan, then press enter to make sure the cell's value has been changed.`);
     ui.alert(
-      `PrinterOS`,
+      `${SERVICENAME}`,
       `Jobnumber : ${jobnumber} was goofy. Please fix and try again...`,
       ui.ButtonSet.OK
     );
     return;
+  } 
+  res = FindOne(jobnumber);
+  console.info(res)
+  if(Object.keys(res).length === 0) {
+    progressUpdate.setValue(`Job number not found. Try again.`);
+    ui.alert(
+      `${SERVICENAME}`,
+      `Jobnumber : ${jobnumber} not found...`,
+      ui.ButtonSet.OK
+    );
   } else {
-    res = FindOne(jobnumber);
-    console.info(res)
-    if(Object.keys(res).length === 0) {
-      progressUpdate.setValue(`Job number not found. Try again.`);
-      ui.alert(
-        `PrinterOS`,
-        `Jobnumber : ${jobnumber} not found...`,
-        ui.ButtonSet.OK
-      );
-    } else {
-      let sheet = SHEETS[res.sheetName];
-      let row = res.row;
-      let email = res.email;
-      let projectname = res.filename;
-      let weight = res.weight;
-      SetByHeader(sheet, HEADERNAMES.status, row, STATUS.abandoned.plaintext);
-      progressUpdate.setValue(`Job number ${jobnumber} marked as abandoned. Sheet: ${sheet.getSheetName()} row: ${row}`);
-      console.info(`Job number ${jobnumber} marked as abandoned. Sheet: ${sheet.getSheetName()} row: ${row}`);
+    let sheet = SHEETS[res.sheetName];
+    let row = res.row;
+    let email = res.email;
+    let projectname = res.filename;
+    let weight = res.weight;
+    SetByHeader(sheet, HEADERNAMES.status, row, STATUS.abandoned.plaintext);
+    progressUpdate.setValue(`Job number ${jobnumber} marked as abandoned. Sheet: ${sheet.getSheetName()} row: ${row}`);
+    console.info(`Job number ${jobnumber} marked as abandoned. Sheet: ${sheet.getSheetName()} row: ${row}`);
 
-      progressUpdate.setValue(`Emailing ${email}......`);
-      await new Emailer({
-        email : email, 
-        status : STATUS.abandoned.plaintext,
-        projectname : projectname,
-        jobnumber : jobnumber,
-        weight : weight,
-      })
-      progressUpdate.setValue(`Owner ${email} of abandoned job: ${jobnumber} emailed..`);
-      ui.alert(
-        `PrinterOS`,
-        `Owner ${email} of abandoned job: ${jobnumber} emailed..`,
-        ui.ButtonSet.OK
-      );
-      return;
+    progressUpdate.setValue(`Emailing ${email}......`);
+    await new Emailer({
+      email : email, 
+      status : STATUS.abandoned.plaintext,
+      projectname : projectname,
+      jobnumber : jobnumber,
+      weight : weight,
+    })
+    progressUpdate.setValue(`Owner ${email} of abandoned job: ${jobnumber} emailed..`);
+    ui.alert(
+      `${SERVICENAME}`,
+      `Owner ${email} of abandoned job: ${jobnumber} emailed..`,
+      ui.ButtonSet.OK
+    );
+    return;
   }
-
-  }
-
-    
 }
 
 
@@ -121,10 +117,15 @@ class QRCodeAndBarcodeGenerator {
     url : url = 'jps.jacobshall.org/', 
     jobnumber : jobnumber = Math.floor(Math.random() * 100000).toFixed(),
   }) {
-    this.url = url;
+    /** @private */
     this.jobnumber = jobnumber;
+    this.url = url;
   }
 
+  /**
+   * Generate QR Code
+   * @return {object} QR Code
+   */
   GenerateQRCode(){
     console.info(`URL : ${this.url}, Jobnumber : ${this.jobnumber}`);
     const loc = `https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=${this.url}`;  // API call
@@ -136,22 +137,26 @@ class QRCodeAndBarcodeGenerator {
       muteHttpExceptions : true
     };
 
-    let qrCode;
-    const html = UrlFetchApp.fetch(loc, postParams);
-    // console.info(`Response Code : ${html.getResponseCode()}`);
-    if (html.getResponseCode() != 200) {
-      console.error('Failed to GET QRCode');
-      return false; 
+    try {
+      const response = UrlFetchApp.fetch(loc, postParams);
+      const responseCode = response.getResponseCode();
+      if(responseCode != 200) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
+
+      let qrCode = DriveApp.createFile( Utilities.newBlob(response.getContent()).setName(`QRCode${this.jobnumber}`));
+      qrCode.setTrashed(true);
+    
+      console.info(`QRCode Created ---> ${qrCode?.getId()?.toString()}`);
+      return qrCode;
+    } catch(err) {
+      console.error(`"GenerateQRCode()" failed : ${err}`);
+      return 1;
     }
-    qrCode = DriveApp.createFile( Utilities.newBlob(html.getContent()).setName(`QRCode${this.jobnumber}`));
-    qrCode.setTrashed(true);
-  
-    console.info(`QRCode Created ---> ${qrCode?.getId()?.toString()}`);
-    return qrCode;
   }
 
-  GenerateBarCode() {
-
+  /**
+   * Generate Barcode
+   */
+  async GenerateBarcode() {
     const root = 'http://bwipjs-api.metafloor.com/';
     const rootsec = 'https://bwipjs-api.metafloor.com/';
     const type = '?bcid=code128';
@@ -159,29 +164,37 @@ class QRCodeAndBarcodeGenerator {
     const scale = '&scale=0.75'
     const postfx = '&includetext';
 
-    //let barcodeLoc = 'http://bwipjs-api.metafloor.com/?bcid=code128&text=1234567890&includetext';  //KNOWN WORKING LOCATION
-    const barcodeLoc = root + type + ts + this.jobnumber + scale +postfx;
+    //let url = 'http://bwipjs-api.metafloor.com/?bcid=code128&text=1234567890&includetext';  //KNOWN WORKING LOCATION
+    const url = root + type + ts + this.jobnumber + scale +postfx;
 
     const params = {
-        "method" : "GET",
-        "headers" : { "Authorization": "Basic ", "Content-Type" : "image/png" },
-        "contentType" : "application/json",
-        followRedirects : true,
-        muteHttpExceptions : true
+      method : "GET",
+      headers : { "Authorization": "Basic ", "Content-Type" : "image/png" },
+      contentType : "application/json",
+      followRedirects : true,
+      muteHttpExceptions : true,
     };
-    
-    let barcode;
-    let html = UrlFetchApp.fetch(barcodeLoc, params);
-    // console.info("Response Code : " + html.getResponseCode());
-    if (html.getResponseCode() == 200) {
-      barcode = DriveApp.createFile( Utilities.newBlob(html.getContent()).setName(`Barcode : ${this.jobnumber}`) );
+
+    try {
+      const response = await UrlFetchApp.fetch(url, params);
+      const responseCode = response.getResponseCode();
+      if(responseCode != 200) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`);  
+      const content = response.getContent();
+      const blob = Utilities.newBlob(content).setName(`Barcode : ${this.jobnumber}`) ;
+      let barcode = DriveApp.createFile(blob);
       barcode.setTrashed(true);
-    } 
-    else console.error('Failed to GET Barcode');
-    console.info(`BARCODE CREATED ---> ${barcode?.getId()?.toString()}`);
-    return barcode;
+      
+      console.info(`BARCODE CREATED ---> ${barcode?.getId()?.toString()}`);
+      return barcode;
+    } catch(err) {
+      console.error(`"GenerateBarcode()" failed : ${err}`);
+      return 1;
+    }
   }
 
+  /**
+   * Generate Barcode (Formatted)
+   */
   GenerateBarCodeForTicketHeader() {
 
     const root = 'http://bwipjs-api.metafloor.com/';
@@ -191,27 +204,31 @@ class QRCodeAndBarcodeGenerator {
     const scaleY = '&scaleY=6';
     const postfx = '&includetext';
 
-    const barcodeLoc = root + type + ts + this.jobnumber + scaleX + scaleY + postfx;
+    const url = root + type + ts + this.jobnumber + scaleX + scaleY + postfx;
 
     const params = {
-      "method" : "GET",
-      "headers" : { "Authorization": "Basic ", "Content-Type" : "image/png" },
-      "contentType" : "application/json",
+      method : "GET",
+      headers : { "Authorization": "Basic ", "Content-Type" : "image/png" },
+      contentType : "application/json",
       followRedirects : true,
       muteHttpExceptions : true,
     };
     
-    let barcode;
-    const res = UrlFetchApp.fetch(barcodeLoc, params);
-    const responseCode = res.getResponseCode();
-    // console.info(`Response Code : ${responseCode}, ${RESPONSECODES[responseCode]}`);
-    if (responseCode == 200) {
-      barcode = DriveApp.createFile( Utilities.newBlob(res.getContent()).setName(`Barcode : ${this.jobnumber}`) );
+    try {
+      const response = UrlFetchApp.fetch(url, params);
+      const responseCode = response.getResponseCode();
+      if(responseCode != 200) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
+      const content = response.getContent();
+
+      let barcode = DriveApp.createFile( Utilities.newBlob(content).setName(`Barcode : ${this.jobnumber}`) );
       barcode.setTrashed(true);
-    } 
-    else console.error('Failed to GET Barcode');
-    console.info(`BARCODE CREATED ---> ${barcode?.getId()?.toString()}`);
-    return barcode;
+       
+      console.info(`BARCODE CREATED ---> ${barcode?.getId()?.toString()}`);
+      return barcode;
+    } catch(err) {
+      console.error(`"GenerateBarCodeForTicketHeader()" failed : ${err}`);
+      return 1;
+    }
   }
   
 }
@@ -231,37 +248,49 @@ class OpenQRGenerator {
     url : url = 'jps.jacobshall.org/',
     size : size = `80x80`, // MAX: 1000x1000
   }) {
-    this.filename = filename ? filename : `file`,
-    this.url = url;
+    /** @private */
+    this.filename = filename;
+    /** @private */
     this.size = size;
-
+    this.url = url;
   }
 
+  /**
+   * Generate QR Code
+   * return {blob} QR Code
+   */
   async GenerateQRCode(){
     const filename = this.filename = `file` ? Math.floor(Math.random() * 100000).toFixed() : this.filename;
     // console.info(`URL : ${this.url}`);
     const loc = `https://api.qrserver.com/v1/create-qr-code/?size=${this.size}&data=${this.url}`;  //API call
     const postParams = {
-      "method" : "GET",
-      "headers" : { "Authorization" : "Basic" },
-      "contentType" : "application/json",
+      method : "GET",
+      headers : { "Authorization" : "Basic" },
+      contentType : "application/json",
       followRedirects : true,
       muteHttpExceptions : true
     };
 
-    let qrCode;
-    const html = UrlFetchApp.fetch(loc, postParams);
-    // console.info(`Response Code : ${RESPONSECODES[html.getResponseCode()]}`);
-    if (html.getResponseCode() != 200) {
-      console.error(`Failed to GET QRCode`);
-      return false; 
+    try {
+      const response = UrlFetchApp.fetch(loc, postParams);
+      const responseCode = response.getResponseCode();
+      if(responseCode != 200) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
+      const content = response.getContent();
+      const blob = Utilities.newBlob(content).setName(`QRCode ${filename}`);
+      let qrCode = await DriveApp.getFolderById(TICKETGID).createFile(blob);
+
+      console.info(`QRCODE CREATED ---> ${qrCode?.getUrl().toString()}`);
+      return qrCode;
+    } catch(err) {
+      console.error(`"GenerateQRCode()" failed : ${err}`);
+      return 1;
     }
-    const blob = Utilities.newBlob(html.getContent()).setName(`QRCode ${filename}`);
-    qrCode = await DriveApp.getFolderById(TICKETGID).createFile(blob)
-    console.info(`QRCODE CREATED ---> ${qrCode?.getUrl().toString()}`);
-    return qrCode;
   }
 
+  /**
+   * Create Printable QR Code
+   * @return {doc} printable doc
+   */
   async CreatePrintableQRCode() {
     const filename = this.filename = `file` ? `QRCode-${Number(Math.floor(Math.random() * 100000)).toFixed()}` : this.filename;
     const folder = DriveApp.getFolderById(TICKETGID);

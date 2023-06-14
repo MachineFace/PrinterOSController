@@ -3,13 +3,13 @@
  * ----------------------------------------------------------------------------------------------------------------
  * Class for Creating a Design Specialist Employee
  */
-class DesignSpecialist
-{
+class DesignSpecialist {
   constructor({
     name : name = `DS`, 
     fullname : fullname = `Design Specialist`, 
     email : email = `jacobsprojectsupport@berkeley.edu`
   }) {
+    this.id = Utilities.getUuid();
     this.name = name;
     this.fullname = fullname;
     this.email = email;
@@ -21,6 +21,7 @@ class DesignSpecialist
   
   get() {
     return {
+      id : this.id,
       name : this.name,
       fullname : this.fullname,
       email : this.email,
@@ -39,8 +40,7 @@ class DesignSpecialist
  * SS Class - child of DS Class
  * Note: In derived classes, super() must be called before you can use 'this'. Leaving this out will cause a reference error.
  */
-class StudentSupervisor extends DesignSpecialist
-{
+class StudentSupervisor extends DesignSpecialist {
   constructor({
     name = `SS`, 
     fullname = `Student Supervisor`, 
@@ -48,6 +48,7 @@ class StudentSupervisor extends DesignSpecialist
   }) {
     // The reserved 'super' keyword is for making super-constructor calls and allows access to parent methods.
     super(name, fullname, email);
+    this.id = Utilities.getUuid();
     this.name = name;
     this.fullname = fullname;
     this.email = email;
@@ -59,6 +60,7 @@ class StudentSupervisor extends DesignSpecialist
 
   get() {
     return {
+      id : this.id,
       name : this.name,
       fullname : this.fullname,
       email : this.email,
@@ -76,15 +78,14 @@ class StudentSupervisor extends DesignSpecialist
  * ----------------------------------------------------------------------------------------------------------------
  * Manager Class - child of DS Class
  */
-class Manager extends DesignSpecialist 
-{ 
+class Manager extends DesignSpecialist { 
   constructor({
     name = `MA`, 
     fullname = `Manager`, 
     email = `jacobsprojectsupport@berkeley.edu`
-  }) 
-  {
+  }) {
     super(name, fullname, email);
+    this.id = Utilities.getUuid();
     this.name = name;
     this.fullname = fullname;
     this.email = email;
@@ -96,6 +97,7 @@ class Manager extends DesignSpecialist
 
   get() {
     return {
+      id : this.id,
       name : this.name,
       fullname : this.fullname,
       email : this.email,
@@ -165,8 +167,7 @@ const StaffEmailAsString = () => {
  * -----------------------------------------------------------------------------------------------------------------
  * Class for Building Staff
  */
-class StaffBuilder
-{
+class StaffBuilder {
   constructor() {
     this.staff = {};
     this.MakeStaff();

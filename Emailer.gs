@@ -6,32 +6,39 @@
 class Emailer {
   constructor({ 
     email : email, 
-    status : status,
-    name : name,
-    projectname : projectname,
-    jobnumber : jobnumber,
-    weight : weight,
-    designspecialist :designspecialist,
-    designspecialistemail : designspecialistemail,
-    designspecialistemaillink : designspecialistemaillink, 
+    name : name = `Self-Service Printing User`,
+    status : status = STATUS.queued.plaintext,
+    projectname : projectname = `Your Project Name`,
+    jobnumber : jobnumber = 1000000001,
+    weight : weight = 0.0,
+    designspecialist : designspecialist = `Cody Glen`,
+    designspecialistemail : designspecialistemail = `codyglen@berkeley.edu`,
+    designspecialistemaillink : designspecialistemaillink = `<a href="codyglen@berkeley.edu">codyglen@berkeley.edu</a>`, 
   }) {
-    this.designspecialistemail = designspecialistemail ? designspecialistemail : `codyglen@berkeley.edu`;
-    this.email = email ? email : ``;
-    this.status = status ? status : STATUS.queued.plaintext;
-
-    this.name = name ? name : `Self-Service Printing User`;
-    this.projectname = projectname ? projectname : `Your Project Name`;
-    this.jobnumber = jobnumber ? jobnumber : 1000000001;
-    this.weight = weight ? weight : 0.0;
-
+    /** @private */
+    this.email = email;
+    /** @private */
+    this.name = name;
+    /** @private */
+    this.status = status;
+    /** @private */
+    this.projectname = projectname;
+    /** @private */
+    this.jobnumber = jobnumber;
+    /** @private */
+    this.weight = weight;
+    /** @private */
+    this.designspecialistemail = designspecialistemail;
+    /** @private */
     this.message = new CreateMessage({
       name : this.name,
       projectname : this.projectname,
       jobnumber : this.jobnumber,
       weight : this.weight,
-      designspecialist : designspecialist ? designspecialist : `Cody Glen`,
-      designspecialistemaillink : designspecialistemaillink ? designspecialistemaillink : `<a href="${this.designspecialistemail}">${this.designspecialistemail}</a>`,
+      designspecialist : designspecialist,
+      designspecialistemaillink : designspecialistemaillink,
     });
+    /** @private */
     this.SendEmail();
   }
 

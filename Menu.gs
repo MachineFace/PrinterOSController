@@ -13,34 +13,33 @@ const PopUpMarkAsAbandoned = async () => {
     let res = FindOne(jobnumber);
     if(!res) {
       ui.alert(
-        `PrinterOS`,
+        `${SERVICENAME}`,
         `Jobnumber : ${jobnumber} NOT FOUND. Maybe try JPS.`,
         ui.ButtonSet.OK
       );
       progressUpdate.setValue(`Job number not found. Try again.`);
       return;
-    } else {
-      let sheet = SHEETS[res.sheetName];
-      let row = res.row;
-      let email = res.email;
-      let projectname = res.filename;
-      let weight = res.weight;
-      SetByHeader(sheet, HEADERNAMES.status, row, STATUS.abandoned.plaintext);
-      console.info(`Job number ${jobnumber} marked as abandoned. Sheet: ${sheet.getSheetName()} row: ${row}`);
-      await new Emailer({
-        email : email, 
-        status : STATUS.abandoned.plaintext,
-        projectname : projectname,
-        jobnumber : jobnumber,
-        weight : weight,
-      })
-      console.warn(`Owner ${email} of abandoned job: ${jobnumber} emailed...`);
-      ui.alert(
-        `${SERVICENAME} : Marked as Abandoned`, 
-        `${email}, Job: ${jobnumber} emailed... Sheet: ${sheet.getSheetName()} row: ${row}`, 
-        ui.ButtonSet.OK
-      );
     }
+    let sheet = SHEETS[res.sheetName];
+    let row = res.row;
+    let email = res.email;
+    let projectname = res.filename;
+    let weight = res.weight;
+    SetByHeader(sheet, HEADERNAMES.status, row, STATUS.abandoned.plaintext);
+    console.info(`Job number ${jobnumber} marked as abandoned. Sheet: ${sheet.getSheetName()} row: ${row}`);
+    await new Emailer({
+      email : email, 
+      status : STATUS.abandoned.plaintext,
+      projectname : projectname,
+      jobnumber : jobnumber,
+      weight : weight,
+    })
+    console.warn(`Owner ${email} of abandoned job: ${jobnumber} emailed...`);
+    ui.alert(
+      `${SERVICENAME} : Marked as Abandoned`, 
+      `${email}, Job: ${jobnumber} emailed... Sheet: ${sheet.getSheetName()} row: ${row}`, 
+      ui.ButtonSet.OK
+    );
   } else if (response.getSelectedButton() == ui.Button.CANCEL) {
     console.warn(`User chose not to send an email...`);
   } else {
@@ -84,7 +83,6 @@ const PopUpMarkAsPickedUp = async () => {
     
 }
 
-
 /**
  * -----------------------------------------------------------------------------------------------------------------
  * Creates a pop-up for counting users.
@@ -112,8 +110,6 @@ const CountQueue = () => {
   return count;
 }
 
-
-
 /**
  * Create a pop-up to Create a new Ticket if one is missing.
  */
@@ -127,8 +123,8 @@ const PopupCreateTicket = async () => {
   // If It is on a valid sheet
   if(CheckSheetIsForbidden(thisSheet)) {
     Browser.msgBox(
-      `Incorrect Sheet Active`,
-      `Please select from the correct sheet. Select one cell in the row and a ticket will be created.`,
+      `${SERVICENAME}`,
+      `Bad Sheet Selected. Please select from the correct sheet. Select one cell in the row and a ticket will be created.`,
       Browser.Buttons.OK
     );
     return;
@@ -163,7 +159,6 @@ const PopupCreateTicket = async () => {
     ui.ButtonSet.OK
   );
 };
-
 
 /**
  * Builds HTML file for the modal pop-up from the help list.
@@ -215,6 +210,9 @@ const PopupHelp = () => {
   ui.showModalDialog(htmlOutput, title);
 };
 
+/**
+ * Run Update
+ */
 const PopupUpdate = async () => {
   let ui = await SpreadsheetApp.getUi();
   new UpdateSheet();
@@ -225,20 +223,26 @@ const PopupUpdate = async () => {
   );
 };
 
+/**
+ * Remove Duplicates
+ */
 const PopupRemoveDuplicates = async () => {
   let ui = await SpreadsheetApp.getUi();
   TriggerRemoveDuplicates();
   ui.alert(
-    `${SERVICENAME}  Message`,
+    `${SERVICENAME} Message`,
     `All Duplicate Info from PrinterOS Server removed.`,
     ui.ButtonSet.OK
   );
 };
 
+/**
+ * Fetch New Data Single Sheet
+ */
 const PopupFetchNewForSingleSheet = async () => {
   let ui = await SpreadsheetApp.getUi();
   let thisSheet = SpreadsheetApp.getActiveSheet();
-  FetchNewDataforSingleSheet(thisSheet);
+  WriteSingleSheet(thisSheet);
   ui.alert(
     `${SERVICENAME} Message`,
     `Fetching new Data for ${thisSheet.getSheetName()} from PrinterOS Server`,
@@ -246,6 +250,9 @@ const PopupFetchNewForSingleSheet = async () => {
   );
 }
 
+/**
+ * Fix Missing Tickets for This Sheet
+ */
 PopupFixMissingTicketsForThisSheet = async () => {
   let ui = await SpreadsheetApp.getUi();
   let thisSheet = SpreadsheetApp.getActiveSheet();
@@ -256,7 +263,6 @@ PopupFixMissingTicketsForThisSheet = async () => {
     ui.ButtonSet.OK
   );
 }
-
 
 /**
  * Creates a modal pop-up for the help text.
@@ -299,13 +305,16 @@ const PopupInterface = () => {
   </html>
   `;
   let ui = SpreadsheetApp.getUi();
-  let title = `PrinterOS Controller`;
+  let title = `${SERVICENAME}`;
   let htmlOutput = HtmlService.createHtmlOutput(html)
     .setWidth(640)
     .setHeight(480);
   ui.showModalDialog(htmlOutput, title);
 };
 
+/**
+ * Remove Users not in Billing List
+ */
 const PopupRemoveUsersNotInBillingList = async () => {
   let ui = await SpreadsheetApp.getUi();
   await RemoveStudentsWhoDidntPrint();
@@ -316,6 +325,9 @@ const PopupRemoveUsersNotInBillingList = async () => {
   );
 }
 
+/**
+ * Calculate Billing
+ */
 const PopupCalcBilling = async () => {
   let ui = await SpreadsheetApp.getUi();
   await CalculateMaterialCostForBilling();
@@ -332,7 +344,7 @@ const PopupCalcBilling = async () => {
  */
 const BarMenu = () => {
   SpreadsheetApp.getUi()
-    .createMenu(`JPS Menu`)
+    .createMenu(`${SERVICENAME} Menu`)
     .addItem(`Barcode Scanning Tool`, `OpenBarcodeTab`)
     .addSeparator()
     .addItem(`Mark as Abandoned`, `PopUpMarkAsAbandoned`)

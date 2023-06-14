@@ -7,17 +7,28 @@ class CleanupSheet {
     this.RemoveAllDuplicateRecords();
     this.FixStatuses();
   }
+
+  /**
+   * Remove All Duplicate Records
+   */
   RemoveAllDuplicateRecords () {
-    Object.values(SHEETS).forEach( async (sheet) => {
-      try {
+    try {
+      Object.values(SHEETS).forEach( async (sheet) => {
         console.warn(`Removing duplicate records on ---> ${sheet.getSheetName()}`);
         await this.RemoveDuplicateRecords(sheet);
-      } catch(err){
-        console.error(`${err} : Couldn't remove duplicates. Maybe it just took too long?...`);
-      } 
-    });
+      });
+      return 0;
+    } catch(err){
+      console.error(`"RemoveAllDuplicateRecords()" failed : ${err}`);
+      return 1;
+    } 
   }
-  RemoveDuplicateRecords (sheet) {
+
+  /**
+   * Remove Duplicate Records
+   * @param {sheet} sheet
+   */
+  RemoveDuplicateRecords(sheet) {
     const records = [];
     let lastRow = sheet.getLastRow() - 1;
     if(lastRow <= 1) lastRow = 1;
@@ -41,47 +52,57 @@ class CleanupSheet {
       });
     }
   }
-  FixStatuses () {
-    console.info(`Checking Statuses....`);
-    Object.values(SHEETS).forEach(sheet => {
-      let posCodes = GetColumnDataByHeader(sheet, HEADERNAMES.posStatCode);
-      let statuses = GetColumnDataByHeader(sheet, HEADERNAMES.status);
-      posCodes.forEach( (code, index) => {
-        switch(code) {
-          case STATUS.queued.statusCode:
-            if (statuses[index + 2] != STATUS.queued.plaintext) {
-              SetByHeader(sheet, HEADERNAMES.status, index + 2, STATUS.queued.plaintext);
-              console.warn(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
-            }
-            break;
-          case STATUS.inProgress.statusCode:
-            if (statuses[index + 2] != STATUS.inProgress.plaintext) {
-              SetByHeader(sheet, HEADERNAMES.status, index + 2, STATUS.inProgress.plaintext);
-              console.warn(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
-            }
-            break;
-          case STATUS.failed.statusCode:
-            if (statuses[index + 2] != STATUS.failed.plaintext) {
-              SetByHeader(sheet, HEADERNAMES.status, index + 2, STATUS.failed.plaintext);
-              console.warn(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
-            }
-            break;
-          case STATUS.cancelled.statusCode:
-            if (statuses[index + 2] != STATUS.cancelled.plaintext) {
-              SetByHeader(sheet, HEADERNAMES.status, index + 2, STATUS.cancelled.plaintext);
-              console.warn(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
-            }
-            break;
-          case STATUS.complete.statusCode:
-            if (statuses[index + 2] != STATUS.complete.plaintext) {
-              SetByHeader(sheet, HEADERNAMES.status, index + 2, STATUS.complete.plaintext);
-              console.warn(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
-            }
-            break;
-        }
-      });
-    })
-    console.warn(`Statuses Checked and Fixed....`);
+
+  /**
+   * Fix Statuses
+   */
+  FixStatuses() {
+    try {
+      console.info(`Checking Statuses....`);
+      Object.values(SHEETS).forEach(sheet => {
+        let posCodes = GetColumnDataByHeader(sheet, HEADERNAMES.posStatCode);
+        let statuses = GetColumnDataByHeader(sheet, HEADERNAMES.status);
+        posCodes.forEach( (code, index) => {
+          switch(code) {
+            case STATUS.queued.statusCode:
+              if (statuses[index + 2] != STATUS.queued.plaintext) {
+                SetByHeader(sheet, HEADERNAMES.status, index + 2, STATUS.queued.plaintext);
+                console.warn(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
+              }
+              break;
+            case STATUS.inProgress.statusCode:
+              if (statuses[index + 2] != STATUS.inProgress.plaintext) {
+                SetByHeader(sheet, HEADERNAMES.status, index + 2, STATUS.inProgress.plaintext);
+                console.warn(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
+              }
+              break;
+            case STATUS.failed.statusCode:
+              if (statuses[index + 2] != STATUS.failed.plaintext) {
+                SetByHeader(sheet, HEADERNAMES.status, index + 2, STATUS.failed.plaintext);
+                console.warn(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
+              }
+              break;
+            case STATUS.cancelled.statusCode:
+              if (statuses[index + 2] != STATUS.cancelled.plaintext) {
+                SetByHeader(sheet, HEADERNAMES.status, index + 2, STATUS.cancelled.plaintext);
+                console.warn(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
+              }
+              break;
+            case STATUS.complete.statusCode:
+              if (statuses[index + 2] != STATUS.complete.plaintext) {
+                SetByHeader(sheet, HEADERNAMES.status, index + 2, STATUS.complete.plaintext);
+                console.warn(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
+              }
+              break;
+          }
+        });
+      })
+      console.warn(`Statuses Checked and Fixed....`);
+      return 0;
+    } catch(err) {
+      console.error(`"FixStatuses()" failed : ${err}`);
+      return 1;
+    }
   }
 }
 const RunCleanup = () => new CleanupSheet();
@@ -94,23 +115,18 @@ const RunCleanup = () => new CleanupSheet();
  * @TRIGGERED
  */
 const TriggerRemoveDuplicates = () => {
-  Object.values(SHEETS).forEach(sheet => {
-    RemoveDuplicatesOnSingleSheet(sheet);
-  });
-}
-const RemoveDuplicatesOnSingleSheet = (sheet) => {
   try {
-    if(typeof sheet != `object`) throw new Error(`Did not pass a good sheet.`);
-
-    let idSet = new Set();
-    GetColumnDataByHeader(sheet, HEADERNAMES.jobID)
-      .forEach( (item, index) => {
-        if(item && idSet.has(item)) {
-          console.warn(`Sheet ${sheet.getSheetName()} @ ROW : ${index + 2}`);
-          sheet.deleteRow(index + 2);
-          sheet.insertRowsAfter(sheet.getMaxRows(), 1);
-        } else idSet.add(item);
-      });
+    Object.values(SHEETS).forEach(sheet => {
+      let idSet = new Set();
+      GetColumnDataByHeader(sheet, HEADERNAMES.jobID)
+        .forEach( (item, index) => {
+          if(item && idSet.has(item)) {
+            console.warn(`Sheet ${sheet.getSheetName()} @ ROW : ${index + 2}`);
+            sheet.deleteRow(index + 2);
+            sheet.insertRowsAfter(sheet.getMaxRows(), 1);
+          } else idSet.add(item);
+        });
+    });
     return 0;
   } catch (err) {
     console.error(`"RemoveDuplicatesOnSingleSheet()" failed : ${err}`);
@@ -118,33 +134,33 @@ const RemoveDuplicatesOnSingleSheet = (sheet) => {
   }
 }
 
-
-
-
 /**
  * Clean the junk out of the filename
+ * @param {string} filename
+ * @return {string} fixed filename
  */
-const FileNameCleanup = (filename) => {
-  const regex = /[0-9_]/g;
-  const regex2 = /[.]gcode/g;
-  const regex3 = /\b[.]modified\b/g;
-  if(!filename) return;
-
+const FileNameCleanup = (filename = `Filename`) => {
   const fixed = filename
     .toString()
-    .replace(regex,``)
-    .replace(regex2, ``)
-    .replace(regex3, ``)
-    .replace(regex2, ``)
+    .replace(/[0-9_]/g,``)
+    .replace(/[.]gcode/g, ``)
+    .replace(/\b[.]modified\b/g, ``)
+    .replace(/[.]gcode/g, ``)
   return TitleCase(fixed).replace(` `, ``);
 }
 
 const _testFilenameCleanup = () => {
-  filenames = GetColumnDataByHeader(SHEETS.Plumbus, HEADERNAMES.filename);
-
-  filenames.forEach(filename => {
-    console.info(`BEFORE --> ${filename}`);
-    const cleanup = FileNameCleanup(filename);
-    console.info(`AFTER --> ${cleanup}`)
-  })
+  GetColumnDataByHeader(SHEETS.Plumbus, HEADERNAMES.filename)
+    .forEach(filename => {
+      console.info(`BEFORE --> ${filename}`);
+      const cleanup = FileNameCleanup(filename);
+      console.info(`AFTER --> ${cleanup}`)
+    });
+  return 0;
 }
+
+
+
+
+
+
