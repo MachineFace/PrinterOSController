@@ -283,10 +283,10 @@ const _gasTMiscTesting = async () => {
     t.equal(y, undefined || null, `GetByHeader SHOULD return undefined or null: ${y}`);
 
     const z = GetByHeader(`BAD SHEET`, HEADERNAMES.filename, 2);
-    t.equal(y, undefined || null, `GetByHeader SHOULD return undefined or null: ${y}`);
+    t.equal(z, 1, `GetByHeader SHOULD return 1: ${z}`);
 
     const a = GetByHeader(`BAD SHEET`, `BAD COLUMN NAME`, `BAD ROW NUMBER`);
-    t.equal(a, undefined || null, `GetByHeader SHOULD return undefined or null: ${a}`);
+    t.equal(a, 1, `GetByHeader SHOULD return 1: ${a}`);
 
   });
 
@@ -295,10 +295,10 @@ const _gasTMiscTesting = async () => {
     t.notEqual(x, undefined || null, `GetColumnDataByHeader SHOULD NOT return undefined or null: ${x}`);
 
     const y = GetColumnDataByHeader(SHEETS.Photon, `BAD COLUMN NAME`);
-    t.equal(y, undefined || null, `GetByHeader SHOULD return undefined or null: ${y}`);
+    t.equal(y, undefined || null, `GetColumnDataByHeader SHOULD return undefined or null: ${y}`);
 
     const z = GetColumnDataByHeader(`BAD SHEET`, `BAD COLUMN NAME`);
-    t.equal(z, undefined || null, `GetByHeader SHOULD return undefined or null: ${z}`);
+    t.equal(z, 1, `GetColumnDataByHeader SHOULD return 1: ${z}`);
 
   });
 
@@ -307,10 +307,10 @@ const _gasTMiscTesting = async () => {
     t.notEqual(x, undefined || null, `GetRowData SHOULD NOT return undefined or null: ${JSON.stringify(x)}`);
 
     const y = GetRowData(SHEETS.Quasar, `BAD COLUMN NAME`);
-    t.equal(y, undefined || null, `GetRowData SHOULD return undefined or null: ${y}`);
+    t.equal(y, 1, `GetRowData SHOULD return undefined or null: ${y}`);
 
     const z = GetRowData(`BAD SHEET`, `BAD COLUMN NAME`);
-    t.equal(z, undefined || null, `GetRowData SHOULD return undefined or null: ${z}`);
+    t.equal(z, 1, `GetRowData SHOULD return undefined or null: ${z}`);
 
   });
 

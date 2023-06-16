@@ -140,6 +140,7 @@ class UpdateSheet {
 const UpdateAll = () => new UpdateSheet();
 
 
+
 /**
  * -----------------------------------------------------------------------------------------------------------------
  * Update All Missing Tickets
@@ -165,10 +166,10 @@ class UpdateMissingTickets {
    */
   async UpdateSheetTickets(sheet) {
     let indexes = [];
-    let tickets = GetColumnDataByHeader(sheet, HEADERNAMES.ticket);
-    tickets.forEach( (item, index) => {
-      if(!item) indexes.push(index + 2);
-    })
+    GetColumnDataByHeader(sheet, HEADERNAMES.ticket)
+      .forEach( (item, index) => {
+        if(!item) indexes.push(index + 2);
+      })
     console.warn(`${sheet.getSheetName()} ---> Missing Tickets: ${indexes}`);
     indexes.forEach(async (index) => {
       this._UpdateRow(index, sheet);
@@ -199,14 +200,18 @@ class UpdateMissingTickets {
       }).CreateTicket();
       const url = t.getUrl();
       SetByHeader(sheet, HEADERNAMES.ticket, index, url.toString());
+      return 0;
     } catch (err) {
       console.error(`${err} : Couldn't generate a ticket....`);
+      return 1;
     }
   }
 
   /**
    * Find Image blob from File
+   * @private
    * @param {png} file
+   * @return {blob} image
    */
   async _GetImage(pngFile) {
     const repo = `https://live3dprinteros.blob.core.windows.net/render/${pngFile}`;
@@ -236,3 +241,9 @@ class UpdateMissingTickets {
  * @TRIGGERED
  */
 const MissingTicketUpdater = () => new UpdateMissingTickets();
+
+
+
+
+
+
