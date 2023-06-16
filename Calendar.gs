@@ -17,12 +17,12 @@ class CalendarFactory {
    * Get Calendars
    * @return {object} calendar
    */
-  async GetCalendars() {
+  get Calendars() {
     const calendars = CalendarApp.getAllCalendars();
     calendars.forEach(calendar => {
       console.info(`Name: ${calendar.getName()}, ID: ${calendar.getId()}`);
     });
-    return await calendars;
+    return calendars;
   }
 
   /**
@@ -212,7 +212,8 @@ const _testCalendars = () => {
   // c.CreateEvent(GetRowData(SHEETS.Plumbus, 22));
   // c.CreateEvent(GetRowData(SHEETS.Luteus, 227));
   // c.CreateEvent(GetRowData(SHEETS.Zardoz, 150));
-  c.Events;
+  // c.Events;
+  c.Calendars;
   // c.DeleteEvent(3271817);
   // c.DeleteAllEvents();
   // const d = c._CalculateCompletionTime(new Date(2012, 5, 3), 1000);
