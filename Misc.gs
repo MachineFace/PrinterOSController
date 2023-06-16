@@ -13,9 +13,7 @@
  */
 const GetByHeader = (sheet, columnName, row) => {
   try {
-    if (typeof(someSheet) !== `object` || columnName === null || columnName === undefined || row === null || row === undefined) {
-      throw new Error(`Bad inputs to function. Sheet: ${sheet} Col: ${columnName} Row: ${row}`)
-    }
+    if(typeof(sheet) !== typeof(SHEETS.Spectrum)) throw new Error(`Bad sheet supplied: Sheet: ${sheet}, Col: ${columnName}, Row: ${row}`);
     const data = sheet.getDataRange().getValues();
     const col = data[0].indexOf(columnName);
     if (col != -1) return data[row - 1][col];
@@ -35,14 +33,10 @@ const GetByHeader = (sheet, columnName, row) => {
  */
 const GetColumnDataByHeader = (sheet, columnName) => {
   try {
-    if (typeof(someSheet) !== `object` || columnName === null || columnName === undefined) {
-      throw new Error(`Bad inputs to function. Sheet: ${sheet} Col: ${columnName}`)
-    }
     const data = sheet.getDataRange().getValues();
     const col = data[0].indexOf(columnName);
-    let colData = data
-      .map(d => d[col])
-      .splice(0, 1);
+    let colData = data.map(d => d[col]);
+    colData.splice(0, 1);
     if (col != -1) return colData;
   } catch (err) {
     console.error(`"GetColumnDataByHeader()" failed : ${err}`);
@@ -61,9 +55,6 @@ const GetColumnDataByHeader = (sheet, columnName) => {
 const GetRowData = (sheet, row) => {
   let dict = {};
   try {
-    if (typeof(someSheet) !== `object` || row === null || row === undefined) {
-      throw new Error(`Bad inputs to function. Sheet: ${sheet} Row: ${row}`)
-    }
     let headers = sheet.getRange(1, 1, 1, sheet.getMaxColumns()).getValues()[0];
     headers.forEach( (name, index) => {
       headers[index] = Object.keys(HEADERNAMES).find(key => HEADERNAMES[key] === name);
@@ -94,9 +85,6 @@ const GetRowData = (sheet, row) => {
  */
 const SetByHeader = (sheet, columnName, row, val) => {
   try {
-    if (typeof(someSheet) !== `object` || columnName === null || columnName === undefined || row === null || row === undefined || val === null || val === undefined) {
-      throw new Error(`Bad inputs to function. Sheet: ${sheet} Col: ${columnName} Row: ${row} Value: ${val}`);
-    }
     const data = sheet.getDataRange().getValues();
     const col = data[0].indexOf(columnName) + 1;
     sheet.getRange(row, col).setValue(val);
