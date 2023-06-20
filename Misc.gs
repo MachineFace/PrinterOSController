@@ -213,6 +213,7 @@ const CheckSheetIsForbidden = (someSheet) => {
 
 
 /**
+ * Get Type
  * return an object describing what was passed
  * @param {*} ob the thing to analyze
  * @return {object} object information

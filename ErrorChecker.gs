@@ -7,10 +7,9 @@ const CheckEmails = () => {
   let masterSet = [];
   Object.values(SHEETS).forEach(sheet => {
     // console.warn(`Checking Sheet: ${sheet.getSheetName()}`);
-    let emails = [].concat(...GetColumnDataByHeader(sheet, HEADERNAMES.email)); 
-    emails = emails.filter(Boolean);
-    const unique = [...new Set(emails)];
-    masterSet.push(...unique);
+    let emails = [...GetColumnDataByHeader(sheet, HEADERNAMES.email)]
+      .filter(Boolean);
+    masterSet.push(...emails);
   });
   masterSet = [...new Set(masterSet)];
   // console.info(`Length After Setting: ${masterSet.length}`); 
@@ -61,17 +60,16 @@ const RemoveStudentsWhoDidntPrint = () => {
   let masterSet = [];
   Object.values(SHEETS).forEach(sheet => {
     // console.warn(`Checking Sheet: ${sheet.getSheetName()}`);
-    let emails = [].concat(...GetColumnDataByHeader(sheet, HEADERNAMES.email)); 
-    emails = emails.filter(Boolean);
-    const unique = [...new Set(emails)];
-    masterSet.push(...unique);
+    let emails = [...GetColumnDataByHeader(sheet, HEADERNAMES.email)]
+      .filter(Boolean);
+    masterSet.push(...emails);
   });
   masterSet = [...new Set(masterSet)];
-  // console.info(`Length After Setting: ${masterSet.length}`); 
+  console.info(`Length After Setting: ${masterSet.length}`); 
 
   // Set of Everyone Billed:
-  let billedemails = [].concat(...OTHERSHEETS.Report.getRange(2, 1, OTHERSHEETS.Report.getLastRow(), 1).getValues()); 
-  billedemails = billedemails.filter(Boolean);
+  let billedemails = [].concat(...OTHERSHEETS.Report.getRange(2, 1, OTHERSHEETS.Report.getLastRow(), 1).getValues())
+    .filter(Boolean);
   
   let notInSet = [];
 
@@ -99,6 +97,9 @@ const RemoveStudentsWhoDidntPrint = () => {
 
 }
 
+/**
+ * Remove Bad Statuses
+ */
 const RemoveShitStatuses = () => {
   // Remove Shitty status
   let statuses = [`LOST_CONNECTION`, `CANCELLED_WEB`, `IN_QUEUE`, `IN_PROGRESS`];
@@ -116,17 +117,16 @@ const RemoveShitStatuses = () => {
   sorted.forEach(row => OTHERSHEETS.Report.deleteRow(row));
 }
 
-
+/**
+ * Check Non-Existant Job Ids
+ */
 const CheckNonExistantJobIDs = () => {
-
   // Set of Everyone who printed
   let masterSet = [];
   Object.values(SHEETS).forEach(sheet => {
-    // console.warn(`Checking Sheet: ${sheet.getSheetName()}`);
-    let jobIDs = [].concat(...GetColumnDataByHeader(sheet, HEADERNAMES.jobID)); 
-    jobIDs = jobIDs.filter(Boolean);
-    const unique = [...new Set(jobIDs)];
-    masterSet.push(...unique);
+    let jobIDs = [...GetColumnDataByHeader(sheet, HEADERNAMES.jobID)]
+      .filter(Boolean);
+    masterSet.push(...jobIDs);
   });
   masterSet = [...new Set(masterSet)];
   console.info(`This JobCount Length ---> ${masterSet.length}`); 
@@ -167,7 +167,9 @@ const CheckNonExistantJobIDs = () => {
 
 }
 
-
+/**
+ * Calculate Material Costs for Billing
+ */
 const CalculateMaterialCostForBilling = () => {
   let materialUsed = GetColumnDataByHeader(OTHERSHEETS.Report, `Material Used (∑,kg)`); //Material in kg
   materialUsed.forEach( (value, index) => {

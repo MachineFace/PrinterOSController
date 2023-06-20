@@ -31,7 +31,7 @@ class Ticket {
     /** @private */
     this.weight = weight;
     /** @private */
-    this.cost = weight ? PrintCost(weight) : 0.0;
+    this.cost = weight ? this._PrintCost(weight) : 0.0;
     /** @private */
     this.jobID = jobID;
     /** @private */
@@ -58,8 +58,8 @@ class Ticket {
     let docId = doc.getId();
     let url = doc.getUrl();
     
-    const qGen = new QRCodeAndBarcodeGenerator({url, jobnumber});
-    const barcode = qGen.GenerateBarCodeForTicketHeader();
+    const b = new BarcodeService({jobnumber});
+    const barcode = b.GenerateBarCodeForTicketHeader();
 
     // Append Document with Info
     if (doc != undefined || doc != null || doc != NaN) {
@@ -94,7 +94,7 @@ class Ticket {
 
       // Create a two-dimensional array containing the cell contents.
       body.appendTable([
-          ["Date Started", this.submissiontime.toString()],
+          ["Date Started", this.submissiontime.toDateString()],
           ["Design Specialist:", this.designspecialist],
           ["Job Number:", this.jobID.toString()],
           ["Student Email:", this.email.toString()],
@@ -132,6 +132,16 @@ class Ticket {
     console.info(`DOC ----> ${doc?.getUrl()?.toString()}`)
     return doc;
   };
+
+  /**
+   * Calculate PrintCost
+   * @private
+   * @param {number} weight
+   * @return {number} value
+   */
+  _PrintCost(weight = 0.0) {
+    return Number(weight * COSTMULTIPLIER).toFixed(2);
+  }
 }
 
 

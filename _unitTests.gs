@@ -211,13 +211,27 @@ const _gasTTicketTesting = async () => {
     eval(UrlFetchApp.fetch('https://raw.githubusercontent.com/huan/gast/master/src/gas-tap-lib.js').getContentText())
   } 
   const test = new GasTap();
+  
+  await test(`New Ticket Creation`, (t) => {
+    const dummyObj = {
+      designspecialist : "Staff",
+      submissiontime : new Date(),
+      name : "Stu Dent",
+      printerID : "123876",
+      printerName : "Dingus",
+      filename : "somefile.gcode",
+      weight : 53.34,
+    }
+    let ticket = new Ticket(dummyObj).CreateTicket();
+    t.notEqual(ticket, undefined || null, `Ticket SHOULD NOT be null or undefined: ${ticket}`); 
+  });
 
   /**
    * -----------------------------------------------------------------------------------------------------------------
    * datetime=**, extruders=[**], id=**, print_time=**, gif_image=**, heated_bed_temperature=**, cost=**, raft=**, email=**, notes=**, material_type=**, filename=**.gcode, file_id=**,
    * picture=**.png, heated_bed=**, status_id=**, printing_duration=**, layer_height=**, file_size=**, printer_id=**, supports=**, weight=**
    */
-  await test(`New Ticket Creation`, (t) => {
+  await test(`New Ticket From POS`, (t) => {
     let jobID;
     let info;
     let image;
@@ -449,7 +463,7 @@ const _gasTCalculationTesting = async () => {
   });
 
   await test(`SumSingleSheetMaterials`, (t) => {
-    const x = Calculate.SumSingleSheetMaterials(SHEETS.Aurum);
+    const x = Calculate._SumSingleSheetMaterials(SHEETS.Aurum);
     t.notEqual(x, undefined || null, `SumSingleSheetMaterials SHOULD NOT return undefined or null. ${x}`);
     t.equal(!isNaN(x), true, `SumSingleSheetMaterials SHOULD return a number: ${JSON.stringify(GetObjectType(x))}`)
   });

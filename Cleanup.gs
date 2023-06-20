@@ -30,12 +30,10 @@ class CleanupSheet {
    */
   RemoveDuplicateRecords(sheet) {
     const records = [];
-    let lastRow = sheet.getLastRow() - 1;
-    if(lastRow <= 1) lastRow = 1;
-    let numbers = GetColumnDataByHeader(sheet, HEADERNAMES.jobID);
-    numbers.forEach(num => {
-      if(num != null || num != undefined || num != "" || num != " ") records.push(num.toString());
-    });
+    let lastRow = sheet.getLastRow() - 1 >= 1 ? sheet.getLastRow() - 1 : 1;
+    GetColumnDataByHeader(sheet, HEADERNAMES.jobID)
+      .filter(Boolean)
+      .forEach(num => records.push(num.toString()));
     
     let indexes = [];
     records.forEach( (item, index) => {
