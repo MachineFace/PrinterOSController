@@ -99,7 +99,6 @@ const SetByHeader = (sheet, columnName, row, val) => {
  * @param {png} file
  */
 const GetImage = async (pngFile) => {
-  let image;
   const repo = `https://live3dprinteros.blob.core.windows.net/render/${pngFile}`;
   const folder = DriveApp.getFoldersByName(`Job Tickets`);
 
@@ -306,32 +305,21 @@ const IsValidDate = (d) => {
 const FormatDate = (date) => Utilities.formatDate(date ? date : new Date(), "PST", "MM/dd/yyyy 'at' HH:mm:ss z");
 
 
-/**
- * Helper to make Sheets
- * @NOTIMPLEMENTED
-const _helperMakeSheets = async () => {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  for(const [key, value] of Object.entries(PRINTERIDS)) {
-    console.info(key);
-    await ss.insertSheet().setName(key);
-  }
-}
-*/
-
-
-
-
 
 /**
  * Set Dropdowns for status
  */
 const SetStatusDropdowns = () => {
-  let statuses = [];
-  Object.values(STATUS).forEach(status => statuses.push(status.plaintext));
-  const rule = SpreadsheetApp.newDataValidation().requireValueInList(statuses);
-  Object.values(SHEETS).forEach(sheet => sheet.getRange(2, 1, sheet.getLastRow(), 1).setDataValidation(rule));
-  // console.info(statuses)
-  return 0;
+  try {
+    let statuses = [];
+    Object.values(STATUS).forEach(status => statuses.push(status.plaintext));
+    const rule = SpreadsheetApp.newDataValidation().requireValueInList(statuses);
+    Object.values(SHEETS).forEach(sheet => sheet.getRange(2, 1, sheet.getLastRow(), 1).setDataValidation(rule));
+    return 0;
+  } catch(err) {
+    console.error(`"SetStatusDropdowns()" failed : ${err}`);
+    return 1;
+  }
 }
 
 
