@@ -507,9 +507,10 @@ const Metrics = () => {
     Calculate.PrintSheetCosts();
     Calculate.PrintSheetMaterials();
     console.info(`Recalculated Metrics`);
-  }
-  catch (err) {
-    console.error(`${err} : Couldn't generate statistics on Metrics.`);
+    return 0;
+  } catch (err) {
+    console.error(`"Metrics()" failed : ${err}`);
+    return 1;
   }
 }
 

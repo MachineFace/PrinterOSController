@@ -5,7 +5,6 @@
 
 
 /**
- * ----------------------------------------------------------------------------------------------------------------
  * Return the value of a cell by column name and row number
  * @param {sheet} sheet
  * @param {string} colName
@@ -25,7 +24,6 @@ const GetByHeader = (sheet, columnName, row) => {
 
 
 /**
- * ----------------------------------------------------------------------------------------------------------------
  * Return the values of a column by the name
  * @param {sheet} sheet
  * @param {string} colName
@@ -46,7 +44,6 @@ const GetColumnDataByHeader = (sheet, columnName) => {
 
 
 /**
- * ----------------------------------------------------------------------------------------------------------------
  * Return the values of a row by the number
  * @param {sheet} sheet
  * @param {number} row
@@ -76,7 +73,6 @@ const GetRowData = (sheet, row) => {
 
 
 /**
- * ----------------------------------------------------------------------------------------------------------------
  * Set the value of a cell by column name and row number
  * @param {sheet} sheet
  * @param {string} colName
@@ -203,7 +199,7 @@ const CheckSheetIsForbidden = (someSheet) => {
     
     let forbiddenNames = [];
     Object.values(OTHERSHEETS).forEach(sheet => forbiddenNames.push(sheet.getSheetName()));
-    return !forbiddenNames.includes(someSheet.getName());
+    return forbiddenNames.includes(someSheet.getName());
   } catch(err) {
     console.error(`"CheckSheetIsForbidden()" failed : ${err}`);
     return 1;
@@ -212,42 +208,37 @@ const CheckSheetIsForbidden = (someSheet) => {
 
 
 
+
 /**
  * Get Type
- * return an object describing what was passed
- * @param {*} ob the thing to analyze
+ * @param {*} object to analyze
  * @return {object} object information
  */
 const GetObjectType = (ob) => {
   let stringify;
   try {
-    // test for an object
     if (ob !== Object(ob)) {
-        return {
-          type : typeof ob,
-          value : ob,
-          length : typeof ob === `string` ? ob.length : null 
-        } ;
-    }
-    else {
-      try {
-        stringify = JSON.stringify(ob);
-        console.warn(stringify);
-      }
-      catch (err) {
-        stringify = `{ "result" : "unable to stringify" }`
-        console.error(stringify);
-      }
       return {
-        type : typeof ob ,
-        value : stringify,
-        name : ob.constructor ? ob.constructor.name : null,
-        nargs : ob.constructor ? ob.constructor.arity : null,
-        length : Array.isArray(ob) ? ob.length:null
-      };       
+        type : typeof ob,
+        value : ob,
+        length : typeof ob === `string` ? ob.length : null 
+      };
+    } 
+    try {
+      stringify = JSON.stringify(ob);
+      console.warn(stringify);
+    } catch (err) {
+      stringify = `{ "result" : "unable to stringify" }`
+      console.error(stringify);
     }
-  }
-  catch (err) {
+    return {
+      type : typeof ob ,
+      value : stringify,
+      name : ob.constructor ? ob.constructor.name : null,
+      nargs : ob.constructor ? ob.constructor.arity : null,
+      length : Array.isArray(ob) ? ob.length:null
+    };       
+  } catch(err) {
     return { type : `indeterminate type`, } ;
   }
 }
