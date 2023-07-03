@@ -79,9 +79,10 @@ class CalendarFactory {
    */
   async DeleteEvent( jobID ) {
     try {
-      [...this.Events]
-        .filter(Boolean)
-        .forEach(event => {
+      const events = [...this.Events]
+        .filter(Boolean);
+      if(events.length != 0) {
+        events.forEach(event => {
           const eventID = event.getId();
           let jID = event.getTitle()
             .replace(` `, ``)
@@ -95,6 +96,7 @@ class CalendarFactory {
             console.info(`Event: ${eventID}, Deleted`);
           }
         });
+      }
       return 0;
     } catch(err) {
       console.error(`"DeleteEvent()" failed : ${err}`);

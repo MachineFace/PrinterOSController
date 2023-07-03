@@ -88,7 +88,7 @@ const SetRowData = (sheet, data) => {
       sorted[index] = data[header];
     });
 
-    SHEETS.Aurum.appendRow(sorted);
+    sheet.appendRow(sorted);
     return 0;
   } catch (err) {
     console.error(`"SetRowData()" failed : ${err}`);
@@ -275,6 +275,37 @@ const GetObjectType = (ob) => {
 }
 
 
+/**
+ * Get Status By Code
+ * @param {number} statusCode
+ */
+const GetStatusByCode = (statusCode) => {
+  try {
+    switch(statusCode) {
+      case STATUS.queued.statusCode:
+        console.warn(`Status changed to: ${STATUS.queued.plaintext}`);
+        return STATUS.queued.plaintext;
+      case STATUS.inProgress.statusCode:
+        console.warn(`Status changed to: ${STATUS.inProgress.plaintext}`);
+        return STATUS.inProgress.plaintext;
+      case STATUS.failed.statusCode:
+        console.warn(`Status changed to: ${STATUS.failed.plaintext}`);
+        return STATUS.failed.plaintext;
+      case STATUS.cancelled.statusCode:
+        console.warn(`Status changed to: ${STATUS.cancelled.plaintext}`);
+        return STATUS.cancelled.plaintext;
+      case STATUS.complete.statusCode:
+        console.warn(`Status changed to: ${STATUS.complete.plaintext}`);
+        return STATUS.complete.plaintext;
+      default:
+        console.warn(`Status NOT changed`);
+        return STATUS.queued.plaintext;
+    }
+  } catch(err) {
+    console.error(`"GetStatusByCode()" failed : ${err}`);
+    return 1;
+  }
+}
 
 /**
  * Fix Statuses

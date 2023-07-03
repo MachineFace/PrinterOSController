@@ -47,13 +47,14 @@ class WriteToSheet {
           if(jobList.length === 0) {
             console.warn(`${sheet.getSheetName()} ----> Nothing New....`);
             return 0;
+          } else {
+            jobList.forEach(async (job) => {
+              console.warn(`${sheet.getSheetName()} ----> New Job! : ${job}`);
+              let data = await pos.GetJobInfo(job);
+              console.warn(`Writing to sheet ${sheet.getSheetName()}, Data: ${JSON.stringify(data)}`);
+              await this._WriteJobDetailsToSheet(data, sheet);
+            });
           }
-          jobList.forEach(async (job) => {
-            console.warn(`${sheet.getSheetName()} ----> New Job! : ${job}`);
-            let data = await pos.GetJobInfo(job)
-            console.warn(`Writing to sheet ${sheet.getSheetName()}, Data: ${JSON.stringify(data)}`);
-            await this._WriteJobDetailsToSheet(data, sheet);
-          });
         })
         .then(() => pos.Logout());
       return 0;
@@ -75,30 +76,14 @@ class WriteToSheet {
       const thisRow = sheet.getLastRow() + 1;
       const printerName = sheet.getSheetName();
       let { printer_id, id, datetime, email, status_id, printing_duration, filename, picture, weight, } = data;
-
-      SetByHeader(sheet, HEADERNAMES.printerName, thisRow, printerName);
-      SetByHeader(sheet, HEADERNAMES.printerID, thisRow, printer_id);
-      SetByHeader(sheet, HEADERNAMES.jobID, thisRow, id);
       const timestamp = datetime ? datetime : new Date().toISOString();
-      SetByHeader(sheet, HEADERNAMES.timestamp, thisRow, timestamp);
-      SetByHeader(sheet, HEADERNAMES.email, thisRow, email);
-      SetByHeader(sheet, HEADERNAMES.posStatCode, thisRow, status_id);
 
-      const duration = printing_duration ? printing_duration : 0;
-      const d = +Number.parseFloat(duration) / 3600;
-      SetByHeader(sheet, HEADERNAMES.duration, thisRow, d.toFixed(2).toString());
-
+      const duration = printing_duration ? Number(Number.parseFloat(printing_duration) / 3600).toFixed(2).toString() : 0;
       filename = filename ? FileNameCleanup(filename.toString()) : "";
-      SetByHeader(sheet, HEADERNAMES.filename, thisRow, filename);
-      SetByHeader(sheet, HEADERNAMES.picture, thisRow, picture);
 
       weight = weight ? Number(weight).toFixed(2) : 0.0;
-      SetByHeader(sheet, HEADERNAMES.weight, thisRow, weight);
-
       const cost = weight ? this._PrintCost(weight) : 0.0;
-      SetByHeader(sheet, HEADERNAMES.cost, thisRow, cost);
 
-      this._UpdateStatus(status_id, sheet, thisRow);
 
       let imageBLOB = await GetImage(picture);
       const ticket = await new Ticket({
@@ -112,7 +97,27 @@ class WriteToSheet {
         image : imageBLOB, 
       }).CreateTicket()
       const url = ticket.getUrl();
-      SetByHeader(sheet, HEADERNAMES.ticket, thisRow, url.toString());
+
+      const rowData = { 
+        status : STATUS.queued.plaintext,
+        printerID : printer_id,
+        printerName : printerName,
+        jobID : id,
+        timestamp : timestamp,
+        email : email,
+        posStatCode : status_id,
+        duration : duration,
+        notes : '',
+        picture : picture,
+        ticket : url,
+        filename : filename,
+        weight : weight,
+        cost : cost,
+      }
+      this._SetRowData(sheet, rowData);
+
+      this._UpdateStatus(status_id, sheet, thisRow);
+
       return 0;
     } catch (err) {
       console.error(`"_WriteJobDetailsToSheet()" failed : ${err}`);
@@ -189,6 +194,32 @@ class WriteToSheet {
       return jobIds.includes(Number(jobId));
     } catch(err) {
       console.error(`"_CheckIfJobExists()" failed : ${err}`);
+      return 1;
+    }
+  }
+
+  /**
+   * Set Row Data
+   * @param {sheet} sheet
+   * @param {object} rowdata to write
+   * @return {number} success or failure
+   */
+  _SetRowData(sheet, data) {
+    try {
+      let sorted = [];
+      const headers = sheet.getRange(1, 1, 1, sheet.getMaxColumns()).getValues()[0];
+      headers.forEach( (name, index) => {
+        headers[index] = Object.keys(HEADERNAMES).find(key => HEADERNAMES[key] === name);
+      })
+
+      headers.forEach( (header, index) => {
+        sorted[index] = data[header];
+      });
+
+      sheet.appendRow(sorted);
+      return 0;
+    } catch (err) {
+      console.error(`"_SetRowData()" failed : ${err}`);
       return 1;
     }
   }

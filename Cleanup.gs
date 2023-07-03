@@ -31,7 +31,7 @@ class CleanupService {
   RemoveDuplicateRecords(sheet) {
     const records = [];
     let lastRow = sheet.getLastRow() - 1 >= 1 ? sheet.getLastRow() - 1 : 1;
-    GetColumnDataByHeader(sheet, HEADERNAMES.jobID)
+    [...GetColumnDataByHeader(sheet, HEADERNAMES.jobID)]
       .filter(Boolean)
       .forEach(num => records.push(num.toString()));
     
