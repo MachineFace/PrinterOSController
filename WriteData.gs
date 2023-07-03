@@ -99,7 +99,7 @@ class WriteToSheet {
       const url = ticket.getUrl();
 
       const rowData = { 
-        status : STATUS.queued.plaintext,
+        status : GetStatusByCode(status_id),
         printerID : printer_id,
         printerName : printerName,
         jobID : id,
@@ -234,7 +234,7 @@ const WriteSingleSheet = (sheet) => new WriteToSheet().WriteSingleSheet();
 
 
 const testT = () => {
-  const w = new WriteToSheet().WriteSingleSheet(SHEETS.Aurum);
+  const w = new WriteToSheet().WriteSingleSheet(SHEETS.Purpura);
 }
 
 
