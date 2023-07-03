@@ -70,6 +70,38 @@ const GetRowData = (sheet, row) => {
   }
 }
 
+/**
+ * Set Row Data
+ * @param {sheet} sheet
+ * @param {object} rowdata to write
+ * @return {number} success or failure
+ */
+const SetRowData = (sheet, data) => {
+  try {
+    let sorted = [];
+    const headers = sheet.getRange(1, 1, 1, sheet.getMaxColumns()).getValues()[0];
+    headers.forEach( (name, index) => {
+      headers[index] = Object.keys(HEADERNAMES).find(key => HEADERNAMES[key] === name);
+    })
+
+    headers.forEach( (header, index) => {
+      sorted[index] = data[header];
+    });
+
+    SHEETS.Aurum.appendRow(sorted);
+    return 0;
+  } catch (err) {
+    console.error(`"SetRowData()" failed : ${err}`);
+    return 1;
+  }
+}
+
+const _testSet = () => {
+  const d = GetRowData(SHEETS.Aurum, 5);
+  // const e = GetRowData(SHEETS.Aurum, 6);
+  SetRowData(SHEETS.Aurum, d);
+}
+
 
 
 /**

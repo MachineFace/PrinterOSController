@@ -125,10 +125,10 @@ class PrinterOS {
   async GetPrinters() {
     const repo = "/get_organization_printers_list";
     const params = {
-      "method" : "POST",
-      "followRedirects" : true,
-      "muteHttpExceptions" : true,
-      "payload" : {
+      method : "POST",
+      followRedirects : true,
+      muteHttpExceptions : true,
+      payload : {
         "session" : this.session,
       },
     };
@@ -172,10 +172,10 @@ class PrinterOS {
   async GetPrinterData(printer_id = 79165) {
     const repo = "/get_printers_list";
     const params = {
-      "method" : "POST",
-      "followRedirects" : true,
-      "muteHttpExceptions" : true,
-      "payload" : {
+      method : "POST",
+      followRedirects : true,
+      muteHttpExceptions : true,
+      payload : {
         "session" : this.session,
         "printer_id" : printer_id,
       },
@@ -212,10 +212,10 @@ class PrinterOS {
   async GetPrinterTypes() {
     const repo = "/get_printer_types";
     const params = {
-      "method" : "POST",
-      "followRedirects" : true,
-      "muteHttpExceptions" : true,
-      "payload" : {
+      method : "POST",
+      followRedirects : true,
+      muteHttpExceptions : true,
+      payload : {
         "session" : this.session,
       },
     };
@@ -248,10 +248,10 @@ class PrinterOS {
   async GetPrintersJobList(printerID = 79165)  {
     const repo = "/get_printer_jobs";
     const params = {
-      "method" : "POST",
-      "followRedirects" : true,
-      "muteHttpExceptions" : true,
-      "payload" : {
+      method : "POST",
+      followRedirects : true,
+      muteHttpExceptions : true,
+      payload : {
         "session" : this.session,
         "printer_id" : printerID,
       },
@@ -282,10 +282,10 @@ class PrinterOS {
   async GetPrintersLatestJob(printerID = 79165)  {
     const repo = "/get_printer_jobs";
     const params = {
-      "method" : "POST",
-      "followRedirects" : true,
-      "muteHttpExceptions" : true,
-      "payload" : {
+      method : "POST",
+      followRedirects : true,
+      muteHttpExceptions : true,
+      payload : {
         "session" : this.session,
         "printer_id" : printerID,
       },
@@ -334,10 +334,10 @@ class PrinterOS {
   async GetJobInfo(jobID) {
     const repo = "/get_job_info";
     const params = {
-      "method" : "POST",
-      "followRedirects" : true,
-      "muteHttpExceptions" : true,
-      "payload" : {
+      method : "POST",
+      followRedirects : true,
+      muteHttpExceptions : true,
+      payload : {
         "session" : this.session,
         "job_id" : jobID,
       },
@@ -372,10 +372,10 @@ class PrinterOS {
   async GetMaterialWeight(jobID) {
     const repo = "/get_job_info";
     const params = {
-      "method" : "POST",
-      "followRedirects" : true,
-      "muteHttpExceptions" : true,
-      "payload" : {
+      method : "POST",
+      followRedirects : true,
+      muteHttpExceptions : true,
+      payload : {
         "session" : this.session,
         "job_id" : jobID,
       },
@@ -407,10 +407,10 @@ class PrinterOS {
   async CalculateCost(jobID) {
     const repo = "/get_job_info";
     const params = {
-      "method" : "POST",
-      "followRedirects" : true,
-      "muteHttpExceptions" : true,
-      "payload" : {
+      method : "POST",
+      followRedirects : true,
+      muteHttpExceptions : true,
+      payload : {
         "session" : this.session,
         "job_id" : jobID,
       },
@@ -443,10 +443,10 @@ class PrinterOS {
   async GetWorkGroups() {
     const repo = `/get_workgroups_simple_list/`;
     const params = {
-      "method" : "POST",
-      "followRedirects" : true,
-      "muteHttpExceptions" : true,
-      "payload" : {
+      method : "POST",
+      followRedirects : true,
+      muteHttpExceptions : true,
+      payload : {
         "session" : this.session,
       },
     };
@@ -552,9 +552,9 @@ class PrinterOS {
   async GetPrintersInCloud() {
     const repo = "/get_printer_types_detailed";
     const params = {
-      "method" : "POST",
-      "followRedirects" : true,
-      "muteHttpExceptions" : true,
+      method : "POST",
+      followRedirects : true,
+      muteHttpExceptions : true,
     };
 
     try {
@@ -581,10 +581,10 @@ class PrinterOS {
   async GetJobImage() {
     const repo = `https://live3dprinteros.blob.core.windows.net/render/${this.picture}`;
     const params = {
-      "method" : "GET",
-      "contentType" : "image/png",
-      "followRedirects" : true,
-      "muteHttpExceptions" : true,
+      method : "GET",
+      contentType : "image/png",
+      followRedirects : true,
+      muteHttpExceptions : true,
     };
 
     try {
@@ -630,9 +630,9 @@ class PrinterOS {
       followRedirects : true,
       muteHttpExceptions : true,
       payload : {
-        "session" : this.session,
-        "workgroup_id" : workgroupId,
-        "email" : email,
+        session : this.session,
+        workgroup_id : workgroupId,
+        email : email,
       },
     };
     try {

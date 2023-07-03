@@ -2,7 +2,7 @@
  * ----------------------------------------------------------------------------------------------------------------
  * Sheet Cleanup Class
  */
-class CleanupSheet {
+class CleanupService {
   constructor() {
     this.RemoveAllDuplicateRecords();
     this.FixStatuses();
@@ -103,7 +103,7 @@ class CleanupSheet {
     }
   }
 }
-const RunCleanup = () => new CleanupSheet();
+const RunCleanup = () => new CleanupService();
 
 
 
@@ -116,7 +116,7 @@ const TriggerRemoveDuplicates = () => {
   try {
     Object.values(SHEETS).forEach(sheet => {
       let idSet = new Set();
-      GetColumnDataByHeader(sheet, HEADERNAMES.jobID)
+      [...GetColumnDataByHeader(sheet, HEADERNAMES.jobID)]
         .forEach( (item, index) => {
           if(item && idSet.has(item)) {
             console.warn(`Sheet ${sheet.getSheetName()} @ ROW : ${index + 2}`);

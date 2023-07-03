@@ -4,7 +4,7 @@
  */
 class UpdateService {
   constructor () {
-    this.UpdateAll();
+
   }
   /**
    * Update Info on the sheet.
@@ -27,14 +27,16 @@ class UpdateService {
   async _Update(sheet) {
     try {
       console.warn(`Updating ---> ${sheet.getSheetName()}`);
-      let numbers = GetColumnDataByHeader(sheet, HEADERNAMES.jobID);
-      let statuses = GetColumnDataByHeader(sheet, HEADERNAMES.posStatCode);
+      let numbers = [...GetColumnDataByHeader(sheet, HEADERNAMES.jobID)];
+      let statuses = [...GetColumnDataByHeader(sheet, HEADERNAMES.posStatCode)];
       let culled = [];
       statuses.forEach((status, index) => {
         if(status == STATUS.queued.statusCode || status == STATUS.inProgress.statusCode) {
           culled.push(numbers[index]);
         }
       })
+      console.info(`Numbers : ${numbers}`);
+      console.info(`Stats : ${statuses}`);
       console.info(`JOBS --> ${JSON.stringify(culled)}`);
       if(culled.length == 0) {
         console.warn(`Nothing to Update....`);
@@ -42,17 +44,17 @@ class UpdateService {
       }
       const pos = new PrinterOS();
       await pos.Login()
-      .then(() => {
-        culled.forEach( async(job) => {
-          let row = SearchSpecificSheet(sheet, job);
-          console.warn(`${sheet.getName()} @ ${row} ----> Updating Job : ${job}`);
-          await pos.GetJobInfo(job)
-            .then( async(data) => {
-              await this._UpdateInfo(data, sheet, row);
-            });
-        });
-      })
-      .then(pos.Logout());
+        .then(() => {
+          culled.forEach( async(job) => {
+            let row = SearchSpecificSheet(sheet, job);
+            console.warn(`${sheet.getName()} @ ${row} ----> Updating Job : ${job}`);
+            await pos.GetJobInfo(job)
+              .then( async(data) => {
+                await this._UpdateInfo(data, sheet, row);
+              });
+          });
+        })
+        .then(pos.Logout());
       return 0;
     } catch(err) {
       console.error(`"Update()" failed : ${err}`);
@@ -137,13 +139,16 @@ class UpdateService {
  * Main Entry Point
  * @TRIGGERED
  */
-const UpdateAll = () => new UpdateService();
+const UpdateAll = () => new UpdateService().UpdateAll();
 
 
 
 
 
-
+const _testUpdate = () => {
+  const u = new UpdateService();
+  u._Update(SHEETS.Aurum)
+}
 
 
 

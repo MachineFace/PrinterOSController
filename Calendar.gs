@@ -79,21 +79,22 @@ class CalendarFactory {
    */
   async DeleteEvent( jobID ) {
     try {
-      const events = this.Events;
-      events.forEach(event => {
-        const eventID = event.getId();
-        let jID = event.getTitle()
-          .replace(` `, ``)
-          .split(",")[1]
-          .replace(`JobID: `, ``);
-        if(jID == jobID) {
-          console.info(`Found Event: ${eventID} for JobID: ${jobID}, Deleting....`);
-          this.calendar
-            .getEventById(eventID)
-            .deleteEvent();
-          console.info(`Event: ${eventID}, Deleted`);
-        }
-      });
+      [...this.Events]
+        .filter(Boolean)
+        .forEach(event => {
+          const eventID = event.getId();
+          let jID = event.getTitle()
+            .replace(` `, ``)
+            .split(",")[1]
+            .replace(`JobID: `, ``);
+          if(jID == jobID) {
+            console.info(`Found Event: ${eventID} for JobID: ${jobID}, Deleting....`);
+            this.calendar
+              .getEventById(eventID)
+              .deleteEvent();
+            console.info(`Event: ${eventID}, Deleted`);
+          }
+        });
       return 0;
     } catch(err) {
       console.error(`"DeleteEvent()" failed : ${err}`);
