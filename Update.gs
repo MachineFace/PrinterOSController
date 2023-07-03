@@ -2,7 +2,7 @@
  * -----------------------------------------------------------------------------------------------------------------
  * Update Data on Sheet
  */
-class UpdateSheet {
+class UpdateService {
   constructor () {
     this.UpdateAll();
   }
@@ -137,110 +137,11 @@ class UpdateSheet {
  * Main Entry Point
  * @TRIGGERED
  */
-const UpdateAll = () => new UpdateSheet();
+const UpdateAll = () => new UpdateService();
 
 
 
-/**
- * -----------------------------------------------------------------------------------------------------------------
- * Update All Missing Tickets
- */
-class UpdateMissingTickets {
-  constructor() {
-    this.UpdateAllTickets();
-  }
 
-  /**
-   * Update All Tickets
-   */
-  async UpdateAllTickets () {
-    // this.UpdateSheetTickets(SHEETS.Crystallum);
-    Object.values(SHEETS).forEach(async (sheet) => {
-      await this.UpdateSheetTickets(sheet);
-    });
-  }
-
-  /**
-   * Update Sheet Tickets
-   * @param {sheet} sheet
-   */
-  async UpdateSheetTickets(sheet) {
-    let indexes = [];
-    GetColumnDataByHeader(sheet, HEADERNAMES.ticket)
-      .forEach( (item, index) => {
-        if(!item) indexes.push(index + 2);
-      })
-    console.warn(`${sheet.getSheetName()} ---> Missing Tickets: ${indexes}`);
-    indexes.forEach(async (index) => {
-      this._UpdateRow(index, sheet);
-    });
-  }
-
-  /**
-   * Update Row 
-   * @private
-   * @param {number} row index
-   * @param {sheet} sheet
-   */
-  async _UpdateRow(index, sheet) {
-    const rowData = await GetRowData(sheet, index);
-    let { status, printerID, printerName, jobID, timestamp, email, posStatCode, duration, notes, picture, ticket, filename, weight, cost, } = rowData;
-    let imageBLOB = await this._GetImage(picture);
-
-    try {
-      const t = await new Ticket({
-        submissionTime : timestamp,
-        email : email,
-        printerName : printerName,
-        printerID : printerID,
-        weight : weight,
-        jobID : jobID,
-        filename : filename,
-        image : imageBLOB, 
-      }).CreateTicket();
-      const url = t.getUrl();
-      SetByHeader(sheet, HEADERNAMES.ticket, index, url.toString());
-      return 0;
-    } catch (err) {
-      console.error(`${err} : Couldn't generate a ticket....`);
-      return 1;
-    }
-  }
-
-  /**
-   * Find Image blob from File
-   * @private
-   * @param {png} file
-   * @return {blob} image
-   */
-  async _GetImage(pngFile) {
-    const repo = `https://live3dprinteros.blob.core.windows.net/render/${pngFile}`;
-
-    const params = {
-      method : "GET",
-      contentType : "image/png",
-      followRedirects : true,
-      muteHttpExceptions : true,
-    };
-
-    try {
-      const response = await UrlFetchApp.fetch(repo, params);
-      const responseCode = response.getResponseCode();
-      if(responseCode != 200) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
-
-      const blob = response.getBlob().setName(`IMAGE_${pngFile}`);
-      return blob;
-    } catch(err) {
-      console.error(`"GetImage()" failed : ${err}`);
-      return 1;
-    }
-  }
-}
-/**
- * Main Entry Point
- * @TRIGGERED
- */
-const MissingTicketUpdater = () => new UpdateMissingTickets();
 
 
 

@@ -7,19 +7,19 @@
  * Configure the service
  * @return {service} service
  */
-const PrinterOS_Service = () => {
+const CreatePrinterOSService = () => {
   try {
     const clientId = PropertiesService.getScriptProperties().getProperty(`POS_username`);
     const clientPassword = PropertiesService.getScriptProperties().getProperty(`POS_password`);
     const service = OAuth2.createService(`PrinterOS`)
       .setAuthorizationBaseUrl(`https://cloud.3dprinteros.com/apiglobal/`)
-      .setTokenUrl(`https://cloud.3dprinteros.com/apiglobal/login/`)
-      .setTokenFormat("application/x-www-form-urlencoded")
-      .setTokenHeaders({ "Authorization": "Basic " + Utilities.base64EncodeWebSafe(clientId + ":" + clientPassword) })
+      .setTokenUrl(`https://cloud.3dprinteros.com/apiglobal/google_login/`)
+      .setTokenFormat(`application/x-www-form-urlencoded1`)
+      .setTokenHeaders({ "Authorization" : "Basic " + Utilities.base64EncodeWebSafe(clientId + ":" + clientPassword) })
       .setClientId(clientId)
       .setClientSecret(clientPassword)
       .setCallbackFunction((request) => {
-        const service = GetPrinterOSService();
+        const service = CreatePrinterOSService();
         const isAuthorized = service.handleCallback(request);
         if (!isAuthorized) { 
           return HtmlService
@@ -34,7 +34,7 @@ const PrinterOS_Service = () => {
       .setCache(CacheService.getUserCache())
       .setLock(LockService.getUserLock())
       // .setScope('user-library-read playlist-read-private playlist-read-collaborative playlist-modify-public playlist-modify-private');
-    if (!service.hasAccess()) throw new Error(`Missing PrinterOS Bot authorization.`);
+    // if (!service.hasAccess()) throw new Error(`Missing PrinterOS Bot authorization.`);
     console.info(`Access: ${service.hasAccess()}`);
     return service;
   } catch(err) {
@@ -44,7 +44,7 @@ const PrinterOS_Service = () => {
 }
 
 const _tPS = () => {
-  const pos = PrinterOS_Service();
+  const pos = CreatePrinterOSService();
   console.info(JSON.stringify(pos, null, 3))
   console.info(`Has access : ${pos.hasAccess()}`)
 }
@@ -53,7 +53,7 @@ const _tPS = () => {
  * Logs the redirect URI to register. You can also get this from File > Project Properties
  */
 const GetRedirectURI = () => {
-  const service = PrinterOS_Service();
+  const service = CreatePrinterOSService();
   const redirectURI = service.getRedirectUri();
   console.log(redirectURI);
   return redirectURI;
@@ -64,7 +64,7 @@ const GetRedirectURI = () => {
  * development/testing.  Run this method (Run > resetOAuth in the script
  * editor) to reset OAuth to re-prompt the user for OAuth.
  */
-const ResetOAuth = () => PrinterOS_Service().reset();
+const ResetOAuth = () => CreatePrinterOSService().reset();
 
 
 
@@ -75,11 +75,10 @@ const ResetOAuth = () => PrinterOS_Service().reset();
  * @return {HttpResponse} the result from the UrlFetchApp.fetch() call.
  */
 const AccessProtectedResource = () => {
-  const url = `https://acorn.3dprinteros.com/apiglobal/login/`;
+  const url = `https://acorn.3dprinteros.com/apiglobal/google_login/`;
   try {
-    const service = PrinterOS_Service();
+    const service = CreatePrinterOSService();
     let isAuthorized = service.hasAccess();
-    // Invoke the authorization flow using the default authorization prompt card.
     if (!isAuthorized) {
       CardService
         .newAuthorizationException()
@@ -88,13 +87,12 @@ const AccessProtectedResource = () => {
         .throwException();
     }
 
-    // A token is present, but it may be expired or invalid. Make a request and check the response code to be sure. 
-    // Make the UrlFetch request and return the result.
-    const response = UrlFetchApp.fetch(url, {
-      'headers': { 'Authorization' : Utilities.formatString('Bearer %s', service.getAccessToken()) },
-      'method' : "GET",
-      'muteHttpExceptions': true, // Prevents thrown HTTP exceptions.
-    });
+    const params = {
+      method : "GET",
+      headers : { 'Authorization' : Utilities.formatString('Bearer %s', service.getAccessToken()) },
+      muteHttpExceptions : true,
+    }
+    const response = UrlFetchApp.fetch(url, params);
     const responseCode = response.getResponseCode();
     if (responseCode == 401 || responseCode == 403) isAuthorized = false;
     if (responseCode >= 200 && responseCode < 300) return response.getContentText("utf-8"); // Success 

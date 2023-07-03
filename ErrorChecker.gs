@@ -15,10 +15,9 @@ const CheckEmails = () => {
   // console.info(`Length After Setting: ${masterSet.length}`); 
 
   // Set of Everyone Billed:
-  let billedSet = [];
-  let billedemails = [].concat(...OTHERSHEETS.Report.getRange(2, 1, OTHERSHEETS.Report.getLastRow(), 1).getValues()); 
-  billedemails = billedemails.filter(Boolean);
-  billedSet = [...new Set(billedemails)];
+  const billedemails = [...OTHERSHEETS.Report.getRange(2, 1, OTHERSHEETS.Report.getLastRow(), 1).getValues()]
+    .filter(Boolean);
+  const billedSet = [...new Set(billedemails)];
   // console.info(`Length of Billed: ${billedSet.length}`);
 
   // Difference
@@ -68,7 +67,7 @@ const RemoveStudentsWhoDidntPrint = () => {
   console.info(`Length After Setting: ${masterSet.length}`); 
 
   // Set of Everyone Billed:
-  let billedemails = [].concat(...OTHERSHEETS.Report.getRange(2, 1, OTHERSHEETS.Report.getLastRow(), 1).getValues())
+  let billedemails = [...OTHERSHEETS.Report.getRange(2, 1, OTHERSHEETS.Report.getLastRow(), 1).getValues()]
     .filter(Boolean);
   
   let notInSet = [];

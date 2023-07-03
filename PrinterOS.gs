@@ -482,10 +482,10 @@ class PrinterOS {
   async GetUsersByWorkgroup(workgroupID = 3275) {
     const repo = "/get_workgroup_users";
     const params = {
-      "method" : "POST",
-      "followRedirects" : true,
-      "muteHttpExceptions" : true,
-      "payload" : {
+      method : "POST",
+      followRedirects : true,
+      muteHttpExceptions : true,
+      payload : {
         "session" : this.session,
         "workgroup_id" : workgroupID,
       },
@@ -496,7 +496,7 @@ class PrinterOS {
       const responseCode = response.getResponseCode();
       if(responseCode != 200) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
       const content = response.getContentText();
-
+      console.info(content)
       const result = JSON.parse(content)?.result;
       if(result == false) return false; 
 
@@ -617,6 +617,40 @@ class PrinterOS {
     }
   }
 
+  /**
+   * Add User to Workgroup
+   * @param {string} email
+   * @param {int} workgroupId
+   * @return {string} result
+   */
+  async AddUserToWorkgroup(email, workgroupId) {
+    const repo = "/add_user_to_workgroup";
+    const params = {
+      method : "POST",
+      followRedirects : true,
+      muteHttpExceptions : true,
+      payload : {
+        "session" : this.session,
+        "workgroup_id" : workgroupId,
+        "email" : email,
+      },
+    };
+    try {
+      const response = await UrlFetchApp.fetch(this.root + repo, params);
+      const responseCode = response.getResponseCode();
+      if(responseCode != 200) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
+
+      const content = response.getContentText();
+      const result = JSON.parse(content)?.result;
+      if(result == false) return false;
+      const out = JSON.parse(content)?.message;
+      return out;
+    } catch(err) {
+      console.error(`"GetPrinterTypes()" failed: ${err}`);
+      return 1;
+    }
+  }
+
 
   /** 
    * Print Cost
@@ -643,7 +677,7 @@ const UpdateAllFilenames = () => {
       const pos = new PrinterOS();
       pos.Login()
         .then(() => {
-          GetColumnDataByHeader(sheet, HEADERNAMES.jobID)
+          [...GetColumnDataByHeader(sheet, HEADERNAMES.jobID)]
             .filter(Boolean)
             .forEach( async(jobId, index) => {
               const info = await pos.GetJobInfo(jobId);
@@ -657,6 +691,7 @@ const UpdateAllFilenames = () => {
     });
   } catch(err){
     console.error(`"UpdateAllFilenames()" failed : ${err} : Couldn't update ${sheet.getSheetName()} with filename.`);
+    return 1;
   } 
 }
 const _testFilename = async () => UpdateAllFilenames();
@@ -719,15 +754,16 @@ const GetPrinterData = () => {
 
 
 
-// const _testPOS = async () => {
-//   const p = new PrinterOS();
-//   await p.Login()
-//     // .then(async () => await p.GetPrinters())
-//     // .then(async () => p.GetPrinterData(PRINTERIDS.Spectrum))
-//     // .then(p.CheckSession())
-//     // .then(async () => await p.GetWorkGroups())
-//     // .then(p.Users)
-//     .then(async () => await p.Logout())
-// }
+const _testPOS = async () => {
+  const p = new PrinterOS();
+  await p.Login()
+    // .then(async () => await p.GetPrinters())
+    // .then(async () => p.GetPrinterData(PRINTERIDS.Spectrum))
+    // .then(p.CheckSession())
+    // .then(async () => await p.GetWorkGroups())
+    // .then(async () => await p.GetUsersByWorkgroup(""))
+    .then(async () => await p.GetUsers())
+    .then(async () => await p.Logout())
+}
 
 

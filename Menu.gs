@@ -215,7 +215,7 @@ const PopupHelp = () => {
  */
 const PopupUpdate = async () => {
   let ui = await SpreadsheetApp.getUi();
-  new UpdateSheet();
+  new UpdateService();
   ui.alert(
     `${SERVICENAME} Message`,
     `All Info Updated from PrinterOS Server`,
@@ -337,6 +337,43 @@ const PopupCalcBilling = async () => {
     ui.ButtonSet.OK
   );
 } 
+
+/**
+ * Create a pop-up to make a new Jobnumber
+ */
+const PopupCreateNewId = async () => {
+  const ui = await SpreadsheetApp.getUi();
+  const thisSheet = SpreadsheetApp.getActiveSheet();
+  let thisRow = thisSheet.getActiveRange().getRow();
+  const id = CreateId();
+
+  if(CheckSheetIsForbidden(thisSheet) == true) {
+    const a = ui.alert(
+      `${SERVICE_NAME}: Incorrect Sheet!`,
+      `Please select from the correct sheet (eg. Laser Cutter or Fablight). Select one cell in the row and a ticket will be created.`,
+      Browser.Buttons.OK,
+    );
+    if(a === ui.Button.OK) return;
+  } 
+  const { name, jobnumber } = GetRowData(thisSheet, thisRow);
+  if(jobnumberService.IsValid(jobnumber)) {
+    const a = ui.alert(
+      `${SERVICE_NAME}: Error!`,
+      `Jobnumber for ${name} exists already!\n${jobnumber}`,
+      ui.ButtonSet.OK
+    );
+    if(a === ui.Button.OK) return;
+  }
+  const newJobnumber = jobnumberService.jobnumber;
+  SetByHeader(thisSheet, HEADERNAMES.jobnumber, thisRow, newJobnumber);
+  const a = ui.alert(
+    `${SERVICE_NAME}:\n Job Number Created!`,
+    `Created a New Jobnumber for ${name}:\n${newJobnumber}`,
+    ui.ButtonSet.OK
+  );
+  if(a === ui.Button.OK) return;
+};
+
 
 /**
  * Builds our JPS Menu and sets functions.
