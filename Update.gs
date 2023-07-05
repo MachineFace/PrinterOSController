@@ -27,25 +27,11 @@ class UpdateService {
   async _Update(sheet) {
     try {
       console.warn(`Updating ---> ${sheet.getSheetName()}`);
-      let numbers = [...GetColumnDataByHeader(sheet, HEADERNAMES.jobID)];
-      let statuses = [...GetColumnDataByHeader(sheet, HEADERNAMES.posStatCode)];
-      let culled = [];
-      statuses.forEach((status, index) => {
-        if(status == STATUS.queued.statusCode || status == STATUS.inProgress.statusCode) {
-          culled.push(numbers[index]);
-        }
-      })
-      console.info(`Numbers : ${numbers}`);
-      console.info(`Stats : ${statuses}`);
-      console.info(`JOBS --> ${JSON.stringify(culled)}`);
-      if(culled.length == 0) {
-        console.warn(`Nothing to Update....`);
-        return 0;
-      }
+      const filtered = [...this._FilterJobsByQueuedOrInProgress(sheet)];
       const pos = new PrinterOS();
       await pos.Login()
         .then(() => {
-          culled.forEach( async(job) => {
+          filtered?.forEach( async(job) => {
             let row = SearchSpecificSheet(sheet, job);
             console.warn(`${sheet.getName()} @ ${row} ----> Updating Job : ${job}`);
             await pos.GetJobInfo(job)
@@ -71,8 +57,8 @@ class UpdateService {
    */
   async _UpdateInfo(jobDetails, sheet, row) {
     try {
-      let { status, printing_duration, filename } = jobDetails;
-      SetByHeader(sheet, HEADERNAMES.posStatCode, row, status);
+      let { status_id, printing_duration, filename } = jobDetails;
+      SetByHeader(sheet, HEADERNAMES.posStatCode, row, status_id);
 
       printing_duration = Number(printing_duration / 3600).toFixed(2);
       SetByHeader(sheet, HEADERNAMES.duration, row, printing_duration.toString());
@@ -80,7 +66,7 @@ class UpdateService {
       filename = FileNameCleanup(filename);
       SetByHeader(sheet, HEADERNAMES.filename, row, filename.toString());
 
-      this._UpdateStatus(status, sheet, row);
+      this._UpdateStatus(status_id, sheet, row);
       return 0;
     } catch(err) {
       console.error(`"_UpdateInfo()" failed : ${err}`);
@@ -133,6 +119,32 @@ class UpdateService {
       return 1;
     }
   }
+
+  /**
+   * Filter Jobs By Queued Or InProgress
+   * @private
+   * @param {sheet} sheet
+   * @return {[number]} jobIds
+   */
+  _FilterJobsByQueuedOrInProgress(sheet) {
+    let d = {};
+    let jobIds = [...GetColumnDataByHeader(sheet, HEADERNAMES.jobID)];
+    let statuses = [...GetColumnDataByHeader(sheet, HEADERNAMES.posStatCode)];
+    jobIds.forEach((id, idx) => d[id] = statuses[idx]);
+
+    Object.entries(d).forEach(([id, status], idx) => {
+      if(status != STATUS.queued.statusCode && status != STATUS.inProgress.statusCode) {
+        delete d[id];
+      }
+    });
+    const filtered = [...Object.keys(d)];
+    console.info(filtered);
+    if(filtered.length == 0) {
+      console.warn(`Nothing to Update....`);
+      return [];
+    }
+    return filtered;
+  }
 }
 
 /**
@@ -147,8 +159,9 @@ const UpdateAll = () => new UpdateService().UpdateAll();
 
 const _testUpdate = () => {
   const u = new UpdateService();
-  u._Update(SHEETS.Aurum)
+  u._Update(SHEETS.Quasar)
 }
+
 
 
 

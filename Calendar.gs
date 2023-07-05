@@ -83,8 +83,8 @@ class CalendarFactory {
         .filter(Boolean);
       if(events.length != 0) {
         events.forEach(event => {
-          const eventID = event.getId();
-          let jID = event.getTitle()
+          const eventID = event?.getId();
+          let jID = event?.getTitle()
             .replace(` `, ``)
             .split(",")[1]
             .replace(`JobID: `, ``);

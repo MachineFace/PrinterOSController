@@ -105,7 +105,7 @@ class WriteToSheet {
         jobID : id,
         timestamp : timestamp,
         email : email,
-        posStatCode : status_id,
+        posStatCode : status_id ? status_id : 11,
         duration : duration,
         notes : '',
         picture : picture,
@@ -234,7 +234,7 @@ const WriteSingleSheet = (sheet) => new WriteToSheet().WriteSingleSheet();
 
 
 const testT = () => {
-  const w = new WriteToSheet().WriteSingleSheet(SHEETS.Purpura);
+  const w = new WriteToSheet().WriteSingleSheet(SHEETS.Quasar);
 }
 
 

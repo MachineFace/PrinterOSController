@@ -281,26 +281,28 @@ const GetObjectType = (ob) => {
  */
 const GetStatusByCode = (statusCode) => {
   try {
+    let status = STATUS.queued.plaintext;
     switch(statusCode) {
       case STATUS.queued.statusCode:
-        console.warn(`Status changed to: ${STATUS.queued.plaintext}`);
-        return STATUS.queued.plaintext;
+        status = STATUS.queued.plaintext;
+        break;
       case STATUS.inProgress.statusCode:
-        console.warn(`Status changed to: ${STATUS.inProgress.plaintext}`);
-        return STATUS.inProgress.plaintext;
+        status = STATUS.inProgress.plaintext;
+        break;
       case STATUS.failed.statusCode:
-        console.warn(`Status changed to: ${STATUS.failed.plaintext}`);
-        return STATUS.failed.plaintext;
+        status = STATUS.failed.plaintext;
+        break;
       case STATUS.cancelled.statusCode:
-        console.warn(`Status changed to: ${STATUS.cancelled.plaintext}`);
-        return STATUS.cancelled.plaintext;
+        status = STATUS.cancelled.plaintext;
+        break;
       case STATUS.complete.statusCode:
-        console.warn(`Status changed to: ${STATUS.complete.plaintext}`);
-        return STATUS.complete.plaintext;
+        status = STATUS.complete.plaintext;
+        break;
       default:
-        console.warn(`Status NOT changed`);
-        return STATUS.queued.plaintext;
+        status = STATUS.queued.plaintext;
+        break;
     }
+    return status;
   } catch(err) {
     console.error(`"GetStatusByCode()" failed : ${err}`);
     return 1;
@@ -312,40 +314,20 @@ const GetStatusByCode = (statusCode) => {
  */
 const FixStatus = () => {
   try {
-    console.info(`Checking Statuses....`);
     Object.values(SHEETS).forEach(sheet => {
+      console.warn(`Checking Statuses for ${sheet.getSheetName()}....`);
       let posCodes = GetColumnDataByHeader(sheet, HEADERNAMES.posStatCode);
       let statuses = GetColumnDataByHeader(sheet, HEADERNAMES.status);
       posCodes.forEach( (code, index) => {
-        switch(code) {
-          case STATUS.queued.statusCode:
-            if (statuses[index + 2] != STATUS.queued.plaintext) {
-              SetByHeader(sheet, HEADERNAMES.status, index + 2, STATUS.queued.plaintext);
-              console.warn(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
-            }
-            break;
-          case STATUS.inProgress.statusCode:
-            if (statuses[index + 2] != STATUS.inProgress.plaintext) {
-              SetByHeader(sheet, HEADERNAMES.status, index + 2, STATUS.inProgress.plaintext);
-              console.warn(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
-            }
-            break;
-          case STATUS.failed.statusCode:
-            if (statuses[index + 2] != STATUS.failed.plaintext) {
-              SetByHeader(sheet, HEADERNAMES.status, index + 2, STATUS.failed.plaintext);
-              console.warn(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
-            }
-            break;
-          case STATUS.cancelled.statusCode:
-            if (statuses[index + 2] != STATUS.cancelled.plaintext) {
-              SetByHeader(sheet, HEADERNAMES.status, index + 2, STATUS.cancelled.plaintext);
-              console.warn(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
-            }
-            break;
+        const status = GetStatusByCode(code);
+        // console.info(`S: ${statuses[index]}:  Stat: ${status}, Code: ${code}`);
+        if(statuses[index] != status) {
+          console.info(`Found Error: Status Claimed: ${statuses[index]},  Status Actual: ${status}`);
+          SetByHeader(sheet, HEADERNAMES.status, index + 2, status);
         }
       });
-    })
-    console.warn(`Statuses Checked and Fixed....`);
+      console.warn(`Statuses Checked and Fixed for ${sheet.getSheetName()}....`);
+    });
     return 0;
   } catch(err) {
     console.error(`"FixStatuses()" failed : ${err}`);

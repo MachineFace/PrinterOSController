@@ -125,35 +125,35 @@ const RESPONSECODES = Object.freeze({
 const STATUS = Object.freeze({
   queued : {
     plaintext : `Queued`,
-    statusCode : `11`,
+    statusCode : 11,
   },
   inProgress : {
     plaintext : `In-Progress`,
-    statusCode : `21`,
+    statusCode : 21,
   },
   complete : {
     plaintext : `Completed`,
-    statusCode : `77`,
+    statusCode : 77,
   },
   failed : {
     plaintext : `FAILED`,
-    statusCode : `43`,
+    statusCode : 43,
   },
   cancelled : {
     plaintext : `Cancelled`,
-    statusCode : `45`,
+    statusCode : 45,
   },
   pickedUp : {
     plaintext : `Picked Up`,
-    statusCode : `0`,
+    statusCode : 0,
   },
   closed : {
     plaintext : `CLOSED`,
-    statusCode : `1`
+    statusCode : 1,
   },
   abandoned : {
     plaintext : `Abandoned`,
-    statusCode : `2`
+    statusCode : 2,
   },
 });
 

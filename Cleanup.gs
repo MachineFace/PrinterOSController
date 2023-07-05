@@ -29,13 +29,9 @@ class CleanupService {
    * @param {sheet} sheet
    */
   RemoveDuplicateRecords(sheet) {
-    const records = [];
-    let lastRow = sheet.getLastRow() - 1 >= 1 ? sheet.getLastRow() - 1 : 1;
-    [...GetColumnDataByHeader(sheet, HEADERNAMES.jobID)]
-      .filter(Boolean)
-      .forEach(num => records.push(num.toString()));
-    
     let indexes = [];
+    const records = [...GetColumnDataByHeader(sheet, HEADERNAMES.jobID)]
+      .filter(Boolean);
     records.forEach( (item, index) => {
       if(records.indexOf(item) !== index) indexes.push(index + 2);
     });
@@ -43,10 +39,10 @@ class CleanupService {
     console.warn(`${sheet.getName()} : Duplicates : ${dups.length}`);
     // Remove
     if(dups) {
-      indexes.forEach(async (number) => {
+      indexes.forEach((number) => {
         console.warn(`Sheet ${sheet.getSheetName()} @ ROW : ${number}`);
-        await sheet.deleteRow(number);
-        await sheet.insertRowsAfter(sheet.getMaxRows(), 1);
+        sheet.deleteRow(number);
+        sheet.insertRowsAfter(sheet.getMaxRows(), 1);
       });
     }
   }
@@ -56,46 +52,20 @@ class CleanupService {
    */
   FixStatuses() {
     try {
-      console.info(`Checking Statuses....`);
       Object.values(SHEETS).forEach(sheet => {
+        console.warn(`Checking Statuses for ${sheet.getSheetName()}....`);
         let posCodes = GetColumnDataByHeader(sheet, HEADERNAMES.posStatCode);
         let statuses = GetColumnDataByHeader(sheet, HEADERNAMES.status);
         posCodes.forEach( (code, index) => {
-          switch(code) {
-            case STATUS.queued.statusCode:
-              if (statuses[index + 2] != STATUS.queued.plaintext) {
-                SetByHeader(sheet, HEADERNAMES.status, index + 2, STATUS.queued.plaintext);
-                console.warn(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
-              }
-              break;
-            case STATUS.inProgress.statusCode:
-              if (statuses[index + 2] != STATUS.inProgress.plaintext) {
-                SetByHeader(sheet, HEADERNAMES.status, index + 2, STATUS.inProgress.plaintext);
-                console.warn(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
-              }
-              break;
-            case STATUS.failed.statusCode:
-              if (statuses[index + 2] != STATUS.failed.plaintext) {
-                SetByHeader(sheet, HEADERNAMES.status, index + 2, STATUS.failed.plaintext);
-                console.warn(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
-              }
-              break;
-            case STATUS.cancelled.statusCode:
-              if (statuses[index + 2] != STATUS.cancelled.plaintext) {
-                SetByHeader(sheet, HEADERNAMES.status, index + 2, STATUS.cancelled.plaintext);
-                console.warn(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
-              }
-              break;
-            case STATUS.complete.statusCode:
-              if (statuses[index + 2] != STATUS.complete.plaintext) {
-                SetByHeader(sheet, HEADERNAMES.status, index + 2, STATUS.complete.plaintext);
-                console.warn(`Changed ${sheet.getSheetName()} @ Index ${index + 2}`);
-              }
-              break;
+          const status = GetStatusByCode(code);
+          // console.info(`S: ${statuses[index]}:  Stat: ${status}, Code: ${code}`);
+          if(statuses[index] != status) {
+            console.info(`Found Error: Status Claimed: ${statuses[index]},  Status Actual: ${status}`);
+            SetByHeader(sheet, HEADERNAMES.status, index + 2, status);
           }
         });
+        console.warn(`Statuses Checked and Fixed for ${sheet.getSheetName()}....`);
       })
-      console.warn(`Statuses Checked and Fixed....`);
       return 0;
     } catch(err) {
       console.error(`"FixStatuses()" failed : ${err}`);
@@ -103,34 +73,13 @@ class CleanupService {
     }
   }
 }
+
+/**
+ * @TRIGGERED
+ */
 const RunCleanup = () => new CleanupService();
 
 
-
-/**
- * -----------------------------------------------------------------------------------------------------------------
- * Remove Duplicate Records
- * @TRIGGERED
- */
-const TriggerRemoveDuplicates = () => {
-  try {
-    Object.values(SHEETS).forEach(sheet => {
-      let idSet = new Set();
-      [...GetColumnDataByHeader(sheet, HEADERNAMES.jobID)]
-        .forEach( (item, index) => {
-          if(item && idSet.has(item)) {
-            console.warn(`Sheet ${sheet.getSheetName()} @ ROW : ${index + 2}`);
-            sheet.deleteRow(index + 2);
-            sheet.insertRowsAfter(sheet.getMaxRows(), 1);
-          } else idSet.add(item);
-        });
-    });
-    return 0;
-  } catch (err) {
-    console.error(`"RemoveDuplicatesOnSingleSheet()" failed : ${err}`);
-    return 1;
-  }
-}
 
 /**
  * Clean the junk out of the filename
@@ -147,15 +96,6 @@ const FileNameCleanup = (filename = `Filename`) => {
   return TitleCase(fixed).replace(` `, ``);
 }
 
-const _testFilenameCleanup = () => {
-  GetColumnDataByHeader(SHEETS.Plumbus, HEADERNAMES.filename)
-    .forEach(filename => {
-      console.info(`BEFORE --> ${filename}`);
-      const cleanup = FileNameCleanup(filename);
-      console.info(`AFTER --> ${cleanup}`)
-    });
-  return 0;
-}
 
 
 
