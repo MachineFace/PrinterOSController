@@ -6,10 +6,10 @@
  */
 const BillingPerSheet = (sheet) => {
   let data = {}
-  let statuses = GetColumnDataByHeader(sheet, HEADERNAMES.status);
-  let emails = GetColumnDataByHeader(sheet, HEADERNAMES.email);
-  let costs = GetColumnDataByHeader(sheet, HEADERNAMES.cost);
-  let staff = GetColumnDataByHeader(OTHERSHEETS.Staff, `EMAIL`);
+  let statuses = [...GetColumnDataByHeader(sheet, HEADERNAMES.status)];
+  let emails = [...GetColumnDataByHeader(sheet, HEADERNAMES.email)];
+  let costs = [...GetColumnDataByHeader(sheet, HEADERNAMES.cost)];
+  let staff = [...GetColumnDataByHeader(OTHERSHEETS.Staff, `EMAIL`)];
   statuses.forEach( (status, index) => {
     if(status == STATUS.complete.plaintext || status == STATUS.closed.plaintext || status == STATUS.abandoned.plaintext || status == STATUS.pickedUp.plaintext) {
       let email = emails[index];

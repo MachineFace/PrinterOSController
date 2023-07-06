@@ -548,6 +548,7 @@ class PrinterOS {
 
   /**
    * Get Printers in Cloud
+   * @NOTIMPLEMENTED
    */
   async GetPrintersInCloud() {
     const repo = "/get_printer_types_detailed";
@@ -666,77 +667,6 @@ class PrinterOS {
 
 
 
-/**
- * -----------------------------------------------------------------------------------------------------------------
- * Update all Filenames
- */
-const UpdateAllFilenames = () => {
-  try {
-    Object.values(SHEETS).forEach(sheet => {
-      console.info(`Updating ${sheet.getSheetName()}`);
-      const pos = new PrinterOS();
-      pos.Login()
-        .then(() => {
-          [...GetColumnDataByHeader(sheet, HEADERNAMES.jobID)]
-            .filter(Boolean)
-            .forEach( async(jobId, index) => {
-              const info = await pos.GetJobInfo(jobId);
-              let filename = info["filename"];
-              let split = filename.slice(0, -6);
-              console.info(`INDEX: ${index + 2} : FILENAME ---> ${split}`);
-              SetByHeader(sheet, HEADERNAMES.filename, index + 2, split);
-            });
-        })
-        .finally(pos.Logout());
-    });
-  } catch(err){
-    console.error(`"UpdateAllFilenames()" failed : ${err} : Couldn't update ${sheet.getSheetName()} with filename.`);
-    return 1;
-  } 
-}
-const _testFilename = async () => UpdateAllFilenames();
-
-
-
-
-
-
-
-/**
- * Update Single Sheet Materials
- * @return {boolean} successful
- */
-const UpdateSingleSheetMaterials = (sheet) => {
-  try {
-    console.info(`Updating Materials and Costs for ---> ${sheet.getSheetName()}`);
-    const pos = new PrinterOS();
-    pos.Login()
-      .then(() => {
-        GetColumnDataByHeader(sheet, HEADERNAMES.jobID)
-          .filter(Boolean)
-          .forEach( async(jobId, index) => {
-            const weight = await pos.GetMaterialWeight(jobId);
-            const price = PrintCost(weight);
-            // console.info(`Weight = ${weight}, Price = ${price}`);
-            SetByHeader(sheet, HEADERNAMES.weight, index + 2, weight);
-            SetByHeader(sheet, HEADERNAMES.cost, index + 2, price);
-          });
-      })
-      .finally(() => {
-        pos.Logout();
-        console.info(`Successfully Updated ${sheet.getSheetName()}`);
-      });
-    return 0;
-  } catch(err){
-    console.error(`"UpdateSingleSheetMaterials()" failed ${err} : Couldn't update ${sheet.getSheetName()} with filename.`);
-    return 1;
-  } 
-}
-
-/**
- * Update All Material Costs
- */
-const UpdateAllMaterialCosts = () => Object.values(SHEETS).forEach(sheet => UpdateSingleSheetMaterials(sheet));
 
 
 /**

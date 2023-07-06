@@ -79,13 +79,13 @@ const AccessProtectedResource = () => {
   try {
     const service = CreatePrinterOSService();
     let isAuthorized = service.hasAccess();
-    if (!isAuthorized) {
-      CardService
-        .newAuthorizationException()
-        .setAuthorizationUrl(service.getAuthorizationUrl())
-        .setResourceDisplayName(`PrinterOS Service`)
-        .throwException();
-    }
+    // if (!isAuthorized) {
+    //   CardService
+    //     .newAuthorizationException()
+    //     .setAuthorizationUrl(service.getAuthorizationUrl())
+    //     .setResourceDisplayName(`PrinterOS Service`)
+    //     .throwException();
+    // }
 
     const params = {
       method : "GET",
