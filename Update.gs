@@ -27,14 +27,13 @@ class UpdateService {
   async _Update(sheet) {
     try {
       console.warn(`Updating ---> ${sheet.getSheetName()}`);
-      const filtered = [...this._FilterJobsByQueuedOrInProgress(sheet)];
+      const filtered = this._FilterJobsByQueuedOrInProgress(sheet);
       const pos = new PrinterOS();
       await pos.Login()
         .then(() => {
-          filtered?.forEach( async(job) => {
-            let row = SearchSpecificSheet(sheet, job);
-            console.warn(`${sheet.getName()} @ ${row} ----> Updating Job : ${job}`);
-            await pos.GetJobInfo(job)
+          Object.entries(filtered).forEach( async([jobId, [status, row]]) => {
+            console.warn(`${sheet.getName()} @ ${row} ----> Updating Job : ${jobId}`);
+            await pos.GetJobInfo(jobId)
               .then( async(data) => {
                 await this._UpdateInfo(data, sheet, row);
               });
@@ -106,20 +105,20 @@ class UpdateService {
     let d = {};
     let jobIds = [...GetColumnDataByHeader(sheet, HEADERNAMES.jobID)];
     let statuses = [...GetColumnDataByHeader(sheet, HEADERNAMES.posStatCode)];
-    jobIds.forEach((id, idx) => d[id] = statuses[idx]);
-
-    Object.entries(d).forEach(([id, status], idx) => {
-      if(status != STATUS.queued.statusCode && status != STATUS.inProgress.statusCode) {
-        delete d[id];
+    jobIds.forEach((id, idx) => {
+      const status = statuses[idx];
+      const index = idx + 2;
+      if(status == STATUS.queued.statusCode || status == STATUS.inProgress.statusCode) {
+        d[id] = [status, index];
       }
     });
-    const filtered = [...Object.keys(d)];
-    console.info(filtered);
-    if(filtered.length == 0) {
-      console.warn(`Nothing to Update....`);
-      return [];
+
+    if(Object.entries(d).length == 0) {
+      console.warn(`${sheet.getSheetName()}: Nothing to Update....`);
+      return {};
     }
-    return filtered;
+    console.info(`Jobs to Update (${Object.entries(d).length}): ${JSON.stringify(d)}`);
+    return d;
   }
 }
 
@@ -128,8 +127,6 @@ class UpdateService {
  * @TRIGGERED
  */
 const UpdateAll = () => new UpdateService().UpdateAll();
-
-
 
 
 
@@ -161,7 +158,7 @@ const UpdateAllFilenames = () => {
     return 1;
   } 
 }
-const _testFilename = async () => UpdateAllFilenames();
+
 
 
 

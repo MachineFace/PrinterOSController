@@ -105,6 +105,25 @@ class DriveController {
   }
 
   /**
+   * Get Drive ID from URL
+   * @param {string} url
+   * @return {string} id
+   */
+  GetDriveIDFromUrl(url) {
+    let id = "";
+    const parts = url.split(/^(([^:\/?#]+):)?(\/\/([^\/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/);
+    if (url.indexOf('?id=') >= 0){
+      id = (parts[6].split("=")[1]).replace("&usp","");
+      return id;
+    }
+    id = parts[5].split("/");
+
+    var sortArr = id.sort((a,b) => b.length - a.length);
+    id = sortArr[0];
+    return id;
+  }
+
+  /**
    * Download File
    * @private
    */
@@ -114,6 +133,7 @@ class DriveController {
     const fileString = fileID.getContentAsString();
     return ContentService.createTextOutput(fileString).downloadAsFile(fileName);
   }
+  
 }
 
 /**
@@ -124,38 +144,11 @@ const CleanupDrive = () => new DriveController().MoveTicketsOutOfRoot();
 const TrashOldTickets = () => new DriveController().TrashOldTickets();
 const CountTickets = () => new DriveController().CountTickets();
 
-/**
- * Get Drive ID from URL
- */
-const GetDriveIDFromUrl = (url) => { 
-  let id = "";
-  const parts = url.split(/^(([^:\/?#]+):)?(\/\/([^\/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/);
-  if (url.indexOf('?id=') >= 0){
-    id = (parts[6].split("=")[1]).replace("&usp","");
-    return id;
-  }
-  id = parts[5].split("/");
-
-  var sortArr = id.sort((a,b) => b.length - a.length);
-  id = sortArr[0];
-  return id;
-}
 
 
 
-/**
- * -----------------------------------------------------------------------------------------------------------------
- * Test Drive Functions
- */
-const _testDrive = () => {
-  // let date = new Date();
-  // let dateMinusNinety = new Date(new Date().setDate(date.getDate() - 120));
-  // console.info(`90 Days ago : ${dateMinusNinety}, Now : ${date}`);
-  let d = new DriveController();
-  // d.TrashOldTickets();
-  d.GetAllFileNamesInRoot();
-  
-}
+
+
 
 
 

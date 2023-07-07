@@ -692,7 +692,10 @@ const _testPOS = async () => {
     // .then(p.CheckSession())
     // .then(async () => await p.GetWorkGroups())
     // .then(async () => await p.GetUsersByWorkgroup(""))
-    .then(async () => await p.GetUsers())
+    // .then(async () => await p.GetUsers())
+    .then(async() => {
+      p.GetJobInfo(3341141);
+    })
     .then(async () => await p.Logout())
 }
 

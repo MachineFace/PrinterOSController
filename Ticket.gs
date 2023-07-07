@@ -114,6 +114,17 @@ class Ticket {
       } catch(err) {
         console.error(`${err} : Couldn't append the image to the ticket for some reason.`);
       }
+
+      // Footer
+      // doc
+      //   .addFooter()
+      //   .setAttributes({
+      //     [DocumentApp.Attribute.FONT_SIZE]: 5,
+      //     [DocumentApp.Attribute.LINE_SPACING]: 1,
+      //     [DocumentApp.Attribute.BORDER_WIDTH]: 0.5,
+      //     [DocumentApp.Attribute.HORIZONTAL_ALIGNMENT] : DocumentApp.HorizontalAlignment.CENTER,
+      //   })
+      //   .setText(Excuse());
       
 
       // Remove File from root and Add that file to a specific folder

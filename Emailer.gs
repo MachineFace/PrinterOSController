@@ -42,7 +42,7 @@ class Emailer {
     this.SendEmail();
   }
 
-  SendEmail () {
+  SendEmail() {
     switch (this.status) {
       case STATUS.queued.plaintext:
         GmailApp.sendEmail(this.email, `${GMAIL_SERVICE_NAME} : Queued`, "", {
@@ -120,6 +120,7 @@ class Emailer {
         break;
     }
   }
+
 }
 
 

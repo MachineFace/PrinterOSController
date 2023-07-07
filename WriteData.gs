@@ -137,34 +137,10 @@ class WriteToSheet {
     try {
       const c = new CalendarFactory();
       const rowData = GetRowData(sheet, row);
-      switch(statusCode) {
-        case STATUS.queued.statusCode:
-          SetByHeader(sheet, HEADERNAMES.status, row, STATUS.queued.plaintext);
-          console.warn(`Status changed to: ${STATUS.queued.plaintext}`);
-          break;
-        case STATUS.inProgress.statusCode:
-          SetByHeader(sheet, HEADERNAMES.status, row, STATUS.inProgress.plaintext);
-          console.warn(`Status changed to: ${STATUS.inProgress.plaintext}`);
-          c.CreateEvent(rowData);
-          break;
-        case STATUS.failed.statusCode:
-          SetByHeader(sheet, HEADERNAMES.status, row, STATUS.failed.plaintext);
-          console.warn(`Status changed to: ${STATUS.failed.plaintext}`);
-          c.DeleteEvent(rowData?.jobId);
-          break;
-        case STATUS.cancelled.statusCode:
-          SetByHeader(sheet, HEADERNAMES.status, row, STATUS.cancelled.plaintext);
-          console.warn(`Status changed to: ${STATUS.cancelled.plaintext}`);
-          c.DeleteEvent(rowData?.jobId);
-          break;
-        case STATUS.complete.statusCode:
-          SetByHeader(sheet, HEADERNAMES.status, row, STATUS.complete.plaintext);
-          console.warn(`Status changed to: ${STATUS.complete.plaintext}`);
-          break;
-        default:
-          console.warn(`Status NOT changed`);
-          break;
-      }
+      const status = GetStatusByCode(statusCode);
+      SetByHeader(sheet, HEADERNAMES.status, row, status);
+      if(statusCode == STATUS.inProgress.statusCode) c.CreateEvent(rowData);
+      else c.DeleteEvent(rowData?.jobId);
       return 0;
     } catch(err) {
       console.error(`"_UpdateStatus()" failed : ${err}`);
@@ -232,10 +208,6 @@ class WriteToSheet {
 const WriteAllNewDataToSheets = () => new WriteToSheet().WriteAll();
 const WriteSingleSheet = (sheet) => new WriteToSheet().WriteSingleSheet();
 
-
-const testT = () => {
-  const w = new WriteToSheet().WriteSingleSheet(SHEETS.Quasar);
-}
 
 
 

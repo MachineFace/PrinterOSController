@@ -279,35 +279,20 @@ const GetObjectType = (ob) => {
  * Get Status By Code
  * @param {number} statusCode
  */
-const GetStatusByCode = (statusCode) => {
+const GetStatusByCode = (posStatCode = 2) => {
   try {
-    let status = STATUS.queued.plaintext;
-    switch(statusCode) {
-      case STATUS.queued.statusCode:
-        status = STATUS.queued.plaintext;
-        break;
-      case STATUS.inProgress.statusCode:
-        status = STATUS.inProgress.plaintext;
-        break;
-      case STATUS.failed.statusCode:
-        status = STATUS.failed.plaintext;
-        break;
-      case STATUS.cancelled.statusCode:
-        status = STATUS.cancelled.plaintext;
-        break;
-      case STATUS.complete.statusCode:
-        status = STATUS.complete.plaintext;
-        break;
-      default:
-        status = STATUS.queued.plaintext;
-        break;
+    for(let i = 0; i < Object.values(STATUS).length; i++) {
+      if(Object.values(STATUS)[i].statusCode == posStatCode) {
+        // console.info(Object.values(STATUS)[i].plaintext)
+        return Object.values(STATUS)[i].plaintext;
+      }
     }
-    return status;
   } catch(err) {
     console.error(`"GetStatusByCode()" failed : ${err}`);
     return 1;
   }
 }
+
 
 /**
  * Fix Statuses
@@ -316,8 +301,8 @@ const FixStatus = () => {
   try {
     Object.values(SHEETS).forEach(sheet => {
       console.warn(`Checking Statuses for ${sheet.getSheetName()}....`);
-      let posCodes = GetColumnDataByHeader(sheet, HEADERNAMES.posStatCode);
-      let statuses = GetColumnDataByHeader(sheet, HEADERNAMES.status);
+      const posCodes = GetColumnDataByHeader(sheet, HEADERNAMES.posStatCode);
+      const statuses = GetColumnDataByHeader(sheet, HEADERNAMES.status);
       posCodes.forEach( (code, index) => {
         const status = GetStatusByCode(code);
         // console.info(`S: ${statuses[index]}:  Stat: ${status}, Code: ${code}`);

@@ -92,10 +92,10 @@ const FileNameCleanup = (filename = `Filename`) => {
     .replace(/[0-9_]/g,``)
     .replace(/[.]gcode/g, ``)
     .replace(/\b[.]modified\b/g, ``)
+    .replace(/stlmagicfix/g, ``)
     .replace(/[.]gcode/g, ``)
   return TitleCase(fixed).replace(` `, ``);
 }
-
 
 
 
