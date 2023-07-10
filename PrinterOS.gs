@@ -22,12 +22,36 @@ class PrinterOS {
     this.imgBlob;
   }
   
+  /** 
+   * Get User Session
+   * @private 
+   */
+  _GetUserSession() {
+    console.info(`Checking for Session: ${JSON.stringify(PropertiesService.getUserProperties().getProperties(), null, 3)}`)
+    const session = PropertiesService.getUserProperties().getProperty(`session`);
+    if(session && this.CheckSession(session)) return session;
+    else return 1;
+  }
+
+  /** 
+   * Clear User Session
+   * @private 
+   */
+  _ClearUserSession() {
+    PropertiesService.getUserProperties().deleteAllProperties();
+    console.info(PropertiesService.getUserProperties().getProperties())
+    return 0;
+  }
 
   /**
    * Login Classic : Username and Password
    * @return {string} session
    */
   async Login() {
+    const prev_session = this._GetUserSession();
+    if(prev_session != 1) {
+      return prev_session;
+    }
     const repo = "/login/";
     const params = {
       method : "POST",
@@ -47,10 +71,12 @@ class PrinterOS {
 
       const result = JSON.parse(content)?.result;
       if(!result) return result; 
-
+      console.info(JSON.parse(content));
       const session = JSON.parse(content)?.message?.session;
       console.info(`(${session}) Session Started: ${result}`);
       this.session = session;
+      PropertiesService.getUserProperties().setProperty("session", session);
+      console.info(PropertiesService.getUserProperties().getProperties())
       return session;
     } catch(err) {
       console.error(`"Login()" failed : ${err}`);
@@ -79,6 +105,7 @@ class PrinterOS {
       const content = response.getContentText();
       const result = JSON.parse(content)?.result;
       console.warn(`(${this.session}) Session Closed: ${result}`);
+      this._ClearUserSession();
       return 0;
     } catch(err) {
       console.error(`"Logout()" failed : ${err}`);
@@ -90,28 +117,28 @@ class PrinterOS {
    * Check PrinterOS Session
    * @return {string} bool
    */
-  async CheckSession() {
+  async CheckSession(session) {
     const repo = "/check_session"
     const params = {
       method : "POST",
       followRedirects : true,
       muteHttpExceptions : true,
       payload : {
-        "session" : this.session,
+        "session" : session,
       },
     };
     try {
       const response = await UrlFetchApp.fetch(`${this.root}${repo}`, params);
       const responseCode = response.getResponseCode();
       if(responseCode != 200) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
+      const content = response.getContentText();
 
-      const result = JSON.parse(response.getContentText())?.result;
-      if(!result) return result?.message;
-      const message = result?.message;
-      console.info(`(${this.session}) Session Valid? : ${message}`);
-      return message;
+      const result = await JSON.parse(content)?.result;
+      console.info(`(${session}) Session Valid? : ${!!result}`);
+
+      return !!result;
     } catch(err) {
-      console.error(`"CheckSession()" Failed: ${err}`);
+      console.error(`"CheckSession()" failed : ${err}`);
       return 1;
     }
   }
@@ -139,7 +166,7 @@ class PrinterOS {
       if(responseCode != 200) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
       const content = response.getContentText();
 
-      const result = JSON.parse(content)?.result;
+      const result = await JSON.parse(content)?.result;
       if(result == false) return false;
       const printerlist = JSON.parse(content)?.message;
 
@@ -223,9 +250,9 @@ class PrinterOS {
       const response = await UrlFetchApp.fetch(this.root + repo, params);
       const responseCode = response.getResponseCode();
       if(responseCode != 200) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
-
       const content = response.getContentText();
-      const result = JSON.parse(content)?.result;
+
+      const result = await JSON.parse(content)?.result;
       if(result == false) return false;
       const types = JSON.parse(content)?.message;
       types.forEach(t => console.info(t));
@@ -686,16 +713,21 @@ const GetPrinterData = () => {
 
 const _testPOS = async () => {
   const p = new PrinterOS();
+  // p._ClearUserSession()
+  // console.info(p._GetUserSession())
+  // console.info(p._ClearUserSession());
+  // p.CheckSession(`64ac2c6b29826813112022c7kY`);
   await p.Login()
     // .then(async () => await p.GetPrinters())
+    .then(async () => await p.GetPrinterTypes())
     // .then(async () => p.GetPrinterData(PRINTERIDS.Spectrum))
     // .then(p.CheckSession())
     // .then(async () => await p.GetWorkGroups())
     // .then(async () => await p.GetUsersByWorkgroup(""))
     // .then(async () => await p.GetUsers())
-    .then(async() => {
-      p.GetJobInfo(3341141);
-    })
+    // .then(async() => {
+    //   p.GetJobInfo(3341141);
+    // })
     .then(async () => await p.Logout())
 }
 

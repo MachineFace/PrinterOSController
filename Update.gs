@@ -82,12 +82,8 @@ class UpdateService {
    */
   _UpdateStatus(statusCode, sheet, row) {
     try {
-      const c = new CalendarFactory();
-      const rowData = GetRowData(sheet, row);
       const status = GetStatusByCode(statusCode);
       SetByHeader(sheet, HEADERNAMES.status, row, status);
-      if(statusCode == STATUS.inProgress.statusCode) c.CreateEvent(rowData);
-      else c.DeleteEvent(rowData?.jobId);
       return 0;
     } catch(err) {
       console.error(`"_UpdateStatus()" failed : ${err}`);

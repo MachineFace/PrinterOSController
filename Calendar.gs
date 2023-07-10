@@ -11,6 +11,8 @@ class CalendarFactory {
     this.calendar_id = PropertiesService.getScriptProperties().getProperty(`CALENDAR_ID`);
     /** @private */
     this.calendar = CalendarApp.getCalendarById(this.calendar_id);
+    /** @private */
+    this.DeleteDuplicateEvents();
   }
 
   /**
@@ -216,7 +218,7 @@ const _testCalendars = () => {
   // c.CreateEvent(GetRowData(SHEETS.Luteus, 227));
   // c.CreateEvent(GetRowData(SHEETS.Zardoz, 150));
   // c.Events;
-  c.Calendars;
+  c.Events;
   // c.DeleteEvent(3271817);
   // c.DeleteAllEvents();
   // const d = c._CalculateCompletionTime(new Date(2012, 5, 3), 1000);

@@ -72,6 +72,11 @@ const DesignAdvice = () => {
   }
 }
 
+/**
+ * Shorten URL
+ * @param {string} url
+ * @return {string} shortened url
+ */
 const ShortenURL = async(url) => {
   const site = `https://api.shrtco.de/v2/shorten?url=${url}`;
   const params = {
