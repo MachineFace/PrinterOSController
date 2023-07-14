@@ -1,5 +1,7 @@
 {
   "timeZone": "America/Los_Angeles",
+  "exceptionLogging": "STACKDRIVER",
+  "runtimeVersion": "V8",
   "dependencies": {
     "enabledAdvancedServices": [
       {
@@ -25,13 +27,25 @@
     ],
     "libraries": [
       {
-        "userSymbol": "OAuth2",
-        "version": "41",
-        "libraryId": "1B7FSrk5Zi6L1rSxxTDgDEUsPzlukDsi4KGuTMorsTQHhGBzBkMun4iDF"
+        "userSymbol": "Log",
+        "libraryId": "1Z1YXYpuN2j2owNQIYk4NeDEgzW9450Sts-y77VMFnnbw7gTMP96b3awX",
+        "version": "0",
+        "developmentMode": true
+      },
+      {
+        "userSymbol": "Barcode",
+        "libraryId": "1YX8BYZ_SHCXF-PgSoThB-KvbZboyPuRxtF7pSIvstcZn98j36OMXhktW",
+        "version": "0",
+        "developmentMode": true
+      },
+      {
+        "userSymbol": "ID",
+        "version": "0",
+        "libraryId": "1PqfhAByfYAVwoUgUAQ4A3aNFcOf_4s1DsPQ7vWaN-2BDh-kbkN1rgzHj",
+        "developmentMode": true
       }
     ]
   },
-  "exceptionLogging": "STACKDRIVER",
   "oauthScopes": [
     "https://www.googleapis.com/auth/forms",
     "https://www.googleapis.com/auth/spreadsheets",
@@ -46,6 +60,5 @@
     "https://www.googleapis.com/auth/script.container.ui",
     "https://www.googleapis.com/auth/script.scriptapp",
     "https://www.googleapis.com/auth/userinfo.email"
-  ],
-  "runtimeVersion": "V8"
+  ]
 }

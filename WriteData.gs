@@ -205,10 +205,12 @@ class WriteToSheet {
  * @TRIGGERED
  */
 const WriteAllNewDataToSheets = () => new WriteToSheet().WriteAll();
-const WriteSingleSheet = (sheet) => new WriteToSheet().WriteSingleSheet();
+const WriteSingleSheet = (sheet) => new WriteToSheet().WriteSingleSheet(sheet);
 
 
 
-
+const _saldkfj = () => {
+  new WriteToSheet().WriteSingleSheet(SHEETS.Luteus)
+}
 
 

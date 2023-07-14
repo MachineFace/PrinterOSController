@@ -54,7 +54,6 @@ const onChange = async (e) => {
   }
 
   SetStatusDropdowns();
-  FixStatus();
   FixMissingTickets();
   
 }

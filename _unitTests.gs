@@ -361,11 +361,6 @@ const _gasTMiscTesting = async () => {
     t.equal(y, false, `IsValidDate SHOULD return false: ${y}`);
   });
 
-  await test(`FixStatus`, (t) => {
-    const x = FixStatus();
-    t.equal(x, 0, `FixStatus SHOULD return 0: ${x}`)
-  });
-
   await test(`SetStatusDropdowns`, (t) => {
     const x = SetStatusDropdowns();
     t.equal(x, 0, `SetStatusDropdowns SHOULD return 0: ${x}`)
@@ -502,7 +497,6 @@ const _gasTLoggerTesting = async () => {
 
   await test(`Logger`, (t) => {
     console.time(`EXECUTION TIMER`);
-
 
     const w = Log.Warning(`Ooopsies ----> Warning`);
     const i = Log.Info(`Some Info`);

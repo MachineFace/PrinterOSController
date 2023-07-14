@@ -14,7 +14,6 @@ class CleanupService {
   RemoveAllDuplicateRecords () {
     try {
       Object.values(SHEETS).forEach( async (sheet) => {
-        console.warn(`Removing duplicate records on ---> ${sheet.getSheetName()}`);
         await this.RemoveDuplicateRecords(sheet);
       });
       return 0;
@@ -36,7 +35,7 @@ class CleanupService {
       if(records.indexOf(item) !== index) indexes.push(index + 2);
     });
     const dups = records.filter((item, index) => records.indexOf(item) !== index);
-    console.warn(`${sheet.getName()} : Duplicates : ${dups.length}`);
+    console.warn(`Removing duplicate records on ---> ${sheet.getSheetName()}, Duplicates : ${dups.length}`);
     // Remove
     if(dups) {
       indexes.forEach((number) => {
@@ -64,7 +63,7 @@ class CleanupService {
             SetByHeader(sheet, HEADERNAMES.status, index + 2, status);
           }
         });
-        console.warn(`Statuses Checked and Fixed for ${sheet.getSheetName()}....`);
+        console.warn(`Fixed ${sheet.getSheetName()}....`);
       })
       return 0;
     } catch(err) {

@@ -188,7 +188,7 @@ class PrinterOS {
     } catch(err) {
       console.error(`"GetPrinters()" failed : ${err}`);
       return 1;
-    }
+    } 
   }
 
   /**
@@ -713,13 +713,13 @@ const GetPrinterData = () => {
 
 const _testPOS = async () => {
   const p = new PrinterOS();
-  // p._ClearUserSession()
+  p._ClearUserSession()
   // console.info(p._GetUserSession())
   // console.info(p._ClearUserSession());
   // p.CheckSession(`64ac2c6b29826813112022c7kY`);
   await p.Login()
-    // .then(async () => await p.GetPrinters())
-    .then(async () => await p.GetPrinterTypes())
+    .then(async () => await p.GetPrinters())
+    // .then(async () => await p.GetPrinterTypes())
     // .then(async () => p.GetPrinterData(PRINTERIDS.Spectrum))
     // .then(p.CheckSession())
     // .then(async () => await p.GetWorkGroups())

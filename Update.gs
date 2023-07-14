@@ -33,10 +33,10 @@ class UpdateService {
         .then(() => {
           Object.entries(filtered).forEach( async([jobId, [status, row]]) => {
             console.warn(`${sheet.getName()} @ ${row} ----> Updating Job : ${jobId}`);
-            await pos.GetJobInfo(jobId)
-              .then( async(data) => {
-                await this._UpdateInfo(data, sheet, row);
-              });
+            // await pos.GetJobInfo(jobId)
+            //   .then( async(data) => {
+            //     await this._UpdateInfo(data, sheet, row);
+            //   });
           });
         })
         .then(pos.Logout());
@@ -80,9 +80,9 @@ class UpdateService {
    * @param {sheet} sheet
    * @param {number} row
    */
-  _UpdateStatus(statusCode, sheet, row) {
+  _UpdateStatus(status_id, sheet, row) {
     try {
-      const status = GetStatusByCode(statusCode);
+      const status = GetStatusByCode(status_id);
       SetByHeader(sheet, HEADERNAMES.status, row, status);
       return 0;
     } catch(err) {
@@ -124,6 +124,9 @@ class UpdateService {
  */
 const UpdateAll = () => new UpdateService().UpdateAll();
 
+const _askdfh = () => {
+  new UpdateService()._Update(SHEETS.Spectrum)
+}
 
 
 /**

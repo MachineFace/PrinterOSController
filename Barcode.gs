@@ -32,7 +32,7 @@ class BarcodeService {
 
     const params = {
       method : "GET",
-      headers : { "Authorization": "Basic ", "Content-Type" : "image/png" },
+      headers : { "Authorization" : "Basic ", "Content-Type" : "image/png" },
       contentType : "application/json",
       followRedirects : true,
       muteHttpExceptions : true,
