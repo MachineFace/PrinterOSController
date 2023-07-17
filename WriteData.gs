@@ -78,7 +78,8 @@ class WriteToSheet {
       let { printer_id, id, datetime, email, status_id, printing_duration, filename, picture, weight, } = data;
       const timestamp = datetime ? datetime : new Date().toISOString();
 
-      const duration = printing_duration ? Number(Number.parseFloat(printing_duration) / 3600).toFixed(2).toString() : 0;
+      printing_duration = printing_duration ? Number.parseFloat(printing_duration) : 0.0;
+      const duration = printing_duration ? +Number(printing_duration / 3600).toFixed(2) : 0;
       filename = filename ? FileNameCleanup(filename.toString()) : "";
 
       weight = weight ? Number(weight).toFixed(2) : 0.0;

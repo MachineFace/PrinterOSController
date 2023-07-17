@@ -22,36 +22,12 @@ class PrinterOS {
     this.imgBlob;
   }
   
-  /** 
-   * Get User Session
-   * @private 
-   */
-  _GetUserSession() {
-    console.info(`Checking for Session: ${JSON.stringify(PropertiesService.getUserProperties().getProperties(), null, 3)}`)
-    const session = PropertiesService.getUserProperties().getProperty(`session`);
-    if(session && this.CheckSession(session)) return session;
-    else return 1;
-  }
-
-  /** 
-   * Clear User Session
-   * @private 
-   */
-  _ClearUserSession() {
-    PropertiesService.getUserProperties().deleteAllProperties();
-    console.info(PropertiesService.getUserProperties().getProperties())
-    return 0;
-  }
 
   /**
    * Login Classic : Username and Password
    * @return {string} session
    */
   async Login() {
-    const prev_session = this._GetUserSession();
-    if(prev_session != 1) {
-      return prev_session;
-    }
     const repo = "/login/";
     const params = {
       method : "POST",
@@ -75,8 +51,6 @@ class PrinterOS {
       const session = JSON.parse(content)?.message?.session;
       console.info(`(${session}) Session Started: ${result}`);
       this.session = session;
-      PropertiesService.getUserProperties().setProperty("session", session);
-      console.info(PropertiesService.getUserProperties().getProperties())
       return session;
     } catch(err) {
       console.error(`"Login()" failed : ${err}`);
@@ -105,7 +79,6 @@ class PrinterOS {
       const content = response.getContentText();
       const result = JSON.parse(content)?.result;
       console.warn(`(${this.session}) Session Closed: ${result}`);
-      this._ClearUserSession();
       return 0;
     } catch(err) {
       console.error(`"Logout()" failed : ${err}`);

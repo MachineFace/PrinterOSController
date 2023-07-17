@@ -95,9 +95,6 @@ class UpdateService {
  */
 const UpdateAll = () => new UpdateService().UpdateAll();
 
-const _askdfh = () => {
-  new UpdateService()._Update(SHEETS.Spectrum)
-}
 
 
 /**

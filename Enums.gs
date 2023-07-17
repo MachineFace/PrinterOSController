@@ -145,15 +145,15 @@ const STATUS = Object.freeze({
   },
   pickedUp : {
     plaintext : `Picked Up`,
-    statusCode : 0,
+    statusCode : 99,
   },
   closed : {
     plaintext : `CLOSED`,
-    statusCode : 1,
+    statusCode : 98,
   },
   abandoned : {
     plaintext : `Abandoned`,
-    statusCode : 2,
+    statusCode : 97,
   },
 });
 

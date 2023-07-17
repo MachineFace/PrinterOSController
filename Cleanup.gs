@@ -5,7 +5,6 @@
 class CleanupService {
   constructor() {
     this.RemoveAllDuplicateRecords();
-    this.FixStatuses();
   }
 
   /**
@@ -39,38 +38,13 @@ class CleanupService {
     // Remove
     if(dups) {
       indexes.forEach((number) => {
-        console.warn(`Sheet ${sheet.getSheetName()} @ ROW : ${number}`);
+        console.warn(`${sheet.getSheetName()} @ ROW : ${number}`);
         sheet.deleteRow(number);
         sheet.insertRowsAfter(sheet.getMaxRows(), 1);
       });
     }
   }
 
-  /**
-   * Fix Statuses
-   */
-  FixStatuses() {
-    try {
-      Object.values(SHEETS).forEach(sheet => {
-        console.warn(`Checking Statuses for ${sheet.getSheetName()}....`);
-        let posCodes = GetColumnDataByHeader(sheet, HEADERNAMES.posStatCode);
-        let statuses = GetColumnDataByHeader(sheet, HEADERNAMES.status);
-        posCodes.forEach( (code, index) => {
-          const status = GetStatusByCode(code);
-          // console.info(`S: ${statuses[index]}:  Stat: ${status}, Code: ${code}`);
-          if(statuses[index] != status) {
-            console.info(`Found Error: Status Claimed: ${statuses[index]},  Status Actual: ${status}`);
-            SetByHeader(sheet, HEADERNAMES.status, index + 2, status);
-          }
-        });
-        console.warn(`Fixed ${sheet.getSheetName()}....`);
-      })
-      return 0;
-    } catch(err) {
-      console.error(`"FixStatuses()" failed : ${err}`);
-      return 1;
-    }
-  }
 }
 
 /**
