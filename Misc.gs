@@ -338,12 +338,15 @@ const FormatDate = (date) => Utilities.formatDate(date ? date : new Date(), "PST
 
 /**
  * Set Dropdowns for status
+ * @TRIGGERED
  */
 const SetStatusDropdowns = () => {
   try {
     let statuses = [];
     Object.values(STATUS).forEach(status => statuses.push(status.plaintext));
-    const rule = SpreadsheetApp.newDataValidation().requireValueInList(statuses);
+    const rule = SpreadsheetApp
+      .newDataValidation()
+      .requireValueInList(statuses);
     Object.values(SHEETS).forEach(sheet => sheet.getRange(2, 1, sheet.getLastRow(), 1).setDataValidation(rule));
     return 0;
   } catch(err) {

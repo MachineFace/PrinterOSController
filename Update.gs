@@ -31,12 +31,12 @@ class UpdateService {
       const pos = new PrinterOS();
       await pos.Login()
         .then(() => {
-          Object.entries(filtered).forEach( async([jobId, {status_id, row}]) => {
+          Object.entries(filtered).forEach( async([jobId, {statusCode, row}]) => {
 
-            console.warn(`${sheet.getSheetName()} @ ${row} ----> Updating Job : ${jobId}, Status_id: ${status_id}`);
+            console.warn(`${sheet.getSheetName()} @ ${row} ----> Updating Job : ${jobId}, Status_id: ${statusCode}`);
             const data = await pos.GetJobInfo(jobId);
 
-            let { printing_duration, filename } = data;
+            let { printing_duration, filename, status_id } = data;
             SetByHeader(sheet, HEADERNAMES.posStatCode, row, status_id);
 
             printing_duration = Number(printing_duration / 3600).toFixed(2);
@@ -129,7 +129,10 @@ const UpdateAllFilenames = () => {
 
 
 
-
+const _ert = () => {
+  const jrbs = new UpdateService()._FilterJobsByQueuedOrInProgress(SHEETS.Spectrum);
+  console.info(jrbs);
+}
 
 
 
