@@ -75,7 +75,7 @@ class WriteToSheet {
     try {
       const thisRow = sheet.getLastRow() + 1;
       const printerName = sheet.getSheetName();
-      let { printer_id, id, datetime, email, status_id, printing_duration, filename, picture, weight, } = data;
+      let { printer_id, id, datetime, email, status_id, printing_duration, filename, picture, weight, file_cost, cost, extruders } = data;
       const timestamp = datetime ? datetime : new Date().toISOString();
 
       printing_duration = printing_duration ? Number.parseFloat(printing_duration) : 0.0;
@@ -83,8 +83,15 @@ class WriteToSheet {
       filename = filename ? FileNameCleanup(filename.toString()) : "";
 
       weight = weight ? Number(weight).toFixed(2) : 0.0;
-      const cost = weight ? this._PrintCost(weight) : 0.0;
 
+      // Calculate Cost
+      const extruder1 = JSON.parse(extruders)[0].w;
+      const extruder2 = JSON.parse(extruders)[1].w;
+      console.info(`Extruder1: ${extruder1}, Extruder2: ${extruder2}`);
+      const e1_cost = extruder1 * COSTMULTIPLIER, e2_cost = extruder2 * COSTMULTIPLIERBREAKAWAY;
+      const total_cost = Number(e1_cost + e2_cost).toFixed(2);
+
+      cost = total_cost ? total_cost : this._PrintCost(weight);
 
       let imageBLOB = await GetImage(picture);
       const ticket = await new Ticket({
@@ -108,7 +115,7 @@ class WriteToSheet {
         email : email,
         posStatCode : status_id ? status_id : 11,
         duration : duration,
-        notes : '',
+        notes : `Extruder 1 Weight: ${extruder1} @ $0.04, Extruder 2 Weight: ${extruder2} @ $0.20, Total: $${total_cost}`,
         picture : picture,
         ticket : url,
         filename : filename,
@@ -210,8 +217,8 @@ const WriteSingleSheet = (sheet) => new WriteToSheet().WriteSingleSheet(sheet);
 
 
 
-const _saldkfj = () => {
-  new WriteToSheet().WriteSingleSheet(SHEETS.Luteus)
+const _UpdateSingle = () => {
+  new WriteToSheet().WriteSingleSheet(SHEETS.Crystallum)
 }
 
 

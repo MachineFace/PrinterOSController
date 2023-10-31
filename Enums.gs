@@ -7,7 +7,9 @@ const GMAIL_SERVICE_NAME = `Jacobs Self-Service Printing Bot`;
 
 const SERVICENAME = `PrinterOS Controller`;
 const PICKUPHOURS = `Monday - Friday: 11am - 1pm & 4pm - 6pm`;
+
 const COSTMULTIPLIER = 0.04;
+const COSTMULTIPLIERBREAKAWAY = 0.20;
 
 const COLORS = Object.freeze({
   green_light : `#d9ead3`,

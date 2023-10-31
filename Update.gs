@@ -129,11 +129,6 @@ const UpdateAllFilenames = () => {
 
 
 
-const _ert = () => {
-  const jrbs = new UpdateService()._FilterJobsByQueuedOrInProgress(SHEETS.Spectrum);
-  console.info(jrbs);
-}
-
 
 
 /**
