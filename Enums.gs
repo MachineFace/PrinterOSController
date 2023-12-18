@@ -304,14 +304,13 @@ const SHEETS = Object.freeze({
 });
 
 const OTHERSHEETS = Object.freeze({
-  Scanner : SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Pickup Scanner'),
   Summary : SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Summary'),
   Staff : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("StaffList"),
   Metrics : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Data/Metrics"),
   Users : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Users"),
   Logger : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Logger"),
-  Unique : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("UniqueUsers"),
   Report : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("REPORT"),
+  All : SpreadsheetApp.getActiveSpreadsheet().getSheetByName("All"),
 });
 
 const WORKGROUPS = [

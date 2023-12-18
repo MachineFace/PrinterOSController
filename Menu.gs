@@ -240,14 +240,14 @@ const PopupRemoveDuplicates = async () => {
  * Fetch New Data Single Sheet
  */
 const PopupFetchNewForSingleSheet = async () => {
-  let ui = await SpreadsheetApp.getUi();
+  // let ui = await SpreadsheetApp.getUi();
   let thisSheet = SpreadsheetApp.getActiveSheet();
   WriteSingleSheet(thisSheet);
-  ui.alert(
-    `${SERVICENAME} Message`,
-    `Fetching new Data for ${thisSheet.getSheetName()} from PrinterOS Server`,
-    ui.ButtonSet.OK
-  );
+  // ui.alert(
+  //   `${SERVICENAME} Message`,
+  //   `Fetching new Data for ${thisSheet.getSheetName()} from PrinterOS Server`,
+  //   ui.ButtonSet.OK
+  // );
 }
 
 /**

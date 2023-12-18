@@ -262,9 +262,7 @@ class Calculate {
   static PrintUniqueUsersWhoHavePrinted() {
     try {
       const users = Calculate.CountUniqueUsersWhoHavePrinted();
-      OTHERSHEETS.Unique.getRange(1, 3, 1, 1).setValue(`Total Successful Students : `);
-      OTHERSHEETS.Unique.getRange(1, 4, 1, 1).setValue(users.length);
-      users.forEach( (user, index) => OTHERSHEETS.Unique.getRange(2 + index, 1, 1, 1).setValue(user));
+      // users.forEach( (user, index) => OTHERSHEETS.Unique.getRange(2 + index, 1, 1, 1).setValue(user));
       OTHERSHEETS.Metrics.getRange(21, 2, 1, 1).setValue(`Users who have printed`);
       OTHERSHEETS.Metrics.getRange(21, 3, 1, 1).setValue(users.length);
       return 0;
@@ -455,6 +453,10 @@ class Calculate {
       console.info(`Total Count of All Funds : $${total}`);
       OTHERSHEETS.Metrics.getRange(`B47`).setValue(`Sum of All Funds Generated ($)`);
       OTHERSHEETS.Metrics.getRange(`C47`).setValue(total);
+      const numOfSpools = Number(total * 0.001).toFixed(2);
+      OTHERSHEETS.Metrics.getRange(`B48`).setValue(`Number of Spools Used`);
+      OTHERSHEETS.Metrics.getRange(`C48`).setValue(numOfSpools);
+      console.info(`Number of Spools Used: ${numOfSpools}`);
       return total;
     } catch(err) {
       console.error(`"SumCosts()" failed : ${err}`);
@@ -521,7 +523,7 @@ const Metrics = () => {
  */
 const _testMetrics = () => {
   // console.info(Calculate.CalculateAverageTurnaround(SHEETS.Spectrum));
-  Calculate.SumMaterials();
+  Calculate.SumCosts();
 }
 
 

@@ -624,6 +624,7 @@ class PrinterOS {
 
   /**
    * Add User to Workgroup
+   * @private
    * @param {string} email
    * @param {int} workgroupId
    * @return {string} result
