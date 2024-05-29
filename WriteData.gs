@@ -85,8 +85,8 @@ class WriteToSheet {
       weight = weight ? Number(weight).toFixed(2) : 0.0;
 
       // Calculate Cost
-      const extruder1 = JSON.parse(extruders)[0].w;
-      const extruder2 = JSON.parse(extruders)[1].w;
+      const extruder1 = JSON.parse(extruders)[0].w ? JSON.parse(extruders)[0].w : JSON.parse(extruders)[0];
+      const extruder2 = JSON.parse(extruders)[1].w ? JSON.parse(extruders)[1].w : JSON.parse(extruders)[1];
       console.info(`Extruder1: ${extruder1}, Extruder2: ${extruder2}`);
       const e1_cost = extruder1 * COSTMULTIPLIER, e2_cost = extruder2 * COSTMULTIPLIERBREAKAWAY;
       const total_cost = Number(e1_cost + e2_cost).toFixed(2);
@@ -104,7 +104,7 @@ class WriteToSheet {
         filename : filename,
         image : imageBLOB, 
       }).CreateTicket()
-      const url = ticket.getUrl();
+      const url = ticket.getUrl() ? ticket.getUrl() : ``;
 
       const rowData = { 
         status : GetStatusByCode(status_id),
@@ -123,7 +123,7 @@ class WriteToSheet {
         cost : cost,
       }
       this._SetRowData(sheet, rowData);
-
+      // this._SetRowData(OTHERSHEETS.All, rowData);
       this._UpdateStatus(status_id, sheet, thisRow);
 
       return 0;

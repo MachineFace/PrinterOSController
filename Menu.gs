@@ -257,11 +257,11 @@ PopupFixMissingTicketsForThisSheet = async () => {
   let ui = await SpreadsheetApp.getUi();
   let thisSheet = SpreadsheetApp.getActiveSheet();
   FixMissingTicketsForSingleSheet(thisSheet);
-  ui.alert(
-    `${SERVICENAME} Message`,
-    `Fixing Missing Tickets for ${thisSheet.getSheetName()} from PrinterOS Server`,
-    ui.ButtonSet.OK
-  );
+  // ui.alert(
+  //   `${SERVICENAME} Message`,
+  //   `Fixing Missing Tickets for ${thisSheet.getSheetName()} from PrinterOS Server`,
+  //   ui.ButtonSet.OK
+  // );
 }
 
 /**
