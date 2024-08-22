@@ -12,7 +12,7 @@ class Calculate {
    * @param {sheet} sheet
    * @return {number} average (hrs)
    */
-  static CalculateAverageTurnaround(sheet) {
+  static GetAverageTurnaround(sheet) {
     try {
       if(CheckSheetIsForbidden(sheet)) throw new Error(`Sheet is FORBIDDEN.`);
       let completionTimes = GetColumnDataByHeader(sheet, HEADERNAMES.duration)
@@ -26,7 +26,7 @@ class Calculate {
       console.info(`Total Time : ${Number(total).toFixed(2)}, Average : ${average}`);
       return average;
     } catch (err) {
-      console.error(`"CalculateAverageTurnaround()" failed : ${err}`);
+      console.error(`"GetAverageTurnaround()" failed : ${err}`);
       return 1;
     }
   }
@@ -38,14 +38,15 @@ class Calculate {
     try {
       let obj = {}
       for(const [key, value] of Object.entries(SHEETS)) {
-        let turnaround = Calculate.CalculateAverageTurnaround(value);
+        let turnaround = Calculate.GetAverageTurnaround(value);
         obj[key] = turnaround;
       }
 
+      OTHERSHEETS.Metrics.getRange(3, 1, 1, 1).setValue(`Printer`);
       Object.entries(obj).forEach(([key, value], index) => {
-        // console.info(`${index} : ${key} : ${value}`);
-        OTHERSHEETS.Metrics.getRange(4 + index, 1, 1, 1).setValue(key);
-        OTHERSHEETS.Metrics.getRange(4 + index, 5, 1, 1).setValue(value);
+        console.info(`${index} : ${key} : ${value}`);
+        const values = [ [ key, value ], ];
+        OTHERSHEETS.Metrics.getRange(4 + index, 1, 1, 2).setValues(values);
       });
       return 0;
     } catch(err) {
@@ -65,7 +66,7 @@ class Calculate {
       let count = {};
       GetColumnDataByHeader(sheet, HEADERNAMES.status)
         .filter(Boolean)
-        .forEach( key => count[key] = ++count[key] || 1);
+        .forEach( key => count[key] = ++count[key] || 0);
       // console.info(JSON.stringify(count, null, 3));
       return count;
     } catch(err) {
@@ -87,12 +88,12 @@ class Calculate {
 
       Object.entries(obj).forEach(([key, value], index) => {
         console.info(`${index} : ${key} : ${JSON.stringify(value)}`);
-
-        let ratio = Number(value.Completed / (value.Completed + value.Cancelled)).toFixed(3);
+        const completed = value.Completed ? value.Completed : 0;
+        const cancelled = value.Cancelled ? value.Cancelled : 0;
+        let ratio = Number(completed / (completed + cancelled)).toFixed(3);
         ratio = `${Number(ratio * 100).toFixed(1)} %`;
-        OTHERSHEETS.Metrics.getRange(4 + index, 2, 1, 1).setValue(value.Completed);
-        OTHERSHEETS.Metrics.getRange(4 + index, 3, 1, 1).setValue(value.Cancelled);
-        OTHERSHEETS.Metrics.getRange(4 + index, 4, 1, 1).setValue(ratio);
+        const values = [ [ completed, cancelled, ratio ], ];
+        OTHERSHEETS.Metrics.getRange(4 + index, 3, 1, 3).setValues(values);
       })
       return obj;
     } catch(err) {
@@ -105,7 +106,7 @@ class Calculate {
    * Calculate User Distribution
    * @return {[]} users and counts
    */
-  static CalculateDistribution() {
+  static GetDistribution() {
     try {
       let userList = [];
       let staff = GetColumnDataByHeader(OTHERSHEETS.Staff, `EMAIL`);
@@ -124,7 +125,7 @@ class Calculate {
         .sort((first, second) => second[1] - first[1]);
       return items;  
     } catch(err) {
-      console.error(`"CalculateDistribution()" failed : ${err}`);
+      console.error(`"GetDistribution()" failed : ${err}`);
       return 1;
     }
   }
@@ -155,8 +156,7 @@ class Calculate {
       temp = [].concat(...temp);
       count = new Set(temp).size;
       console.info(`Count : ${count}`);
-      OTHERSHEETS.Metrics.getRange(20, 2, 1, 1).setValue(`User Count`);
-      OTHERSHEETS.Metrics.getRange(20, 3, 1, 1).setValue(count);
+      OTHERSHEETS.Metrics.getRange(20, 2, 1, 2).setValues([[ `User Count`, count ]]);
     })
     .finally(() => {
       pos.Logout();
@@ -176,9 +176,8 @@ class Calculate {
           .forEach( user => userList.push(user));
       });
       const count = new Set(userList).size
-      OTHERSHEETS.Metrics.getRange(22, 2, 1, 1).setValue(`Unique Users`);
-      OTHERSHEETS.Metrics.getRange(22, 3, 1, 1).setValue(count);
       console.info(`Number of Users -----> ${count}`);
+      OTHERSHEETS.Metrics.getRange(22, 2, 1, 2).setValues([[ `Unique Users`, count ]]);
       return count;
     } catch(err) {
       console.error(`"CountUniqueUsers()" failed : ${err}`);
@@ -198,8 +197,7 @@ class Calculate {
         count += last;
       })
       console.info(`Total Count : ${count}`);
-      OTHERSHEETS.Metrics.getRange(23, 2, 1, 1).setValue(`Total Submissions`);
-      OTHERSHEETS.Metrics.getRange(23, 3, 1, 1).setValue(count);
+      OTHERSHEETS.Metrics.getRange(23, 2, 1, 2).setValues([[ `Total Submissions`, count ]]);
       return count;
     } catch(err) {
       console.error(`"CountTotalSubmissions()" failed : ${err}`);
@@ -224,17 +222,13 @@ class Calculate {
     });
 
     console.info(count);
-    OTHERSHEETS.Metrics.getRange(25, 2, 1, 1).setValue(`Completed Prints`);
-    OTHERSHEETS.Metrics.getRange(25, 3, 1, 1).setValue(count.complete);
-
-    OTHERSHEETS.Metrics.getRange(26, 2, 1, 1).setValue(`Cancelled Prints`);
-    OTHERSHEETS.Metrics.getRange(26, 3, 1, 1).setValue(count.cancelled);
-
-    OTHERSHEETS.Metrics.getRange(27, 2, 1, 1).setValue(`In-Progress Prints`);
-    OTHERSHEETS.Metrics.getRange(27, 3, 1, 1).setValue(count.inProgress);
-
-    OTHERSHEETS.Metrics.getRange(28, 2, 1, 1).setValue(`Queued Prints`);
-    OTHERSHEETS.Metrics.getRange(28, 3, 1, 1).setValue(count.queued);
+    const values = [
+      [ `Completed Prints`, count.complete ? count.complete : 0 ],
+      [ `Cancelled Prints`, count.cancelled ? count.cancelled : 0 ],
+      [ `In-Progress Prints`, count.inProgress ? count.inProgress : 0 ],
+      [ `Queued Prints`, count.queued ? count.queued : 0 ],
+    ];
+    OTHERSHEETS.Metrics.getRange(25, 2, values.length, 2).setValues(values);
     return count;
   }
   
@@ -263,8 +257,7 @@ class Calculate {
     try {
       const users = Calculate.CountUniqueUsersWhoHavePrinted();
       // users.forEach( (user, index) => OTHERSHEETS.Unique.getRange(2 + index, 1, 1, 1).setValue(user));
-      OTHERSHEETS.Metrics.getRange(21, 2, 1, 1).setValue(`Users who have printed`);
-      OTHERSHEETS.Metrics.getRange(21, 3, 1, 1).setValue(users.length);
+      OTHERSHEETS.Metrics.getRange(21, 2, 1, 2).setValues([[`Users who have printed`, users.length]]);
       return 0;
     } catch(err) {
       console.error(`"PrintUniqueUsersWhoHavePrinted()" failed : ${err}`);
@@ -276,9 +269,9 @@ class Calculate {
    * Standard Deviation for Users
    * @return {number} standard deviation
    */
-  static CalculateStandardDeviation() {
+  static GetStandardDeviation() {
     try {
-      const distribution = Calculate.CalculateDistribution();
+      const distribution = Calculate.GetDistribution();
       const n = distribution.length;
 
       let data = [];
@@ -292,11 +285,10 @@ class Calculate {
       let standardDeviation = Number(Math.abs(s - mean)).toFixed(4);
       console.info(`Standard Deviation for Number of Submissions : +/- ${standardDeviation}`);
 
-      OTHERSHEETS.Metrics.getRange(43, 2, 1, 1).setValue(`Standard Deviation for Number of Submissions per User`);
-      OTHERSHEETS.Metrics.getRange(43, 3, 1, 1).setValue(`+/- ${standardDeviation}`);
+      OTHERSHEETS.Metrics.getRange(43, 2, 1, 2).setValues([[ `Standard Deviation for Number of Submissions per User`, `+/- ${standardDeviation}` ]]);
       return standardDeviation;
     } catch(err) {
-      console.error(`"CalculateStandardDeviation()" failed : ${err}`);
+      console.error(`"GetStandardDeviation()" failed : ${err}`);
       return 1;
     }
   }
@@ -305,9 +297,9 @@ class Calculate {
    * Arithmetic Mean
    * @return {number} mean
    */
-  static CalculateArithmeticMean() {
+  static GetArithmeticMean() {
     try {
-      const distribution = Calculate.CalculateDistribution();
+      const distribution = Calculate.GetDistribution();
       const n = distribution.length;
 
       const data = [];
@@ -316,11 +308,10 @@ class Calculate {
       let mean = Number(data.reduce((a, b) => a + b) / n).toFixed(4);
       console.info(`Mean = ${mean}`);
 
-      OTHERSHEETS.Metrics.getRange(44, 2, 1, 1).setValue(`Arithmetic Mean for user submissions`);
-      OTHERSHEETS.Metrics.getRange(44, 3, 1, 1).setValue(mean);
+      OTHERSHEETS.Metrics.getRange(44, 2, 1, 2).setValues([[ `Arithmetic Mean for user submissions`, mean ]]);
       return mean;
     } catch(err) {
-      console.error(`"CalculateArithmeticMean()" failed : ${err}`);
+      console.error(`"GetArithmeticMean()" failed : ${err}`);
       return 1;
     }
   }
@@ -330,14 +321,13 @@ class Calculate {
    */
   static PrintTopTen() {
     try {
-      const distribution = Calculate.CalculateDistribution()
+      const distribution = Calculate.GetDistribution()
         .slice(0, 11);
       console.info(distribution);
 
       distribution.forEach((pair, index) => {
-        OTHERSHEETS.Metrics.getRange(30 + index, 1, 1, 1).setValue(index + 1); // Index
-        OTHERSHEETS.Metrics.getRange(30 + index, 2, 1, 1).setValue(pair[0]); // Name
-        OTHERSHEETS.Metrics.getRange(30 + index, 3, 1, 1).setValue(pair[1]); // Number of Prints
+        const values = [ [ index + 1, pair[0], pair[1] ], ];
+        OTHERSHEETS.Metrics.getRange(30 + index, 1, 1, 3).setValues(values); 
       });
       return 0;
     } catch(err) {
@@ -366,8 +356,8 @@ class Calculate {
       let weights = GetColumnDataByHeader(sheet, HEADERNAMES.weight);
       let statuses = GetColumnDataByHeader(sheet, HEADERNAMES.status);
       for(let i = 0; i < weights.length; i++) {
-        if(statuses[i] == STATUS.complete.plaintext || statuses[i] == STATUS.closed.plaintext) weights[i] = 0.0;
-        if(weights[i] === null || !weights[i] || weights[i] == ' ') weights[i] = 0.0;
+        if(statuses[i] != STATUS.complete.plaintext && statuses[i] != STATUS.closed.plaintext) weights[i] = 0.0;
+        if(weights[i] == null || !weights[i] || weights[i] == ' ' || isNaN(weights[i])) weights[i] = 0.0;
       }
       let sum = Number(weights.reduce((a,b) => a + b)).toFixed(2);
       console.info(`SUM for ${sheet.getSheetName()} = ${sum} grams`);
@@ -389,8 +379,7 @@ class Calculate {
       console.info(count);
       let total = Number(count.reduce((a,b) => Number(a) + Number(b))).toFixed(2);
       console.info(`Total Count of All Materials : ${total}`);
-      OTHERSHEETS.Metrics.getRange(`B46`).setValue(`Sum of All Materials (Grams)`);
-      OTHERSHEETS.Metrics.getRange(`C46`).setValue(total);
+      OTHERSHEETS.Metrics.getRange(46, 2, 1, 2).setValues([[ `Sum of All Materials (Grams)`, total ]]);
       return total;
     } catch(err) {
       console.error(`"SumMaterials()" failed : ${err}`);
@@ -404,12 +393,14 @@ class Calculate {
   static PrintSheetMaterials() {
     try {
       let counts = [];
-      Object.values(SHEETS).forEach(sheet => counts.push(Calculate._SumSingleSheetMaterials(sheet)));
-      console.info(counts);
-      OTHERSHEETS.Metrics.getRange(3, 6, 1, 1).setValue(`PLA Used (grams)`);
-      for(let i = 0; i < counts.length; i++) {
-        OTHERSHEETS.Metrics.getRange(4 + i, 6, 1, 1).setValue(`${counts[i]}`);
-      }
+      Object.values(SHEETS).forEach(sheet => counts.push([Calculate._SumSingleSheetMaterials(sheet)]));
+      OTHERSHEETS.Metrics.getRange(3, 7, 1, 1).setValue(`PLA Used (grams)`);
+      OTHERSHEETS.Metrics.getRange(4, 7, counts.length, 1).setValues(counts);
+
+      let total = Number(counts.reduce((a,b) => Number(a) + Number(b))).toFixed(2);
+      const numOfSpools = Number(total * 0.001).toFixed(2);
+      console.info(`Number of Spools Used: ${numOfSpools}`);
+      OTHERSHEETS.Metrics.getRange(48, 2, 1, 2).setValues([[ `Number of Spools Used`, numOfSpools ]]);
       return 0;
     } catch(err) {
       console.error(`"PrintSheetMaterials()" failed : ${err}`);
@@ -430,7 +421,7 @@ class Calculate {
       let statuses = GetColumnDataByHeader(sheet, HEADERNAMES.status);
       for(let i = 0; i < cost.length; i++) {
         if(statuses[i] == STATUS.complete.plaintext || statuses[i] == STATUS.closed.plaintext) cost[i] = 0.0;
-        if(cost[i] === null || !cost[i] || cost[i] == ' ') cost[i] = 0.0;
+        if(cost[i] === null || !cost[i] || cost[i] == ' ' || isNaN(cost[i])) cost[i] = 0.0;
       }
       let sum = Number(cost.reduce((a,b) => a + b)).toFixed(2);
       console.info(`SUM for ${sheet.getSheetName()} = $${sum}`);
@@ -448,15 +439,10 @@ class Calculate {
     try {
       let count = [];
       Object.values(SHEETS).forEach(sheet => count.push(Calculate._SumSingleSheetCost(sheet)));
-
       let total = Number(count.reduce((a,b) => Number(a) + Number(b))).toFixed(2);
+
       console.info(`Total Count of All Funds : $${total}`);
-      OTHERSHEETS.Metrics.getRange(`B47`).setValue(`Sum of All Funds Generated ($)`);
-      OTHERSHEETS.Metrics.getRange(`C47`).setValue(total);
-      const numOfSpools = Number(total * 0.001).toFixed(2);
-      OTHERSHEETS.Metrics.getRange(`B48`).setValue(`Number of Spools Used`);
-      OTHERSHEETS.Metrics.getRange(`C48`).setValue(numOfSpools);
-      console.info(`Number of Spools Used: ${numOfSpools}`);
+      OTHERSHEETS.Metrics.getRange(47, 2, 1, 2).setValues([[ `Sum of All Funds Generated ($)`, total ],]);
       return total;
     } catch(err) {
       console.error(`"SumCosts()" failed : ${err}`);
@@ -470,12 +456,9 @@ class Calculate {
   static PrintSheetCosts() {
     try {
       let counts = [];
-      Object.values(SHEETS).forEach(sheet => counts.push(Calculate._SumSingleSheetCost(sheet)));
-      console.info(counts);
-      OTHERSHEETS.Metrics.getRange(3, 5, 1, 1).setValue(`Funds Generated ($)`);
-      for(let i = 0; i < counts.length; i++) {
-        OTHERSHEETS.Metrics.getRange(4 + i, 5, 1, 1).setValue(`$${counts[i]}`);
-      }
+      Object.values(SHEETS).forEach(sheet => counts.push([Calculate._SumSingleSheetCost(sheet)]));
+      OTHERSHEETS.Metrics.getRange(3, 6, 1, 1).setValue(`Funds Generated ($)`);
+      OTHERSHEETS.Metrics.getRange(4, 6, counts.length, 1).setValues(counts);
     } catch(err) {
       console.error(`"PrintSheetCosts()" failed : ${err}`);
       return 1;
@@ -500,8 +483,8 @@ const Metrics = () => {
     Calculate.CountUniqueUsers();
     Calculate.CountTotalSubmissions();
     Calculate.PrintTopTen();
-    Calculate.CalculateStandardDeviation();
-    Calculate.CalculateArithmeticMean();
+    Calculate.GetStandardDeviation();
+    Calculate.GetArithmeticMean();
     Calculate.StatusCounts();
     Calculate.PrintUniqueUsersWhoHavePrinted();
     Calculate.SumMaterials();
@@ -522,8 +505,8 @@ const Metrics = () => {
  * Testing for Metrics
  */
 const _testMetrics = () => {
-  // console.info(Calculate.CalculateAverageTurnaround(SHEETS.Spectrum));
-  Calculate.SumCosts();
+  // console.info(Calculate.GetAverageTurnaround(SHEETS.Spectrum));
+  Calculate.PrintSheetCosts();
 }
 
 

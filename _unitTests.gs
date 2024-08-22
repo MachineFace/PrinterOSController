@@ -395,13 +395,13 @@ const _gasTCalculationTesting = async () => {
   
   // ------------------------------------------------------------------------------------------------------------------------------
   await test(`Calc Average Turnaround`, (t) => {
-    const x = Calculate.CalculateAverageTurnaround(SHEETS.Aurum);
+    const x = Calculate.GetAverageTurnaround(SHEETS.Aurum);
     t.notEqual(x, undefined || null || NaN, `Average Turnaround SHOULD NOT return null or undefined: ${x}`);
-    t.equal(!isNaN(x), true, `CalculateAverageTurnaround SHOULD return a number: ${JSON.stringify(GetObjectType(x))}`)
-    const y = Calculate.CalculateAverageTurnaround(OTHERSHEETS.Logger);
-    t.equal(isNaN(y), true, `CalculateAverageTurnaround SHOULD return NaN: ${y}`);
-    const z = Calculate.CalculateAverageTurnaround(`Fuck`);
-    t.equal(isNaN(z), true, `CalculateAverageTurnaround SHOULD return NaN: ${z}`);
+    t.equal(!isNaN(x), true, `GetAverageTurnaround SHOULD return a number: ${JSON.stringify(GetObjectType(x))}`)
+    const y = Calculate.GetAverageTurnaround(OTHERSHEETS.Logger);
+    t.equal(isNaN(y), true, `GetAverageTurnaround SHOULD return NaN: ${y}`);
+    const z = Calculate.GetAverageTurnaround(`Fuck`);
+    t.equal(isNaN(z), true, `GetAverageTurnaround SHOULD return NaN: ${z}`);
   });
 
   await test(`SumStatuses`, (t) => {
@@ -412,7 +412,7 @@ const _gasTCalculationTesting = async () => {
   });
 
   await test(`Calc Distribution`, (t) => {
-    const x = Calculate.CalculateDistribution();
+    const x = Calculate.GetDistribution();
     t.notEqual(x, undefined || null, `Distribution should not return undefined: ${x.slice(0, 3)}`);
   });
 
@@ -446,15 +446,15 @@ const _gasTCalculationTesting = async () => {
   });
 
   await test(`Calc Standard Deviation`, (t) => {
-    const x = Calculate.CalculateStandardDeviation();
+    const x = Calculate.GetStandardDeviation();
     t.notEqual(x, undefined || null, `Standard Deviation should not return undefined or null. ${x}`);
-    t.equal(!isNaN(x), true, `CalculateStandardDeviation SHOULD return a number: ${JSON.stringify(GetObjectType(x))}`)
+    t.equal(!isNaN(x), true, `GetStandardDeviation SHOULD return a number: ${JSON.stringify(GetObjectType(x))}`)
   });
 
   await test(`Calculate Arithmetic Mean`, (t) => {
-    const x = Calculate.CalculateArithmeticMean();
+    const x = Calculate.GetArithmeticMean();
     t.notEqual(x, undefined || null, `Arithmetic Mean SHOULD NOT return undefined or null. ${x}`);
-    t.equal(!isNaN(x), true, `CalculateArithmeticMean SHOULD return a number: ${JSON.stringify(GetObjectType(x))}`)
+    t.equal(!isNaN(x), true, `GetArithmeticMean SHOULD return a number: ${JSON.stringify(GetObjectType(x))}`)
   });
 
   await test(`SumSingleSheetMaterials`, (t) => {

@@ -382,31 +382,76 @@ const PopupCreateNewId = async () => {
 const BarMenu = () => {
   SpreadsheetApp.getUi()
     .createMenu(`${SERVICENAME} Menu`)
-    .addItem(`Barcode Scanning Tool`, `OpenBarcodeTab`)
+    // .addItem(`Barcode Scanning Tool`, `OpenBarcodeTab`)
     .addSeparator()
-    .addItem(`Mark as Abandoned`, `PopUpMarkAsAbandoned`)
-    .addItem(`Mark as Picked Up`, `PopUpMarkAsPickedUp`)
+    .addItem(`Mark SELECTED as Abandoned`, `PopUpMarkAsAbandoned`)
+    .addItem(`Mark SELECTED as Picked Up`, `PopUpMarkAsPickedUp`)
     .addSeparator()
-    .addItem(`Count Queue`, `PopupCountQueue`)
     .addItem(`Create a Ticket for a User`, `PopupCreateTicket`)
     .addItem(`Fix All Missing Tickets`, `MissingTicketUpdater`)
     .addItem(`Fix Missing Tickets for THIS Sheet`, `PopupFixMissingTicketsForThisSheet`)
     .addItem(`Fix All Missing Filenames`, `UpdateAllFilenames`)
     .addSeparator()
-    .addItem(`Recompute Metrics`, `Metrics`)
-    .addItem(`Fetch All New Data`, `WriteAllNewDataToSheets`)
-    .addItem(`Fetch All New Data for This Sheet`, `PopupFetchNewForSingleSheet`)
-    .addItem(`Update All`, `PopupUpdate`)
-    .addItem(`Remove Duplicate Info`, `PopupRemoveDuplicates`)
+    .addSubMenu(
+      SpreadsheetApp.getUi()
+        .createMenu(`Administrative`)
+          .addItem(`Recompute Metrics`, `Metrics`)
+          .addItem(`Fetch All New Data`, `WriteAllNewDataToSheets`)
+          .addItem(`Fetch All New Data for This Sheet`, `PopupFetchNewForSingleSheet`)
+          .addItem(`Update All`, `PopupUpdate`)
+          .addItem(`Remove Duplicate Info`, `PopupRemoveDuplicates`)
+          .addItem(`Count Queue`, `PopupCountQueue`)
+    )
     .addSeparator()
-    .addItem(`Generate Semester Billing`, `Billing`)
-    .addItem(`Calculate Material Costs for All Users on Billing Sheet`, `PopupCalcBilling`)
-    .addItem(`Export Billing Report CSV`,`SaveAsCSV`)
+    .addSubMenu(
+      SpreadsheetApp.getUi()
+        .createMenu(`Billing`)
+          .addItem(`HELP: How to do Semester Billing`, `PopupBillingHelp`)
+          .addItem(`Generate Semester Billing Report`, `Billing`)
+          .addItem(`Generate Material Costs for All Users on Billing Sheet`, `PopupCalcBilling`)
+          // .addItem(`Export Billing Report CSV`,`SaveAsCSV`)
+    )
     .addSeparator()
     .addItem(`Help`, `PopupHelp`)
     .addToUi();
 };
 
+
+
+/**
+ * Creates a modal pop-up for the help text.
+ */
+const BuildBillingHELP = () => {
+  let items = [
+    `Check every date on every page to make sure they fall within the semester.`,
+    `Note: If you don't check the dates, you might double-bill a student.`,
+    `Check that there are no NaN issues on each sheet.`,
+    `Click "Generate Semester Billing Report" to populate the REPORT tab.`,
+    `Navigate to: "https://docs.google.com/spreadsheets/d/14QlRmAclIAwwXSPDxLoegB-qolS47sIK9Knk0HxXjWU/edit?gid=1891954171#gid=1891954171"`,
+    `Create a new tab for this semester.`,
+    `Copy & Paste data into that tab.`,
+    `Notify Erik or Joey about completion.`,
+    `Report any errors to Cody`,
+  ];
+  let html = `<h3 style="font-family:Roboto">How to Complete PrinterOS Billing : </h3>`;
+  html += `<hr>`;
+  html += `<p><b>Steps:</b></p>`;
+  html += `<ol style="font-family:Roboto font-size:10">`;
+  items.forEach(item => {
+    html += `<li>${item}</li>`;
+  });
+  html += `</ol>`;
+  html += `<p>See Cody for additional help / protips.</p>`;
+  return html;
+};
+const PopupBillingHelp = () => {
+  let ui = SpreadsheetApp.getUi();
+  let title = `${SERVICENAME} BILLING HELP`;
+  let htmlOutput = HtmlService.createHtmlOutput(BuildBillingHELP())
+    .setWidth(640)
+    .setHeight(480);
+  ui.showModalDialog(htmlOutput, title);
+};
 
 
 /**
