@@ -2,7 +2,7 @@
  * -----------------------------------------------------------------------------------------------------------------
  * Code Enumerations
  */
-const SUPPORT_ALIAS = GmailApp.getAliases()[0];
+const SUPPORT_ALIAS = `jacobs-project-support@berkeley.edu`;
 const GMAIL_SERVICE_NAME = `Jacobs Self-Service Printing Bot`;
 
 const SERVICENAME = `PrinterOS Controller`;
