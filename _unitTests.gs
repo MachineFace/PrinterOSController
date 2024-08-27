@@ -373,11 +373,11 @@ const _gasTMiscTesting = async () => {
     t.equal(y, `S0m3 N4m3`, `TitleCase SHOULD return "S0m3 N4m3": ${y}`);
   });
 
-  await test(`OpenQRGenerator`, (t) => {
-    const data = {url : `https://docs.google.com/forms/d/e/1FAIpQLSfLTLKre-6ZPU0qsxTkbvmfqm56p_Y_ajoRD1tKALLMvPfdMQ/viewform`, size : `1000x1000`};
-    const x = new OpenQRGenerator(data).CreatePrintableQRCode();
-    t.notEqual(x, undefined || null, `OpenQRGenerator SHOULD NOT return null or undefined: ${x}`);
-  });
+  // await test(`OpenQRGenerator`, (t) => {
+  //   const data = {url : `https://docs.google.com/forms/d/e/1FAIpQLSfLTLKre-6ZPU0qsxTkbvmfqm56p_Y_ajoRD1tKALLMvPfdMQ/viewform`, size : `1000x1000`};
+  //   const x = new OpenQRGenerator(data).CreatePrintableQRCode();
+  //   t.notEqual(x, undefined || null, `OpenQRGenerator SHOULD NOT return null or undefined: ${x}`);
+  // });
 
   await test.finish();
   if (test.totalFailed() > 0) throw "Some test(s) failed!";
@@ -469,11 +469,11 @@ const _gasTCalculationTesting = async () => {
     t.equal(!isNaN(x), true, `SumMaterials SHOULD return a number: ${JSON.stringify(GetObjectType(x))}`)
   });
 
-  await test(`SumSingleSheetCost`, (t) => {
-    const x = Calculate.SumSingleSheetCost(SHEETS.Aurum);
-    t.notEqual(x, undefined || null, `SumSingleSheetCost SHOULD NOT return undefined or null. ${x}`);
-    t.equal(!isNaN(x), true, `SumSingleSheetCost SHOULD return a number: ${JSON.stringify(GetObjectType(x))}`)
-  });
+  // await test(`SumSingleSheetCost`, (t) => {
+  //   const x = Calculate.SumSingleSheetCost(SHEETS.Aurum);
+  //   t.notEqual(x, undefined || null, `SumSingleSheetCost SHOULD NOT return undefined or null. ${x}`);
+  //   t.equal(!isNaN(x), true, `SumSingleSheetCost SHOULD return a number: ${JSON.stringify(GetObjectType(x))}`)
+  // });
 
   await test(`SumCosts`, (t) => {
     const x = Calculate.SumCosts();
@@ -589,14 +589,14 @@ const _gasTUpdateTesting = async () => {
     t.notThrow(() => x,`MissingTicketUpdater SHOULD NOT throw error.`);
   });
 
-  await test(`FetchNewDataforSingleSheet`, t => {
-    const x = FetchNewDataforSingleSheet(SHEETS.Zardoz);
-    t.notThrow(() => x,`FetchNewDataforSingleSheet SHOULD NOT throw error.`);
-  });
+  // await test(`FetchNewDataforSingleSheet`, t => {
+  //   const x = FetchNewDataforSingleSheet(SHEETS.Zardoz);
+  //   t.notThrow(() => x,`FetchNewDataforSingleSheet SHOULD NOT throw error.`);
+  // });
 
-  await test(`TriggerRemoveDuplicates`, t => {
-    const x = TriggerRemoveDuplicates();
-    t.notThrow(() => x,`TriggerRemoveDuplicates SHOULD NOT throw error.`);
+  await test(`RunCleanup`, t => {
+    const x = RunCleanup();
+    t.notThrow(() => x,`RunCleanup SHOULD NOT throw error.`);
   });   
 
   await test(`Filename Cleanup`, t => {

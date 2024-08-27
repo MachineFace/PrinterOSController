@@ -85,12 +85,7 @@ class WriteToSheet {
       weight = weight ? Number(weight).toFixed(2) : 0.0;
 
       // Calculate Cost
-      const extruder1 = JSON.parse(extruders)[0].w ? JSON.parse(extruders)[0].w : JSON.parse(extruders)[0];
-      const extruder2 = JSON.parse(extruders)[1].w ? JSON.parse(extruders)[1].w : JSON.parse(extruders)[1];
-      console.info(`Extruder1: ${extruder1}, Extruder2: ${extruder2}`);
-      const e1_cost = extruder1 * COSTMULTIPLIER, e2_cost = extruder2 * COSTMULTIPLIERBREAKAWAY;
-      const total_cost = Number(e1_cost + e2_cost).toFixed(2);
-
+      const total_cost = Number(weight * COSTMULTIPLIER).toFixed(2);
       cost = total_cost ? total_cost : this._PrintCost(weight);
 
       let imageBLOB = await GetImage(picture);
@@ -115,7 +110,7 @@ class WriteToSheet {
         email : email,
         posStatCode : status_id ? status_id : 11,
         duration : duration,
-        notes : `Extruder 1 Weight: ${extruder1} @ $0.04, Extruder 2 Weight: ${extruder2} @ $0.20, Total: $${total_cost}`,
+        notes : `Weight: ${weight} @ $0.04, Total: $${total_cost}`,
         picture : picture,
         ticket : url,
         filename : filename,
