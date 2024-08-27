@@ -43,7 +43,7 @@ class CreateMessage {
     /** @private */
     this.salutations = `<p>Best,<br/>Jacobs Hall Staff</p>`;
     /** @private */
-    this.survey = `<p><small>Please take a moment to take our survey so we can improve ${SERVICENAME}:<br/><a href="https://docs.google.com/forms/d/e/1FAIpQLSe_yCGqiGa4U51DodKWjOWPFt-ZfpxGUwaAYJqBV0GZ0q_IUQ/viewform">Take Survey</a></small></p><br/>`;
+    this.survey = `<p><small>Please take a moment to take our survey so we can improve ${SERVICENAME}:<br/><a href="https://docs.google.com/forms/d/1fICKWXj67v8k6EznXgkYz6qgiy45V8bV-X8dlRwRPDc/viewform">Take Survey</a></small></p><br/>`;
   }
   get defaultMessage() {
     let message = this.greetings;
@@ -112,8 +112,6 @@ class CreateMessage {
       message += `<p>`;
       message += this.thanks;
       message += `The part or parts requested for your project, <b><i>${this.projectname}</i></b> have been picked up. Job Number: <i>${this.jobnumber}</i><br/>`;
-      message += `<p>Please take a moment to take our survey so we can improve JPS : `
-      message += `<a href="https://docs.google.com/forms/d/e/1FAIpQLSe_yCGqiGa4U51DodKWjOWPFt-ZfpxGUwaAYJqBV0GZ0q_IUQ/viewform">Take Survey</a></p><br/>`;
       message += this.questions;
       message += `</p>`;
       message += this.salutations;
@@ -132,8 +130,6 @@ class CreateMessage {
       message += `2530 Ridge Rd, Berkeley, CA 94709</a><br/><br/></b>`;
       message += `<b>Pick-Up Hours:<br/>`;
       message += `${PICKUPHOURS}</b><br/><br/>`
-      message += `<p>Please take a moment to take our survey so we can improve JPS : `
-      message += `<a href="https://docs.google.com/forms/d/e/1FAIpQLSe_yCGqiGa4U51DodKWjOWPFt-ZfpxGUwaAYJqBV0GZ0q_IUQ/viewform">Take Survey</a></p><br/>`;
       message += this.questions;
       message += `</p>`;
       message += this.salutations;
@@ -176,8 +172,6 @@ class CreateMessage {
       message += `</ul>`;     
       message += `<br/>`;
       message += `If you have not picked up your parts, they can be picked up in-person.<br/><br/>`;
-      message += `<p>Please take a moment to take our survey so we can improve JPS : `; 
-      message += `<a href="https://docs.google.com/forms/d/e/1FAIpQLSe_yCGqiGa4U51DodKWjOWPFt-ZfpxGUwaAYJqBV0GZ0q_IUQ/viewform">Take Survey</a>`;
       message += this.questions;
       message += `</p>`;
       message += this.salutations;
