@@ -117,8 +117,8 @@ class WriteToSheet {
         weight : weight,
         cost : cost,
       }
-      this._SetRowData(sheet, rowData);
-      // this._SetRowData(OTHERSHEETS.All, rowData);
+      this._WriteNewRowData(sheet, rowData);
+      // this._WriteNewRowData(OTHERSHEETS.All, rowData);
       this._UpdateStatus(status_id, sheet, thisRow);
 
       return 0;
@@ -182,7 +182,7 @@ class WriteToSheet {
    * @param {object} rowdata to write
    * @return {number} success or failure
    */
-  _SetRowData(sheet, data) {
+  _WriteNewRowData(sheet, data) {
     try {
       let sorted = [];
       const headers = sheet.getRange(1, 1, 1, sheet.getMaxColumns()).getValues()[0];
@@ -197,7 +197,7 @@ class WriteToSheet {
       sheet.appendRow(sorted);
       return 0;
     } catch (err) {
-      console.error(`"_SetRowData()" failed : ${err}`);
+      console.error(`"_WriteNewRowData()" failed : ${err}`);
       return 1;
     }
   }

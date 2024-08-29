@@ -76,6 +76,39 @@ const GetRowData = (sheet, row) => {
  * @param {object} rowdata to write
  * @return {number} success or failure
  */
+const WriteNewRowData = (sheet, data) => {
+  try {
+    let sorted = [];
+    const headers = sheet.getRange(1, 1, 1, sheet.getMaxColumns()).getValues()[0];
+    headers.forEach( (name, index) => {
+      headers[index] = Object.keys(HEADERNAMES).find(key => HEADERNAMES[key] === name);
+    })
+
+    headers.forEach( (header, index) => {
+      sorted[index] = data[header];
+    });
+
+    sheet.appendRow(sorted);
+    return 0;
+  } catch (err) {
+    console.error(`"WriteNewRowData()" failed : ${err}`);
+    return 1;
+  }
+}
+
+const _testSet = () => {
+  const d = GetRowData(SHEETS.Aurum, 5);
+  // const e = GetRowData(SHEETS.Aurum, 6);
+  WriteNewRowData(SHEETS.Aurum, d);
+}
+
+
+/**
+ * Set Row Data
+ * @param {sheet} sheet
+ * @param {object} rowdata to write
+ * @return {number} success or failure
+ */
 const SetRowData = (sheet, data) => {
   try {
     let sorted = [];
@@ -95,14 +128,6 @@ const SetRowData = (sheet, data) => {
     return 1;
   }
 }
-
-const _testSet = () => {
-  const d = GetRowData(SHEETS.Aurum, 5);
-  // const e = GetRowData(SHEETS.Aurum, 6);
-  SetRowData(SHEETS.Aurum, d);
-}
-
-
 
 /**
  * Set the value of a cell by column name and row number
