@@ -5,8 +5,7 @@
 const SERVICE_EMAIL = `jacobs-project-support@berkeley.edu`;
 const SERVICE_NAME = `Jacobs Self-Service Printing Bot`;
 
-const SERVICENAME = `PrinterOS Controller`;
-const PICKUPHOURS = `Monday - Friday: 11am - 1pm & 4pm - 6pm`;
+const PICKUP_HOURS = `Monday - Friday: 11am - 1pm & 4pm - 6pm`;
 
 const COSTMULTIPLIER = 0.04;
 const COSTMULTIPLIERBREAKAWAY = 0.20;

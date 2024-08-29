@@ -243,7 +243,7 @@ const PickupByBarcode = () => {
   if (jobnumber == null || jobnumber == "" || jobnumber instanceof String) {
     progressUpdate.setValue(`No Print Number provided! Select the yellow cell, scan, then press enter to make sure the cell's value has been changed.`);
     ui.alert(
-      `${SERVICENAME}`,
+      `${SERVICE_NAME}`,
       `Jobnumber : ${jobnumber} was goofy. Please fix and try again...`,
       ui.ButtonSet.OK
     );
@@ -261,7 +261,7 @@ const PickupByBarcode = () => {
       progressUpdate.setValue(`Print #${jobnumber} marked as "Picked-up". Printer: ${key}, Row: ${searchRow}`);
       console.info(`Print #${jobnumber} marked as "Picked-up". Printer: ${key}, Row: ${searchRow}`);
       ui.alert(
-        `${SERVICENAME}`,
+        `${SERVICE_NAME}`,
         `Print #${jobnumber} marked as "Picked-up". Printer: ${key}, Row: ${searchRow}`,
         ui.ButtonSet.OK
       );
@@ -270,7 +270,7 @@ const PickupByBarcode = () => {
   }
   progressUpdate.setValue('Print Number not found. Try again.');
   ui.alert(
-    `${SERVICENAME}`,
+    `${SERVICE_NAME}`,
     `Print #${jobnumber} not found.. Please try again....`,
     ui.ButtonSet.OK
   );
@@ -289,7 +289,7 @@ const MarkAsAbandonedByBarcode = async () => {
   if (!jobnumber || jobnumber instanceof String) {
     progressUpdate.setValue(`No job number provided. Select the yellow cell, scan, then press enter to make sure the cell's value has been changed.`);
     ui.alert(
-      `${SERVICENAME}`,
+      `${SERVICE_NAME}`,
       `Jobnumber : ${jobnumber} was goofy. Please fix and try again...`,
       ui.ButtonSet.OK
     );
@@ -300,7 +300,7 @@ const MarkAsAbandonedByBarcode = async () => {
   if(Object.keys(res).length === 0) {
     progressUpdate.setValue(`Job number not found. Try again.`);
     ui.alert(
-      `${SERVICENAME}`,
+      `${SERVICE_NAME}`,
       `Jobnumber : ${jobnumber} not found...`,
       ui.ButtonSet.OK
     );
@@ -326,7 +326,7 @@ const MarkAsAbandonedByBarcode = async () => {
   })
   progressUpdate.setValue(`Owner ${email} of abandoned job: ${jobnumber} emailed..`);
   ui.alert(
-    `${SERVICENAME}`,
+    `${SERVICE_NAME}`,
     `Owner ${email} of abandoned job: ${jobnumber} emailed..`,
     ui.ButtonSet.OK
   );

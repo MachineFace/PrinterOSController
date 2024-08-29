@@ -13,7 +13,7 @@ const PopUpMarkAsAbandoned = async () => {
     let res = FindOne(jobnumber);
     if(!res) {
       ui.alert(
-        `${SERVICENAME}`,
+        `${SERVICE_NAME}`,
         `Jobnumber : ${jobnumber} NOT FOUND. Maybe try JPS.`,
         ui.ButtonSet.OK
       );
@@ -36,7 +36,7 @@ const PopUpMarkAsAbandoned = async () => {
     })
     console.warn(`Owner ${email} of abandoned job: ${jobnumber} emailed...`);
     ui.alert(
-      `${SERVICENAME} : Marked as Abandoned`, 
+      `${SERVICE_NAME} : Marked as Abandoned`, 
       `${email}, Job: ${jobnumber} emailed... Sheet: ${sheet.getSheetName()} row: ${row}`, 
       ui.ButtonSet.OK
     );
@@ -62,7 +62,7 @@ const PopUpMarkAsPickedUp = async () => {
     let res = FindOne(jobnumber);
     if(!res) {
       ui.alert(
-        `${SERVICENAME} `,
+        `${SERVICE_NAME} `,
         `Jobnumber : ${jobnumber} NOT FOUND. Maybe try JPS.`,
         ui.ButtonSet.OK
       );
@@ -91,7 +91,7 @@ const PopupCountQueue = async () => {
   let ui = await SpreadsheetApp.getUi();
   let count = await CountQueue();
   ui.alert(
-    `${SERVICENAME} Message`,
+    `${SERVICE_NAME} Message`,
     `Prints Currently in Queue : ${count}`,
     ui.ButtonSet.OK
   );
@@ -123,7 +123,7 @@ const PopupCreateTicket = async () => {
   // If It is on a valid sheet
   if(CheckSheetIsForbidden(thisSheet)) {
     Browser.msgBox(
-      `${SERVICENAME}`,
+      `${SERVICE_NAME}`,
       `Bad Sheet Selected. Please select from the correct sheet. Select one cell in the row and a ticket will be created.`,
       Browser.Buttons.OK
     );
@@ -154,7 +154,7 @@ const PopupCreateTicket = async () => {
   }
 
   ui.alert(
-    `${SERVICENAME} Message`,
+    `${SERVICE_NAME} Message`,
     `Ticket Created for : ${email}, @ Index : ${thisRow}, Job Number : ${jobID}`,
     ui.ButtonSet.OK
   );
@@ -203,7 +203,7 @@ const BuildHTMLHELP = () => {
  */
 const PopupHelp = () => {
   let ui = SpreadsheetApp.getUi();
-  let title = `${SERVICENAME} HELP`;
+  let title = `${SERVICE_NAME} HELP`;
   let htmlOutput = HtmlService.createHtmlOutput(BuildHTMLHELP())
     .setWidth(640)
     .setHeight(480);
@@ -217,7 +217,7 @@ const PopupUpdate = async () => {
   let ui = await SpreadsheetApp.getUi();
   new UpdateService();
   ui.alert(
-    `${SERVICENAME} Message`,
+    `${SERVICE_NAME} Message`,
     `All Info Updated from PrinterOS Server`,
     ui.ButtonSet.OK
   );
@@ -230,7 +230,7 @@ const PopupRemoveDuplicates = async () => {
   let ui = await SpreadsheetApp.getUi();
   TriggerRemoveDuplicates();
   ui.alert(
-    `${SERVICENAME} Message`,
+    `${SERVICE_NAME} Message`,
     `All Duplicate Info from PrinterOS Server removed.`,
     ui.ButtonSet.OK
   );
@@ -244,7 +244,7 @@ const PopupFetchNewForSingleSheet = async () => {
   let thisSheet = SpreadsheetApp.getActiveSheet();
   WriteSingleSheet(thisSheet);
   // ui.alert(
-  //   `${SERVICENAME} Message`,
+  //   `${SERVICE_NAME} Message`,
   //   `Fetching new Data for ${thisSheet.getSheetName()} from PrinterOS Server`,
   //   ui.ButtonSet.OK
   // );
@@ -258,7 +258,7 @@ PopupFixMissingTicketsForThisSheet = async () => {
   let thisSheet = SpreadsheetApp.getActiveSheet();
   FixMissingTicketsForSingleSheet(thisSheet);
   // ui.alert(
-  //   `${SERVICENAME} Message`,
+  //   `${SERVICE_NAME} Message`,
   //   `Fixing Missing Tickets for ${thisSheet.getSheetName()} from PrinterOS Server`,
   //   ui.ButtonSet.OK
   // );
@@ -305,7 +305,7 @@ const PopupInterface = () => {
   </html>
   `;
   let ui = SpreadsheetApp.getUi();
-  let title = `${SERVICENAME}`;
+  let title = `${SERVICE_NAME}`;
   let htmlOutput = HtmlService.createHtmlOutput(html)
     .setWidth(640)
     .setHeight(480);
@@ -319,7 +319,7 @@ const PopupRemoveUsersNotInBillingList = async () => {
   let ui = await SpreadsheetApp.getUi();
   await RemoveStudentsWhoDidntPrint();
   ui.alert(
-    `${SERVICENAME} Billing Cleanup`,
+    `${SERVICE_NAME} Billing Cleanup`,
     `All Users Who haven't printed with us REMOVED from Billing REPORT`,
     ui.ButtonSet.OK
   );
@@ -332,7 +332,7 @@ const PopupCalcBilling = async () => {
   let ui = await SpreadsheetApp.getUi();
   await CalculateMaterialCostForBilling();
   ui.alert(
-    `${SERVICENAME} Billing`,
+    `${SERVICE_NAME} Billing`,
     `Calculated Printing Costs for ALL our Users.`,
     ui.ButtonSet.OK
   );
@@ -381,7 +381,7 @@ const PopupCreateNewId = async () => {
  */
 const BarMenu = () => {
   SpreadsheetApp.getUi()
-    .createMenu(`${SERVICENAME} Menu`)
+    .createMenu(`${SERVICE_NAME} Menu`)
     // .addItem(`Barcode Scanning Tool`, `OpenBarcodeTab`)
     .addSeparator()
     .addItem(`Mark SELECTED as Abandoned`, `PopUpMarkAsAbandoned`)
@@ -446,7 +446,7 @@ const BuildBillingHELP = () => {
 };
 const PopupBillingHelp = () => {
   let ui = SpreadsheetApp.getUi();
-  let title = `${SERVICENAME} BILLING HELP`;
+  let title = `${SERVICE_NAME} BILLING HELP`;
   let htmlOutput = HtmlService.createHtmlOutput(BuildBillingHELP())
     .setWidth(640)
     .setHeight(480);

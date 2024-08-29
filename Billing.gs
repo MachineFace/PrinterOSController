@@ -22,18 +22,22 @@ const BillingPerSheet = (sheet) => {
   return data;
 }
 
+/**
+ * Billing
+ */
 const Billing = () => {
   let data = {}
   Object.values(SHEETS).forEach(sheet => {
     let sheetdata = BillingPerSheet(sheet);
     Object.entries(sheetdata).forEach(([key, value]) => {
       key in data ? data[key] = Number(Number(data[key]) + Number(value)).toFixed(2) : data[key] = value;
-    })
-  })
+    });
+  });
+
   Object.entries(data).sort().forEach(([key, value], index) => {
     SetByHeader(OTHERSHEETS.Report, `Account Email`, index + 2, key);
     SetByHeader(OTHERSHEETS.Report, `Total Sum ($)`, index + 2, value);
-  })
+  });
   console.info(data);
 }
 
