@@ -106,10 +106,26 @@ const _testSet = () => {
 /**
  * Set Row Data
  * @param {sheet} sheet
+ * @param {number} row
  * @param {object} rowdata to write
  * @return {number} success or failure
  */
-const SetRowData = (sheet, data) => {
+const SetRowData = (sheet = SHEETS.Aurum, row = 2, data = { 
+  status : STATUS.queued.plaintext, 
+  printerID : PRINTERDATA.Aurum.printerID, 
+  printerName : PRINTERDATA.Aurum.name, 
+  jobID : 1234567, 
+  timestamp : new Date(), 
+  email : SERVICE_EMAIL, 
+  posStatCode : STATUS.queued.statusCode, 
+  duration : 5, 
+  notes : ``, 
+  picture : ``, 
+  ticket : ``, 
+  filename : ``, 
+  weight : 1.0, 
+  cost : 1.0, 
+  }) => {
   try {
     let sorted = [];
     const headers = sheet.getRange(1, 1, 1, sheet.getMaxColumns()).getValues()[0];
@@ -121,12 +137,18 @@ const SetRowData = (sheet, data) => {
       sorted[index] = data[header];
     });
 
-    sheet.appendRow(sorted);
+    // Write to Row on Sheet
+    console.info(`Writing to Row: ${row}: ${[sorted]}`);
+    sheet.getRange(row, 1, 1, sorted.length).setValues([sorted]);
     return 0;
   } catch (err) {
     console.error(`"SetRowData()" failed : ${err}`);
     return 1;
   }
+}
+
+const _testA = () => {
+  SetRowData(SHEETS.Spectrum, 50);
 }
 
 /**

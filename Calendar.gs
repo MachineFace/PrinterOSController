@@ -58,7 +58,7 @@ class CalendarFactory {
     const endTime = this._CalculateCompletionTime(startTime, rowdata?.duration);
     const color = PRINTERDATA[rowdata?.printerName].color;
     const location = `Jacobs Hall Rm 234 \n${rowdata?.printerName}`;
-    let description = `${GMAIL_SERVICE_NAME} \n`;
+    let description = `${SERVICE_NAME} \n`;
 
     Object.entries(rowdata).forEach(entry => {
       let headername = HEADERNAMES[entry[0]];

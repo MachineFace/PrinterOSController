@@ -12,12 +12,12 @@
  */
 class CreateMessage {
   constructor({
-    name : name = `${GMAIL_SERVICE_NAME} User`, 
+    name : name = `${SERVICE_NAME} User`, 
     projectname : projectname = `Project Name`, 
     jobnumber : jobnumber = 1000001, 
     weight : weight = 0.0, 
     designspecialist : designspecialist = `Staff`, 
-    designspecialistemaillink : designspecialistemaillink = SUPPORT_ALIAS,
+    designspecialistemaillink : designspecialistemaillink = SERVICE_EMAIL,
   }){
     /** @private */
     this.name = name;

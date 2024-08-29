@@ -2,8 +2,8 @@
  * -----------------------------------------------------------------------------------------------------------------
  * Code Enumerations
  */
-const SUPPORT_ALIAS = `jacobs-project-support@berkeley.edu`;
-const GMAIL_SERVICE_NAME = `Jacobs Self-Service Printing Bot`;
+const SERVICE_EMAIL = `jacobs-project-support@berkeley.edu`;
+const SERVICE_NAME = `Jacobs Self-Service Printing Bot`;
 
 const SERVICENAME = `PrinterOS Controller`;
 const PICKUPHOURS = `Monday - Friday: 11am - 1pm & 4pm - 6pm`;

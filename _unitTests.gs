@@ -3,15 +3,19 @@
  * See : https://github.com/huan/gast for instructions
  */
 
+/** @private */
+const gasT_URL = UrlFetchApp
+  .fetch('https://raw.githubusercontent.com/huan/gast/master/src/gas-tap-lib.js')
+  .getContentText();
 
 /**
  * Test PrinterOS with GasT
  */
 const _gasTPrinterOSTesting = async () => {
-  if ((typeof GasTap) === 'undefined') { 
-    eval(UrlFetchApp.fetch('https://raw.githubusercontent.com/huan/gast/master/src/gas-tap-lib.js').getContentText())
-  } 
+  if ((typeof GasTap) === 'undefined') eval(gasT_URL);
   const test = new GasTap();
+  console.warn(`Testing: ${new Error().stack.split('\n')[1].split(`at `)[1]}`);  // Print Enclosing Function Name
+
   const p = new PrinterOS();
   
   await test(`PrinterOS Self-Test`, (t) => {
@@ -103,10 +107,9 @@ const _gasTPrinterOSTesting = async () => {
  * Test with GasT
  */
 const _gasTMessagingAndStaffTesting = async () => {
-  if ((typeof GasTap) === 'undefined') { 
-    eval(UrlFetchApp.fetch('https://raw.githubusercontent.com/huan/gast/master/src/gas-tap-lib.js').getContentText())
-  } 
+  if ((typeof GasTap) === 'undefined') eval(gasT_URL); 
   const test = new GasTap();
+  console.warn(`Testing: ${new Error().stack.split('\n')[1].split(`at `)[1]}`);  // Print Enclosing Function Name
 
   // await test(`Checking...`, (t) => {    
   //     let i = 3 + 4
@@ -207,10 +210,9 @@ const _gasTMessagingAndStaffTesting = async () => {
  * Test Ticket with GasT
  */
 const _gasTTicketTesting = async () => {
-  if ((typeof GasTap) === 'undefined') { 
-    eval(UrlFetchApp.fetch('https://raw.githubusercontent.com/huan/gast/master/src/gas-tap-lib.js').getContentText())
-  } 
+  if ((typeof GasTap) === 'undefined') eval(gasT_URL);
   const test = new GasTap();
+  console.warn(`Testing: ${new Error().stack.split('\n')[1].split(`at `)[1]}`);  // Print Enclosing Function Name
   
   await test(`New Ticket Creation`, (t) => {
     const dummyObj = {
@@ -283,10 +285,9 @@ const _gasTTicketTesting = async () => {
  * Test Misc with GasT
  */
 const _gasTMiscTesting = async () => {
-  if ((typeof GasTap) === 'undefined') { 
-    eval(UrlFetchApp.fetch('https://raw.githubusercontent.com/huan/gast/master/src/gas-tap-lib.js').getContentText())
-  } 
+  if ((typeof GasTap) === 'undefined') eval(gasT_URL);
   const test = new GasTap();
+  console.warn(`Testing: ${new Error().stack.split('\n')[1].split(`at `)[1]}`);  // Print Enclosing Function Name
 
   // ------------------------------------------------------------------------------------------------------------------------------
   await test(`GetByHeader`, (t) => {
@@ -388,10 +389,9 @@ const _gasTMiscTesting = async () => {
  * Test Calculations with GasT
  */
 const _gasTCalculationTesting = async () => {
-  if ((typeof GasTap) === 'undefined') { 
-    eval(UrlFetchApp.fetch('https://raw.githubusercontent.com/huan/gast/master/src/gas-tap-lib.js').getContentText())
-  } 
+  if ((typeof GasTap) === 'undefined') eval(gasT_URL);
   const test = new GasTap();
+  console.warn(`Testing: ${new Error().stack.split('\n')[1].split(`at `)[1]}`);  // Print Enclosing Function Name
   
   // ------------------------------------------------------------------------------------------------------------------------------
   await test(`Calc Average Turnaround`, (t) => {
@@ -490,10 +490,9 @@ const _gasTCalculationTesting = async () => {
  * Test Logger with GasT
  */
 const _gasTLoggerTesting = async () => {
-  if ((typeof GasTap) === 'undefined') { 
-    eval(UrlFetchApp.fetch('https://raw.githubusercontent.com/huan/gast/master/src/gas-tap-lib.js').getContentText())
-  } 
+  if ((typeof GasTap) === 'undefined') eval(gasT_URL); 
   const test = new GasTap();
+  console.warn(`Testing: ${new Error().stack.split('\n')[1].split(`at `)[1]}`);  // Print Enclosing Function Name
 
   await test(`Logger`, (t) => {
     console.time(`EXECUTION TIMER`);
@@ -541,18 +540,17 @@ const _gasTLoggerTesting = async () => {
  * Test Emailing with GasT
  */
 const _gasTEmailTesting = async () => {
-  if ((typeof GasTap) === 'undefined') { 
-    eval(UrlFetchApp.fetch('https://raw.githubusercontent.com/huan/gast/master/src/gas-tap-lib.js').getContentText())
-  } 
+  if ((typeof GasTap) === 'undefined') eval(gasT_URL);
   const test = new GasTap();
+  console.warn(`Testing: ${new Error().stack.split('\n')[1].split(`at `)[1]}`);  // Print Enclosing Function Name
 
   await test(`Emailer`, t => {
     Object.values(STATUS).forEach( status => {
       const em = new Emailer({
-        email : "codyglen@berkeley.edu",
+        email : SERVICE_EMAIL,
         status : status.plaintext,
-        name : `Dingus Dongus`,
-        projectname : `Dingus Project`,
+        name : `Testa Fiesta`,
+        projectname : `Testa Project`,
         jobnumber : 9234875,
         weight : 200,
       });
@@ -569,9 +567,7 @@ const _gasTEmailTesting = async () => {
  * Test Updating with GasT
  */
 const _gasTUpdateTesting = async () => {
-  if ((typeof GasTap) === 'undefined') { 
-    eval(UrlFetchApp.fetch('https://raw.githubusercontent.com/huan/gast/master/src/gas-tap-lib.js').getContentText())
-  } 
+  if ((typeof GasTap) === 'undefined') eval(gasT_URL);
   const test = new GasTap();
   
   await test(`WriteAllNewDataToSheets`, t => {

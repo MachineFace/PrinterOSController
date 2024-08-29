@@ -45,72 +45,72 @@ class Emailer {
   SendEmail() {
     switch (this.status) {
       case STATUS.queued.plaintext:
-        MailApp.sendEmail(this.email, `${GMAIL_SERVICE_NAME} : Queued`, "", {
+        MailApp.sendEmail(this.email, `${SERVICE_NAME} : Queued`, "", {
           htmlBody: this.message.queuedMessage,
-          from: SUPPORT_ALIAS,
-          cc: `${this.designspecialistemail}, ${SUPPORT_ALIAS}`,
+          from: SERVICE_EMAIL,
+          cc: `${this.designspecialistemail}, ${SERVICE_EMAIL}`,
           bcc: "",
-          name: GMAIL_SERVICE_NAME,
+          name: SERVICE_NAME,
         });
         console.warn(`Student ${this.name} emailed ${this.status} message...`);
         break;
       case STATUS.inProgress.plaintext:
-        MailApp.sendEmail(this.email, `${GMAIL_SERVICE_NAME} : Project Started`, "", {
+        MailApp.sendEmail(this.email, `${SERVICE_NAME} : Project Started`, "", {
             htmlBody: this.message.inProgressMessage,
-            from: SUPPORT_ALIAS,
-            cc: `${this.designspecialistemail}, ${SUPPORT_ALIAS}`,
+            from: SERVICE_EMAIL,
+            cc: `${this.designspecialistemail}, ${SERVICE_EMAIL}`,
             bcc: "",
-            name: GMAIL_SERVICE_NAME,
+            name: SERVICE_NAME,
         });
         console.warn(`Student ${this.name} emailed ${this.status} message...`);
         break;
       case STATUS.complete.plaintext:
-        MailApp.sendEmail(this.email, `${GMAIL_SERVICE_NAME} : Project Completed`, "", {
+        MailApp.sendEmail(this.email, `${SERVICE_NAME} : Project Completed`, "", {
             htmlBody: this.message.completedMessage,
-            from: SUPPORT_ALIAS,
-            cc: `${this.designspecialistemail}, ${SUPPORT_ALIAS}`,
+            from: SERVICE_EMAIL,
+            cc: `${this.designspecialistemail}, ${SERVICE_EMAIL}`,
             bcc: "",
-            name: GMAIL_SERVICE_NAME,
+            name: SERVICE_NAME,
         });
         console.warn(`Student ${this.name} emailed ${this.status} message...`);
         break;
       case STATUS.failed.plaintext:
-        MailApp.sendEmail(this.email, `${GMAIL_SERVICE_NAME} : Project has Failed`, "", {
+        MailApp.sendEmail(this.email, `${SERVICE_NAME} : Project has Failed`, "", {
             htmlBody: this.message.failedMessage,
-            from: SUPPORT_ALIAS,
-            cc: `${this.designspecialistemail}, ${SUPPORT_ALIAS}`,
+            from: SERVICE_EMAIL,
+            cc: `${this.designspecialistemail}, ${SERVICE_EMAIL}`,
             bcc: "",
-            name: GMAIL_SERVICE_NAME,
+            name: SERVICE_NAME,
         });
         console.warn(`Student ${this.name} emailed ${this.status} message...`);
         break;
       case STATUS.cancelled.plaintext:
-        MailApp.sendEmail(this.email, `${GMAIL_SERVICE_NAME} : Project has been Cancelled`, "", {
+        MailApp.sendEmail(this.email, `${SERVICE_NAME} : Project has been Cancelled`, "", {
             htmlBody: this.message.cancelledMessage,
-            from: SUPPORT_ALIAS,
-            cc: `${this.designspecialistemail}, ${SUPPORT_ALIAS}`,
+            from: SERVICE_EMAIL,
+            cc: `${this.designspecialistemail}, ${SERVICE_EMAIL}`,
             bcc: "",
-            name: GMAIL_SERVICE_NAME,
+            name: SERVICE_NAME,
         });
         console.warn(`Student ${this.name} emailed ${this.status} message...`);
         break;
       case STATUS.closed.plaintext:
-        MailApp.sendEmail(this.email, `${GMAIL_SERVICE_NAME} : Project Closed`, "", {
+        MailApp.sendEmail(this.email, `${SERVICE_NAME} : Project Closed`, "", {
           htmlBody: this.message.completedMessage,
-          from: SUPPORT_ALIAS,
-            cc: `${this.designspecialistemail}, ${SUPPORT_ALIAS}`,
+          from: SERVICE_EMAIL,
+            cc: `${this.designspecialistemail}, ${SERVICE_EMAIL}`,
           bcc: "",
-          name: GMAIL_SERVICE_NAME,
+          name: SERVICE_NAME,
         });
         console.warn(`Student ${this.name} emailed ${this.status} message...`);
         break;
       case STATUS.abandoned.plaintext:
-        MailApp.sendEmail(this.email, `${GMAIL_SERVICE_NAME} : Project hasn't been picked up yet!`, "", {
+        MailApp.sendEmail(this.email, `${SERVICE_NAME} : Project hasn't been picked up yet!`, "", {
           htmlBody: this.message.abandonedMessage,
-          from: SUPPORT_ALIAS,
-            cc: `${this.designspecialistemail}, ${SUPPORT_ALIAS}`,
+          from: SERVICE_EMAIL,
+            cc: `${this.designspecialistemail}, ${SERVICE_EMAIL}`,
           bcc: "",
-          name: GMAIL_SERVICE_NAME,
+          name: SERVICE_NAME,
         });
         console.warn(`Student ${this.name} emailed ${this.status} message...`);
         break;
