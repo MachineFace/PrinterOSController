@@ -7,13 +7,13 @@
 const gasT_URL = UrlFetchApp
   .fetch('https://raw.githubusercontent.com/huan/gast/master/src/gas-tap-lib.js')
   .getContentText();
+if ((typeof GasTap) === 'undefined') eval(gasT_URL);
+const test = new GasTap();
 
 /**
  * Test PrinterOS with GasT
  */
 const _gasTPrinterOSTesting = async () => {
-  if ((typeof GasTap) === 'undefined') eval(gasT_URL);
-  const test = new GasTap();
   console.warn(`Testing: ${new Error().stack.split('\n')[1].split(`at `)[1]}`);  // Print Enclosing Function Name
 
   const p = new PrinterOS();
@@ -107,8 +107,6 @@ const _gasTPrinterOSTesting = async () => {
  * Test with GasT
  */
 const _gasTMessagingAndStaffTesting = async () => {
-  if ((typeof GasTap) === 'undefined') eval(gasT_URL); 
-  const test = new GasTap();
   console.warn(`Testing: ${new Error().stack.split('\n')[1].split(`at `)[1]}`);  // Print Enclosing Function Name
 
   // await test(`Checking...`, (t) => {    
@@ -210,8 +208,6 @@ const _gasTMessagingAndStaffTesting = async () => {
  * Test Ticket with GasT
  */
 const _gasTTicketTesting = async () => {
-  if ((typeof GasTap) === 'undefined') eval(gasT_URL);
-  const test = new GasTap();
   console.warn(`Testing: ${new Error().stack.split('\n')[1].split(`at `)[1]}`);  // Print Enclosing Function Name
   
   await test(`New Ticket Creation`, (t) => {
@@ -285,8 +281,6 @@ const _gasTTicketTesting = async () => {
  * Test Misc with GasT
  */
 const _gasTMiscTesting = async () => {
-  if ((typeof GasTap) === 'undefined') eval(gasT_URL);
-  const test = new GasTap();
   console.warn(`Testing: ${new Error().stack.split('\n')[1].split(`at `)[1]}`);  // Print Enclosing Function Name
 
   // ------------------------------------------------------------------------------------------------------------------------------
@@ -389,8 +383,6 @@ const _gasTMiscTesting = async () => {
  * Test Calculations with GasT
  */
 const _gasTCalculationTesting = async () => {
-  if ((typeof GasTap) === 'undefined') eval(gasT_URL);
-  const test = new GasTap();
   console.warn(`Testing: ${new Error().stack.split('\n')[1].split(`at `)[1]}`);  // Print Enclosing Function Name
   
   // ------------------------------------------------------------------------------------------------------------------------------
@@ -490,8 +482,6 @@ const _gasTCalculationTesting = async () => {
  * Test Logger with GasT
  */
 const _gasTLoggerTesting = async () => {
-  if ((typeof GasTap) === 'undefined') eval(gasT_URL); 
-  const test = new GasTap();
   console.warn(`Testing: ${new Error().stack.split('\n')[1].split(`at `)[1]}`);  // Print Enclosing Function Name
 
   await test(`Logger`, (t) => {
@@ -540,8 +530,6 @@ const _gasTLoggerTesting = async () => {
  * Test Emailing with GasT
  */
 const _gasTEmailTesting = async () => {
-  if ((typeof GasTap) === 'undefined') eval(gasT_URL);
-  const test = new GasTap();
   console.warn(`Testing: ${new Error().stack.split('\n')[1].split(`at `)[1]}`);  // Print Enclosing Function Name
 
   await test(`Emailer`, t => {
@@ -567,9 +555,8 @@ const _gasTEmailTesting = async () => {
  * Test Updating with GasT
  */
 const _gasTUpdateTesting = async () => {
-  if ((typeof GasTap) === 'undefined') eval(gasT_URL);
-  const test = new GasTap();
-  
+  console.warn(`Testing: ${new Error().stack.split('\n')[1].split(`at `)[1]}`);  // Print Enclosing Function Name
+
   await test(`WriteAllNewDataToSheets`, t => {
     const x = WriteAllNewDataToSheets();
     t.notThrow(() => x,`WriteAllNewDataToSheets SHOULD NOT throw error.`);
