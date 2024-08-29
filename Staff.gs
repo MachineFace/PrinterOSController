@@ -7,7 +7,7 @@ class DesignSpecialist {
   constructor({
     name : name = `DS`, 
     fullname : fullname = `Design Specialist`, 
-    email : email = `jacobsprojectsupport@berkeley.edu`
+    email : email = SERVICE_EMAIL
   }) {
     this.id = Utilities.getUuid();
     this.name = name;
@@ -44,7 +44,7 @@ class StudentSupervisor extends DesignSpecialist {
   constructor({
     name = `SS`, 
     fullname = `Student Supervisor`, 
-    email = `jacobsprojectsupport@berkeley.edu`
+    email = SERVICE_EMAIL
   }) {
     // The reserved 'super' keyword is for making super-constructor calls and allows access to parent methods.
     super(name, fullname, email);
@@ -82,7 +82,7 @@ class Manager extends DesignSpecialist {
   constructor({
     name = `MA`, 
     fullname = `Manager`, 
-    email = `jacobsprojectsupport@berkeley.edu`
+    email = SERVICE_EMAIL
   }) {
     super(name, fullname, email);
     this.id = Utilities.getUuid();

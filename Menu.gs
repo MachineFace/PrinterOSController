@@ -165,7 +165,6 @@ const PopupCreateTicket = async () => {
  */
 const BuildHTMLHELP = () => {
   let items = [
-    `Note : All status changes trigger an email to the student except for 'CLOSED' status`,
     `New Project comes into a sheet and status will automatically be set to 'Received'.`,
     `Assign yourself as the DS / SS and fill in the materials as best you can.`,
     `Change the status to 'In-Progress' when you're ready to start the project.`,
@@ -179,20 +178,15 @@ const BuildHTMLHELP = () => {
     `If you need student approval before proceeding, choose 'Pending Approval'. `,
     `'Missing Access' will be set automatically, and you should not choose this as an option.`,
     `If the student needs to be waitlisted for more information or space, choose 'Waitlisted'. `,
-    `See Cody or Chris for additional help + protips.`,
   ];
   let html = `<h2 style="text-align:center"><b> HELP MENU </b></h2>`;
   html += `<h3 style="font-family:Roboto">How to Use JPS : </h3>`;
   html += `<hr>`;
-  html += `<p>${items[0]}</p>`;
+  html += `<p>Note : All status changes trigger an email to the student except for 'CLOSED' status.</p>`;
   html += `<ol style="font-family:Roboto font-size:10">`;
-  items.forEach((item, index) => {
-    if (index > 0 && index < items.length - 1) {
-      html += `<li>${item}</li>`;
-    }
-  });
+  items.forEach(item => html += `<li>${item}</li>`);
   html += `</ol>`;
-  html += `<p>${items[items.length - 1]}</p>`;
+  html += `<p>See Cody or Chris for additional help / protips.</p>`;
 
   console.info(html);
   return html;

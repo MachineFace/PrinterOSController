@@ -12,7 +12,6 @@
  */
 const GetByHeader = (sheet, columnName, row) => {
   try {
-    if(typeof(sheet) !== typeof(SHEETS.Spectrum)) throw new Error(`Bad sheet supplied: Sheet: ${sheet}, Col: ${columnName}, Row: ${row}`);
     const data = sheet.getDataRange().getValues();
     const col = data[0].indexOf(columnName);
     if (col != -1) return data[row - 1][col];
@@ -96,7 +95,7 @@ const WriteNewRowData = (sheet, data) => {
   }
 }
 
-const _testSet = () => {
+const _testWriteNewRowData = () => {
   const d = GetRowData(SHEETS.Aurum, 5);
   // const e = GetRowData(SHEETS.Aurum, 6);
   WriteNewRowData(SHEETS.Aurum, d);
@@ -110,35 +109,44 @@ const _testSet = () => {
  * @param {object} rowdata to write
  * @return {number} success or failure
  */
-const SetRowData = (sheet = SHEETS.Aurum, row = 2, data = { 
-  status : STATUS.queued.plaintext, 
-  printerID : PRINTERDATA.Aurum.printerID, 
-  printerName : PRINTERDATA.Aurum.name, 
-  jobID : 1234567, 
-  timestamp : new Date(), 
-  email : SERVICE_EMAIL, 
-  posStatCode : STATUS.queued.statusCode, 
-  duration : 5, 
-  notes : ``, 
-  picture : ``, 
-  ticket : ``, 
-  filename : ``, 
-  weight : 1.0, 
-  cost : 1.0, 
+const SetRowData = (sheet, row, data = { 
+  status : null, 
+  printerID : null, 
+  printerName : null, 
+  jobID : null, 
+  timestamp : null, 
+  email : null, 
+  posStatCode : null, 
+  duration : null, 
+  notes : null, 
+  picture : null, 
+  ticket : null, 
+  filename : null, 
+  weight : null, 
+  cost : null, 
   }) => {
   try {
+    if(row <= 1) throw new Error(`Trying to write to Header...`);
     let sorted = [];
+
+    let existingRowData = GetRowData(sheet, row);
+    let merged = MergeObjects(data, existingRowData);
+    // console.info(`EXISTING: ${JSON.stringify(existingRowData, null, 3)}`);
+    // console.info(`MERGED: ${JSON.stringify(merged, null, 3)}`);
+
+
     const headers = sheet.getRange(1, 1, 1, sheet.getMaxColumns()).getValues()[0];
     headers.forEach( (name, index) => {
       headers[index] = Object.keys(HEADERNAMES).find(key => HEADERNAMES[key] === name);
     })
 
     headers.forEach( (header, index) => {
-      sorted[index] = data[header];
+      sorted[index] = merged[header];
     });
 
+    console.info(`ROW: ${row}, SORTED DATA: ${sorted}`);
+    
     // Write to Row on Sheet
-    console.info(`Writing to Row: ${row}: ${[sorted]}`);
     sheet.getRange(row, 1, 1, sorted.length).setValues([sorted]);
     return 0;
   } catch (err) {
@@ -148,8 +156,38 @@ const SetRowData = (sheet = SHEETS.Aurum, row = 2, data = {
 }
 
 const _testA = () => {
-  SetRowData(SHEETS.Spectrum, 50);
+  SetRowData(SHEETS.Spectrum, 27, {
+    status : STATUS.cancelled.plaintext,
+    email : `borq@borq.com`,
+    weight : 2938457293,
+  });
 }
+
+
+/** 
+ * Merge Objects
+ * @param {object} (rowData)
+ * @param {object} (rowData2)
+ * @returns {object} Merged Row Data
+ */
+const MergeObjects = (objA, objB) => {
+  let result = {};
+
+  for (let key in objA) {
+    if (objA.hasOwnProperty(key)) {
+      result[key] = objA[key] !== null ? objA[key] : objB[key];
+    }
+  }
+
+  for (let key in objB) {
+    if (objB.hasOwnProperty(key) && !result.hasOwnProperty(key)) {
+      result[key] = objB[key];
+    }
+  }
+
+  return result;
+}
+
 
 /**
  * Set the value of a cell by column name and row number

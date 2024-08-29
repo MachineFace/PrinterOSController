@@ -669,7 +669,7 @@ class PrinterOS {
   /**
    * Calculate Cost Via Extruder Data
    * @private
-   */
+   *
   _CalculateCost(extruders = {}) {
     try {
       console.info(`Extruders: ${extruders}`);
@@ -685,6 +685,7 @@ class PrinterOS {
       return 1;
     }
   }
+  */
 
 }
 

@@ -11,9 +11,9 @@ class Emailer {
     projectname : projectname = `Your Project Name`,
     jobnumber : jobnumber = 1000000001,
     weight : weight = 0.0,
-    designspecialist : designspecialist = `Cody Glen`,
-    designspecialistemail : designspecialistemail = `codyglen@berkeley.edu`,
-    designspecialistemaillink : designspecialistemaillink = `<a href="codyglen@berkeley.edu">codyglen@berkeley.edu</a>`, 
+    designspecialist : designspecialist = `Staff`,
+    designspecialistemail : designspecialistemail = SERVICE_EMAIL,
+    designspecialistemaillink : designspecialistemaillink = `<a href="${SERVICE_EMAIL}">${SERVICE_EMAIL}</a>`, 
   }) {
     /** @private */
     this.email = email;
