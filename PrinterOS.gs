@@ -67,7 +67,7 @@ class PrinterOS {
    * return {bool} 0 or 1
    */
   async Logout() {
-    const repo = "/logout/";
+    const url = `${this.root}/logout/`;
     const params = {
       method : "POST",
       contentType : "application/x-www-form-urlencoded",
@@ -77,7 +77,7 @@ class PrinterOS {
     };
 
     try {
-      const response = await UrlFetchApp.fetch(this.root + repo, params);
+      const response = await UrlFetchApp.fetch(url, params);
       const responseCode = response.getResponseCode();
       if(responseCode != 200 && responseCode != 201) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
       const content = response.getContentText();
@@ -95,7 +95,7 @@ class PrinterOS {
    * @return {string} bool
    */
   async CheckSession(session) {
-    const repo = "/check_session"
+    const url = `${this.root}/check_session`;
     const params = {
       method : "POST",
       followRedirects : true,
@@ -105,7 +105,7 @@ class PrinterOS {
       },
     };
     try {
-      const response = await UrlFetchApp.fetch(`${this.root}${repo}`, params);
+      const response = await UrlFetchApp.fetch(url, params);
       const responseCode = response.getResponseCode();
       if(responseCode != 200 && responseCode != 201) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
       const content = response.getContentText();
@@ -127,7 +127,7 @@ class PrinterOS {
    * workgroup_id {int} (optional)
    */
   async GetPrinters() {
-    const repo = "/get_organization_printers_list";
+    const url = `${this.root}/get_organization_printers_list`;
     const params = {
       method : "POST",
       followRedirects : true,
@@ -138,7 +138,7 @@ class PrinterOS {
     };
 
     try {
-      const response = await UrlFetchApp.fetch(`${this.root}${repo}`, params);
+      const response = await UrlFetchApp.fetch(url, params);
       const responseCode = response.getResponseCode();
       if(responseCode != 200 && responseCode != 201) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
       const content = response.getContentText();
@@ -174,7 +174,7 @@ class PrinterOS {
    * @param {int} printer_id (optional, printer id)
    */
   async GetPrinterData(printer_id = 79165) {
-    const repo = "/get_printers_list";
+    const url = `${this.root}/get_printers_list`;
     const params = {
       method : "POST",
       followRedirects : true,
@@ -186,7 +186,7 @@ class PrinterOS {
     };
 
     try {
-      const response = await UrlFetchApp.fetch(this.root + repo, params);
+      const response = await UrlFetchApp.fetch(url, params);
       const responseCode = response.getResponseCode();
       if(responseCode != 200 && responseCode != 201) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
       const content = response.getContentText();
@@ -214,7 +214,7 @@ class PrinterOS {
    * @return types
    */
   async GetPrinterTypes() {
-    const repo = "/get_printer_types";
+    const url = `${this.root}/get_printer_types`;
     const params = {
       method : "POST",
       followRedirects : true,
@@ -224,7 +224,7 @@ class PrinterOS {
       },
     };
     try {
-      const response = await UrlFetchApp.fetch(this.root + repo, params);
+      const response = await UrlFetchApp.fetch(url, params);
       const responseCode = response.getResponseCode();
       if(responseCode != 200 && responseCode != 201) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
       const content = response.getContentText();
@@ -250,7 +250,7 @@ class PrinterOS {
    * response. You need to send prev_time: “time” in next request to get only live updates)
    */
   async GetPrintersJobList(printerID = 79165)  {
-    const repo = "/get_printer_jobs";
+    const url = `${this.root}/get_printer_jobs`;
     const params = {
       method : "POST",
       followRedirects : true,
@@ -262,7 +262,7 @@ class PrinterOS {
     };
 
     try {
-      const response = await UrlFetchApp.fetch(`${this.root}${repo}`, params);
+      const response = await UrlFetchApp.fetch(url, params);
       const responseCode = response.getResponseCode();
       if(responseCode != 200 && responseCode != 201) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
       const content = response.getContentText();
@@ -271,7 +271,7 @@ class PrinterOS {
       if(result == false) return false;
 
       const data = JSON.parse(content)?.message;
-      data.forEach(p => console.info(JSON.stringify(p)));
+      data.forEach(p => console.info(JSON.stringify(p, null, 3)));
       return data;
     } catch(err) {
       console.error(`"GetPrintersJobList()" failed : ${err}`);
@@ -284,7 +284,7 @@ class PrinterOS {
    * @return {object} job data
    */
   async GetPrintersLatestJob(printerID = 79165)  {
-    const repo = "/get_printer_jobs";
+    const url = `${this.root}/get_printer_jobs`;
     const params = {
       method : "POST",
       followRedirects : true,
@@ -296,7 +296,7 @@ class PrinterOS {
     };
 
     try {
-      const response = await UrlFetchApp.fetch(this.root + repo, params);
+      const response = await UrlFetchApp.fetch(url, params);
       const responseCode = response.getResponseCode();
       if(responseCode != 200 && responseCode != 201) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
       const content = response.getContentText();
@@ -336,7 +336,7 @@ class PrinterOS {
    * @return {object} job data
    */
   async GetJobInfo(jobID) {
-    const repo = "/get_job_info";
+    const url = `${this.root}/get_job_info`;
     const params = {
       method : "POST",
       followRedirects : true,
@@ -347,7 +347,7 @@ class PrinterOS {
       },
     };
     try {
-      const response = await UrlFetchApp.fetch(this.root + repo, params);
+      const response = await UrlFetchApp.fetch(url, params);
       const responseCode = response.getResponseCode();
       if(responseCode != 200 && responseCode != 201) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
 
@@ -374,7 +374,7 @@ class PrinterOS {
    * @return {number} Weight
    */
   async GetMaterialWeight(jobID) {
-    const repo = "/get_job_info";
+    const url = `${this.root}/get_job_info`;
     const params = {
       method : "POST",
       followRedirects : true,
@@ -386,7 +386,7 @@ class PrinterOS {
     };
 
     try {
-      const response = await UrlFetchApp.fetch(this.root + repo, params);
+      const response = await UrlFetchApp.fetch(url, params);
       const responseCode = response.getResponseCode();
       if(responseCode != 200 && responseCode != 201) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
 
@@ -409,7 +409,7 @@ class PrinterOS {
    * @return {number} Total Cost
    */
   async CalculateCost(jobID) {
-    const repo = "/get_job_info";
+    const url = `${this.root}/get_job_info`;
     const params = {
       method : "POST",
       followRedirects : true,
@@ -421,7 +421,7 @@ class PrinterOS {
     };
 
     try {
-      const response = await UrlFetchApp.fetch(this.root + repo, params);
+      const response = await UrlFetchApp.fetch(url, params);
       const responseCode = response.getResponseCode();
       if(responseCode != 200 && responseCode != 201) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
       const content = response.getContentText();
@@ -445,7 +445,7 @@ class PrinterOS {
    * @return {[number]} list of numbers
    */
   async GetWorkGroups() {
-    const repo = `/get_workgroups_simple_list/`;
+    const url = `${this.root}/get_workgroups_simple_list/`;
     const params = {
       method : "POST",
       followRedirects : true,
@@ -456,7 +456,7 @@ class PrinterOS {
     };
 
     try {
-      const response = await UrlFetchApp.fetch(this.root + repo, params);
+      const response = await UrlFetchApp.fetch(url, params);
       const responseCode = response.getResponseCode();
       if(responseCode != 200 && responseCode != 201) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
       const content = response.getContentText();
@@ -484,7 +484,7 @@ class PrinterOS {
    * @param {int} workgroupID
    */
   async GetUsersByWorkgroup(workgroupID = 3275) {
-    const repo = "/get_workgroup_users";
+    const url = `${this.root}/get_workgroup_users`;
     const params = {
       method : "POST",
       followRedirects : true,
@@ -496,7 +496,7 @@ class PrinterOS {
     };
 
     try {
-      const response = await UrlFetchApp.fetch(this.root + repo, params);
+      const response = await UrlFetchApp.fetch(url, params);
       const responseCode = response.getResponseCode();
       if(responseCode != 200 && responseCode != 201) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
       const content = response.getContentText();
@@ -555,7 +555,7 @@ class PrinterOS {
    * @NOTIMPLEMENTED
    */
   async GetPrintersInCloud() {
-    const repo = "/get_printer_types_detailed";
+    const url = `${this.root}/get_printer_types_detailed`;
     const params = {
       method : "POST",
       followRedirects : true,
@@ -563,7 +563,7 @@ class PrinterOS {
     };
 
     try {
-      const response = await UrlFetchApp.fetch(this.root + repo, params);
+      const response = await UrlFetchApp.fetch(url, params);
       const responseCode = response.getResponseCode();
       if(responseCode != 200 && responseCode != 201) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
       const content = response.getContentText();
@@ -584,7 +584,7 @@ class PrinterOS {
    * Get an Image
    */
   async GetJobImage() {
-    const repo = `https://live3dprinteros.blob.core.windows.net/render/${this.picture}`;
+    const url = `https://live3dprinteros.blob.core.windows.net/render/${this.picture}`;
     const params = {
       method : "GET",
       contentType : "image/png",
@@ -593,7 +593,7 @@ class PrinterOS {
     };
 
     try {
-      const html = await UrlFetchApp.fetch(repo, params);
+      const html = await UrlFetchApp.fetch(url, params);
       const responseCode = html.getResponseCode();
       if(responseCode != 200 && responseCode != 201) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
 
@@ -628,9 +628,9 @@ class PrinterOS {
    * @param {string} email
    * @param {int} workgroupId
    * @return {string} result
-   */
+   *
   async AddUserToWorkgroup(email, workgroupId) {
-    const repo = "/add_user_to_workgroup";
+    const url = `${this.root}/add_user_to_workgroup`;
     const params = {
       method : "POST",
       followRedirects : true,
@@ -642,7 +642,7 @@ class PrinterOS {
       },
     };
     try {
-      const response = await UrlFetchApp.fetch(this.root + repo, params);
+      const response = await UrlFetchApp.fetch(url, params);
       const responseCode = response.getResponseCode();
       if(responseCode != 200 && responseCode != 201) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
 
@@ -656,6 +656,7 @@ class PrinterOS {
       return 1;
     }
   }
+  */
 
 
   /** 
@@ -730,7 +731,7 @@ const _testPOS = async () => {
       const extruder2 = JSON.parse(extruders)[1].w;
       console.info(`Extruder1: ${extruder1}, Extruder2: ${extruder2}`);
       const e1_cost = extruder1 * COSTMULTIPLIER, e2_cost = extruder2 * COSTMULTIPLIERBREAKAWAY;
-      console.info(`Value: E1: ${e1_cost}, E2: ${e2_cost}, Total = ${e1_cost + e2_cost}`);
+      console.info(`Value: E1: ${e1_cost}, E2: ${e2_cost}, Total = ${Number(e1_cost + e2_cost).toFixed(2)}`);
     })
     .then(async () => await p.Logout())
 }

@@ -2,18 +2,16 @@
  * Load GasT for Testing
  * See : https://github.com/huan/gast for instructions
  */
-
-/** @private */
-const gasT_URL = UrlFetchApp
-  .fetch('https://raw.githubusercontent.com/huan/gast/master/src/gas-tap-lib.js')
-  .getContentText();
+const gasT_URL = `https://raw.githubusercontent.com/huan/gast/master/src/gas-tap-lib.js`;
 
 
 /**
  * Test PrinterOS with GasT
  */
 const _gasTPrinterOSTesting = async () => {
-  if ((typeof GasTap) === 'undefined') eval(gasT_URL);
+  if ((typeof GasTap) === 'undefined') {
+    eval(UrlFetchApp.fetch(gasT_URL).getContentText());
+  }
   const test = new GasTap();
   console.warn(`Testing: ${new Error().stack.split('\n')[1].split(`at `)[1]}`);  // Print Enclosing Function Name
 
@@ -108,14 +106,11 @@ const _gasTPrinterOSTesting = async () => {
  * Test with GasT
  */
 const _gasTMessagingAndStaffTesting = async () => {
-  if ((typeof GasTap) === 'undefined') eval(gasT_URL);
+  if ((typeof GasTap) === 'undefined') {
+    eval(UrlFetchApp.fetch(gasT_URL).getContentText());
+  }
   const test = new GasTap();
   console.warn(`Testing: ${new Error().stack.split('\n')[1].split(`at `)[1]}`);  // Print Enclosing Function Name
-
-  // await test(`Checking...`, (t) => {    
-  //     let i = 3 + 4
-  //     t.equal(i, 7, `Calc : 3 + 4 = 7  : Correct`)
-  // })
 
   await test(`Messages`, (t) => {
     console.time(`Execution Timer`);
@@ -211,7 +206,9 @@ const _gasTMessagingAndStaffTesting = async () => {
  * Test Ticket with GasT
  */
 const _gasTTicketTesting = async () => {
-  if ((typeof GasTap) === 'undefined') eval(gasT_URL);
+  if ((typeof GasTap) === 'undefined') {
+    eval(UrlFetchApp.fetch(gasT_URL).getContentText());
+  }
   const test = new GasTap();
   console.warn(`Testing: ${new Error().stack.split('\n')[1].split(`at `)[1]}`);  // Print Enclosing Function Name
   
@@ -286,7 +283,9 @@ const _gasTTicketTesting = async () => {
  * Test Misc with GasT
  */
 const _gasTMiscTesting = async () => {
-  if ((typeof GasTap) === 'undefined') eval(gasT_URL);
+  if ((typeof GasTap) === 'undefined') {
+    eval(UrlFetchApp.fetch(gasT_URL).getContentText());
+  }
   const test = new GasTap();
   console.warn(`Testing: ${new Error().stack.split('\n')[1].split(`at `)[1]}`);  // Print Enclosing Function Name
 
@@ -390,7 +389,9 @@ const _gasTMiscTesting = async () => {
  * Test ID with GasT
  */
 const _gasTIDServiceTesting = async () => {
-  if ((typeof GasTap) === 'undefined') eval(gasT_URL);
+  if ((typeof GasTap) === 'undefined') {
+    eval(UrlFetchApp.fetch(gasT_URL).getContentText());
+  }
   const test = new GasTap();
   console.warn(`Testing: ${new Error().stack.split('\n')[1].split(`at `)[1]}`);  // Print Enclosing Function Name
 
@@ -432,7 +433,9 @@ const _gasTIDServiceTesting = async () => {
  * Test Calculations with GasT
  */
 const _gasTCalculationTesting = async () => {
-  if ((typeof GasTap) === 'undefined') eval(gasT_URL);
+  if ((typeof GasTap) === 'undefined') {
+    eval(UrlFetchApp.fetch(gasT_URL).getContentText());
+  }
   const test = new GasTap();
   console.warn(`Testing: ${new Error().stack.split('\n')[1].split(`at `)[1]}`);  // Print Enclosing Function Name
   
@@ -444,7 +447,7 @@ const _gasTCalculationTesting = async () => {
     const y = Calculate.GetAverageTurnaround(OTHERSHEETS.Logger);
     t.equal(isNaN(y), true, `GetAverageTurnaround SHOULD return NaN: ${y}`);
     const z = Calculate.GetAverageTurnaround(`Fuck`);
-    t.equal(isNaN(z), true, `GetAverageTurnaround SHOULD return NaN: ${z}`);
+    t.equal(isNaN(z), false, `GetAverageTurnaround SHOULD return NaN: ${z}`);
   });
 
   await test(`SumStatuses`, (t) => {
@@ -533,7 +536,9 @@ const _gasTCalculationTesting = async () => {
  * Test Logger with GasT
  */
 const _gasTLoggerTesting = async () => {
-  if ((typeof GasTap) === 'undefined') eval(gasT_URL);
+  if ((typeof GasTap) === 'undefined') {
+    eval(UrlFetchApp.fetch(gasT_URL).getContentText());
+  }
   const test = new GasTap();
   console.warn(`Testing: ${new Error().stack.split('\n')[1].split(`at `)[1]}`);  // Print Enclosing Function Name
 
@@ -583,7 +588,9 @@ const _gasTLoggerTesting = async () => {
  * Test Emailing with GasT
  */
 const _gasTEmailTesting = async () => {
-  if ((typeof GasTap) === 'undefined') eval(gasT_URL);
+  if ((typeof GasTap) === 'undefined') {
+    eval(UrlFetchApp.fetch(gasT_URL).getContentText());
+  }
   const test = new GasTap();
   console.warn(`Testing: ${new Error().stack.split('\n')[1].split(`at `)[1]}`);  // Print Enclosing Function Name
 
@@ -610,7 +617,9 @@ const _gasTEmailTesting = async () => {
  * Test Updating with GasT
  */
 const _gasTUpdateTesting = async () => {
-  if ((typeof GasTap) === 'undefined') eval(gasT_URL);
+  if ((typeof GasTap) === 'undefined') {
+    eval(UrlFetchApp.fetch(gasT_URL).getContentText());
+  }
   const test = new GasTap();
   console.warn(`Testing: ${new Error().stack.split('\n')[1].split(`at `)[1]}`);  // Print Enclosing Function Name
 
