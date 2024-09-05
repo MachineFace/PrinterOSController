@@ -32,7 +32,7 @@ class PrinterOS {
    * @return {string} session
    */
   async Login() {
-    const repo = "/login/";
+    const url = `${this.root}/login/`;
     const params = {
       method : "POST",
       contentType : "application/x-www-form-urlencoded",
@@ -44,7 +44,7 @@ class PrinterOS {
       },
     };
     try {
-      const response = await UrlFetchApp.fetch(this.root + repo, params);
+      const response = await UrlFetchApp.fetch(url, params);
       const responseCode = response.getResponseCode();
       if(responseCode != 200 && responseCode != 201) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
       const content = response.getContentText();
@@ -101,7 +101,7 @@ class PrinterOS {
       followRedirects : true,
       muteHttpExceptions : true,
       payload : {
-        "session" : session,
+        session : session,
       },
     };
     try {
@@ -133,7 +133,7 @@ class PrinterOS {
       followRedirects : true,
       muteHttpExceptions : true,
       payload : {
-        "session" : this.session,
+        session : this.session,
       },
     };
 
@@ -180,8 +180,8 @@ class PrinterOS {
       followRedirects : true,
       muteHttpExceptions : true,
       payload : {
-        "session" : this.session,
-        "printer_id" : printer_id,
+        session : this.session,
+        printer_id : printer_id,
       },
     };
 
@@ -220,7 +220,7 @@ class PrinterOS {
       followRedirects : true,
       muteHttpExceptions : true,
       payload : {
-        "session" : this.session,
+        session : this.session,
       },
     };
     try {
@@ -256,8 +256,8 @@ class PrinterOS {
       followRedirects : true,
       muteHttpExceptions : true,
       payload : {
-        "session" : this.session,
-        "printer_id" : printerID,
+        session : this.session,
+        printer_id : printerID,
       },
     };
 
@@ -290,8 +290,8 @@ class PrinterOS {
       followRedirects : true,
       muteHttpExceptions : true,
       payload : {
-        "session" : this.session,
-        "printer_id" : printerID,
+        session : this.session,
+        printer_id : printerID,
       },
     };
 
@@ -342,8 +342,8 @@ class PrinterOS {
       followRedirects : true,
       muteHttpExceptions : true,
       payload : {
-        "session" : this.session,
-        "job_id" : jobID,
+        session : this.session,
+        job_id : jobID,
       },
     };
     try {
@@ -380,8 +380,8 @@ class PrinterOS {
       followRedirects : true,
       muteHttpExceptions : true,
       payload : {
-        "session" : this.session,
-        "job_id" : jobID,
+        session : this.session,
+        job_id : jobID,
       },
     };
 
@@ -415,8 +415,8 @@ class PrinterOS {
       followRedirects : true,
       muteHttpExceptions : true,
       payload : {
-        "session" : this.session,
-        "job_id" : jobID,
+        session : this.session,
+        job_id : jobID,
       },
     };
 
@@ -451,7 +451,7 @@ class PrinterOS {
       followRedirects : true,
       muteHttpExceptions : true,
       payload : {
-        "session" : this.session,
+        session : this.session,
       },
     };
 
@@ -490,8 +490,8 @@ class PrinterOS {
       followRedirects : true,
       muteHttpExceptions : true,
       payload : {
-        "session" : this.session,
-        "workgroup_id" : workgroupID,
+        session : this.session,
+        workgroup_id : workgroupID,
       },
     };
 

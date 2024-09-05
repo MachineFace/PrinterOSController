@@ -7,6 +7,7 @@ const gasT_URL = `https://raw.githubusercontent.com/huan/gast/master/src/gas-tap
 
 /**
  * Test PrinterOS with GasT
+ * @private
  */
 const _gasTPrinterOSTesting = async () => {
   if ((typeof GasTap) === 'undefined') {
@@ -18,7 +19,7 @@ const _gasTPrinterOSTesting = async () => {
   const p = new PrinterOS();
   
   await test(`PrinterOS Self-Test`, (t) => {
-    t.notThrow(() => p, `PrinterOS instance SHOULD NOT throw error: ${JSON.stringify(p)}`);
+    t.notThrow(() => p, `PrinterOS Self-Test SHOULD NOT throw error: ${JSON.stringify(p)}`);
   });
 
   await test(`Login`, (t) => {

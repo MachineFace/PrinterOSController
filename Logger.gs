@@ -13,7 +13,7 @@ class Log {
    */
   static Error(message) {
     try{
-      const text = [new Date().toUTCString(), "ERROR!", message, ];
+      const text = [ new Date().toUTCString(), "ERROR!", message, ];
       const sheet = this.prototype._GetLoggerSheet();
       sheet.appendRow(text);
       console.error(`${text[0]}, ${text[1]} : ${message}`);
@@ -32,7 +32,7 @@ class Log {
    */
   static Warning(message) {
     try{
-      const text = [new Date().toUTCString(), "WARNING", message, ];
+      const text = [ new Date().toUTCString(), "WARNING", message, ];
       OTHERSHEETS.Logger.appendRow(text);
       console.warn(`${text[0]}, ${text[1]} : ${message}`);
       this.prototype._PopItem();
@@ -50,7 +50,7 @@ class Log {
    */
   static Info(message) {
     try {
-      const text = [new Date().toUTCString(), "INFO", message, ];
+      const text = [ new Date().toUTCString(), "INFO", message, ];
       OTHERSHEETS.Logger.appendRow(text);
       console.info(`${text[0]}, ${text[1]} : ${message}`);
       this.prototype._PopItem();
@@ -68,7 +68,7 @@ class Log {
    */
   static Debug(message) {
     try {
-      const text = [new Date().toUTCString(), "DEBUG", message, ];
+      const text = [ new Date().toUTCString(), "DEBUG", message, ];
       OTHERSHEETS.Logger.appendRow(text);
       console.log(`${text[0]}, ${text[1]} : ${message}`);
       this.prototype._PopItem();
@@ -111,6 +111,7 @@ class Log {
   /**
    * Get Logger Sheet
    * Returns logger sheet even if logger sheet doesn't exist
+   * @private
    */
   _GetLoggerSheet() {
     try {
