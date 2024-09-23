@@ -49,31 +49,34 @@ class CalendarFactory {
    * @return {event} event
    */
   async CreateEvent( rowdata ) {
-    const title = `${rowdata?.printerName}, JobID: ${rowdata?.jobID}, Email: ${rowdata?.email}, Filename:${rowdata?.filename}`;
+    try {
+      const title = `${rowdata?.printerName}, JobID: ${rowdata?.jobID}, Email: ${rowdata?.email}, Filename:${rowdata?.filename}`; 
+      if(this._CheckIfEventExists(rowdata?.jobID) == true) return; // Skip if it exists
 
-    // Skip if it exists
-    if(this._CheckIfEventExists(rowdata?.jobID) == true) return;
+      const startTime =  new Date();
+      const endTime = this._CalculateCompletionTime(startTime, rowdata?.duration);
+      const color = PRINTERDATA[rowdata?.printerName].color;
+      const location = `Jacobs Hall Rm 234 \n${rowdata?.printerName}`;
+      let description = `${SERVICE_NAME} \n`;
 
-    const startTime =  new Date();
-    const endTime = this._CalculateCompletionTime(startTime, rowdata?.duration);
-    const color = PRINTERDATA[rowdata?.printerName].color;
-    const location = `Jacobs Hall Rm 234 \n${rowdata?.printerName}`;
-    let description = `${SERVICE_NAME} \n`;
+      Object.entries(rowdata).forEach(entry => {
+        let headername = HEADERNAMES[entry[0]];
+        let value = entry[1];
+        description += `${headername}: ${value}\n`;
+      });
 
-    Object.entries(rowdata).forEach(entry => {
-      let headername = HEADERNAMES[entry[0]];
-      let value = entry[1];
-      description += `${headername}: ${value}\n`;
-    });
-
-    let event = await this.calendar
-      .createEvent(title, startTime, endTime)
-      .setDescription(description)
-      .setLocation(location)
-      .setColor(color)
-    console.info(event.getId());
-    this.DeleteDuplicateEvents();
-    return await event;
+      let event = await this.calendar
+        .createEvent(title, startTime, endTime)
+        .setDescription(description)
+        .setLocation(location)
+        .setColor(color)
+      console.info(event.getId());
+      this.DeleteDuplicateEvents();
+      return await event;
+    } catch(err) {
+      console.error(`"CreateEvent()" failed : ${err}`);
+      return 1;
+    }
   }
 
   /**
@@ -98,7 +101,6 @@ class CalendarFactory {
           console.info(`Event: ${eventID}, Deleted`);
         }
       });
-      
       return 0;
     } catch(err) {
       console.error(`"DeleteEvent()" failed : ${err}`);
@@ -121,10 +123,6 @@ class CalendarFactory {
       console.error(`"DeleteEventByGID()" failed : ${err}`);
       return 1;
     }
-
-
-      
-
   }
 
   /**
@@ -139,8 +137,10 @@ class CalendarFactory {
           .getEventById(event.getId())
           .deleteEvent();
       });
+      return 0;
     } catch(err) {
       console.error(`"DeleteAllEvents()" failed : ${err}`);
+      return 1;
     }
   }
 
@@ -175,17 +175,22 @@ class CalendarFactory {
    * @return {bool} true or false
    */
   _CheckIfEventExists(jobID) {
-    const events = this.Events;
-    for(let i = 0; i < events.length; i++) {
-      const eventID = events[i].getId();
-      let jID = events[i].getTitle()
-        .replace(` `, ``)
-        .split(",")[1]
-        .replace(`JobID: `, ``);
-        console.info(`JobID: ${jID}`);
-      if(jID != jobID) return false;
-      console.info(`Found Event: ${eventID} for JobID: ${jobID}....`);
-      return true;
+    try {
+      const events = this.Events;
+      for(let i = 0; i < events.length; i++) {
+        const eventID = events[i].getId();
+        let jID = events[i].getTitle()
+          .replace(` `, ``)
+          .split(",")[1]
+          .replace(`JobID: `, ``);
+          console.info(`JobID: ${jID}`);
+        if(jID != jobID) return false;
+        console.info(`Found Event: ${eventID} for JobID: ${jobID}....`);
+        return true;
+      }
+    } catch(err) {
+      console.error(`"_CheckIfEventExists()" failed : ${err}`);
+      return 1;
     }
   }
 
@@ -197,10 +202,15 @@ class CalendarFactory {
    * @return {Date} end
    */
   _CalculateCompletionTime(start = new Date(), duration = 3.75) {
-    const s = new Date(start).getTime();
-    const d = (duration + 0.5) * 3600000;
-    const date = new Date(s + d);
-    return date;
+    try {
+      const s = new Date(start).getTime();
+      const d = (duration + 0.5) * 3600000;
+      const date = new Date(s + d);
+      return date;
+    } catch(err) {
+      console.error(`"_CalculateCompletionTime()" failed : ${err}`);
+      return 1;
+    }
   }
 
 
@@ -214,9 +224,9 @@ const deleteDupEvents = () => new CalendarFactory().DeleteDuplicateEvents();
 
 const _testCalendars = () => {
   let c = new CalendarFactory();
-  // c.CreateEvent(GetRowData(SHEETS.Plumbus, 22));
-  // c.CreateEvent(GetRowData(SHEETS.Luteus, 227));
-  // c.CreateEvent(GetRowData(SHEETS.Zardoz, 150));
+  c.CreateEvent(GetRowData(SHEETS.Plumbus, 22));
+  c.CreateEvent(GetRowData(SHEETS.Luteus, 227));
+  c.CreateEvent(GetRowData(SHEETS.Zardoz, 150));
   // c.Events;
   c.Events;
   // c.DeleteEvent(3271817);

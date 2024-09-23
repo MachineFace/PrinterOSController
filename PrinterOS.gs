@@ -1,6 +1,7 @@
 /**
  * -----------------------------------------------------------------------------------------------------------------
  * PrinterOS Class for handling PrinterOS requests and responses
+ * API Info: https://docs.google.com/document/d/16u1uKQFML0sJ9SCdnHzcYX4eQh9dvsgeSeEtFymhTLs/edit#heading=h.tn9ro1ef6f0
  */
 class PrinterOS {
   constructor(){
@@ -628,7 +629,7 @@ class PrinterOS {
    * @param {string} email
    * @param {int} workgroupId
    * @return {string} result
-   *
+   * NOTIMPLEMENTED
   async AddUserToWorkgroup(email, workgroupId) {
     const url = `${this.root}/add_user_to_workgroup`;
     const params = {
@@ -670,7 +671,7 @@ class PrinterOS {
   /**
    * Calculate Cost Via Extruder Data
    * @private
-   *
+   * NOTIMPLEMENTED
   _CalculateCost(extruders = {}) {
     try {
       console.info(`Extruders: ${extruders}`);
