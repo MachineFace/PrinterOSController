@@ -64,14 +64,19 @@ class DriveController {
    * Count Tickets
    */
   CountTickets() {
-    let count = 0;
-    let files = this.ticketFolder.next().getFiles();
-    while (files.hasNext()) {
-      count++;
-      files.next();
+    try {
+      let count = 0;
+      let files = this.ticketFolder.next().getFiles();
+      while (files.hasNext()) {
+        count++;
+        files.next();
+      }
+      console.info(`Total Tickets : ${count}`);
+      return count;
+    } catch(err) {
+      console.error(`"CountTickets()" failed : ${err}`);
+      return 1;
     }
-    console.info(`Total Tickets : ${count}`);
-    return count;
   }
 
   /**
@@ -83,20 +88,24 @@ class DriveController {
     while (files.hasNext()) {
       let file = files.next();
       let date = file.getDateCreated();
+      let fileName = file.getName();
+      let id = file.getId();
+      let owner = file.getOwner();
+      let tag = `File: ${fileName}, ID: ${id}, Date: ${date}, Owner: ${owner}`;
       if(date < this.dateMinusOneTwenty) {
-        console.warn(`Attempting delete ----> Name : ${file.getName()}, ID : ${file.getId()}, Date : ${file.getDateCreated()}, Owner: ${file.getOwner()}`);
         try {
+          console.warn(`ATTEMPTING DELETE: (${tag})`);
           file.setTrashed(true);
-          console.warn(`Removed ----> Name : ${file.getName()}, ID : ${file.getId()}, Date : ${file.getDateCreated()}`);
+          console.warn(`REMOVED: (${tag})`);
         } catch(err) {
-          console.error(`Whoops: Couldn't delete ${file.getName()}, ${err}`);
+          console.error(`Whoops: Couldn't delete (${tag}): ${err}`);
           try {
-            DriveApp.removeFile(file.getId());
+            DriveApp.removeFile(id);
           } catch(error) {
-            console.error(`Whoops: REALLY Couldn't delete ${file.getName()}, ${error}`);
+            console.error(`Whoops: REALLY Couldn't delete (${tag}), ${error}`);
           }
         } finally {
-          console.info(`This file has been handled....`);
+          console.info(`(${tag}) has been handled.`);
         }
         
         
