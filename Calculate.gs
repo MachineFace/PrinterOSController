@@ -12,10 +12,9 @@ class Calculate {
    * @param {sheet} sheet
    * @return {number} average (hrs)
    */
-  static GetAverageTurnaroundPerSheet(sheet) {
+  static GetAverageTurnaroundPerSheet(sheet = SHEETS.Spectrum) {
     try {
-      let completionTimes = [...GetColumnDataByHeader(sheet, HEADERNAMES.duration)]
-        .filter(Boolean);
+      let completionTimes = [...GetColumnDataByHeader(sheet, HEADERNAMES.duration)];
       let average = Calculate.GeometricMean(completionTimes);
       return average;
     } catch (err) {
@@ -30,10 +29,11 @@ class Calculate {
   static PrintTurnarounds() {
     try {
       let entries = [];
-      for(const [key, value] of Object.entries(SHEETS)) {
-        let turnaround = `${Number(Calculate.GetAverageTurnaroundPerSheet(value)).toFixed(3) || 0} days`;
+      Object.entries(SHEETS).forEach(([key, sheet], idx) => {
+        let turnaround = `${Number(Calculate.GetAverageTurnaroundPerSheet(sheet)).toFixed(3) || 0} days`;
         entries.push([ key, turnaround, ]);
-      }
+      }); 
+      
       const values = [
         [ `Printer`, `Turnaround` ],
         ...entries,
@@ -45,27 +45,6 @@ class Calculate {
       return 1;
     }
   }
-
-  /**
-   * Sum a Sheet's Statuses
-   * @param {sheet} sheet
-   * @return {object} status counts
-   *
-  static SumStatuses(sheet) {
-    try {
-      if(CheckSheetIsForbidden(sheet)) throw new Error(`Bad sheet.`);
-      let count = {};
-      [...GetColumnDataByHeader(sheet, HEADERNAMES.status)]
-        .filter(Boolean)
-        .forEach( key => count[key] = ++count[key] || 0);
-      // console.info(JSON.stringify(count, null, 3));
-      return count;
-    } catch(err) {
-      console.error(`"SumStatuses()" failed : ${err}`);
-      return 1;
-    }
-  }
-  */
 
   /**
    * Sum all Statuses
@@ -148,14 +127,19 @@ class Calculate {
    */
   static async GetUserCount() {
     const pos = new PrinterOS();
-    let count = await pos.GetUserCount() || 0;
+    let count = 0
+    pos.Login()
+      .then(async () => {
+        await pos.GetUserCount()
+          .then(cx => count = cx);
+      });
     const values = [
-      [ `User Count` ], 
-      [ count ],
+      [ `User Count (From PrinterOS)` ], 
+      [ await count ],
     ];
-    console.info(values);
-    OTHERSHEETS.Metrics.getRange(1, 12, values.length, 1).setValues(values);
-    return await count;
+    console.info( await values);
+    OTHERSHEETS.Metrics.getRange(1, 12, 2, 1).setValues(await values);
+    return count;
   }
 
   /**
@@ -225,12 +209,10 @@ class Calculate {
 
     console.info(count);
     const values = [
-      [ `Completed Prints`, count.complete ? count.complete : 0 ],
-      [ `Cancelled Prints`, count.cancelled ? count.cancelled : 0 ],
-      [ `In-Progress Prints`, count.inProgress ? count.inProgress : 0 ],
-      [ `Queued Prints`, count.queued ? count.queued : 0 ],
+      [ `Completed Prints`, `Cancelled Prints`, `In-Progress Prints`, `Queued Prints`, ], 
+      [ count.complete ? count.complete : 0, count.cancelled ? count.cancelled : 0, count.inProgress ? count.inProgress : 0, count.queued ? count.queued : 0  ],
     ];
-    OTHERSHEETS.Metrics.getRange(25, 2, values.length, 2).setValues(values);
+    OTHERSHEETS.Metrics.getRange(1, 24, values.length, 4).setValues(values);
     return count;
   }
   
@@ -249,10 +231,11 @@ class Calculate {
     })
     const userSet = [...new Set(userList)].length;
     const values = [
-      [ `Users who have printed`, userSet, ],
+      [ `Users who have printed` ], 
+      [ userSet ],
     ];
     console.info(values);
-    OTHERSHEETS.Metrics.getRange(21, 2, 1, 2).setValues(values);
+    OTHERSHEETS.Metrics.getRange(1, 11, 2, 1).setValues(values);
     return userSet;
   }
 
@@ -805,8 +788,7 @@ const Metrics = () => {
  * Testing for Metrics
  */
 const _testMetrics = () => {
-  // console.info(Calculate.GetAverageTurnaroundPerSheet(SHEETS.Spectrum));
-  Calculate.UserStandardDeviation();
+  Calculate.GetUserCount();
 }
 
 

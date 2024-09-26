@@ -485,6 +485,7 @@ class PrinterOS {
    * @param {int} workgroupID
    */
   async GetUsersByWorkgroup(workgroupID = 3275) {
+    // if(this.CheckSession(this.session) == false) this.Login();
     const url = `${this.root}/get_workgroup_users`;
     const params = {
       method : "POST",
@@ -501,12 +502,12 @@ class PrinterOS {
       const responseCode = response.getResponseCode();
       if(responseCode != 200 && responseCode != 201) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
       const content = response.getContentText();
-      console.info(content)
+      // console.info(content)
       const result = JSON.parse(content)?.result;
       if(result == false) return false; 
 
       const users = JSON.parse(content)?.message;
-      console.info(users);
+      // console.info(users);
       return users;
     } catch(err) {
       console.error(`"GetUsersByWorkgroup()" failed : ${err}`);
@@ -537,12 +538,14 @@ class PrinterOS {
   async GetUserCount() {
     try {
       let users = [];
-      JACOBSWORKGROUPS.forEach( async(group) => {
-        const res = await this.GetUsersByWorkgroup(group)
-        console.info(res?.email);
-        res.forEach(user => users.push(user.email));
-      })
-      let count = new Set(users).size;
+      await JACOBSWORKGROUPS.forEach( async(group) => {
+        await this.GetUsersByWorkgroup(group)
+          .then(res => {
+            res.forEach(user => users.push(user?.email));
+          });
+      });
+      // console.info( await users)
+      let count = new Set( await users).size;
       console.info(`Count : ${count}`);
       return count;
     } catch(err) {
@@ -716,7 +719,7 @@ const _testPOS = async () => {
   const p = new PrinterOS();
   // console.info(p._GetUserSession())
   // console.info(p._ClearUserSession());
-  await p.Login()
+  // await p.Login()
     // .then(async () => await p.GetPrinters())
     // .then(async () => await p.GetPrinterTypes())
     // .then(async () => p.GetPrinterData(PRINTERIDS.Spectrum))
@@ -725,16 +728,21 @@ const _testPOS = async () => {
     // .then(async () => await p.GetWorkGroups())
     // .then(async () => await p.GetUsersByWorkgroup(""))
     // .then(async () => await p.GetUsers())
-    .then(async() => {
-      const { extruders, weight, file_cost, cost } = await p.GetJobInfo(3435856);
-      console.info(`Extruders: ${extruders}, Weight: ${weight}, File Cost: ${file_cost}, Cost: ${cost}`);
-      const extruder1 = JSON.parse(extruders)[0].w;
-      const extruder2 = JSON.parse(extruders)[1].w;
-      console.info(`Extruder1: ${extruder1}, Extruder2: ${extruder2}`);
-      const e1_cost = extruder1 * COSTMULTIPLIER, e2_cost = extruder2 * COSTMULTIPLIERBREAKAWAY;
-      console.info(`Value: E1: ${e1_cost}, E2: ${e2_cost}, Total = ${Number(e1_cost + e2_cost).toFixed(2)}`);
+    // .then(async() => {
+    //   const { extruders, weight, file_cost, cost } = await p.GetJobInfo(3435856);
+    //   console.info(`Extruders: ${extruders}, Weight: ${weight}, File Cost: ${file_cost}, Cost: ${cost}`);
+    //   const extruder1 = JSON.parse(extruders)[0].w;
+    //   const extruder2 = JSON.parse(extruders)[1].w;
+    //   console.info(`Extruder1: ${extruder1}, Extruder2: ${extruder2}`);
+    //   const e1_cost = extruder1 * COSTMULTIPLIER, e2_cost = extruder2 * COSTMULTIPLIERBREAKAWAY;
+    //   console.info(`Value: E1: ${e1_cost}, E2: ${e2_cost}, Total = ${Number(e1_cost + e2_cost).toFixed(2)}`);
+    // })
+    // .then(async () => await p.Logout())
+  p.Login()
+    .then(async () => {
+      let users = await p.GetUserCount();
+      console.info(users)
     })
-    .then(async () => await p.Logout())
 }
 
 
