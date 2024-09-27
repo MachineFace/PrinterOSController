@@ -546,7 +546,7 @@ class PrinterOS {
       });
       // console.info( await users)
       let count = new Set( await users).size;
-      console.info(`Count : ${count}`);
+      console.info(`User Count: ${count}`);
       return count;
     } catch(err) {
       console.error(`"GetUserCount()" failed : ${err}`);

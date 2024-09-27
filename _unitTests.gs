@@ -510,17 +510,11 @@ const _gasTCalculationTesting = async () => {
     t.equal(!isNaN(x), true, `SumSingleSheetMaterials SHOULD return a number: ${JSON.stringify(GetObjectType(x))}`)
   });
 
-  await test(`SumMaterials`, (t) => {
-    const x = Calculate.SumMaterials();
-    t.notEqual(x, undefined || null, `SumMaterials SHOULD NOT return undefined or null. ${x}`);
-    t.equal(!isNaN(x), true, `SumMaterials SHOULD return a number: ${JSON.stringify(GetObjectType(x))}`)
+  await test(`SumSingleSheetCost`, (t) => {
+    const x = Calculate.SumSingleSheetCost(SHEETS.Aurum);
+    t.notEqual(x, undefined || null, `SumSingleSheetCost SHOULD NOT return undefined or null. ${x}`);
+    t.equal(!isNaN(x), true, `SumSingleSheetCost SHOULD return a number: ${JSON.stringify(GetObjectType(x))}`)
   });
-
-  // await test(`SumSingleSheetCost`, (t) => {
-  //   const x = Calculate.SumSingleSheetCost(SHEETS.Aurum);
-  //   t.notEqual(x, undefined || null, `SumSingleSheetCost SHOULD NOT return undefined or null. ${x}`);
-  //   t.equal(!isNaN(x), true, `SumSingleSheetCost SHOULD return a number: ${JSON.stringify(GetObjectType(x))}`)
-  // });
 
   await test(`SumCosts`, (t) => {
     const x = Calculate.SumCosts();
