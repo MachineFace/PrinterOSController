@@ -285,6 +285,26 @@ const FindOne = (value) => {
   return res;
 }
 
+/**
+ * Find Email
+ * @private
+ * @param {string} name
+ * @returns {string} email
+ */
+const FindEmail = (name = ``) => {
+  name.toString().replace(/\s+/g, "");
+  let email = ``;
+  const finder = SpreadsheetApp.getActiveSpreadsheet()
+    .createTextFinder(name)
+    .findAll()[0];
+  if (finder != null) {
+    const row = finder.getRow();
+    const sheet = finder.getSheet();
+    // console.info(`SH: ${sheet}, R: ${row}`);
+    email = GetByHeader(sheet, HEADERNAMES.email, row);
+  }
+  return email;
+}
 
 /**
  * Search a Specific Sheets for a value
