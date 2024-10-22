@@ -20,24 +20,22 @@ const PopUpMarkAsAbandoned = async () => {
       progressUpdate.setValue(`Job number not found. Try again.`);
       return;
     }
-    let sheet = SHEETS[res.sheetName];
-    let row = res.row;
-    let email = res.email;
-    let projectname = res.filename;
-    let weight = res.weight;
-    SheetService.SetByHeader(sheet, HEADERNAMES.status, row, STATUS.abandoned.plaintext);
-    console.info(`Job number ${jobnumber} marked as abandoned. Sheet: ${sheet.getSheetName()} row: ${row}`);
-    await new Emailer({
+    let { status, printerID, printerName, jobID, timestamp, email, posStatCode, duration, notes, picture, ticket, filename, weight, cost, row, sheetName } = res;
+    status = STATUS.abandoned.plaintext;
+    let sheet = SHEETS[sheetName];
+    SheetService.SetByHeader(sheet, HEADERNAMES.status, row, status);
+    console.info(`Job ID ${jobID} marked as abandoned. Sheet: ${sheetName} row: ${row}`);
+    new Emailer({
       email : email, 
-      status : STATUS.abandoned.plaintext,
-      projectname : projectname,
-      jobnumber : jobnumber,
+      status : status,
+      projectname : filename,
+      jobnumber : jobID,
       weight : weight,
     })
-    console.warn(`Owner ${email} of abandoned job: ${jobnumber} emailed...`);
+    console.warn(`Owner ${email} of abandoned job: ${jobID} emailed...`);
     ui.alert(
       `${SERVICE_NAME} : Marked as Abandoned`, 
-      `${email}, Job: ${jobnumber} emailed... Sheet: ${sheet.getSheetName()} row: ${row}`, 
+      `Job ID: ${jobID}: ${email} emailed... (Sheet: ${sheetName} @ Row: ${row})`, 
       ui.ButtonSet.OK
     );
   } else if (response.getSelectedButton() == ui.Button.CANCEL) {
@@ -67,14 +65,17 @@ const PopUpMarkAsPickedUp = async () => {
         ui.ButtonSet.OK
       );
       progressUpdate.setValue(`Job number not found. Try again.`);
-    } else {
-      let sheet = SHEETS[res.sheetName];
-      let row = res.row;
-      let email = res.email;
-      SheetService.SetByHeader(sheet, HEADERNAMES.status, row, STATUS.pickedUp.plaintext);
-      console.warn(`${email}, Job: ${jobnumber} marked as picked up... Sheet: ${sheet.getSheetName()} row: ${row}`);
-      ui.alert(`Marked as Picked Up`, `${email}, Job: ${jobnumber}... Sheet: ${sheet.getSheetName()} row: ${row}`, ui.ButtonSet.OK);
     }
+    let { status, printerID, printerName, jobID, timestamp, email, posStatCode, duration, notes, picture, ticket, filename, weight, cost, row, sheetName } = res;
+    status = STATUS.pickedUp.plaintext;
+    let sheet = SHEETS[sheetName];
+    SheetService.SetByHeader(sheet, HEADERNAMES.status, row, status);
+    console.warn(`${email}, Job ID: ${jobID} marked as picked up... (Sheet: ${sheetName} @ Row: ${row}`);
+    ui.alert(
+      `Marked as Picked Up`, 
+      `${email}, Job: ${jobID}... Sheet: ${sheetName} @ Row: ${row}`, 
+      ui.ButtonSet.OK
+    );
   } else if (response.getSelectedButton() == ui.Button.CANCEL) {
     console.warn(`User chose not to mark as picked up...`);
   } else {
@@ -87,28 +88,19 @@ const PopUpMarkAsPickedUp = async () => {
  * -----------------------------------------------------------------------------------------------------------------
  * Creates a pop-up for counting users.
  */
-const PopupCountQueue = async () => {
-  let ui = await SpreadsheetApp.getUi();
-  let count = await CountQueue();
-  ui.alert(
-    `${SERVICE_NAME} Message`,
-    `Prints Currently in Queue : ${count}`,
-    ui.ButtonSet.OK
-  );
-};
-
-/**
- * Count the Number of Jobs in the Queue.
- */
-const CountQueue = () => {
+const PopupCountQueue = () => {
+  let ui = SpreadsheetApp.getUi();
   let count = 0;
   Object.values(SHEETS).forEach(sheet => {
     let pageCount = sheet.createTextFinder(`Queued`).findAll().length;
     count = count + pageCount;
   });
-  console.info(`Count : ${count}`);
-  return count;
-}
+  ui.alert(
+    `${SERVICE_NAME}`,
+    `Prints Currently in Queue : ${count}`,
+    ui.ButtonSet.OK
+  );
+};
 
 /**
  * Create a pop-up to Create a new Ticket if one is missing.
@@ -120,7 +112,6 @@ const PopupCreateTicket = async () => {
   let sheetname = thisSheet.getName();
   let thisRow = thisSheet.getActiveRange().getRow();
 
-  // If It is on a valid sheet
   if(SheetService.IsValidSheet(thisSheet) == false) {
     Browser.msgBox(
       `${SERVICE_NAME}`,
@@ -350,10 +341,10 @@ const PopupCreateNewId = async () => {
     if(a === ui.Button.OK) return;
   } 
   const { name, jobID } = SheetService.GetRowData(thisSheet, thisRow);
-  if(jobnumberService.IsValid(jobID)) {
+  if(IDService.isValid(jobID)) {
     const a = ui.alert(
       `${SERVICE_NAME}: Error!`,
-      `Jobnumber for ${name} exists already!\n${jobID}`,
+      `Job ID for ${name} exists already!\n${jobID}`,
       ui.ButtonSet.OK
     );
     if(a === ui.Button.OK) return;

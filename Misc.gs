@@ -35,9 +35,6 @@ const GetImage = async (pngFile) => {
 
 
 
-
-
-
 /** 
  * Merge Objects
  * @param {object} (rowData)
