@@ -31,7 +31,7 @@ const onChange = async (e) => {
   if (thisRow <= 1) return;
 
   // Ignore Edits on background sheets like Logger and StoreItems 
-  if (CheckSheetIsForbidden(ss)) return;
+  if (SheetService.IsValidSheet(ss) == false) return;
 
   let hardID;
   Object.values(PRINTERDATA).forEach(printer => {
@@ -39,9 +39,9 @@ const onChange = async (e) => {
   })
   console.info(`Sheet : ${sheetname} : PrinterID : ${hardID}`);
 
-  const status = GetByHeader(ss, HEADERNAMES.status, thisRow);
+  const status = SheetService.GetByHeader(ss, HEADERNAMES.status, thisRow);
   if(status == STATUS.abandoned.plaintext) {
-    const rowData = GetRowData(ss, thisRow);
+    const rowData = SheetService.GetRowData(ss, thisRow);
     let { status, printerID, printerName, jobID, timestamp, email, posStatCode, duration, notes, picture, ticket, filename, weight, cost, } = rowData;
 
     new Emailer({

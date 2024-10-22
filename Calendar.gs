@@ -48,7 +48,7 @@ class CalendarFactory {
    * @param {object} rowdata
    * @return {event} event
    */
-  async CreateEvent( rowdata ) {
+  CreateEvent(rowdata = {}) {
     try {
       const title = `${rowdata?.printerName}, JobID: ${rowdata?.jobID}, Email: ${rowdata?.email}, Filename:${rowdata?.filename}`; 
       if(this._CheckIfEventExists(rowdata?.jobID) == true) return; // Skip if it exists
@@ -65,14 +65,14 @@ class CalendarFactory {
         description += `${headername}: ${value}\n`;
       });
 
-      let event = await this.calendar
+      let event = this.calendar
         .createEvent(title, startTime, endTime)
         .setDescription(description)
         .setLocation(location)
         .setColor(color)
       console.info(event.getId());
       this.DeleteDuplicateEvents();
-      return await event;
+      return event;
     } catch(err) {
       console.error(`"CreateEvent()" failed : ${err}`);
       return 1;
@@ -82,7 +82,7 @@ class CalendarFactory {
   /**
    * Delete Event By JobID
    */
-  async DeleteEvent( jobID ) {
+  DeleteEvent(jobID = ``) {
     try {
       const events = [...this.Events]
         .filter(Boolean);
@@ -111,7 +111,7 @@ class CalendarFactory {
   /**
    * Delete Event by Google ID
    */
-  async DeleteEventByGID( googleId ) {
+  DeleteEventByGID(googleId = ``) {
     try {
       console.info(`Deleting Event : ${googleId}....`);
       this.calendar
@@ -128,7 +128,7 @@ class CalendarFactory {
   /**
    * Delete All Events
    */
-  async DeleteAllEvents() {
+  DeleteAllEvents() {
     try {
       const events = this.Events;
       events.forEach(event => {
@@ -170,11 +170,11 @@ class CalendarFactory {
 
   /** 
    * Check If Event Exists
-   * @private 
    * @param {string} jobID
    * @return {bool} true or false
+   * @private 
    */
-  _CheckIfEventExists(jobID) {
+  _CheckIfEventExists(jobID = ``) {
     try {
       const events = this.Events;
       for(let i = 0; i < events.length; i++) {
@@ -224,9 +224,9 @@ const deleteDupEvents = () => new CalendarFactory().DeleteDuplicateEvents();
 
 const _testCalendars = () => {
   let c = new CalendarFactory();
-  c.CreateEvent(GetRowData(SHEETS.Plumbus, 22));
-  c.CreateEvent(GetRowData(SHEETS.Luteus, 227));
-  c.CreateEvent(GetRowData(SHEETS.Zardoz, 150));
+  c.CreateEvent(SheetService.GetRowData(SHEETS.Plumbus, 22));
+  c.CreateEvent(SheetService.GetRowData(SHEETS.Luteus, 227));
+  c.CreateEvent(SheetService.GetRowData(SHEETS.Zardoz, 150));
   // c.Events;
   c.Events;
   // c.DeleteEvent(3271817);
@@ -239,7 +239,18 @@ const _testCalendars = () => {
 }
 
 
+/**
+ * ----------------------------------------------------------------------------------------------------------------
+ * Test if value is a date and return true or false
+ * @param {date} d
+ * @returns {boolean} b
+ */
+const IsValidDate = (d) => {
+  if (Object.prototype.toString.call(d) !== "[object Date]") return false;
+  return !isNaN(d.getTime());
+};
 
+const FormatDate = (date) => Utilities.formatDate(date ? date : new Date(), "PST", "MM/dd/yyyy 'at' HH:mm:ss z");
 
 
 

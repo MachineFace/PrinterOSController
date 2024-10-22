@@ -292,65 +292,65 @@ const _gasTMiscTesting = async () => {
 
   // ------------------------------------------------------------------------------------------------------------------------------
   await test(`GetByHeader`, (t) => {
-    const x = GetByHeader(SHEETS.Caerulus, HEADERNAMES.email, 2);
+    const x = SheetService.GetByHeader(SHEETS.Caerulus, HEADERNAMES.email, 2);
     t.notEqual(x, undefined || null, `GetByHeader SHOULD NOT return undefined or null: ${x}`);
 
-    const y = GetByHeader(SHEETS.Caerulus, `BAD COLUMN NAME`, 2);
+    const y = SheetService.GetByHeader(SHEETS.Caerulus, `BAD COLUMN NAME`, 2);
     t.equal(y, undefined || null, `GetByHeader SHOULD return undefined or null: ${y}`);
 
-    const z = GetByHeader(`BAD SHEET`, HEADERNAMES.filename, 2);
+    const z = SheetService.GetByHeader(`BAD SHEET`, HEADERNAMES.filename, 2);
     t.equal(z, 1, `GetByHeader SHOULD return 1: ${z}`);
 
-    const a = GetByHeader(`BAD SHEET`, `BAD COLUMN NAME`, `BAD ROW NUMBER`);
+    const a = SheetService.GetByHeader(`BAD SHEET`, `BAD COLUMN NAME`, `BAD ROW NUMBER`);
     t.equal(a, 1, `GetByHeader SHOULD return 1: ${a}`);
 
   });
 
   await test(`GetColumnDataByHeader`, (t) => {
-    const x = GetColumnDataByHeader(SHEETS.Crystallum, HEADERNAMES.email);
+    const x = SheetService.GetColumnDataByHeader(SHEETS.Crystallum, HEADERNAMES.email);
     t.notEqual(x, undefined || null, `GetColumnDataByHeader SHOULD NOT return undefined or null: ${x}`);
 
-    const y = GetColumnDataByHeader(SHEETS.Photon, `BAD COLUMN NAME`);
+    const y = SheetService.GetColumnDataByHeader(SHEETS.Photon, `BAD COLUMN NAME`);
     t.equal(y, undefined || null, `GetColumnDataByHeader SHOULD return undefined or null: ${y}`);
 
-    const z = GetColumnDataByHeader(`BAD SHEET`, `BAD COLUMN NAME`);
+    const z = SheetService.GetColumnDataByHeader(`BAD SHEET`, `BAD COLUMN NAME`);
     t.equal(z, 1, `GetColumnDataByHeader SHOULD return 1: ${z}`);
 
   });
 
   await test(`GetRowData`, (t) => {
-    const x = GetRowData(SHEETS.Plumbus, 2);
+    const x = SheetService.GetRowData(SHEETS.Plumbus, 2);
     t.notEqual(x, undefined || null, `GetRowData SHOULD NOT return undefined or null: ${JSON.stringify(x)}`);
 
-    const y = GetRowData(SHEETS.Quasar, `BAD COLUMN NAME`);
+    const y = SheetService.GetRowData(SHEETS.Quasar, `BAD COLUMN NAME`);
     t.equal(y, 1, `GetRowData SHOULD return undefined or null: ${y}`);
 
-    const z = GetRowData(`BAD SHEET`, `BAD COLUMN NAME`);
+    const z = SheetService.GetRowData(`BAD SHEET`, `BAD COLUMN NAME`);
     t.equal(z, 1, `GetRowData SHOULD return undefined or null: ${z}`);
 
   });
 
   await test(`Search`, (t) => {
-    const x = Search(`Cody`);
+    const x = SheetService.Search(`Cody`);
     t.notEqual(x, undefined || null, `Search should not return undefined or null. ${JSON.stringify(x)}`);
   });
 
   await test(`FindOne`, (t) => {
-    const x = FindOne(`Cancelled`);
+    const x = SheetService.FindOne(`Cancelled`);
     t.notEqual(x, undefined || null, `FindOne should not return undefined or null. ${JSON.stringify(x)}`);
 
-    const y = FindOne(`BAD NAME`);
+    const y = SheetService.FindOne(`BAD NAME`);
     t.equal(0, Object.entries(y).length, `FindOne SHOULD return empty object: ${JSON.stringify(y)}`);
   });
 
   await test(`Search Specific Sheet`, (t) => {
-    const x = SearchSpecificSheet(SHEETS.Luteus,`Cancelled`);
+    const x = SheetService.SearchSpecificSheet(SHEETS.Luteus,`Cancelled`);
     t.notEqual(x, undefined || null, `SearchSpecificSheet should not return undefined or null. ${JSON.stringify(x)}`);
   });
 
   // ------------------------------------------------------------------------------------------------------------------------------
   await test(`GetImage`, (t) => {
-    let png = GetByHeader(SHEETS.Spectrum, "Picture", 10);
+    let png = SheetService.GetByHeader(SHEETS.Spectrum, "Picture", 10);
     let x = GetImage(png);
     t.notEqual(x, undefined || null, `GetImage SHOULD NOT return undefined or null. ${JSON.stringify(x)}`);
   });

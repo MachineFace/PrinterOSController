@@ -28,7 +28,7 @@ class CleanupService {
    */
   RemoveDuplicateRecords(sheet) {
     let indexes = [];
-    const records = [...GetColumnDataByHeader(sheet, HEADERNAMES.jobID)]
+    const records = [...SheetService.GetColumnDataByHeader(sheet, HEADERNAMES.jobID)]
       .filter(Boolean);
     records.forEach( (item, index) => {
       if(records.indexOf(item) !== index) indexes.push(index + 2);

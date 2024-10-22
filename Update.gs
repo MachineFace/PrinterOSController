@@ -37,16 +37,16 @@ class UpdateService {
             const data = await pos.GetJobInfo(jobId);
 
             let { printing_duration, filename, status_id } = data;
-            SetByHeader(sheet, HEADERNAMES.posStatCode, row, status_id);
+            SheetService.SetByHeader(sheet, HEADERNAMES.posStatCode, row, status_id);
 
             printing_duration = Number(printing_duration / 3600).toFixed(2);
-            SetByHeader(sheet, HEADERNAMES.duration, row, printing_duration.toString());
+            SheetService.SetByHeader(sheet, HEADERNAMES.duration, row, printing_duration.toString());
 
             filename = FileNameCleanup(filename);
-            SetByHeader(sheet, HEADERNAMES.filename, row, filename.toString());
+            SheetService.SetByHeader(sheet, HEADERNAMES.filename, row, filename.toString());
 
             const status = GetStatusByCode(status_id);
-            SetByHeader(sheet, HEADERNAMES.status, row, status);
+            SheetService.SetByHeader(sheet, HEADERNAMES.status, row, status);
               
           });
         })
@@ -67,8 +67,8 @@ class UpdateService {
    */
   _FilterJobsByQueuedOrInProgress(sheet) {
     let d = {};
-    let jobIds = [...GetColumnDataByHeader(sheet, HEADERNAMES.jobID)];
-    let statuses = [...GetColumnDataByHeader(sheet, HEADERNAMES.posStatCode)];
+    let jobIds = [...SheetService.GetColumnDataByHeader(sheet, HEADERNAMES.jobID)];
+    let statuses = [...SheetService.GetColumnDataByHeader(sheet, HEADERNAMES.posStatCode)];
     jobIds.forEach((id, idx) => {
       const status_id = statuses[idx];
       const index = idx + 2;
@@ -108,14 +108,14 @@ const UpdateAllFilenames = () => {
       const pos = new PrinterOS();
       pos.Login()
         .then(() => {
-          [...GetColumnDataByHeader(sheet, HEADERNAMES.jobID)]
+          [...SheetService.GetColumnDataByHeader(sheet, HEADERNAMES.jobID)]
             .filter(Boolean)
             .forEach( async(jobId, index) => {
               const info = await pos.GetJobInfo(jobId);
               let filename = info["filename"];
               let split = filename.slice(0, -6);
               console.info(`INDEX: ${index + 2} : FILENAME ---> ${split}`);
-              SetByHeader(sheet, HEADERNAMES.filename, index + 2, split);
+              SheetService.SetByHeader(sheet, HEADERNAMES.filename, index + 2, split);
             });
         })
         .finally(pos.Logout());
@@ -141,14 +141,14 @@ const UpdateSingleSheetMaterials = (sheet) => {
     const pos = new PrinterOS();
     pos.Login()
       .then(() => {
-        GetColumnDataByHeader(sheet, HEADERNAMES.jobID)
+        [...SheetService.GetColumnDataByHeader(sheet, HEADERNAMES.jobID)]
           .filter(Boolean)
           .forEach( async(jobId, index) => {
             const weight = await pos.GetMaterialWeight(jobId);
             const price = PrintCost(weight);
             // console.info(`Weight = ${weight}, Price = ${price}`);
-            SetByHeader(sheet, HEADERNAMES.weight, index + 2, weight);
-            SetByHeader(sheet, HEADERNAMES.cost, index + 2, price);
+            SheetService.SetByHeader(sheet, HEADERNAMES.weight, index + 2, weight);
+            SheetService.SetByHeader(sheet, HEADERNAMES.cost, index + 2, price);
           });
       })
       .finally(() => {

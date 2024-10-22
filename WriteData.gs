@@ -117,8 +117,7 @@ class WriteToSheet {
         weight : weight,
         cost : cost,
       }
-      this._WriteNewRowData(sheet, rowData);
-      // this._WriteNewRowData(OTHERSHEETS.All, rowData);
+      SheetService.SetRowData(sheet, thisRow, rowData);
       this._UpdateStatus(status_id, sheet, thisRow);
 
       return 0;
@@ -139,9 +138,9 @@ class WriteToSheet {
   _UpdateStatus(statusCode, sheet, row) {
     try {
       const c = new CalendarFactory();
-      const rowData = GetRowData(sheet, row);
+      const rowData = SheetService.GetRowData(sheet, row);
       const status = GetStatusByCode(statusCode);
-      SetByHeader(sheet, HEADERNAMES.status, row, status);
+      SheetService.SetByHeader(sheet, HEADERNAMES.status, row, status);
       if(statusCode == STATUS.inProgress.statusCode) c.CreateEvent(rowData);
       return 0;
     } catch(err) {
@@ -168,36 +167,10 @@ class WriteToSheet {
    */
   _CheckIfJobExists(sheet = SHEETS.Spectrum, jobId = 0) {
     try {
-      let jobIds = [...GetColumnDataByHeader(sheet, HEADERNAMES.jobID)];
+      let jobIds = [...SheetService.GetColumnDataByHeader(sheet, HEADERNAMES.jobID)];
       return jobIds.includes(Number(jobId));
     } catch(err) {
       console.error(`"_CheckIfJobExists()" failed : ${err}`);
-      return 1;
-    }
-  }
-
-  /**
-   * Set Row Data
-   * @param {sheet} sheet
-   * @param {object} rowdata to write
-   * @return {number} success or failure
-   */
-  _WriteNewRowData(sheet, data) {
-    try {
-      let sorted = [];
-      const headers = sheet.getRange(1, 1, 1, sheet.getMaxColumns()).getValues()[0];
-      headers.forEach( (name, index) => {
-        headers[index] = Object.keys(HEADERNAMES).find(key => HEADERNAMES[key] === name);
-      })
-
-      headers.forEach( (header, index) => {
-        sorted[index] = data[header];
-      });
-
-      sheet.appendRow(sorted);
-      return 0;
-    } catch (err) {
-      console.error(`"_WriteNewRowData()" failed : ${err}`);
       return 1;
     }
   }

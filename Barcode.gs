@@ -104,7 +104,6 @@ class BarcodeService {
 
 
 /**
- * -----------------------------------------------------------------------------------------------------------------
  * For use with barcode scanner.
  * Searches for job number found in cell B2 of SearchByBarCode sheet and changes status to 'Picked Up'
  */
@@ -130,7 +129,7 @@ const PickupByBarcode = () => {
     const searchFind = textFinder.findNext();
     if (searchFind != null) {
       searchRow = searchFind.getRow();
-      SetByHeader(sheet, HEADERNAMES.status, searchRow, STATUS.pickedUp.plaintext); // change status to picked up
+      SheetService.SetByHeader(sheet, HEADERNAMES.status, searchRow, STATUS.pickedUp.plaintext); // change status to picked up
       progressUpdate.setValue(`Print #${jobnumber} marked as "Picked-up". Printer: ${key}, Row: ${searchRow}`);
       console.info(`Print #${jobnumber} marked as "Picked-up". Printer: ${key}, Row: ${searchRow}`);
       ui.alert(
@@ -168,7 +167,7 @@ const MarkAsAbandonedByBarcode = async () => {
     );
     return;
   } 
-  res = FindOne(jobnumber);
+  res = SheetService.FindOne(jobnumber);
   console.info(res)
   if(Object.keys(res).length === 0) {
     progressUpdate.setValue(`Job number not found. Try again.`);
@@ -185,7 +184,7 @@ const MarkAsAbandonedByBarcode = async () => {
   let email = res.email;
   let projectname = res.filename;
   let weight = res.weight;
-  SetByHeader(sheet, HEADERNAMES.status, row, STATUS.abandoned.plaintext);
+  SheetService.SetByHeader(sheet, HEADERNAMES.status, row, STATUS.abandoned.plaintext);
   progressUpdate.setValue(`Job number ${jobnumber} marked as abandoned. Sheet: ${sheet.getSheetName()} row: ${row}`);
   console.info(`Job number ${jobnumber} marked as abandoned. Sheet: ${sheet.getSheetName()} row: ${row}`);
 

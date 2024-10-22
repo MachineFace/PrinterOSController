@@ -6,10 +6,10 @@
  */
 const BillingPerSheet = (sheet) => {
   let data = {}
-  let statuses = [...GetColumnDataByHeader(sheet, HEADERNAMES.status)];
-  let emails = [...GetColumnDataByHeader(sheet, HEADERNAMES.email)];
-  let costs = [...GetColumnDataByHeader(sheet, HEADERNAMES.cost)];
-  let staff = [...GetColumnDataByHeader(OTHERSHEETS.Staff, `EMAIL`)];
+  let statuses = [...SheetService.GetColumnDataByHeader(sheet, HEADERNAMES.status)];
+  let emails = [...SheetService.GetColumnDataByHeader(sheet, HEADERNAMES.email)];
+  let costs = [...SheetService.GetColumnDataByHeader(sheet, HEADERNAMES.cost)];
+  let staff = [...SheetService.GetColumnDataByHeader(OTHERSHEETS.Staff, `EMAIL`)];
   statuses.forEach( (status, index) => {
     if(status == STATUS.complete.plaintext || status == STATUS.closed.plaintext || status == STATUS.abandoned.plaintext || status == STATUS.pickedUp.plaintext) {
       let email = emails[index];
@@ -35,8 +35,8 @@ const Billing = () => {
   });
 
   Object.entries(data).sort().forEach(([key, value], index) => {
-    SetByHeader(OTHERSHEETS.Report, `Account Email`, index + 2, key);
-    SetByHeader(OTHERSHEETS.Report, `Total Sum ($)`, index + 2, value);
+    SheetService.SetByHeader(OTHERSHEETS.Report, `Account Email`, index + 2, key);
+    SheetService.SetByHeader(OTHERSHEETS.Report, `Total Sum ($)`, index + 2, value);
   });
   console.info(data);
 }

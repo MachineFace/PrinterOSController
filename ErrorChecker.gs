@@ -16,7 +16,7 @@ class ErrorChecker {
     let masterSet = [];
     Object.values(SHEETS).forEach(sheet => {
       // console.warn(`Checking Sheet: ${sheet.getSheetName()}`);
-      let emails = [...GetColumnDataByHeader(sheet, HEADERNAMES.email)]
+      let emails = [...SheetService.GetColumnDataByHeader(sheet, HEADERNAMES.email)]
         .filter(Boolean);
       masterSet.push(...emails);
     });
@@ -68,7 +68,7 @@ class ErrorChecker {
     let masterSet = [];
     Object.values(SHEETS).forEach(sheet => {
       // console.warn(`Checking Sheet: ${sheet.getSheetName()}`);
-      let emails = [...GetColumnDataByHeader(sheet, HEADERNAMES.email)]
+      let emails = [...SheetService.GetColumnDataByHeader(sheet, HEADERNAMES.email)]
         .filter(Boolean);
       masterSet.push(...emails);
     });
@@ -132,7 +132,7 @@ class ErrorChecker {
     // Set of Everyone who printed
     let masterSet = [];
     Object.values(SHEETS).forEach(sheet => {
-      let jobIDs = [...GetColumnDataByHeader(sheet, HEADERNAMES.jobID)]
+      let jobIDs = [...SheetService.GetColumnDataByHeader(sheet, HEADERNAMES.jobID)]
         .filter(Boolean);
       masterSet.push(...jobIDs);
     });
@@ -179,14 +179,14 @@ class ErrorChecker {
    * Calculate Material Costs for Billing
    */
   static CalculateMaterialCostForBilling() {
-    let materialUsed = GetColumnDataByHeader(OTHERSHEETS.Report, `Material Used (∑,kg)`); //Material in kg
+    let materialUsed = SheetService.GetColumnDataByHeader(OTHERSHEETS.Report, `Material Used (∑,kg)`); //Material in kg
     materialUsed.forEach( (value, index) => {
       let row = index + 2;
       let grams = value * 1000;
       let cost = PrintCost(weight);
       console.info(`Row: ${row}, Grams: ${grams}, Cost: ${cost}`)
-      SetByHeader(OTHERSHEETS.Report, `Computed Material Cost (∑,$)`, row, cost);
-    })
+      SheetService.SetByHeader(OTHERSHEETS.Report, `Computed Material Cost (∑,$)`, row, cost);
+    });
   }
 }
 

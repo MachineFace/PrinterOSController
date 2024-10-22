@@ -10,7 +10,7 @@ const PopUpMarkAsAbandoned = async () => {
   if (response.getSelectedButton() == ui.Button.OK) {
     let jobnumber = response.getResponseText();
     console.warn(`Finding ${jobnumber}`);
-    let res = FindOne(jobnumber);
+    let res = SheetService.FindOne(jobnumber);
     if(!res) {
       ui.alert(
         `${SERVICE_NAME}`,
@@ -25,7 +25,7 @@ const PopUpMarkAsAbandoned = async () => {
     let email = res.email;
     let projectname = res.filename;
     let weight = res.weight;
-    SetByHeader(sheet, HEADERNAMES.status, row, STATUS.abandoned.plaintext);
+    SheetService.SetByHeader(sheet, HEADERNAMES.status, row, STATUS.abandoned.plaintext);
     console.info(`Job number ${jobnumber} marked as abandoned. Sheet: ${sheet.getSheetName()} row: ${row}`);
     await new Emailer({
       email : email, 
@@ -59,7 +59,7 @@ const PopUpMarkAsPickedUp = async () => {
   if (response.getSelectedButton() == ui.Button.OK) {
     let jobnumber = response.getResponseText();
     console.warn(`Finding ${jobnumber}`);
-    let res = FindOne(jobnumber);
+    let res = SheetService.FindOne(jobnumber);
     if(!res) {
       ui.alert(
         `${SERVICE_NAME} `,
@@ -71,7 +71,7 @@ const PopUpMarkAsPickedUp = async () => {
       let sheet = SHEETS[res.sheetName];
       let row = res.row;
       let email = res.email;
-      SetByHeader(sheet, HEADERNAMES.status, row, STATUS.pickedUp.plaintext);
+      SheetService.SetByHeader(sheet, HEADERNAMES.status, row, STATUS.pickedUp.plaintext);
       console.warn(`${email}, Job: ${jobnumber} marked as picked up... Sheet: ${sheet.getSheetName()} row: ${row}`);
       ui.alert(`Marked as Picked Up`, `${email}, Job: ${jobnumber}... Sheet: ${sheet.getSheetName()} row: ${row}`, ui.ButtonSet.OK);
     }
@@ -121,7 +121,7 @@ const PopupCreateTicket = async () => {
   let thisRow = thisSheet.getActiveRange().getRow();
 
   // If It is on a valid sheet
-  if(CheckSheetIsForbidden(thisSheet)) {
+  if(SheetService.IsValidSheet(thisSheet) == false) {
     Browser.msgBox(
       `${SERVICE_NAME}`,
       `Bad Sheet Selected. Please select from the correct sheet. Select one cell in the row and a ticket will be created.`,
@@ -130,7 +130,7 @@ const PopupCreateTicket = async () => {
     return;
   }
 
-  const rowData = GetRowData(sheet, thisRow);
+  const rowData = SheetService.GetRowData(sheet, thisRow);
   let { status, printerID, printerName, jobID, timestamp, email, posStatCode, duration, notes, picture, ticket, filename, weight, cost, } = rowData;
   const imageBlob = await GetImage(picture);
   
@@ -148,7 +148,7 @@ const PopupCreateTicket = async () => {
     }).CreateTicket();
 
     const url = ticket.getUrl();
-    SetByHeader(thisSheet, HEADERNAMES.ticket, thisRow, url.toString());
+    SheetService.SetByHeader(thisSheet, HEADERNAMES.ticket, thisRow, url.toString());
   } catch (err) {
     console.error(`${err} : Couldn't create a ticket.`);
   }
@@ -339,9 +339,9 @@ const PopupCreateNewId = async () => {
   const ui = await SpreadsheetApp.getUi();
   const thisSheet = SpreadsheetApp.getActiveSheet();
   let thisRow = thisSheet.getActiveRange().getRow();
-  const id = CreateId();
+  const id = IDService.createId();
 
-  if(CheckSheetIsForbidden(thisSheet) == true) {
+  if(SheetService.IsValidSheet(thisSheet)) {
     const a = ui.alert(
       `${SERVICE_NAME}: Incorrect Sheet!`,
       `Please select from the correct sheet (eg. Laser Cutter or Fablight). Select one cell in the row and a ticket will be created.`,
@@ -349,20 +349,19 @@ const PopupCreateNewId = async () => {
     );
     if(a === ui.Button.OK) return;
   } 
-  const { name, jobnumber } = GetRowData(thisSheet, thisRow);
-  if(jobnumberService.IsValid(jobnumber)) {
+  const { name, jobID } = SheetService.GetRowData(thisSheet, thisRow);
+  if(jobnumberService.IsValid(jobID)) {
     const a = ui.alert(
       `${SERVICE_NAME}: Error!`,
-      `Jobnumber for ${name} exists already!\n${jobnumber}`,
+      `Jobnumber for ${name} exists already!\n${jobID}`,
       ui.ButtonSet.OK
     );
     if(a === ui.Button.OK) return;
   }
-  const newJobnumber = jobnumberService.jobnumber;
-  SetByHeader(thisSheet, HEADERNAMES.jobnumber, thisRow, newJobnumber);
+  SheetService.SetByHeader(thisSheet, HEADERNAMES.jobnumber, thisRow, id);
   const a = ui.alert(
-    `${SERVICE_NAME}:\n Job Number Created!`,
-    `Created a New Jobnumber for ${name}:\n${newJobnumber}`,
+    `${SERVICE_NAME}:\n ID Created!`,
+    `Created a New ID for ${name}:\n${id}`,
     ui.ButtonSet.OK
   );
   if(a === ui.Button.OK) return;

@@ -14,7 +14,7 @@ class Calculate {
    */
   static GetAverageTurnaroundPerSheet(sheet = SHEETS.Spectrum) {
     try {
-      let completionTimes = [...GetColumnDataByHeader(sheet, HEADERNAMES.duration)];
+      let completionTimes = [...SheetService.GetColumnDataByHeader(sheet, HEADERNAMES.duration)];
       let average = Calculate.GeometricMean(completionTimes);
       return average;
     } catch (err) {
@@ -51,7 +51,7 @@ class Calculate {
    */
   static StatusCountsPerSheet(sheet = SHEETS.Spectrum) {
     try {
-      const statuses = [...GetColumnDataByHeader(sheet, HEADERNAMES.status)];
+      const statuses = [...SheetService.GetColumnDataByHeader(sheet, HEADERNAMES.status)];
       const distribution = [...Calculate.Distribution(statuses)] || [];
       const distSet = new Set(distribution.map(([key, _]) => key));
 
@@ -104,9 +104,9 @@ class Calculate {
   static UserDistribution() {
     try {
       let userList = [];
-      let staff = GetColumnDataByHeader(OTHERSHEETS.Staff, `EMAIL`);
+      let staff = SheetService.GetColumnDataByHeader(OTHERSHEETS.Staff, `EMAIL`);
       Object.values(SHEETS).forEach(sheet => {
-        [...GetColumnDataByHeader(sheet, HEADERNAMES.email)]
+        [...SheetService.GetColumnDataByHeader(sheet, HEADERNAMES.email)]
           .filter(Boolean)
           .forEach( user => {
             if(staff.indexOf(user) == -1) userList.push(user);
@@ -149,7 +149,7 @@ class Calculate {
     try {
       let userList = [];
       Object.values(SHEETS).forEach(sheet => {
-        [...GetColumnDataByHeader(sheet, HEADERNAMES.email)]
+        [...SheetService.GetColumnDataByHeader(sheet, HEADERNAMES.email)]
           .filter(Boolean)
           .forEach( user => userList.push(user));
       });
@@ -221,8 +221,8 @@ class Calculate {
   static CountUniqueUsersWhoHavePrinted() {
     let userList = [];
     Object.values(SHEETS).forEach(sheet => {
-      let status = GetColumnDataByHeader(sheet, HEADERNAMES.status);
-      let users = GetColumnDataByHeader(sheet, HEADERNAMES.email);
+      let status = SheetService.GetColumnDataByHeader(sheet, HEADERNAMES.status);
+      let users = SheetService.GetColumnDataByHeader(sheet, HEADERNAMES.email);
       status.forEach( (stat, index) => {
         if(stat == STATUS.complete.plaintext) userList.push(users[index])
       });
@@ -365,9 +365,9 @@ class Calculate {
    */
   static _SumSingleSheetMaterials(sheet) {
     try {
-      if(CheckSheetIsForbidden(sheet)) throw new Error(`Sheet is FORBIDDEN.`);
-      let weights = GetColumnDataByHeader(sheet, HEADERNAMES.weight);
-      let statuses = GetColumnDataByHeader(sheet, HEADERNAMES.status);
+      if(SheetService.IsValidSheet(sheet) == false) throw new Error(`Sheet is FORBIDDEN.`);
+      let weights = SheetService.GetColumnDataByHeader(sheet, HEADERNAMES.weight);
+      let statuses = SheetService.GetColumnDataByHeader(sheet, HEADERNAMES.status);
       for(let i = 0; i < weights.length; i++) {
         if(statuses[i] != STATUS.complete.plaintext && statuses[i] != STATUS.closed.plaintext) weights[i] = 0.0;
         if(weights[i] == null || !weights[i] || weights[i] == ' ' || isNaN(weights[i])) weights[i] = 0.0;
@@ -420,9 +420,9 @@ class Calculate {
    */
   static _SumSingleSheetCost(sheet) {
     try {
-      if(CheckSheetIsForbidden(sheet)) throw new Error(`Sheet is FORBIDDEN.`);
-      let costs = GetColumnDataByHeader(sheet, HEADERNAMES.cost);
-      let statuses = GetColumnDataByHeader(sheet, HEADERNAMES.status);
+      if(SheetService.IsValidSheet(sheet) == false) throw new Error(`Sheet is FORBIDDEN.`);
+      let costs = SheetService.GetColumnDataByHeader(sheet, HEADERNAMES.cost);
+      let statuses = SheetService.GetColumnDataByHeader(sheet, HEADERNAMES.status);
       for(let i = 0; i < costs.length; i++) {
         if(statuses[i] == STATUS.complete.plaintext || statuses[i] == STATUS.closed.plaintext) costs[i] = 0.0;
         if(costs[i] === null || !costs[i] || costs[i] == ' ' || isNaN(costs[i])) costs[i] = 0.0;

@@ -11,7 +11,7 @@ class Log {
    * Error Message
    * @param {string} message
    */
-  static Error(message) {
+  static Error(message = ``) {
     try{
       const text = [ new Date().toUTCString(), "ERROR!", message, ];
       const sheet = this.prototype._GetLoggerSheet();
@@ -30,7 +30,7 @@ class Log {
    * Warning Message
    * @param {string} message
    */
-  static Warning(message) {
+  static Warning(message = ``) {
     try{
       const text = [ new Date().toUTCString(), "WARNING", message, ];
       OTHERSHEETS.Logger.appendRow(text);
@@ -48,7 +48,7 @@ class Log {
    * Info Message
    * @param {string} message
    */
-  static Info(message) {
+  static Info(message = ``) {
     try {
       const text = [ new Date().toUTCString(), "INFO", message, ];
       OTHERSHEETS.Logger.appendRow(text);
@@ -66,7 +66,7 @@ class Log {
    * Debug Message
    * @param {string} message
    */
-  static Debug(message) {
+  static Debug(message = ``) {
     try {
       const text = [ new Date().toUTCString(), "DEBUG", message, ];
       OTHERSHEETS.Logger.appendRow(text);

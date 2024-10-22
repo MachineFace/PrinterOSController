@@ -181,7 +181,7 @@ class UpdateMissingTickets {
    */
   async UpdateSheetTickets(sheet) {
     let indexes = [];
-    GetColumnDataByHeader(sheet, HEADERNAMES.ticket)
+    SheetService.GetColumnDataByHeader(sheet, HEADERNAMES.ticket)
       .forEach( (item, index) => {
         if(!item) indexes.push(index + 2);
       })
@@ -198,7 +198,7 @@ class UpdateMissingTickets {
    * @param {sheet} sheet
    */
   async _UpdateRow(index, sheet) {
-    const rowData = await GetRowData(sheet, index);
+    const rowData = SheetService.GetRowData(sheet, index);
     let { status, printerID, printerName, jobID, timestamp, email, posStatCode, duration, notes, picture, ticket, filename, weight, cost, } = rowData;
     let imageBLOB = await this._GetImage(picture);
 
@@ -214,7 +214,7 @@ class UpdateMissingTickets {
         image : imageBLOB, 
       }).CreateTicket();
       const url = t.getUrl();
-      SetByHeader(sheet, HEADERNAMES.ticket, index, url.toString());
+      SheetService.SetByHeader(sheet, HEADERNAMES.ticket, index, url.toString());
       return 0;
     } catch (err) {
       console.error(`${err} : Couldn't generate a ticket....`);
@@ -268,12 +268,12 @@ const MissingTicketUpdater = () => new UpdateMissingTickets();
  */
 const FixMissingTicketsForSingleSheet = (sheet) => {
   try {
-    GetColumnDataByHeader(sheet, HEADERNAMES.ticket)
+    SheetService.GetColumnDataByHeader(sheet, HEADERNAMES.ticket)
       .forEach( async (cell, index) => {
         if(!cell) {
           let thisRow = index + 2;
           console.warn(`Sheet : ${sheet.getSheetName()}, Index : ${thisRow} is Missing a Ticket! Creating new Ticket....`);
-          const rowData = GetRowData(sheet, thisRow);
+          const rowData = SheetService.GetRowData(sheet, thisRow);
           let { status, printerID, printerName, jobID, timestamp, email, posStatCode, duration, notes, picture, ticket, filename, weight, cost, } = rowData;
           
           let imageBLOB = await GetImage(picture);
@@ -289,7 +289,7 @@ const FixMissingTicketsForSingleSheet = (sheet) => {
             image : imageBLOB, 
           }).CreateTicket();
           const url = t.getUrl();
-          SetByHeader(sheet, HEADERNAMES.ticket, thisRow, url.toString());
+          SheetService.SetByHeader(sheet, HEADERNAMES.ticket, thisRow, url.toString());
           console.warn(`Ticket Created....`);
         }
       });
