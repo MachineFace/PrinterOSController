@@ -42,7 +42,7 @@ class UpdateService {
             printing_duration = Number(printing_duration / 3600).toFixed(2);
             SheetService.SetByHeader(sheet, HEADERNAMES.duration, row, printing_duration.toString());
 
-            filename = FileNameCleanup(filename);
+            filename = CleanupService.FileNameCleanup(filename);
             SheetService.SetByHeader(sheet, HEADERNAMES.filename, row, filename.toString());
 
             const status = GetStatusByCode(status_id);

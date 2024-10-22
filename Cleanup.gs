@@ -4,16 +4,16 @@
  */
 class CleanupService {
   constructor() {
-    this.RemoveAllDuplicateRecords();
+
   }
 
   /**
    * Remove All Duplicate Records
    */
-  RemoveAllDuplicateRecords () {
+  static RemoveAllDuplicateRecords() {
     try {
-      Object.values(SHEETS).forEach( async (sheet) => {
-        await this.RemoveDuplicateRecords(sheet);
+      Object.values(SHEETS).forEach(sheet => {
+        CleanupService.RemoveDuplicateRecords(sheet);
       });
       return 0;
     } catch(err){
@@ -26,7 +26,7 @@ class CleanupService {
    * Remove Duplicate Records
    * @param {sheet} sheet
    */
-  RemoveDuplicateRecords(sheet) {
+  static RemoveDuplicateRecords(sheet) {
     let indexes = [];
     const records = [...SheetService.GetColumnDataByHeader(sheet, HEADERNAMES.jobID)]
       .filter(Boolean);
@@ -45,30 +45,32 @@ class CleanupService {
     }
   }
 
+  /**
+   * Clean the junk out of the filename
+   * @param {string} filename
+   * @return {string} fixed filename
+   */
+  static FileNameCleanup(filename = `Filename`) {
+    const fixed = filename
+      .toString()
+      .replace(/[0-9_]/g,``)
+      .replace(/[.]gcode/g, ``)
+      .replace(/\b[.]modified\b/g, ``)
+      .replace(/stlmagicfix/g, ``)
+      .replace(/[.]gcode/g, ``)
+    return TitleCase(fixed).replace(` `, ``);
+  }
+
 }
 
 /**
  * @TRIGGERED
  */
-const RunCleanup = () => new CleanupService();
+const RunCleanup = () => CleanupService.RemoveAllDuplicateRecords();
 
 
 
-/**
- * Clean the junk out of the filename
- * @param {string} filename
- * @return {string} fixed filename
- */
-const FileNameCleanup = (filename = `Filename`) => {
-  const fixed = filename
-    .toString()
-    .replace(/[0-9_]/g,``)
-    .replace(/[.]gcode/g, ``)
-    .replace(/\b[.]modified\b/g, ``)
-    .replace(/stlmagicfix/g, ``)
-    .replace(/[.]gcode/g, ``)
-  return TitleCase(fixed).replace(` `, ``);
-}
+
 
 
 

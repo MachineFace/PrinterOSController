@@ -650,13 +650,13 @@ const _gasTUpdateTesting = async () => {
       bad : `@#$%.exe&*()`,
       worse : `\n\n\n\n\n\n`,
     }
-    const x = FileNameCleanup(s.good);
+    const x = CleanupService.FileNameCleanup(s.good);
     t.equal(x, `Somename`, `Pre: ${s.good}, Post: Assert ${x} = Somename`);
-    const y = FileNameCleanup(s.bad);
+    const y = CleanupService.FileNameCleanup(s.bad);
     t.equal(y, `@#$%.exe&*()`, `Pre: ${s.bad}, Post: Assert ${y} = @#$%.exe&*()`);
-    const z = FileNameCleanup(s.worse);
+    const z = CleanupService.FileNameCleanup(s.worse);
     t.equal(z, `\n\n\n\n\n\n`, `Pre: ${s.bad}, Post: Assert ${z} = 6 returns`);
-    const a = FileNameCleanup(s.mod);
+    const a = CleanupService.FileNameCleanup(s.mod);
     t.equal(a, `Somename`, `Pre: ${s.mod}, Post: Assert ${a} = Somename`);
   });
 

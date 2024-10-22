@@ -80,7 +80,7 @@ class WriteToSheet {
 
       printing_duration = printing_duration ? Number.parseFloat(printing_duration) : 0.0;
       const duration = printing_duration ? +Number(printing_duration / 3600).toFixed(2) : 0;
-      filename = filename ? FileNameCleanup(filename.toString()) : "";
+      filename = filename ? CleanupService.FileNameCleanup(filename.toString()) : "";
 
       weight = weight ? Number(weight).toFixed(2) : 0.0;
 
@@ -137,11 +137,12 @@ class WriteToSheet {
    */
   _UpdateStatus(statusCode, sheet, row) {
     try {
-      const c = new CalendarFactory();
       const rowData = SheetService.GetRowData(sheet, row);
       const status = GetStatusByCode(statusCode);
       SheetService.SetByHeader(sheet, HEADERNAMES.status, row, status);
-      if(statusCode == STATUS.inProgress.statusCode) c.CreateEvent(rowData);
+      if(statusCode == STATUS.inProgress.statusCode) {
+        new CalendarFactory().CreateEvent(rowData);
+      }
       return 0;
     } catch(err) {
       console.error(`"_UpdateStatus()" failed : ${err}`);
