@@ -97,11 +97,6 @@ class IDService {
   }
 }
 
-/**
- * Create ID
- * @return {string} uuid
- */
-const CreateID = () => IDService.createId();
 
 /**
  * 

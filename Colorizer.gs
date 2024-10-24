@@ -1,82 +1,88 @@
 /**
- * Colorizer Class for coloring rows.
- * @NOTIMPLEMENTED
+ * Color Service Class for coloring rows.
  */
-/**
-class Colorizer {
-  constructor({ 
-    rowNumber : rowNumber, 
-    status : status,
-  }) {
-    this.rowNumber = rowNumber ? rowNumber : 2;
-    this.status = status ? status : STATUS.queued.plaintext;
-    this.wholerow = SpreadsheetApp.getActiveSheet().getRange(rowNumber, 1, 1, SpreadsheetApp.getActiveSpreadsheet().getLastColumn());
-    this.SetRowColorByStatus();
+class ColorService {
+  constructor() {
+  
   }
 
-  async SetRowColorByStatus () {
-    if(this.rowNumber <= 1) return;
+  /**
+   * Set Row Color By Status
+   * @param {sheet} sheet
+   * @param {number} row
+   * @param {string} status
+   * @returns {bool} success 
+   */
+  static SetRowColorByStatus(sheet, row = 2, status = STATUS.queued.plaintext) {
+    sheet = sheet ? sheet : SpreadsheetApp.getActiveSheet();
+    crow = row > 2 ? row : 2;
+    status = status ? status : STATUS.queued.plaintext;
+    const wholerow = sheet.getRange(row, 1, 1, sheet.getLastColumn());
     try {  
-      switch(this.status) {
+      switch(status) {
         case STATUS.queued.plaintext:
-          this.wholerow.setFontColor(null); //unset
-          this.wholerow.setFontColor(COLORS.greenish);  //Greenish
-          this.wholerow.setBackground(null); //unset
-          this.wholerow.setBackground(COLORS.green_light); //Light Green
-          console.warn(`Status: ${this.status}, Set Color to : Green`);
+          wholerow.setFontColor(null); //unset
+          wholerow.setFontColor(COLORS.greenish);  //Greenish
+          wholerow.setBackground(null); //unset
+          wholerow.setBackground(COLORS.green_light); //Light Green
+          console.warn(`Status: ${status}, Set Color to : Green`);
           break;
         case STATUS.inProgress.plaintext:
-          this.wholerow.setFontColor(null); //unset
-          this.wholerow.setFontColor(COLORS.orange_dark);  //Dark Yellow
-          this.wholerow.setBackground(null); //unset
-          this.wholerow.setBackground(COLORS.orange_light); //Light yellow
-          console.warn(`Status: ${this.status}, Set Color to : Orange`);
+          wholerow.setFontColor(null); //unset
+          wholerow.setFontColor(COLORS.orange_dark);  //Dark Yellow
+          wholerow.setBackground(null); //unset
+          wholerow.setBackground(COLORS.orange_light); //Light yellow
+          console.warn(`Status: ${status}, Set Color to : Orange`);
           break;
         case STATUS.closed.plaintext:
         case STATUS.pickedUp.plaintext:
         case STATUS.complete.plaintext:
-          this.wholerow.setFontColor(null); //unset
-          this.wholerow.setFontColor(COLORS.grey);  //Gray
-          this.wholerow.setBackground(null); //unset
-          this.wholerow.setBackground(COLORS.grey_light); //Light Grey
-          console.warn(`Status: ${this.status}, Set Color to : Grey`);
+          wholerow.setFontColor(null); //unset
+          wholerow.setFontColor(COLORS.grey);  //Gray
+          wholerow.setBackground(null); //unset
+          wholerow.setBackground(COLORS.grey_light); //Light Grey
+          console.warn(`Status: ${status}, Set Color to : Grey`);
           break;
         case STATUS.failed.plaintext:
-          this.wholerow.setFontColor(null); //unset
-          this.wholerow.setFontColor(COLORS.red);  //Red
-          this.wholerow.setBackground(null); //unset
-          this.wholerow.setBackground(COLORS.red_light); //Light Red
-          console.warn(`Status: ${this.status}, Set Color to : Red`);
+          wholerow.setFontColor(null); //unset
+          wholerow.setFontColor(COLORS.red);  //Red
+          wholerow.setBackground(null); //unset
+          wholerow.setBackground(COLORS.red_light); //Light Red
+          console.warn(`Status: ${status}, Set Color to : Red`);
           break;
         case STATUS.cancelled.plaintext:
-          this.wholerow.setFontColor(null); //unset
-          this.wholerow.setFontColor(COLORS.purple_dark);  //yellow
-          this.wholerow.setBackground(null); //unset
-          this.wholerow.setBackground(COLORS.purle_light); //Light yellow
-          console.warn(`Status: ${this.status}, Set Color to : Purple`);
+          wholerow.setFontColor(null); //unset
+          wholerow.setFontColor(COLORS.purple_dark);  //yellow
+          wholerow.setBackground(null); //unset
+          wholerow.setBackground(COLORS.purle_light); //Light yellow
+          console.warn(`Status: ${status}, Set Color to : Purple`);
           break;
         case undefined:
-          this.wholerow.setBackground(null);
-          this.wholerow.setFontColor(null); //Unset Color
-          console.warn(`Status: ${this.status}, Set Color to : None`);
+          wholerow.setBackground(null);
+          wholerow.setFontColor(null); //Unset Color
+          console.warn(`Status: ${status}, Set Color to : None`);
           break;
         default:
-          this.wholerow.setBackground(null);
-          this.wholerow.setFontColor(null); //Unset Color
-          console.warn(`Status: ${this.status}, Set Color to : None`);
+          wholerow.setBackground(null);
+          wholerow.setFontColor(null); //Unset Color
+          console.warn(`Status: ${status}, Set Color to : None`);
           break;
       }    
+      return 0;
     } catch(err) {
       console.error(`${err} : Couldn't color rows for some reason`);
+      return 1;
     }
     
   }
 }
 
-const _testColorizer = async () => {
-  const c = new Colorizer({ rowNumber : 2, status : STATUS.queued.plaintext });
+const _testColorizer = () => {
+  // ColorService.SetRowColorByStatus(SHEETS.Aurum, 2, STATUS.queued.plaintext);
+  let statuses = [...Object.values(STATUS).map(status => status.plaintext)];
+  console.info(statuses)
 }
-*/
+
 
 
 /**
@@ -84,62 +90,62 @@ const _testColorizer = async () => {
  * @TRIGGERED
  */
 const SetConditionalFormatting = () => {
-  let statuses = [];
-  Object.values(STATUS).forEach(status => statuses.push(status.plaintext));
+  // let statuses = [...Object.values(STATUS).map(status => status.plaintext)];
   Object.values(SHEETS).forEach(sheet => {
+    let range = [ sheet.getRange(2, 1, sheet.getMaxRows(), sheet.getMaxColumns()), ];
     let rules = [
       SpreadsheetApp.newConditionalFormatRule()
         .whenFormulaSatisfied(`=$A2="${STATUS.queued.plaintext}"`)
-        .setRanges([sheet.getRange(2, 1, sheet.getMaxRows(), sheet.getMaxColumns()),])
+        .setRanges(range)
         .setBackground(COLORS.green_light)
         .setFontColor(COLORS.green_dark)
         .build()
       ,
       SpreadsheetApp.newConditionalFormatRule()
         .whenFormulaSatisfied(`=$A2="${STATUS.inProgress.plaintext}"`)
-        .setRanges([sheet.getRange(2, 1, sheet.getMaxRows(), sheet.getMaxColumns()),])
+        .setRanges(range)
         .setBackground(COLORS.orange_light)
         .setFontColor(COLORS.orange_dark)
         .build()
       ,
       SpreadsheetApp.newConditionalFormatRule()
         .whenFormulaSatisfied(`=$A2="${STATUS.cancelled.plaintext}"`)
-        .setRanges([sheet.getRange(2, 1, sheet.getMaxRows(), sheet.getMaxColumns()),])
+        .setRanges(range)
         .setBackground(COLORS.purle_light)
         .setFontColor(COLORS.purple)
         .build()
       ,
       SpreadsheetApp.newConditionalFormatRule()
         .whenFormulaSatisfied(`=$A2="${STATUS.complete.plaintext}"`)
-        .setRanges([sheet.getRange(2, 1, sheet.getMaxRows(), sheet.getMaxColumns()),])
+        .setRanges(range)
         .setBackground(COLORS.grey_light)
         .setFontColor(COLORS.grey)
         .build()
       ,
       SpreadsheetApp.newConditionalFormatRule()
         .whenFormulaSatisfied(`=$A2="${STATUS.closed.plaintext}"`)
-        .setRanges([sheet.getRange(2, 1, sheet.getMaxRows(), sheet.getMaxColumns()),])
+        .setRanges(range)
         .setBackground(COLORS.grey_light)
         .setFontColor(COLORS.grey)
         .build()
       ,
       SpreadsheetApp.newConditionalFormatRule()
         .whenFormulaSatisfied(`=$A2="${STATUS.failed.plaintext}"`)
-        .setRanges([sheet.getRange(2, 1, sheet.getMaxRows(), sheet.getMaxColumns()),])
+        .setRanges(range)
         .setBackground(COLORS.red_light)
         .setFontColor(COLORS.red)
         .build()
       ,
       SpreadsheetApp.newConditionalFormatRule()
         .whenFormulaSatisfied(`=$A2="${STATUS.pickedUp.plaintext}"`)
-        .setRanges([sheet.getRange(2, 1, sheet.getMaxRows(), sheet.getMaxColumns()),])
+        .setRanges(range)
         .setBackground(COLORS.grey_light)
         .setFontColor(COLORS.grey)
         .build()
       ,
       SpreadsheetApp.newConditionalFormatRule()
         .whenFormulaSatisfied(`=$A2="${STATUS.abandoned.plaintext}"`)
-        .setRanges([sheet.getRange(2, 1, sheet.getMaxRows(), sheet.getMaxColumns()),])
+        .setRanges(range)
         .setBackground(COLORS.yellow_light)
         .setFontColor(COLORS.yellow_dark)
         .build()

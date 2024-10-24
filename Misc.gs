@@ -213,6 +213,35 @@ const GetFunctionName = () => {
   return stack;
 }
 
+/**
+ * Execute with Timeout
+ * @param {function} some function to run
+ * @param {number} timeout in seconds
+ * @returns {Promise} race
+ */
+const ExecuteWithTimeout = (fn, timeout = 2) => {
+  timeout = timeout > 0 ? timeout * 1000 : 2000;
+  const startTime = new Date().getTime();
 
+  const timeoutPromise = new Promise((_, reject) => {
+    // Continuously check the elapsed time without setTimeout
+    while (new Date().getTime() - startTime < timeout) {
+      // No operation, just waiting
+    }
+    reject("Execution timed out!");
+  });
+
+  // Wrap the function execution in a promise
+  const executionPromise = new Promise((resolve, reject) => {
+    try {
+      const result = fn();  // Execute the function
+      resolve(result);
+    } catch (error) {
+      reject(`Error during execution: ${error.message}`);
+    }
+  });
+  
+  return Promise.race([executionPromise, timeoutPromise]);  // Use Promise.race() to return whichever promise resolves or rejects first
+}
 
 

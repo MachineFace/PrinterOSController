@@ -51,6 +51,7 @@ class Emailer {
           cc: `${this.designspecialistemail}, ${SERVICE_EMAIL}`,
           bcc: "",
           name: SERVICE_NAME,
+          noReply : true,
         });
         console.warn(`Student ${this.name} emailed ${this.status} message...`);
         break;
@@ -61,6 +62,7 @@ class Emailer {
             cc: `${this.designspecialistemail}, ${SERVICE_EMAIL}`,
             bcc: "",
             name: SERVICE_NAME,
+            noReply : true,
         });
         console.warn(`Student ${this.name} emailed ${this.status} message...`);
         break;
@@ -71,6 +73,7 @@ class Emailer {
             cc: `${this.designspecialistemail}, ${SERVICE_EMAIL}`,
             bcc: "",
             name: SERVICE_NAME,
+            noReply : true,
         });
         console.warn(`Student ${this.name} emailed ${this.status} message...`);
         break;
@@ -81,6 +84,7 @@ class Emailer {
             cc: `${this.designspecialistemail}, ${SERVICE_EMAIL}`,
             bcc: "",
             name: SERVICE_NAME,
+            noReply : true,
         });
         console.warn(`Student ${this.name} emailed ${this.status} message...`);
         break;
@@ -91,6 +95,7 @@ class Emailer {
             cc: `${this.designspecialistemail}, ${SERVICE_EMAIL}`,
             bcc: "",
             name: SERVICE_NAME,
+            noReply : true,
         });
         console.warn(`Student ${this.name} emailed ${this.status} message...`);
         break;
@@ -101,6 +106,7 @@ class Emailer {
             cc: `${this.designspecialistemail}, ${SERVICE_EMAIL}`,
           bcc: "",
           name: SERVICE_NAME,
+          noReply : true,
         });
         console.warn(`Student ${this.name} emailed ${this.status} message...`);
         break;
@@ -111,6 +117,7 @@ class Emailer {
             cc: `${this.designspecialistemail}, ${SERVICE_EMAIL}`,
           bcc: "",
           name: SERVICE_NAME,
+          noReply : true,
         });
         console.warn(`Student ${this.name} emailed ${this.status} message...`);
         break;
@@ -124,18 +131,18 @@ class Emailer {
 }
 
 
-const _testEmailer = () => {
-  Object.values(STATUS).forEach(async (status) => {
-    await new Emailer({
-      email : "codyglen@berkeley.edu",
-      status : status.plaintext,
-      name : `Dingus Dongus`,
-      projectname : `Dingus Project`,
-      jobnumber : 9234875,
-      weight : 200,
-    })
-  })
-}
+// const _testEmailer = () => {
+//   Object.values(STATUS).forEach(async (status) => {
+//     await new Emailer({
+//       email : "codyglen@berkeley.edu",
+//       status : status.plaintext,
+//       name : `Dingus Dongus`,
+//       projectname : `Dingus Project`,
+//       jobnumber : 9234875,
+//       weight : 200,
+//     })
+//   })
+// }
 
 
 
