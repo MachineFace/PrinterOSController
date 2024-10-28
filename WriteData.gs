@@ -89,7 +89,7 @@ class WriteToSheet {
       cost = total_cost ? total_cost : this._PrintCost(weight);
 
       let imageBLOB = await GetImage(picture);
-      const ticket = await new Ticket({
+      const ticket = await TicketService.CreateTicket({
         submissionTime : timestamp,
         email : email,
         printerName : printerName,
@@ -98,7 +98,7 @@ class WriteToSheet {
         jobID : id,
         filename : filename,
         image : imageBLOB, 
-      }).CreateTicket()
+      });
       const url = ticket.getUrl() ? ticket.getUrl() : ``;
 
       const rowData = { 

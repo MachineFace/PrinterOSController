@@ -5,8 +5,7 @@
  */
 class DriveController {
   constructor() {
-    /** @private */
-    this.ticketFolder = DriveApp.getFolderById(PropertiesService.getScriptProperties().getProperty(`TICKET_FOLDER_GID`));
+    
   }
 
   /**
@@ -33,15 +32,16 @@ class DriveController {
    * Move Tickets Out Of Root
    * @return {bool} success or failure
    */
-  MoveTicketsOutOfRoot() {
+  static MoveTicketsOutOfRoot() {
     try {
+      const ticketFolder = DriveApp.getFolderById(PropertiesService.getScriptProperties().getProperty(`TICKET_FOLDER_GID`));
       const files = DriveController.AllFileNamesInRoot;
-      console.info(`Destination ----> ${this.ticketFolder.getName()}`);
+      console.info(`Destination ----> ${ticketFolder.getName()}`);
       files.forEach(file => {
         let name = file.getName();
         if(name.includes(`Job Ticket`) || name.includes(`Job Ticket-[object Object]`) || name.includes(`PrinterOS Ticket`) || name.includes(`Job Ticket-`) || name.includes(`PrinterOSTicket`)) {
           console.warn(`Moving ----> Name : ${name}, ID : ${file.getId()}`);
-          file.moveTo(this.ticketFolder);
+          file.moveTo(ticketFolder);
           console.warn(`Moved ----> Name : ${name}, ID : ${file.getId()}`);
         } else {
           console.error(`No files moved....`);
@@ -58,10 +58,11 @@ class DriveController {
   /**
    * Count Tickets
    */
-  CountTickets() {
+  static CountTickets() {
     try {
+      const ticketFolder = DriveApp.getFolderById(PropertiesService.getScriptProperties().getProperty(`TICKET_FOLDER_GID`));
       let count = 0;
-      let files = this.ticketFolder.getFiles();
+      let files = ticketFolder.getFiles();
       while (files.hasNext()) {
         count++;
         files.next();
@@ -78,11 +79,12 @@ class DriveController {
    * Trash Old Tickets
    * ** Note: this function needed a timeout. Otherwise it runs forever
    */
-  TrashOldTickets() {
+  static TrashOldTickets() {
     try {
+      const ticketFolder = DriveApp.getFolderById(PropertiesService.getScriptProperties().getProperty(`TICKET_FOLDER_GID`));
       const date120DaysAgo = new Date(new Date().setDate(new Date().getDate() - 120));
       console.warn(`DELETING TICKETS OLDER THAN 120 Days ago ---> ${date120DaysAgo}`);
-      const files = this.ticketFolder.getFiles();
+      const files = ticketFolder.getFiles();
       const startTime = new Date().getTime();
       const timeout = 5.9 * 60 * 1000;
       while (files.hasNext() && (new Date().getTime() - startTime < timeout)) {
@@ -159,6 +161,59 @@ class DriveController {
     const fileString = fileID.getContentAsString();
     return ContentService.createTextOutput(fileString).downloadAsFile(fileName);
   }
+
+  /**
+   * Search for File
+   * @param {string} filename
+   * @returns {file} file
+   */
+  static GetFileByName(fileName = ``) {
+    try {
+      const ticketFolder = DriveApp.getFolderById(PropertiesService.getScriptProperties().getProperty(`TICKET_FOLDER_GID`));
+      const files = ticketFolder.getFilesByName(fileName);
+      if (files.hasNext()) {
+        const file = files.next();
+        console.info(`File found: ${file.getName()} (ID: ${file.getId()})`);
+        return file;
+      } else {
+        console.warn(`No file found with the specified name.`);
+        return null;
+      }
+    } catch(err) {
+      console.error(`"GetFileByName()" failed: ${err}`);
+      return 1;
+    }
+  }
+
+  /**
+   * Get File by ID
+   * @param {string} google id
+   * @returns {file} file
+   */
+  static GetFileByID(id = ``) {
+    try {
+      return DriveApp.getFileById(id);
+    } catch(err) {
+      console.error(`"GetFileByID()" failed: ${err}`);
+      return 1;
+    }
+  }
+
+  /**
+   * Delete File by ID
+   * @param {string} id
+   * @returns {bool} success
+   */
+  static DeleteFileByID(id = ``) {
+    try {
+      DriveApp.getFileById(id)
+        .setTrashed(true);
+      return 0;
+    } catch(err) {
+      console.error(`"DeleteFileByID()" failed: ${err}`);
+      return 1;
+    }
+  }
   
 }
 
@@ -166,9 +221,9 @@ class DriveController {
  * -----------------------------------------------------------------------------------------------------------------
  * Main Cleanup Function
  */
-const CleanupDrive = () => new DriveController().MoveTicketsOutOfRoot();
-const TrashOldTickets = () => new DriveController().TrashOldTickets();
-const CountTickets = () => new DriveController().CountTickets();
+const CleanupDrive = () => DriveController.MoveTicketsOutOfRoot();
+const TrashOldTickets = () => DriveController.TrashOldTickets();
+const CountTickets = () => DriveController.CountTickets();
 
 
 

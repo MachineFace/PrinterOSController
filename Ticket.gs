@@ -3,8 +3,15 @@
  * -----------------------------------------------------------------------------------------------------------------
  * Ticket Class
  */
-class Ticket {
-  constructor({
+class TicketService {
+  constructor(){
+    
+  }
+
+  /**
+   * Create Ticket
+   */
+  static CreateTicket({
     designspecialist : designspecialist = `Staff`, 
     submissiontime : submissiontime = new Date(), 
     name : name = `Student Name`, 
@@ -17,48 +24,16 @@ class Ticket {
     ticketName : ticketName = `PrinterOSTicket-${jobID}`,
     filename : filename = `file.gcode`,
     image : image,
-  }){
-    /** @private */
-    this.designspecialist = designspecialist;
-    /** @private */
-    this.submissiontime = submissiontime;
-    /** @private */
-    this.name = name;
-    /** @private */
-    this.email = email;
-    /** @private */
-    this.projectname = projectname;
-    /** @private */
-    this.weight = weight;
-    /** @private */
-    this.cost = weight ? this._PrintCost(weight) : 0.0;
-    /** @private */
-    this.jobID = jobID;
-    /** @private */
-    this.ticketName = ticketName;
-    /** @private */
-    this.printerID = printerID;
-    /** @private */
-    this.printerName = printerName;
-    /** @private */
-    this.filename = filename;
-    /** @private */
-    this.image = image;
-    /** @private */
-    this.folder = DriveApp.getFolderById(PropertiesService.getScriptProperties().getProperty(`TICKETGID`));
-  }
+  }) {
+    const folder = DriveApp.getFolderById(PropertiesService.getScriptProperties().getProperty(`TICKETGID`));
+    const cost = weight ? TicketService.PrintCost(weight) : 0.0;
 
-  /**
-   * Create Ticket
-   */
-  CreateTicket() {
-    const jobnumber = this.jobID;
-    let doc = DocumentApp.create(this.ticketName); // Make Document
+    let doc = DocumentApp.create(ticketName); // Make Document
     let body = doc.getBody();
     let docId = doc.getId();
     let url = doc.getUrl();
     
-    const b = new BarcodeService({jobnumber});
+    const b = new BarcodeService({ jobID });
     const barcode = b.GenerateBarCodeForTicketHeader();
 
     // Append Document with Info
@@ -77,14 +52,14 @@ class Ticket {
         .setHeight(100);
       body.insertHorizontalRule(1);
 
-      body.insertParagraph(2, "Email: " + this.email.toString())
+      body.insertParagraph(2, `Email: ${email.toString()}`)
         .setHeading(DocumentApp.ParagraphHeading.HEADING1)
         .setAttributes({
           [DocumentApp.Attribute.FONT_SIZE]: 11,
           [DocumentApp.Attribute.BOLD]: true,
           [DocumentApp.Attribute.LINE_SPACING]: 1,
         });
-      body.insertParagraph(3, "Printer: " + this.printerName.toString())
+      body.insertParagraph(3, `Printer: ${printerName.toString()}`)
         .setHeading(DocumentApp.ParagraphHeading.HEADING2)
         .setAttributes({
           [DocumentApp.Attribute.FONT_SIZE]: 9,
@@ -94,13 +69,14 @@ class Ticket {
 
       // Create a two-dimensional array containing the cell contents.
       body.appendTable([
-          ["Date Started", this.submissiontime.toDateString()],
-          ["Design Specialist:", this.designspecialist],
-          ["Job Number:", this.jobID.toString()],
-          ["Student Email:", this.email.toString()],
-          ["Materials:", `PLA : ${this.weight} grams`],
-          [`Estimated Cost @ $0.04/gram:`, `$${this.cost}`],
-          ["Filename:", `${this.filename}`],
+          [ `Name`, name, ],
+          [ `Date Started`, submissiontime.toDateString(), ],
+          [ `Design Specialist`, designspecialist, ],
+          [ `Job ID`, jobID.toString(), ],
+          [ `Student Email`, email.toString(), ],
+          [ `Materials`, `PLA : ${weight} grams`, ],
+          [ `Estimated Cost @ $0.04/gram`, `$${cost}`, ],
+          [ `Filename`, `${filename}`, ],
         ])
         .setAttributes({
           [DocumentApp.Attribute.FONT_SIZE]: 6,
@@ -108,7 +84,7 @@ class Ticket {
           [DocumentApp.Attribute.BORDER_WIDTH]: 0.5,
         });
       try {
-        body.insertImage(6, this.image)
+        body.insertImage(6, image)
         .setWidth(260)
         .setHeight(260);
       } catch(err) {
@@ -130,8 +106,8 @@ class Ticket {
       // Remove File from root and Add that file to a specific folder
       try {
         const docFile = DriveApp.getFileById(docId);
-        docFile.moveTo(this.folder);
-        barcode.moveTo(this.folder);
+        docFile.moveTo(folder);
+        barcode.moveTo(folder);
         // Set permissions to 'anyone can edit' for that file
         docFile.setSharing(DriveApp.Access.ANYONE, DriveApp.Permission.EDIT); //set sharing
       } catch (err) {
@@ -142,7 +118,34 @@ class Ticket {
     // Return Document to use later
     console.info(`DOC ----> ${doc?.getUrl()?.toString()}`)
     return doc;
-  };
+  }
+
+  /**
+   * Find Image blob from File
+   * @param {png} file
+   */
+  static async GetImage(pngFile) {
+    const url = `https://live3dprinteros.blob.core.windows.net/render/${pngFile}`;
+
+    const params = {
+      method : "GET",
+      contentType : "image/png",
+      followRedirects : true,
+      muteHttpExceptions : true
+    };
+
+    try {
+      const response = await UrlFetchApp.fetch(url, params);
+      const responseCode = response.getResponseCode();
+      if(responseCode != 200) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
+
+      const blob = response.getBlob().setName(`IMAGE_${pngFile}`);
+      return blob;
+    } catch(err) {
+      console.error(`"GetImage()" failed : ${err}`);
+      return 1;
+    }
+  }
 
   /**
    * Calculate PrintCost
@@ -150,8 +153,22 @@ class Ticket {
    * @param {number} weight
    * @return {number} value
    */
-  _PrintCost(weight = 0.0) {
+  static PrintCost(weight = 0.0) {
     return Number(weight * COSTMULTIPLIER).toFixed(2);
+  }
+
+  /**
+   * Check if a Ticket Exists
+   * @param {string} ticket name
+   * @returns {bool} exists
+   */
+  static TicketExists(ticketName = ``) {
+    const files = DriveController.GetFileByName(ticketName);
+
+  }
+
+  static DeleteTicket(gid = ``) {
+    DriveController.DeleteFileByID(gid);
   }
 }
 
@@ -200,10 +217,10 @@ class UpdateMissingTickets {
   async _UpdateRow(index, sheet) {
     const rowData = SheetService.GetRowData(sheet, index);
     let { status, printerID, printerName, jobID, timestamp, email, posStatCode, duration, notes, picture, ticket, filename, weight, cost, } = rowData;
-    let imageBLOB = await this._GetImage(picture);
+    let imageBLOB = await TicketService.GetImage(picture);
 
     try {
-      const t = await new Ticket({
+      const t = await TicketService.CreateTicket({
         submissionTime : timestamp,
         email : email,
         printerName : printerName,
@@ -212,41 +229,12 @@ class UpdateMissingTickets {
         jobID : jobID,
         filename : filename,
         image : imageBLOB, 
-      }).CreateTicket();
+      });
       const url = t.getUrl();
       SheetService.SetByHeader(sheet, HEADERNAMES.ticket, index, url.toString());
       return 0;
     } catch (err) {
       console.error(`${err} : Couldn't generate a ticket....`);
-      return 1;
-    }
-  }
-
-  /**
-   * Find Image blob from File
-   * @private
-   * @param {png} file
-   * @return {blob} image
-   */
-  async _GetImage(pngFile) {
-    try {
-      const repo = `https://live3dprinteros.blob.core.windows.net/render/${pngFile}`;
-
-      const params = {
-        method : "GET",
-        contentType : "image/png",
-        followRedirects : true,
-        muteHttpExceptions : true,
-      };
-
-      const response = await UrlFetchApp.fetch(repo, params);
-      const responseCode = response.getResponseCode();
-      if(responseCode != 200) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
-
-      const blob = response.getBlob().setName(`IMAGE_${pngFile}`);
-      return blob;
-    } catch(err) {
-      console.error(`"GetImage()" failed : ${err}`);
       return 1;
     }
   }
@@ -278,7 +266,7 @@ const FixMissingTicketsForSingleSheet = (sheet) => {
           
           let imageBLOB = await GetImage(picture);
 
-          const t = await new Ticket({
+          const t = await TicketService.CreateTicket({
             submissionTime : timestamp,
             email : email,
             printerName : printerName,
@@ -287,7 +275,7 @@ const FixMissingTicketsForSingleSheet = (sheet) => {
             jobID : jobID,
             filename: filename,
             image : imageBLOB, 
-          }).CreateTicket();
+          });
           const url = t.getUrl();
           SheetService.SetByHeader(sheet, HEADERNAMES.ticket, thisRow, url.toString());
           console.warn(`Ticket Created....`);

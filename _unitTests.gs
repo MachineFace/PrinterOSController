@@ -9,7 +9,7 @@ const gasT_URL = `https://raw.githubusercontent.com/huan/gast/master/src/gas-tap
  * Test PrinterOS with GasT
  * @private
  */
-const _gasTPrinterOSTesting = async () => {
+const _gasT_PrinterOS_Testing = async () => {
   if ((typeof GasTap) === 'undefined') {
     eval(UrlFetchApp.fetch(gasT_URL).getContentText());
   }
@@ -106,7 +106,7 @@ const _gasTPrinterOSTesting = async () => {
 /**
  * Test with GasT
  */
-const _gasTMessagingAndStaffTesting = async () => {
+const _gasT_MessagingAndStaff_Testing = async () => {
   if ((typeof GasTap) === 'undefined') {
     eval(UrlFetchApp.fetch(gasT_URL).getContentText());
   }
@@ -206,14 +206,14 @@ const _gasTMessagingAndStaffTesting = async () => {
 /**
  * Test Ticket with GasT
  */
-const _gasTTicketTesting = async () => {
+const _gasT_Ticket_Testing = async () => {
   if ((typeof GasTap) === 'undefined') {
     eval(UrlFetchApp.fetch(gasT_URL).getContentText());
   }
   const test = new GasTap();
   console.warn(`Testing: ${new Error().stack.split('\n')[1].split(`at `)[1]}`);  // Print Enclosing Function Name
   
-  await test(`New Ticket Creation`, (t) => {
+  await test(`New Ticket Creation`, async (t) => {
     const dummyObj = {
       designspecialist : "Staff",
       submissiontime : new Date(),
@@ -223,7 +223,7 @@ const _gasTTicketTesting = async () => {
       filename : "somefile.gcode",
       weight : 53.34,
     }
-    let ticket = new Ticket(dummyObj).CreateTicket();
+    let ticket = await TicketService.CreateTicket(dummyObj);
     t.notEqual(ticket, undefined || null, `Ticket SHOULD NOT be null or undefined: ${ticket}`); 
   });
 
@@ -260,7 +260,7 @@ const _gasTTicketTesting = async () => {
         filename : "somefile.gcode",
         image : image,
       }
-      let ticket = new Ticket(dummyObj).CreateTicket();
+      let ticket = await TicketService.CreateTicket(dummyObj);
       t.notEqual(ticket, undefined || null, `Ticket SHOULD NOT be null or undefined: ${ticket}`);
     }); 
   });
@@ -283,7 +283,7 @@ const _gasTTicketTesting = async () => {
 /**
  * Test Misc with GasT
  */
-const _gasTMiscTesting = async () => {
+const _gasT_Misc_Testing = async () => {
   if ((typeof GasTap) === 'undefined') {
     eval(UrlFetchApp.fetch(gasT_URL).getContentText());
   }
@@ -389,7 +389,7 @@ const _gasTMiscTesting = async () => {
 /**
  * Test ID with GasT
  */
-const _gasTIDServiceTesting = async () => {
+const _gasT_IDService_Testing = async () => {
   if ((typeof GasTap) === 'undefined') {
     eval(UrlFetchApp.fetch(gasT_URL).getContentText());
   }
@@ -433,7 +433,7 @@ const _gasTIDServiceTesting = async () => {
 /**
  * Test Calculations with GasT
  */
-const _gasTCalculationTesting = async () => {
+const _gasT_Calculation_Testing = async () => {
   if ((typeof GasTap) === 'undefined') {
     eval(UrlFetchApp.fetch(gasT_URL).getContentText());
   }
@@ -530,7 +530,7 @@ const _gasTCalculationTesting = async () => {
 /**
  * Test Logger with GasT
  */
-const _gasTLoggerTesting = async () => {
+const _gasT_Logger_Testing = async () => {
   if ((typeof GasTap) === 'undefined') {
     eval(UrlFetchApp.fetch(gasT_URL).getContentText());
   }
@@ -558,14 +558,26 @@ const _gasTLoggerTesting = async () => {
     t.notThrow(() => x,`SetConditionalFormatting SHOULD NOT throw error.`);
   });
 
-  await test(`Drive`, t => {
-    t.skip();
-    const d = new DriveController();
+  await test.finish();
+  if (test.totalFailed() > 0) throw "Some test(s) failed!";
+}
 
-    const f = d.GetAllFileNamesInRoot();
-    const m = d.MoveTicketsOutOfRoot();
-    const o = d.TrashOldTickets();
-    const c = d.CountTickets();
+/**
+ * Test Logger with GasT
+ */
+const _gasT_DriveController_Testing = async () => {
+  if ((typeof GasTap) === 'undefined') {
+    eval(UrlFetchApp.fetch(gasT_URL).getContentText());
+  }
+  const test = new GasTap();
+  console.warn(`Testing: ${new Error().stack.split('\n')[1].split(`at `)[1]}`);  // Print Enclosing Function Name
+
+  await test(`Drive Controller`, t => {
+    // t.skip();
+    const f = DriveController.AllFileNamesInRoot()
+    const m = DriveController.MoveTicketsOutOfRoot();
+    const o = DriveController.TrashOldTickets();
+    const c = DriveController.CountTickets();
 
     t.notThrow(() => f,`MoveTicketsOutOfRoot SHOULD NOT throw error.`);
     t.notThrow(() => m,`MoveTicketsOutOfRoot SHOULD NOT throw error.`);
@@ -578,11 +590,10 @@ const _gasTLoggerTesting = async () => {
   if (test.totalFailed() > 0) throw "Some test(s) failed!";
 }
 
-
 /**
  * Test Emailing with GasT
  */
-const _gasTEmailTesting = async () => {
+const _gasT_Email_Testing = async () => {
   if ((typeof GasTap) === 'undefined') {
     eval(UrlFetchApp.fetch(gasT_URL).getContentText());
   }
@@ -607,11 +618,10 @@ const _gasTEmailTesting = async () => {
   if (test.totalFailed() > 0) throw "Some test(s) failed!";
 }
 
-
 /**
  * Test Updating with GasT
  */
-const _gasTUpdateTesting = async () => {
+const _gasT_Update_Testing = async () => {
   if ((typeof GasTap) === 'undefined') {
     eval(UrlFetchApp.fetch(gasT_URL).getContentText());
   }
@@ -671,14 +681,15 @@ const _gasTUpdateTesting = async () => {
 const _gasTTestAll = async () => {
   console.time(`TESTING TIMER`);
   Promise.all([
-    await _gasTMessagingAndStaffTesting(),
-    await _gasTTicketTesting(),
-    await _gasTMiscTesting(),
-    await _gasTIDServiceTesting(),
-    await _gasTCalculationTesting(),
-    await _gasTLoggerTesting(),
-    await _gasTEmailTesting(),
-    await _gasTUpdateTesting(),
+    await _gasT_MessagingAndStaff_Testing(),
+    await _gasT_Ticket_Testing(),
+    await _gasT_Misc_Testing(),
+    await _gasT_IDService_Testing(),
+    await _gasT_Calculation_Testing(),
+    await _gasT_Logger_Testing(),
+    await _gasT_DriveController_Testing(),
+    await _gasT_Email_Testing(),
+    await _gasT_Update_Testing(),
   ])
   .then(console.info('Test Success'))
   .catch(err => {

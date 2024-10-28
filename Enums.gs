@@ -11,6 +11,9 @@ const COSTMULTIPLIER = 0.04;
 const COSTMULTIPLIERBREAKAWAY = 0.20;
 const COSTMULTIPLIER_AVERAGE = 0.12;
 
+/**
+ * Colors
+ */
 const COLORS = Object.freeze({
   green_light : `#d9ead3`,
   green : `74d975`, 
@@ -40,7 +43,9 @@ const COLORS = Object.freeze({
   black : `#000000`,
 });
 
-
+/**
+ * Event Colors
+ */
 const EVENT_COLORS = Object.freeze({
   PALE_BLUE	: 1,
   PALE_GREEN : 2,
@@ -55,6 +60,9 @@ const EVENT_COLORS = Object.freeze({
   RED : 11,
 });
 
+/**
+ * Response Codes
+ */
 const RESPONSECODES = Object.freeze({
 	200 : `OK`,
 	201 : `Created`,
@@ -124,6 +132,9 @@ const RESPONSECODES = Object.freeze({
 	599 : `Network connect timeout error`,
 });
 
+/**
+ * Status
+ */
 const STATUS = Object.freeze({
   queued : {
     plaintext : `Queued`,
@@ -159,6 +170,9 @@ const STATUS = Object.freeze({
   },
 });
 
+/**
+ * Printer IDS
+ */
 const PRINTERIDS = Object.freeze({ 
   Luteus : 79606,
   Caerulus : 79605,
@@ -178,6 +192,9 @@ const PRINTERIDS = Object.freeze({
   Moopy : 00000,
 });
 
+/**
+ * Printer Data
+ */
 const PRINTERDATA = Object.freeze({ 
   Luteus : { 
     name : `Luteus`,
@@ -294,6 +311,9 @@ const PRINTERDATA = Object.freeze({
   },
 });
 
+/**
+ * Headernames
+ */
 const HEADERNAMES = Object.freeze({
   status : `Status`,
   printerID :	`PrinterID`,
@@ -311,6 +331,9 @@ const HEADERNAMES = Object.freeze({
   cost : `Cost ($)`,												
 });
 
+/**
+ * Sheets
+ */
 const SHEETS = Object.freeze({
   Spectrum : SpreadsheetApp.getActiveSpreadsheet().getSheetByName(`Spectrum`), 
   Zardoz : SpreadsheetApp.getActiveSpreadsheet().getSheetByName(`Zardoz`), 
@@ -330,6 +353,9 @@ const SHEETS = Object.freeze({
   Moopy : SpreadsheetApp.getActiveSpreadsheet().getSheetByName(`Moopy`),
 });
 
+/**
+ * Other Sheets
+ */
 const OTHERSHEETS = Object.freeze({
   Summary : SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Summary'),
   Staff : SpreadsheetApp.getActiveSpreadsheet().getSheetByName(`StaffList`),
@@ -340,15 +366,23 @@ const OTHERSHEETS = Object.freeze({
   All : SpreadsheetApp.getActiveSpreadsheet().getSheetByName(`All`),
 });
 
+/**
+ * Workgroups
+ */
 const WORKGROUPS = [
   3275, 3285, 3286, 3291, 3292, 3296, 3414, 3473, 3474, 3475,
 ];
 
+/**
+ * Jacobs Specific Workgroups
+ */
 const JACOBSWORKGROUPS = [
   3275, 3285, 3286, 3296, 3414,
 ];
 
-
+/**
+ * Workgroups Enumerated
+ */
 const WORKGROUPS_ENUMERATED = Object.freeze({
   STUDENTS_GENERAL : 3275, 
   MDES : 3285, 
@@ -362,7 +396,10 @@ const WORKGROUPS_ENUMERATED = Object.freeze({
   CED_DFL_PDST : 3475,
 });
 
-//3291, 3292, 3473, 3474, 3475,
+/**
+ * Non-Jacobs Workgroups Enumerated
+ * 3291, 3292, 3473, 3474, 3475,
+ */
 const NOT_JACOBS_ENUMERATED = Object.freeze({
   CED : 3291, 
   L_S : 3292, 
@@ -371,24 +408,22 @@ const NOT_JACOBS_ENUMERATED = Object.freeze({
   CED_DFL_PDST : 3475,
 });
 
-
-
-
 /**
-  * INPUTS
-  * -argument-     :-inches-      :-mm-     :-points-
-  * letter_size    :8.5"x11"      :216x279  :612.283x790.866
-  * tabloid_size   :11"x17"       :279x432  :790.866x1224.57
-  * legal_size     :8.5"x14"      :216x356  :612.283x1009.13
-  * statement_size :5.5"x8.5"     :140x216  :396.85x612.283
-  * executive_size :7.25"x10.5"   :184x267  :521.575x756.85
-  * folio_size     :8.5"x13"      :216x330  :612.283x935.433
-  * a3_size        :11.69"x16.54" :297x420  :841.89x1190.55
-  * a4_size        :8.27"x11.69"  :210x297  :595.276x841.89
-  * a5_size        :5.83"x8.27"   :148x210  :419.528x595.276
-  * b4_size        :9.84"x13.9"   :250x353  :708.661x1000.63
-  * b5_size        :6.93"x9.84"   :176x250  :498.898x708.661
-*/
+ * Page Sizes
+ * INPUTS
+ * -argument-     :-inches-      :-mm-     :-points-
+ * letter_size    :8.5"x11"      :216x279  :612.283x790.866
+ * tabloid_size   :11"x17"       :279x432  :790.866x1224.57
+ * legal_size     :8.5"x14"      :216x356  :612.283x1009.13
+ * statement_size :5.5"x8.5"     :140x216  :396.85x612.283
+ * executive_size :7.25"x10.5"   :184x267  :521.575x756.85
+ * folio_size     :8.5"x13"      :216x330  :612.283x935.433
+ * a3_size        :11.69"x16.54" :297x420  :841.89x1190.55
+ * a4_size        :8.27"x11.69"  :210x297  :595.276x841.89
+ * a5_size        :5.83"x8.27"   :148x210  :419.528x595.276
+ * b4_size        :9.84"x13.9"   :250x353  :708.661x1000.63
+ * b5_size        :6.93"x9.84"   :176x250  :498.898x708.661
+ */
 const PAGESIZES = Object.freeze({
   letter: {width: 612.283, height: 790.866},
   tabloid: {width: 790.866,height: 1224.57},

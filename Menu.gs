@@ -126,7 +126,7 @@ const PopupCreateTicket = async () => {
   const imageBlob = await GetImage(picture);
   
   try {
-    const ticket = await new Ticket({
+    const ticket = await TicketService.CreateTicket({
       name : email,
       submissionTime : timestamp,
       email : email,
@@ -136,7 +136,7 @@ const PopupCreateTicket = async () => {
       jobID : jobID,
       filename : filename,
       image : imageBlob,
-    }).CreateTicket();
+    });
 
     const url = ticket.getUrl();
     SheetService.SetByHeader(thisSheet, HEADERNAMES.ticket, thisRow, url.toString());
