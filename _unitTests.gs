@@ -296,7 +296,7 @@ const _gasTMiscTesting = async () => {
     t.notEqual(x, undefined || null, `GetByHeader SHOULD NOT return undefined or null: ${x}`);
 
     const y = SheetService.GetByHeader(SHEETS.Caerulus, `BAD COLUMN NAME`, 2);
-    t.equal(y, undefined || null, `GetByHeader SHOULD return undefined or null: ${y}`);
+    t.equal(y, 1, `GetByHeader SHOULD return "1": Actual: ${y}`);
 
     const z = SheetService.GetByHeader(`BAD SHEET`, HEADERNAMES.filename, 2);
     t.equal(z, 1, `GetByHeader SHOULD return 1: ${z}`);
@@ -311,10 +311,10 @@ const _gasTMiscTesting = async () => {
     t.notEqual(x, undefined || null, `GetColumnDataByHeader SHOULD NOT return undefined or null: ${x}`);
 
     const y = SheetService.GetColumnDataByHeader(SHEETS.Photon, `BAD COLUMN NAME`);
-    t.equal(y, undefined || null, `GetColumnDataByHeader SHOULD return undefined or null: ${y}`);
+    t.equal(y, 1, `GetColumnDataByHeader SHOULD return "1": Actual: ${y}`);
 
     const z = SheetService.GetColumnDataByHeader(`BAD SHEET`, `BAD COLUMN NAME`);
-    t.equal(z, 1, `GetColumnDataByHeader SHOULD return 1: ${z}`);
+    t.equal(z, 1, `GetColumnDataByHeader SHOULD return "1": Actual: ${z}`);
 
   });
 

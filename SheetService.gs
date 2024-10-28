@@ -283,8 +283,7 @@ class SheetService {
         const sheetName = sheet.getSheetName();
         const finder = sheet.createTextFinder(value).findAll();
         if (finder != null) {
-          temp = [];
-          finder.forEach(result => temp.push(result.getRow()));
+          let temp = [...finder.map(x => x.getRow())];
           res[sheetName] = temp;
         }
       })
