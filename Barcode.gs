@@ -9,26 +9,23 @@
  * @return
  */
 class BarcodeService {
-  constructor({
-    jobnumber : jobnumber = Math.floor(Math.random() * 100000).toFixed(),
-  }) {
-    /** @private */
-    this.jobnumber = jobnumber;
+  constructor() {
+
   }
 
   /**
    * Generate Barcode
+   * @param {number} number to encode
+   * @return {barcode} barcode
    */
-  async GenerateBarcode() {
+  static async GenerateBarcode(jobID = Math.floor(Math.random() * 100000).toFixed()) {
     const root = 'http://bwipjs-api.metafloor.com/';
-    const rootsec = 'https://bwipjs-api.metafloor.com/';
-    const type = '?bcid=code128';
-    const ts = '&text=';
+    // const rootsec = 'https://bwipjs-api.metafloor.com/';
     const scale = '&scale=0.75'
     const postfx = '&includetext';
 
     //let url = 'http://bwipjs-api.metafloor.com/?bcid=code128&text=1234567890&includetext';  //KNOWN WORKING LOCATION
-    const url = root + type + ts + this.jobnumber + scale + postfx;
+    const url = root + `?bcid=code128` + `&text=` + jobID + scale + postfx;
 
     const params = {
       method : "GET",
@@ -43,13 +40,11 @@ class BarcodeService {
       const responseCode = response.getResponseCode();
       if(responseCode != 200) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`);  
       const content = response.getContent();
-      const blob = Utilities.newBlob(content).setName(`Barcode : ${this.jobnumber}`) ;
-      
-      let barcode = DriveApp.createFile(blob);
-      barcode.setTrashed(true);
-      
+      const blob = Utilities.newBlob(content).setName(`Barcode_${jobID}`) ;
+      const barcode = DriveApp.createFile(blob);      
       console.info(`BARCODE CREATED ---> ${barcode?.getUrl()}`);
-      return barcode;
+      barcode.setTrashed(true);
+      return blob;
     } catch(err) {
       console.error(`"GenerateBarcode()" failed : ${err}`);
       return 1;
@@ -58,17 +53,16 @@ class BarcodeService {
 
   /**
    * Generate Barcode (Formatted)
+   * @param {number} number to encode
+   * @return {barcode} barcode   
    */
-  GenerateBarCodeForTicketHeader() {
-
+  static async GenerateBarCodeForTicketHeader(jobID = Math.floor(Math.random() * 100000).toFixed()) {
     const root = 'http://bwipjs-api.metafloor.com/';
-    const type = '?bcid=code128';
-    const ts = '&text=';
     const scaleX = `&scaleX=6`
     const scaleY = '&scaleY=6';
     const postfx = '&includetext';
 
-    const url = root + type + ts + this.jobnumber + scaleX + scaleY + postfx;
+    const url = root + `?bcid=code128` + `&text=` + jobID + scaleX + scaleY + postfx;
 
     const params = {
       method : "GET",
@@ -79,16 +73,15 @@ class BarcodeService {
     };
     
     try {
-      const response = UrlFetchApp.fetch(url, params);
+      const response = await UrlFetchApp.fetch(url, params);
       const responseCode = response.getResponseCode();
       if(responseCode != 200) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
       const content = response.getContent();
-
-      let barcode = DriveApp.createFile( Utilities.newBlob(content).setName(`Barcode : ${this.jobnumber}`) );
-      barcode.setTrashed(true);
-       
+      const blob = Utilities.newBlob(content).setName(`Barcode_${jobID}`);
+      const barcode = DriveApp.createFile(blob);       
       console.info(`BARCODE CREATED ---> ${barcode?.getUrl()}`);
-      return barcode;
+      barcode.setTrashed(true);
+      return blob;
     } catch(err) {
       console.error(`"GenerateBarCodeForTicketHeader()" failed : ${err}`);
       return 1;

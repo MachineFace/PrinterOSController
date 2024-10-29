@@ -76,10 +76,10 @@ class DriveController {
   }
 
   /**
-   * Trash Old Tickets
+   * Delete Old Tickets
    * ** Note: this function needed a timeout. Otherwise it runs forever
    */
-  static TrashOldTickets() {
+  static DeleteOldTickets() {
     try {
       const ticketFolder = DriveApp.getFolderById(PropertiesService.getScriptProperties().getProperty(`TICKET_FOLDER_GID`));
       const date120DaysAgo = new Date(new Date().setDate(new Date().getDate() - 120));
@@ -99,7 +99,7 @@ class DriveController {
       } 
       return 0;
     } catch(err) {
-      console.error(`"TrashOldTickets()" failed: ${err}`);
+      console.error(`"DeleteOldTickets()" failed: ${err}`);
       return 1;
     }
   }
@@ -107,7 +107,7 @@ class DriveController {
   /**
    * Trash Old Tickets
    */
-  static TrashOldestTicketsFirst() {
+  static DeleteOldestTicketsFirst() {
     try {
       const date120DaysAgo = new Date(new Date().setDate(new Date().getDate() - 120));
       console.warn(`DELETING TICKETS OLDER THAN 120 Days ago ---> ${date120DaysAgo}`);
@@ -130,6 +130,35 @@ class DriveController {
     } catch(err) {
       console.error(`"TrashOldTickets()" failed: ${err}`);
       return 1;
+    }
+  }
+
+  /**
+   * Delete Duplicate Files
+   */
+  static DeleteDuplicateFiles() {
+    const folder = DriveApp.getFolderById(PropertiesService.getScriptProperties().getProperty(`TICKET_FOLDER_GID`));
+    const files = folder.getFiles();
+
+    let fileMap = {};
+
+    // Group files by name
+    const startTime = new Date().getTime();
+    const timeout = 5.9 * 60 * 1000;
+    while (files.hasNext() && (new Date().getTime() - startTime < timeout)) {
+      let file = files.next();
+      let fileName = file.getName();
+
+      // If a duplicate exists and it's newer, delete the current file
+      if (fileMap[fileName] && fileMap[fileName].getLastUpdated() > file.getLastUpdated()) {
+        file.setTrashed(true);
+      } else {
+        // Otherwise, keep this file and trash the older one if it exists
+        if (fileMap[fileName]) {
+          fileMap[fileName].setTrashed(true);
+        }
+        fileMap[fileName] = file;
+      }
     }
   }
 
@@ -222,12 +251,14 @@ class DriveController {
  * Main Cleanup Function
  */
 const CleanupDrive = () => DriveController.MoveTicketsOutOfRoot();
-const TrashOldTickets = () => DriveController.TrashOldTickets();
+const TrashOldTickets = () => DriveController.DeleteOldTickets();
 const CountTickets = () => DriveController.CountTickets();
 
 
 
-
+const _test_DriveController = () => {
+  DriveController.DeleteDuplicateFiles();
+}
 
 
 

@@ -202,7 +202,6 @@ const _gasT_MessagingAndStaff_Testing = async () => {
   if (test.totalFailed() > 0) throw "Some test(s) failed!";
 }
 
-
 /**
  * Test Ticket with GasT
  */
@@ -576,7 +575,7 @@ const _gasT_DriveController_Testing = async () => {
     // t.skip();
     const f = DriveController.AllFileNamesInRoot()
     const m = DriveController.MoveTicketsOutOfRoot();
-    const o = DriveController.TrashOldTickets();
+    const o = DriveController.DeleteOldTickets();
     const c = DriveController.CountTickets();
 
     t.notThrow(() => f,`MoveTicketsOutOfRoot SHOULD NOT throw error.`);

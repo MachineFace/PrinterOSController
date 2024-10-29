@@ -238,8 +238,8 @@ const PopupFetchNewForSingleSheet = async () => {
 /**
  * Fix Missing Tickets for This Sheet
  */
-PopupFixMissingTicketsForThisSheet = async () => {
-  let ui = await SpreadsheetApp.getUi();
+PopupFixMissingTicketsForThisSheet = () => {
+  let ui = SpreadsheetApp.getUi();
   let thisSheet = SpreadsheetApp.getActiveSheet();
   FixMissingTicketsForSingleSheet(thisSheet);
   // ui.alert(

@@ -88,7 +88,7 @@ class WriteToSheet {
       const total_cost = Number(weight * COSTMULTIPLIER).toFixed(2);
       cost = total_cost ? total_cost : this._PrintCost(weight);
 
-      let imageBLOB = await GetImage(picture);
+      let imageBLOB = await TicketService.GetImage(picture);
       const ticket = await TicketService.CreateTicket({
         submissionTime : timestamp,
         email : email,

@@ -11,7 +11,7 @@ class TicketService {
   /**
    * Create Ticket
    */
-  static CreateTicket({
+  static async CreateTicket({
     designspecialist : designspecialist = `Staff`, 
     submissiontime : submissiontime = new Date(), 
     name : name = `Student Name`, 
@@ -25,20 +25,28 @@ class TicketService {
     filename : filename = `file.gcode`,
     image : image,
   }) {
-    const folder = DriveApp.getFolderById(PropertiesService.getScriptProperties().getProperty(`TICKETGID`));
-    const cost = weight ? TicketService.PrintCost(weight) : 0.0;
+    try {
+      const folder = DriveApp.getFolderById(PropertiesService.getScriptProperties().getProperty(`TICKETGID`));
+      const width = 260;
+      const cost = weight ? TicketService.PrintCost(weight) : 0.0;
 
-    let doc = DocumentApp.create(ticketName); // Make Document
-    let body = doc.getBody();
-    let docId = doc.getId();
-    let url = doc.getUrl();
-    
-    const b = new BarcodeService({ jobID });
-    const barcode = b.GenerateBarCodeForTicketHeader();
+      // Check if doc exists
+      if(TicketService.TicketExists(ticketName)) {
+        console.info(`Deleting Found Ticket (${ticketName})`);
+        const id = DriveController.GetFileByName(ticketName).getId();
+        DriveController.DeleteFileByID(id);
+      }
 
-    // Append Document with Info
-    if (doc != undefined || doc != null || doc != NaN) {
+      let doc = DocumentApp.create(ticketName); // Make Document
+      if (doc == undefined || doc == null || doc == NaN) throw new Error(`Could not create document.`);
 
+      let body = doc.getBody();
+      let docId = doc.getId();
+      let url = doc.getUrl();
+      
+      const barcode = await BarcodeService.GenerateBarCodeForTicketHeader(jobID);
+
+      // Append Document with Info
       body
         .setPageWidth(PAGESIZES.custom.width)
         .setPageHeight(PAGESIZES.custom.height)
@@ -46,12 +54,10 @@ class TicketService {
         .setMarginBottom(2)
         .setMarginLeft(2)
         .setMarginRight(2);
-
       body.insertImage(0, barcode)
-        .setWidth(260)
+        .setWidth(width)
         .setHeight(100);
       body.insertHorizontalRule(1);
-
       body.insertParagraph(2, `Email: ${email.toString()}`)
         .setHeading(DocumentApp.ParagraphHeading.HEADING1)
         .setAttributes({
@@ -66,8 +72,6 @@ class TicketService {
           [DocumentApp.Attribute.BOLD]: true,
           [DocumentApp.Attribute.LINE_SPACING]: 1,
         });
-
-      // Create a two-dimensional array containing the cell contents.
       body.appendTable([
           [ `Name`, name, ],
           [ `Date Started`, submissiontime.toDateString(), ],
@@ -83,13 +87,10 @@ class TicketService {
           [DocumentApp.Attribute.LINE_SPACING]: 1,
           [DocumentApp.Attribute.BORDER_WIDTH]: 0.5,
         });
-      try {
-        body.insertImage(6, image)
-        .setWidth(260)
-        .setHeight(260);
-      } catch(err) {
-        console.error(`${err} : Couldn't append the image to the ticket for some reason.`);
-      }
+
+      image && body.insertImage(6, image)
+        .setWidth(width)
+        .setHeight(width);
 
       // Footer
       // doc
@@ -102,22 +103,18 @@ class TicketService {
       //   })
       //   .setText(Excuse());
       
-
       // Remove File from root and Add that file to a specific folder
-      try {
-        const docFile = DriveApp.getFileById(docId);
-        docFile.moveTo(folder);
-        barcode.moveTo(folder);
-        // Set permissions to 'anyone can edit' for that file
-        docFile.setSharing(DriveApp.Access.ANYONE, DriveApp.Permission.EDIT); //set sharing
-      } catch (err) {
-        console.error(`Whoops : ${err}`);
-      }
-      
+      const docFile = DriveApp.getFileById(docId);
+      docFile.moveTo(folder);
+      docFile.setSharing(DriveApp.Access.ANYONE, DriveApp.Permission.EDIT); // Set permissions to 'anyone can edit' for that file
+        
+      // Return Document to use later
+      console.info(`DOC ----> ${doc?.getUrl()?.toString()}`)
+      return doc;
+    } catch(err) {
+      console.error(`"CreateTicket()" failed: ${err}`);
+      return 1;
     }
-    // Return Document to use later
-    console.info(`DOC ----> ${doc?.getUrl()?.toString()}`)
-    return doc;
   }
 
   /**
@@ -164,12 +161,28 @@ class TicketService {
    */
   static TicketExists(ticketName = ``) {
     const files = DriveController.GetFileByName(ticketName);
-
+    return !!files;
   }
 
   static DeleteTicket(gid = ``) {
     DriveController.DeleteFileByID(gid);
   }
+  
+}
+
+const _test_tickets = async () => {
+  // const t = TicketService.TicketExists(`PrinterOSTicket-4068093`)
+  // console.info(t)
+  const dummyObj = {
+      designspecialist : "Staff",
+      submissiontime : new Date(),
+      name : "Stu Dent",
+      printerID : "123876",
+      printerName : "Dingus",
+      filename : "somefile.gcode",
+      weight : 53.34,
+    }
+  let ticket = await TicketService.CreateTicket(dummyObj);
 }
 
 
