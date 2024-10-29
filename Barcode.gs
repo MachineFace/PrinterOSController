@@ -182,7 +182,7 @@ const MarkAsAbandonedByBarcode = async () => {
   console.info(`Job number ${jobnumber} marked as abandoned. Sheet: ${sheet.getSheetName()} row: ${row}`);
 
   progressUpdate.setValue(`Emailing ${email}......`);
-  await new Emailer({
+  await new EmailService({
     email : email, 
     status : STATUS.abandoned.plaintext,
     projectname : projectname,

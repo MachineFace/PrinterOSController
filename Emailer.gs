@@ -3,7 +3,7 @@
  * @required {string} Student Email
  * @required {string} Status
  */
-class Emailer {
+class EmailService {
   constructor({ 
     email : email, 
     name : name = `Self-Service Printing User`,
@@ -30,7 +30,7 @@ class Emailer {
     /** @private */
     this.designspecialistemail = designspecialistemail;
     /** @private */
-    this.message = new CreateMessage({
+    this.message = new MessageService({
       name : this.name,
       projectname : this.projectname,
       jobnumber : this.jobnumber,
@@ -45,81 +45,25 @@ class Emailer {
   SendEmail() {
     switch (this.status) {
       case STATUS.queued.plaintext:
-        MailApp.sendEmail(this.email, `${SERVICE_NAME} : Queued`, "", {
-          htmlBody: this.message.queuedMessage,
-          from: SERVICE_EMAIL,
-          cc: `${this.designspecialistemail}, ${SERVICE_EMAIL}`,
-          bcc: "",
-          name: SERVICE_NAME,
-          noReply : true,
-        });
-        console.warn(`Student ${this.name} emailed ${this.status} message...`);
+        EmailService.Mail(this.email, STATUS.queued.plaintext, this.message.queuedMessage, this.designspecialistemail);
         break;
       case STATUS.inProgress.plaintext:
-        MailApp.sendEmail(this.email, `${SERVICE_NAME} : Project Started`, "", {
-            htmlBody: this.message.inProgressMessage,
-            from: SERVICE_EMAIL,
-            cc: `${this.designspecialistemail}, ${SERVICE_EMAIL}`,
-            bcc: "",
-            name: SERVICE_NAME,
-            noReply : true,
-        });
-        console.warn(`Student ${this.name} emailed ${this.status} message...`);
+        EmailService.Mail(this.email, STATUS.inProgress.plaintext, this.message.inProgressMessage, this.designspecialistemail);
         break;
       case STATUS.complete.plaintext:
-        MailApp.sendEmail(this.email, `${SERVICE_NAME} : Project Completed`, "", {
-            htmlBody: this.message.completedMessage,
-            from: SERVICE_EMAIL,
-            cc: `${this.designspecialistemail}, ${SERVICE_EMAIL}`,
-            bcc: "",
-            name: SERVICE_NAME,
-            noReply : true,
-        });
-        console.warn(`Student ${this.name} emailed ${this.status} message...`);
+        EmailService.Mail(this.email, STATUS.complete.plaintext, this.message.completedMessage, this.designspecialistemail);
         break;
       case STATUS.failed.plaintext:
-        MailApp.sendEmail(this.email, `${SERVICE_NAME} : Project has Failed`, "", {
-            htmlBody: this.message.failedMessage,
-            from: SERVICE_EMAIL,
-            cc: `${this.designspecialistemail}, ${SERVICE_EMAIL}`,
-            bcc: "",
-            name: SERVICE_NAME,
-            noReply : true,
-        });
-        console.warn(`Student ${this.name} emailed ${this.status} message...`);
+        EmailService.Mail(this.email, STATUS.failed.plaintext, this.message.failedMessage, this.designspecialistemail);
         break;
       case STATUS.cancelled.plaintext:
-        MailApp.sendEmail(this.email, `${SERVICE_NAME} : Project has been Cancelled`, "", {
-            htmlBody: this.message.cancelledMessage,
-            from: SERVICE_EMAIL,
-            cc: `${this.designspecialistemail}, ${SERVICE_EMAIL}`,
-            bcc: "",
-            name: SERVICE_NAME,
-            noReply : true,
-        });
-        console.warn(`Student ${this.name} emailed ${this.status} message...`);
+        EmailService.Mail(this.email, STATUS.cancelled.plaintext, this.message.cancelledMessage, this.designspecialistemail);
         break;
       case STATUS.closed.plaintext:
-        MailApp.sendEmail(this.email, `${SERVICE_NAME} : Project Closed`, "", {
-          htmlBody: this.message.completedMessage,
-          from: SERVICE_EMAIL,
-            cc: `${this.designspecialistemail}, ${SERVICE_EMAIL}`,
-          bcc: "",
-          name: SERVICE_NAME,
-          noReply : true,
-        });
-        console.warn(`Student ${this.name} emailed ${this.status} message...`);
+        EmailService.Mail(this.email, STATUS.closed.plaintext, this.message.completedMessage, this.designspecialistemail);
         break;
       case STATUS.abandoned.plaintext:
-        MailApp.sendEmail(this.email, `${SERVICE_NAME} : Project hasn't been picked up yet!`, "", {
-          htmlBody: this.message.abandonedMessage,
-          from: SERVICE_EMAIL,
-            cc: `${this.designspecialistemail}, ${SERVICE_EMAIL}`,
-          bcc: "",
-          name: SERVICE_NAME,
-          noReply : true,
-        });
-        console.warn(`Student ${this.name} emailed ${this.status} message...`);
+        EmailService.Mail(this.email, STATUS.abandoned.plaintext, this.message.abandonedMessage, this.designspecialistemail);
         break;
       case "":
       case undefined:
@@ -128,21 +72,50 @@ class Emailer {
     }
   }
 
+  /**
+   * Mail
+   * @param {string} to email
+   * @param {string} status
+   * @param {string} message
+   * @param {string} bcc email
+   * @returns {bool} success
+   */
+  static Mail(to_email = ``, status = STATUS.queued, message = new MessageService({}), ds_email = ``) {
+    try {
+      const subject = `${SERVICE_NAME}: ${status}`;
+      const options = {
+        htmlBody: message,
+        from: SERVICE_EMAIL,
+        cc: `${ds_email}, ${SERVICE_EMAIL}`,
+        bcc: "",
+        name: SERVICE_NAME,
+        noReply : true,
+      }
+      MailApp.sendEmail(to_email, subject, "", options);
+      console.warn(`User (${to_email}) emailed ${status} message.`);
+      return 0;
+    } catch(err) {
+      console.error(`"Mail()" failed: ${err}`);
+      return 1;
+
+    }
+  }
+
 }
 
 
-// const _testEmailer = () => {
-//   Object.values(STATUS).forEach(async (status) => {
-//     await new Emailer({
-//       email : "codyglen@berkeley.edu",
-//       status : status.plaintext,
-//       name : `Dingus Dongus`,
-//       projectname : `Dingus Project`,
-//       jobnumber : 9234875,
-//       weight : 200,
-//     })
-//   })
-// }
+const _testEmailer = () => {
+  Object.values(STATUS).forEach(async (status) => {
+    await new EmailService({
+      email : "codyglen@berkeley.edu",
+      status : status.plaintext,
+      name : `Dingus Dongus`,
+      projectname : `Dingus Project`,
+      jobnumber : 9234875,
+      weight : 200,
+    })
+  })
+}
 
 
 

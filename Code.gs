@@ -44,7 +44,7 @@ const onChange = async (e) => {
     const rowData = SheetService.GetRowData(ss, thisRow);
     let { status, printerID, printerName, jobID, timestamp, email, posStatCode, duration, notes, picture, ticket, filename, weight, cost, } = rowData;
 
-    new Emailer({
+    new EmailService({
       email : email, 
       status : status,
       projectname : filename,

@@ -116,8 +116,7 @@ const FixStatus = () => {
  */
 const SetStatusDropdowns = () => {
   try {
-    let statuses = [];
-    Object.values(STATUS).forEach(status => statuses.push(status.plaintext));
+    let statuses = [...Object.values(STATUS).map(status => status.plaintext)];
     const rule = SpreadsheetApp
       .newDataValidation()
       .requireValueInList(statuses);

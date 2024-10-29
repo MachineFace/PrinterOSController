@@ -116,7 +116,7 @@ const _gasT_MessagingAndStaff_Testing = async () => {
   await test(`Messages`, (t) => {
     console.time(`Execution Timer`);
 
-    const message = new CreateMessage({
+    const message = new MessageService({
       name : 'Stew Dent',
       projectname : 'Pro Ject',
       weight : 523,
@@ -143,7 +143,7 @@ const _gasT_MessagingAndStaff_Testing = async () => {
     const i = `ABANDONED ${message.abandonedMessage}`;
     t.notEqual(i, undefined || null, `ABANDONED message should not return undefined or null. \n${i}`);
 
-    const message2 = new CreateMessage({});
+    const message2 = new MessageService({});
     const j = `DEFAULT ${message2.defaultMessage}`;
     t.notEqual(j, undefined || null, `DEFAULT message should not return undefined or null. \n${j}`);
     const k = `QUEUED ${message2.queuedMessage}`;
@@ -599,9 +599,9 @@ const _gasT_Email_Testing = async () => {
   const test = new GasTap();
   console.warn(`Testing: ${new Error().stack.split('\n')[1].split(`at `)[1]}`);  // Print Enclosing Function Name
 
-  await test(`Emailer`, t => {
+  await test(`EmailService`, t => {
     Object.values(STATUS).forEach( status => {
-      const em = new Emailer({
+      const em = new EmailService({
         email : SERVICE_EMAIL,
         status : status.plaintext,
         name : `Testa Fiesta`,
@@ -609,7 +609,7 @@ const _gasT_Email_Testing = async () => {
         jobnumber : 9234875,
         weight : 200,
       });
-      t.notThrow(() => em,`Emailer SHOULD NOT throw error. ${em}`);
+      t.notThrow(() => em,`EmailService SHOULD NOT throw error. ${em}`);
     });
   });
 

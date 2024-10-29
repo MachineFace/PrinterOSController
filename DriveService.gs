@@ -82,15 +82,15 @@ class DriveController {
   static DeleteOldTickets() {
     try {
       const ticketFolder = DriveApp.getFolderById(PropertiesService.getScriptProperties().getProperty(`TICKET_FOLDER_GID`));
-      const date120DaysAgo = new Date(new Date().setDate(new Date().getDate() - 120));
-      console.warn(`DELETING TICKETS OLDER THAN 120 Days ago ---> ${date120DaysAgo}`);
+      const dateminus90 = new Date(new Date().setDate(new Date().getDate() - 90));
+      console.warn(`DELETING TICKETS OLDER THAN 120 Days ago ---> ${dateminus90}`);
       const files = ticketFolder.getFiles();
       const startTime = new Date().getTime();
       const timeout = 5.9 * 60 * 1000;
       while (files.hasNext() && (new Date().getTime() - startTime < timeout)) {
         let file = files.next();
         let date = file.getDateCreated();
-        if(date > date120DaysAgo) continue;
+        if(date > dateminus90) continue;
         let fileName = file.getName(), id = file.getId();
         let tag = `File: ${fileName}, ID: ${id}, Date: ${date}`;
         file.setTrashed(true);
@@ -109,15 +109,15 @@ class DriveController {
    */
   static DeleteOldestTicketsFirst() {
     try {
-      const date120DaysAgo = new Date(new Date().setDate(new Date().getDate() - 120));
-      console.warn(`DELETING TICKETS OLDER THAN 120 Days ago ---> ${date120DaysAgo}`);
+      const dateminus90 = new Date(new Date().setDate(new Date().getDate() - 90));
+      console.warn(`DELETING TICKETS OLDER THAN 120 Days ago ---> ${dateminus90}`);
       const ticketFolder = DriveApp.getFolderById(PropertiesService.getScriptProperties().getProperty(`TICKET_FOLDER_GID`));
       const files = ticketFolder.getFiles();
     
       let fileList = [];
       while (files.hasNext()) {
         let file = files.next();
-        if(file.getDateCreated() > date120DaysAgo) continue;
+        if(file.getDateCreated() > dateminus90) continue;
         fileList.push({
           file: file,
           createdDate: file.getDateCreated()

@@ -25,7 +25,7 @@ const PopUpMarkAsAbandoned = async () => {
     let sheet = SHEETS[sheetName];
     SheetService.SetByHeader(sheet, HEADERNAMES.status, row, status);
     console.info(`Job ID ${jobID} marked as abandoned. Sheet: ${sheetName} row: ${row}`);
-    new Emailer({
+    new EmailService({
       email : email, 
       status : status,
       projectname : filename,
