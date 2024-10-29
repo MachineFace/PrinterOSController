@@ -167,7 +167,7 @@ class TicketService {
   static DeleteTicket(gid = ``) {
     DriveController.DeleteFileByID(gid);
   }
-  
+
 }
 
 const _test_tickets = async () => {
@@ -277,7 +277,7 @@ const FixMissingTicketsForSingleSheet = (sheet) => {
           const rowData = SheetService.GetRowData(sheet, thisRow);
           let { status, printerID, printerName, jobID, timestamp, email, posStatCode, duration, notes, picture, ticket, filename, weight, cost, } = rowData;
           
-          let imageBLOB = await GetImage(picture);
+          let imageBLOB = await TicketService.GetImage(picture);
 
           const t = await TicketService.CreateTicket({
             submissionTime : timestamp,

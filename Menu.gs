@@ -123,7 +123,7 @@ const PopupCreateTicket = async () => {
 
   const rowData = SheetService.GetRowData(sheet, thisRow);
   let { status, printerID, printerName, jobID, timestamp, email, posStatCode, duration, notes, picture, ticket, filename, weight, cost, } = rowData;
-  const imageBlob = await GetImage(picture);
+  const imageBlob = await TicketService.GetImage(picture);
   
   try {
     const ticket = await TicketService.CreateTicket({

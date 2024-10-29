@@ -54,25 +54,38 @@ class StatusService {
   /**
    * Fix Statuses
    */
-  static FixStatuses() {
+  static FixAllStatuses() {
     try {
-      Object.values(SHEETS).forEach(sheet => {
-        console.warn(`Checking Statuses for ${sheet.getSheetName()}....`);
-        const posCodes = SheetService.GetColumnDataByHeader(sheet, HEADERNAMES.posStatCode);
-        const statuses = SheetService.GetColumnDataByHeader(sheet, HEADERNAMES.status);
-        posCodes.forEach( (code, index) => {
-          const status = GetStatusByCode(code);
-          // console.info(`S: ${statuses[index]}:  Stat: ${status}, Code: ${code}`);
-          if(statuses[index] != status) {
-            console.info(`Found Error: Status Claimed: ${statuses[index]},  Status Actual: ${status}`);
-            SheetService.SetByHeader(sheet, HEADERNAMES.status, index + 2, status);
-          }
-        });
-        console.warn(`Statuses Checked and Fixed for ${sheet.getSheetName()}....`);
-      });
+      Object.values(SHEETS).forEach(sheet => StatusService.FixSheetStatuses(sheet));
       return 0;
     } catch(err) {
-      console.error(`"FixStatuses()" failed : ${err}`);
+      console.error(`"FixAllStatuses()" failed: ${err}`);
+      return 1;
+    }
+  }
+
+  /**
+   * Fix a Single Sheet's Statuses
+   * @param {sheet} sheet
+   * @returns {bool} success
+   * @private
+   */
+  static FixSheetStatuses(sheet = SHEETS.Aurum) {
+    try {
+      console.warn(`Checking Statuses for ${sheet.getSheetName()}....`);
+      const posCodes = SheetService.GetColumnDataByHeader(sheet, HEADERNAMES.posStatCode);
+      const statuses = SheetService.GetColumnDataByHeader(sheet, HEADERNAMES.status);
+      posCodes.forEach( (code, index) => {
+        const status = StatusService.GetStatusByCode(code);
+        if(statuses[index] != status) {
+          console.info(`Found Error: Status Claimed: ${statuses[index]},  Status Actual: ${status}`);
+          SheetService.SetByHeader(sheet, HEADERNAMES.status, index + 2, status);
+        }
+      });
+      console.warn(`Statuses Checked and Fixed for ${sheet.getSheetName()}....`);
+      return 0;
+    } catch(err) {
+      console.error(`"FixSheetStatuses()" failed: ${err}`);
       return 1;
     }
   }

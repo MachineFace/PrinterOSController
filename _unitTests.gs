@@ -350,7 +350,7 @@ const _gasT_Misc_Testing = async () => {
   // ------------------------------------------------------------------------------------------------------------------------------
   await test(`GetImage`, (t) => {
     let png = SheetService.GetByHeader(SHEETS.Spectrum, "Picture", 10);
-    let x = GetImage(png);
+    let x = TicketService.GetImage(png);
     t.notEqual(x, undefined || null, `GetImage SHOULD NOT return undefined or null. ${JSON.stringify(x)}`);
   });
 

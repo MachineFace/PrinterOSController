@@ -4,37 +4,6 @@
  */
 
 
-
-/**
- * Find Image blob from File
- * @param {png} file
- */
-const GetImage = async (pngFile) => {
-  const repo = `https://live3dprinteros.blob.core.windows.net/render/${pngFile}`;
-  const folder = DriveApp.getFoldersByName(`Job Tickets`);
-
-  const params = {
-    method : "GET",
-    contentType : "image/png",
-    followRedirects : true,
-    muteHttpExceptions : true
-  };
-
-  try {
-    const response = await UrlFetchApp.fetch(repo, params);
-    const responseCode = response.getResponseCode();
-    if(responseCode != 200) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
-
-    const blob = response.getBlob().setName(`IMAGE_${pngFile}`);
-    return blob;
-  } catch(err) {
-    console.error(`"GetImage()" failed : ${err}`);
-    return 1;
-  }
-}
-
-
-
 /** 
  * Merge Objects
  * @param {object} (rowData)
