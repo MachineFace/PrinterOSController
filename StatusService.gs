@@ -6,11 +6,43 @@
 
 class StatusService {
   constructor() {
-
+    this.state = STATUS.queued;
   }
 
-  get Status() {
+  /**
+   * Get State
+   */
+  GetState() {
+    return this.state;
+  }
 
+  /**
+   * Set State
+   */
+  SetState(newState = ``) {
+    if (!Object.values(STATUS).includes(newState)) throw new Error(`Invalid state: ${newState}`);
+    this.state = newState;
+  }
+
+  /**
+   * Method to check if the current state matches a specific state
+   */
+  CheckState(stateToCheck = ``) {
+    return this.state === stateToCheck;
+  }
+
+  /**
+   * Method to check if the current state is one of the provided states
+   */
+  IsOneOf(...states) {
+    return states.includes(this.state);
+  }
+
+  /** 
+   * Reset state to 'none'
+   */
+  ResetState() {
+    this.state = STATUS.queued;
   }
 
   /**
@@ -90,40 +122,22 @@ class StatusService {
     }
   }
 
-  /**
-  const STATUS = Object.freeze({
-  queued : {
-    plaintext : `Queued`,
-    statusCode : 11,
-  },
-  inProgress : {
-    plaintext : `In-Progress`,
-    statusCode : 21,
-  },
-  complete : {
-    plaintext : `Completed`,
-    statusCode : 77,
-  },
-  failed : {
-    plaintext : `FAILED`,
-    statusCode : 43,
-  },
-  cancelled : {
-    plaintext : `Cancelled`,
-    statusCode : 45,
-  },
-  pickedUp : {
-    plaintext : `Picked Up`,
-    statusCode : 99,
-  },
-  closed : {
-    plaintext : `CLOSED`,
-    statusCode : 98,
-  },
-  abandoned : {
-    plaintext : `Abandoned`,
-    statusCode : 97,
-  },
-});
-*/
+
 }
+
+
+const _test_State = () => {
+  const task = new StatusService();
+  task.SetState(STATUS.queued);
+  console.log(task.state); // Output: 'queued'
+  console.log(task.CheckState(STATUS.queued)); // Output: true
+  console.log(task.IsOneOf(STATUS.complete, STATUS.queued)); // Output: true
+  task.SetState(STATUS.complete);
+  console.log(task.state); // Output: 'complete'
+}
+
+
+
+
+
+
