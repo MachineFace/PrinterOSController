@@ -623,7 +623,11 @@ class StatisticsService {
       if (Array.isArray(distribution[0])) values = distribution.map(item => item[1]);
       else values = distribution;
 
-      const mean = values.reduce((a, b) => a + b) / n;
+      const mean = values.reduce((a, b) => {
+        a = !isNaN(a) && a != undefined && a != null ? Number(a) : 0;
+        b = !isNaN(b) && b != undefined && b != null ? Number(b) : 0;
+        return Number(a) + Number(b);
+      }) / n;
       console.warn(`ARITHMETIC MEAN: ${mean}`);
       return mean.toFixed(3);
     } catch(err) {
@@ -1250,7 +1254,7 @@ class StatisticsService {
       });
 
       items.sort((first, second) => second[1] - first[1]);
-      console.warn(items);
+      console.info(`Distribution: ${JSON.stringify(items.slice(0, 10))}....`);
       return items;  
     } catch(err) {
       console.error(`"Distribution()" failed: ${err}`);
