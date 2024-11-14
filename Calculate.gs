@@ -15,7 +15,7 @@ class Calculate {
   static GetAverageTurnaroundPerSheet(sheet = SHEETS.Spectrum) {
     try {
       let completionTimes = [...SheetService.GetColumnDataByHeader(sheet, HEADERNAMES.duration)];
-      let average = StatisticsService.GeometricMean(completionTimes);
+      let average = StatisticsService.ArithmeticMean(completionTimes);
       return average;
     } catch (err) {
       console.error(`"GetAverageTurnaroundPerSheet()" failed : ${err}`);
@@ -488,23 +488,27 @@ class Calculate {
  */
 const Metrics = () => {
   try {
-    console.warn(`Calculating Metrics .... `);
-    Calculate.GetUserCount()
-    Calculate.PrintTurnarounds();
-    Calculate.PrintStatusCounts();
-    Calculate.CountUniqueUsers();
-    Calculate.CountTotalSubmissions();
-    Calculate.PrintTopTen();
-    Calculate.GetUserArithmeticMean();
-    Calculate.UserStandardDeviation();
-    Calculate.UserKurtosisAndSkewness();
-    Calculate.StatusCounts();
-    Calculate.CountUniqueUsersWhoHavePrinted();
-    Calculate.SumCosts();
-    Calculate.PrintSheetCosts();
-    Calculate.PrintSheetMaterials();
-    Calculate.PrintZscoreDistribution();
-    console.info(`Recalculated Metrics`);
+    const startTime = new Date().getTime();
+    const timeout = 5.9 * 60 * 1000;
+    while (new Date().getTime() - startTime < timeout) {
+      console.warn(`Calculating Metrics .... `);
+      Calculate.GetUserCount()
+      Calculate.PrintTurnarounds();
+      Calculate.PrintStatusCounts();
+      Calculate.CountUniqueUsers();
+      Calculate.CountTotalSubmissions();
+      Calculate.PrintTopTen();
+      Calculate.GetUserArithmeticMean();
+      Calculate.UserStandardDeviation();
+      Calculate.UserKurtosisAndSkewness();
+      Calculate.StatusCounts();
+      Calculate.CountUniqueUsersWhoHavePrinted();
+      Calculate.SumCosts();
+      Calculate.PrintSheetCosts();
+      Calculate.PrintSheetMaterials();
+      Calculate.PrintZscoreDistribution();
+      console.info(`Recalculated Metrics`);
+    }
     return 0;
   } catch (err) {
     console.error(`"Metrics()" failed : ${err}`);
