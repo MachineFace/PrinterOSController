@@ -5,6 +5,9 @@
 const SERVICE_NAME = `Jacobs Self-Service Printing Bot`;
 const SERVICE_EMAIL = `jacobs-project-support@berkeley.edu`;
 
+/** @private */
+const THIS_SPREADSHEET = SpreadsheetApp.openById(PropertiesService.getScriptProperties().getProperty(`SPREADSHEET_ID`));
+
 const PICKUP_HOURS = `Monday - Friday: 11am - 1pm & 4pm - 6pm`;
 
 const COSTMULTIPLIER = 0.04;
@@ -199,56 +202,56 @@ const PRINTERDATA = Object.freeze({
   Luteus : { 
     name : `Luteus`,
     printerID : 79606,
-    sheet : SpreadsheetApp.getActiveSpreadsheet().getSheetByName(`Luteus`),
+    sheet : THIS_SPREADSHEET.getSheetByName(`Luteus`),
     type : `UM3`,
     color : EVENT_COLORS.BLUE,
   },
   Caerulus : {
     name : `Caerulus`,
     printerID : 79605,
-    sheet : SpreadsheetApp.getActiveSpreadsheet().getSheetByName(`Caerulus`),
+    sheet : THIS_SPREADSHEET.getSheetByName(`Caerulus`),
     type : `UM3`,
     color : EVENT_COLORS.CYAN,
   },
   Photon : {
     name : `Photon`,
     printerID : 75677,
-    sheet : SpreadsheetApp.getActiveSpreadsheet().getSheetByName(`Photon`),
+    sheet : THIS_SPREADSHEET.getSheetByName(`Photon`),
     type : `UM3`,
     color : EVENT_COLORS.GRAY,
   },
   Quasar : {
     name : `Quasar`,
     printerID : 75675,
-    sheet : SpreadsheetApp.getActiveSpreadsheet().getSheetByName(`Quasar`),
+    sheet : THIS_SPREADSHEET.getSheetByName(`Quasar`),
     type : `UM3`,
     color : EVENT_COLORS.GREEN,
   },
   Zardoz : {
     name : `Zardoz`,
     printerID : 79166,
-    sheet : SpreadsheetApp.getActiveSpreadsheet().getSheetByName(`Zardoz`),
+    sheet : THIS_SPREADSHEET.getSheetByName(`Zardoz`),
     type : `UM3 Extended`,
     color : EVENT_COLORS.MAUVE,
   },
   Viridis : {
     name : `Viridis`,
     printerID : 79167,
-    sheet : SpreadsheetApp.getActiveSpreadsheet().getSheetByName(`Viridis`),
+    sheet : THIS_SPREADSHEET.getSheetByName(`Viridis`),
     type : `UM3`,
     color : EVENT_COLORS.ORANGE,
   },
   Rubrum : {
     name : `Rubrum`,
     printerID : 79170,
-    sheet : SpreadsheetApp.getActiveSpreadsheet().getSheetByName(`Rubrum`),
+    sheet : THIS_SPREADSHEET.getSheetByName(`Rubrum`),
     type : `UM3`,
     color : EVENT_COLORS.PALE_BLUE,
   },
   Plumbus : {
     name : `Plumbus`,
     printerID : 75140,
-    sheet : SpreadsheetApp.getActiveSpreadsheet().getSheetByName(`Plumbus`),
+    sheet : THIS_SPREADSHEET.getSheetByName(`Plumbus`),
     type : `UM3`,
     ip : '192.168.1.140',
     color : EVENT_COLORS.PALE_GREEN,
@@ -256,56 +259,56 @@ const PRINTERDATA = Object.freeze({
   Nimbus : {
     name : `Nimbus`,
     printerID : 75670,
-    sheet : SpreadsheetApp.getActiveSpreadsheet().getSheetByName(`Nimbus`),
+    sheet : THIS_SPREADSHEET.getSheetByName(`Nimbus`),
     type : `UM3`,
     color : EVENT_COLORS.PALE_RED,
   },
   Spectrum : {
     name : `Spectrum`,
     printerID : 79165,
-    sheet : SpreadsheetApp.getActiveSpreadsheet().getSheetByName(`Spectrum`),
+    sheet : THIS_SPREADSHEET.getSheetByName(`Spectrum`),
     type : `UM3 Extended`,
     color : EVENT_COLORS.RED,
   },
   Purpura : {
     name : `Purpura`,
     printerID : 87199,
-    sheet : SpreadsheetApp.getActiveSpreadsheet().getSheetByName(`Purpura`),
+    sheet : THIS_SPREADSHEET.getSheetByName(`Purpura`),
     type : `S3`,
     color : EVENT_COLORS.YELLOW,
   },
   Crystallum : {
     name : `Crystallum`,
     printerID : 87200,
-    sheet : SpreadsheetApp.getActiveSpreadsheet().getSheetByName(`Crystallum`),
+    sheet : THIS_SPREADSHEET.getSheetByName(`Crystallum`),
     type : `S3`,
     color : EVENT_COLORS.BLUE,
   },
   Aurum : {
     name : `Aurum`,
     printerID : 89128,
-    sheet : SpreadsheetApp.getActiveSpreadsheet().getSheetByName(`Aurum`),
+    sheet : THIS_SPREADSHEET.getSheetByName(`Aurum`),
     type : `S3`,
     color : EVENT_COLORS.CYAN,
   },
   Cleetus : {
     name : `Cleetus`,
     printerID : 89128,
-    sheet : SpreadsheetApp.getActiveSpreadsheet().getSheetByName(`Cleetus`),
+    sheet : THIS_SPREADSHEET.getSheetByName(`Cleetus`),
     type : `S3`,
     color : EVENT_COLORS.MAUVE,
   },
   Dingbat : {
     name : `Dingbat`,
     printerID : 89128,
-    sheet : SpreadsheetApp.getActiveSpreadsheet().getSheetByName(`Dingbat`),
+    sheet : THIS_SPREADSHEET.getSheetByName(`Dingbat`),
     type : `S3`,
     color : EVENT_COLORS.ORANGE,
   },
   Moopy : {
     name : `Moopy`,
     printerID : 89128,
-    sheet : SpreadsheetApp.getActiveSpreadsheet().getSheetByName(`Moopy`),
+    sheet : THIS_SPREADSHEET.getSheetByName(`Moopy`),
     type : `S3`,
     color : EVENT_COLORS.RED,
   },
@@ -335,35 +338,41 @@ const HEADERNAMES = Object.freeze({
  * Sheets
  */
 const SHEETS = Object.freeze({
-  Spectrum : SpreadsheetApp.getActiveSpreadsheet().getSheetByName(`Spectrum`), 
-  Zardoz : SpreadsheetApp.getActiveSpreadsheet().getSheetByName(`Zardoz`), 
-  Nimbus : SpreadsheetApp.getActiveSpreadsheet().getSheetByName(`Nimbus`), 
-  Plumbus : SpreadsheetApp.getActiveSpreadsheet().getSheetByName(`Plumbus`), 
-  Rubrum : SpreadsheetApp.getActiveSpreadsheet().getSheetByName(`Rubrum`), 
-  Viridis : SpreadsheetApp.getActiveSpreadsheet().getSheetByName(`Viridis`), 
-  Quasar : SpreadsheetApp.getActiveSpreadsheet().getSheetByName(`Quasar`), 
-  Photon : SpreadsheetApp.getActiveSpreadsheet().getSheetByName(`Photon`), 
-  Caerulus : SpreadsheetApp.getActiveSpreadsheet().getSheetByName(`Caerulus`), 
-  Luteus : SpreadsheetApp.getActiveSpreadsheet().getSheetByName(`Luteus`), 
-  Purpura : SpreadsheetApp.getActiveSpreadsheet().getSheetByName(`Purpura`), 
-  Crystallum : SpreadsheetApp.getActiveSpreadsheet().getSheetByName(`Crystallum`),
-  Aurum : SpreadsheetApp.getActiveSpreadsheet().getSheetByName(`Aurum`),
-  Cleetus : SpreadsheetApp.getActiveSpreadsheet().getSheetByName(`Cleetus`),
-  Dingbat : SpreadsheetApp.getActiveSpreadsheet().getSheetByName(`Dingbat`),
-  Moopy : SpreadsheetApp.getActiveSpreadsheet().getSheetByName(`Moopy`),
+  Spectrum :   THIS_SPREADSHEET.getSheetByName(`Spectrum`), 
+  Zardoz :     THIS_SPREADSHEET.getSheetByName(`Zardoz`), 
+  Nimbus :     THIS_SPREADSHEET.getSheetByName(`Nimbus`), 
+  Plumbus :    THIS_SPREADSHEET.getSheetByName(`Plumbus`), 
+  Rubrum :     THIS_SPREADSHEET.getSheetByName(`Rubrum`), 
+  Viridis :    THIS_SPREADSHEET.getSheetByName(`Viridis`), 
+  Quasar :     THIS_SPREADSHEET.getSheetByName(`Quasar`), 
+  Photon :     THIS_SPREADSHEET.getSheetByName(`Photon`), 
+  Caerulus :   THIS_SPREADSHEET.getSheetByName(`Caerulus`), 
+  Luteus :     THIS_SPREADSHEET.getSheetByName(`Luteus`), 
+  Purpura :    THIS_SPREADSHEET.getSheetByName(`Purpura`), 
+  Crystallum : THIS_SPREADSHEET.getSheetByName(`Crystallum`),
+  Aurum :      THIS_SPREADSHEET.getSheetByName(`Aurum`),
+  Cleetus :    THIS_SPREADSHEET.getSheetByName(`Cleetus`),
+  Dingbat :    THIS_SPREADSHEET.getSheetByName(`Dingbat`),
+  Moopy :      THIS_SPREADSHEET.getSheetByName(`Moopy`),
 });
+
+// const GetSheets = () => {
+//   const sheets = THIS_SPREADSHEET.getSheets();
+//   const names = sheets.map(x => x.getSheetName());
+//   console.info(names);
+// }
 
 /**
  * Other Sheets
  */
 const OTHERSHEETS = Object.freeze({
-  Summary : SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Summary'),
-  Staff : SpreadsheetApp.getActiveSpreadsheet().getSheetByName(`StaffList`),
-  Metrics : SpreadsheetApp.getActiveSpreadsheet().getSheetByName(`Data/Metrics`),
-  Users : SpreadsheetApp.getActiveSpreadsheet().getSheetByName(`Users`),
-  Logger : SpreadsheetApp.getActiveSpreadsheet().getSheetByName(`Logger`),
-  Report : SpreadsheetApp.getActiveSpreadsheet().getSheetByName(`REPORT`),
-  All : SpreadsheetApp.getActiveSpreadsheet().getSheetByName(`All`),
+  Summary : THIS_SPREADSHEET.getSheetByName('Summary'),
+  Staff :   THIS_SPREADSHEET.getSheetByName(`StaffList`),
+  Metrics : THIS_SPREADSHEET.getSheetByName(`Data/Metrics`),
+  Users :   THIS_SPREADSHEET.getSheetByName(`Users`),
+  Logger :  THIS_SPREADSHEET.getSheetByName(`Logger`),
+  Report :  THIS_SPREADSHEET.getSheetByName(`REPORT`),
+  All :     THIS_SPREADSHEET.getSheetByName(`All`),
 });
 
 /**
