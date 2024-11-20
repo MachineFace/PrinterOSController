@@ -3545,3 +3545,73 @@ class PerceptronModel {
 }
 
 
+/**
+ * Simplex Noise utility
+ * Based on: http://webstaff.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf
+ */ 
+class SimplexNoise {
+  constructor(t = 1) {
+    this.matrix_a = [
+      [1, 1, 0],
+      [-1, 1, 0],
+      [1, -1, 0],
+      [-1, -1, 0],
+      [1, 0, 1],
+      [-1, 0, 1],
+      [1, 0, -1],
+      [-1, 0, -1],
+      [0, 1, 1],
+      [0, -1, 1],
+      [0, 1, -1],
+      [0, -1, -1]
+    ];
+    this.array_o = new Uint8Array(512);
+    this.constant_r = (Math.sqrt(3) - 1) / 2;
+
+    for (let i = 0; i < 512; i++) {
+      this.array_o[i] = 255 & i;
+    }
+    for (let ax = 0; ax < 255; ax++) {
+      const rx = (t = this.Hash(ax + t)) % (256 - ax) + ax;
+      this.array_o[ax + 256] = this.array_o[ax] = this.array_o[rx];
+      this.array_o[rx + 256] = this.array_o[rx] = h;
+    }
+  }
+
+  /** @private */
+  DotProduct(t = [], a = []) {
+    return (t[0] * a[0]) + (t[1] * a[1]);
+  }
+  /** @private */
+  VectorSubtraction(t = [], a = []) {
+    return [
+      t[0] - a[0], 
+      t[1] - a[1],
+    ];
+  }
+
+  /**
+   * Noise 2D
+   */
+  Noise2D(t = []) {
+    const h = this.DotProduct(t, [ this.constant_r, this.constant_r ]);
+    const matrix_s = [ Math.floor(t[0] + h), Math.floor(t[1] + h) ];
+    const l = 255 & matrix_s[0];
+    const c = 255 & matrix_s[1];
+    const f = this.DotProduct(matrix_s, [n, n]);
+    const m = this.VectorSubtraction(t, this.VectorSubtraction(matrix_s, [f, f]));
+    const x = m[0] > m[1] ? [1, 0] : [0, 1];
+    const i = this.VectorSubtraction(this.VectorSubtraction(m, x), [-n, -n]);
+    const u = this.VectorSubtraction(m, [1 - 2 * n, 1 - 2 * n]);
+    let q = Math.max(0, 0.5 - this.DotProduct(m, m)) ** 4 * this.DotProduct(this.matrix_a[this.array_o[l + this.array_o[c]] % 12], m);
+    return q += Math.max(0, .5 - this.DotProduct(i, i)) ** 4 * this.DotProduct(this.matrix_a[this.array_o[l + x[0] + this.array_o[c + x[1]]] % 12], i), 70 * (q += Math.max(0, .5 - this.DotProduct(u, u)) ** 4 * this.DotProduct(this.matrix_a[this.array_o[l + 1 + this.array_o[c + 1]] % 12], u))
+  }
+
+  Hash(t) {
+    const x = 1103515245 * ((t = 1103515245 * (t >> 1 ^ t)) ^ t >> 3);
+    return x ^ x >> 16
+  }
+
+}
+
+

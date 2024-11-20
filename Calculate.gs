@@ -82,11 +82,12 @@ class Calculate {
       OTHERSHEETS.Metrics.getRange(1, 4, 1, 4).setValues([[ `Completed`, `Cancelled`, `Failed`, `Completion Ratio`, ]]);
       Object.entries(SHEETS).forEach(([key, sheet], idx) => {
         const counts = this.StatusCountsPerSheet(sheet);
-        const completed = (counts.Completed + counts.CLOSED) || 0;
-        const cancelled = counts.Cancelled || 0;
-        const failed = counts.FAILED || 0;
+        const sum = (counts.Completed + counts.CLOSED);
+        const completed = !isNaN(sum) && sum != null && sum != undefined && sum > 0 ? Number(sum).toFixed(3) : 0.0;
+        const cancelled = !isNaN(counts.Cancelled) && counts.Cancelled != null && counts.Cancelled != undefined && counts.Cancelled > 0 ? Number(counts.Cancelled).toFixed(3) : 0.0;
+        const failed = !isNaN(counts.FAILED) && counts.FAILED != null && counts.FAILED != undefined && counts.FAILED > 0 ? Number(counts.FAILED).toFixed(3) : 0.0;
         const total = StatisticsService.Sum(Object.values(counts)) || 0;
-        let ratio = `${Number(Number(completed / total).toFixed(3) * 100).toFixed(1) || 0} %`;
+        let ratio = total > 0 ? `${Number(Number(completed / total).toFixed(3) * 100).toFixed(1)} %` : `0 %`;
         console.info(`COMPLETED: ${completed}, CANCELLED: ${cancelled}, FAILED: ${failed}, TOTAL: ${total}, COMPLETED RATIO: ${ratio}`);
         const values = [ [ completed, cancelled, failed, ratio ], ];
         OTHERSHEETS.Metrics.getRange(2 + idx, 4, 1, 4).setValues(values);
@@ -266,7 +267,7 @@ class Calculate {
       const standardDeviation = StatisticsService.StandardDeviation(this.userDistribution);
       const values = [
         [ `Std. Deviation for # of Submissions per User` ], 
-        [ `+/- ${standardDeviation}` ],
+        [ `+/- ${Number(standardDeviation).toFixed(4)}` ],
       ];
       console.info(values);
       OTHERSHEETS.Metrics.getRange(1, 16, 2, 1).setValues(values);
@@ -521,7 +522,7 @@ const Metrics = () => {
  */
 const _testMetrics = () => {
   const c = new Calculate();
-  c.PrintTurnarounds();
+  c.PrintStatusCounts();
 }
 
 

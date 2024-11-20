@@ -78,11 +78,11 @@ class WriteToSheet {
       let { printer_id, id, datetime, email, status_id, printing_duration, filename, picture, weight, file_cost, cost, extruders } = data;
       const timestamp = datetime ? datetime : new Date().toISOString();
 
-      printing_duration = printing_duration ? Number.parseFloat(printing_duration) : 0.0;
+      printing_duration = !isNaN(printing_duration) && printing_duration != null && printing_duration != undefined ? Number.parseFloat(printing_duration) : 0.0;
       const duration = printing_duration ? +Number(printing_duration / 3600).toFixed(2) : 0;
       filename = filename ? CleanupService.FileNameCleanup(filename.toString()) : "";
 
-      weight = weight ? Number(weight).toFixed(2) : 0.0;
+      weight = !isNaN(weight) && weight != null && weight != undefined ? Number(weight).toFixed(2) : 0.0;
 
       // Calculate Cost
       const total_cost = Number(weight * COSTMULTIPLIER).toFixed(2);
