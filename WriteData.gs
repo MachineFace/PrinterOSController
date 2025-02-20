@@ -104,7 +104,7 @@ class WriteToSheet {
       const url = ticket && ticket.getUrl() ? ticket.getUrl() : ``;
 
       const rowData = { 
-        status : GetStatusByCode(status_id),
+        status : StatusService.GetStatusByCode(status_id),
         printerID : printer_id,
         printerName : printerName,
         jobID : id,
@@ -141,7 +141,7 @@ class WriteToSheet {
   _UpdateStatus(statusCode, sheet, row) {
     try {
       const rowData = SheetService.GetRowData(sheet, row);
-      const status = GetStatusByCode(statusCode);
+      const status = StatusService.GetStatusByCode(statusCode);
       SheetService.SetByHeader(sheet, HEADERNAMES.status, row, status);
       if(statusCode == STATUS.inProgress.statusCode) {
         new CalendarFactory().CreateEvent(rowData);

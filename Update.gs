@@ -45,7 +45,7 @@ class UpdateService {
             filename = CleanupService.FileNameCleanup(filename);
             SheetService.SetByHeader(sheet, HEADERNAMES.filename, row, filename.toString());
 
-            const status = GetStatusByCode(status_id);
+            const status = StatusService.GetStatusByCode(status_id);
             SheetService.SetByHeader(sheet, HEADERNAMES.status, row, status);
               
           });

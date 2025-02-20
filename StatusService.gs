@@ -138,6 +138,29 @@ const _test_State = () => {
 
 
 
+/**
+ * Fix Statuses
+ */
+const FixStatus = () => StatusService.FixAllStatuses();
 
+
+
+/**
+ * Set Dropdowns for status
+ * @TRIGGERED
+ */
+const SetStatusDropdowns = () => {
+  try {
+    let statuses = [...Object.values(STATUS).map(status => status.plaintext)];
+    const rule = SpreadsheetApp
+      .newDataValidation()
+      .requireValueInList(statuses);
+    Object.values(SHEETS).forEach(sheet => sheet.getRange(2, 1, sheet.getLastRow(), 1).setDataValidation(rule));
+    return 0;
+  } catch(err) {
+    console.error(`"SetStatusDropdowns()" failed : ${err}`);
+    return 1;
+  }
+}
 
 

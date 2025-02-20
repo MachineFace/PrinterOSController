@@ -65,70 +65,6 @@ const GetObjectType = (ob) => {
 
 
 /**
- * Get Status By Code
- * @param {number} statusCode
- */
-const GetStatusByCode = (posStatCode = 2) => {
-  try {
-    for(let i = 0; i < Object.values(STATUS).length; i++) {
-      if(Object.values(STATUS)[i].statusCode == posStatCode) {
-        // console.info(Object.values(STATUS)[i].plaintext)
-        return Object.values(STATUS)[i].plaintext;
-      }
-    }
-  } catch(err) {
-    console.error(`"GetStatusByCode()" failed : ${err}`);
-    return 1;
-  }
-}
-
-/**
- * Fix Statuses
- */
-const FixStatus = () => {
-  try {
-    Object.values(SHEETS).forEach(sheet => {
-      console.warn(`Checking Statuses for ${sheet.getSheetName()}....`);
-      const posCodes = SheetService.GetColumnDataByHeader(sheet, HEADERNAMES.posStatCode);
-      const statuses = SheetService.GetColumnDataByHeader(sheet, HEADERNAMES.status);
-      posCodes.forEach( (code, index) => {
-        const status = GetStatusByCode(code);
-        // console.info(`S: ${statuses[index]}:  Stat: ${status}, Code: ${code}`);
-        if(statuses[index] != status) {
-          console.info(`Found Error: Status Claimed: ${statuses[index]},  Status Actual: ${status}`);
-          SheetService.SetByHeader(sheet, HEADERNAMES.status, index + 2, status);
-        }
-      });
-      console.warn(`Statuses Checked and Fixed for ${sheet.getSheetName()}....`);
-    });
-    return 0;
-  } catch(err) {
-    console.error(`"FixStatuses()" failed : ${err}`);
-    return 1;
-  }
-}
-
-
-
-/**
- * Set Dropdowns for status
- * @TRIGGERED
- */
-const SetStatusDropdowns = () => {
-  try {
-    let statuses = [...Object.values(STATUS).map(status => status.plaintext)];
-    const rule = SpreadsheetApp
-      .newDataValidation()
-      .requireValueInList(statuses);
-    Object.values(SHEETS).forEach(sheet => sheet.getRange(2, 1, sheet.getLastRow(), 1).setDataValidation(rule));
-    return 0;
-  } catch(err) {
-    console.error(`"SetStatusDropdowns()" failed : ${err}`);
-    return 1;
-  }
-}
-
-/**
  * Build Summary Equation:
  * @TRIGGERED
  * FORMAT: `={QUERY(Spectrum!A2:S, "Select * Where A = 'Queued' OR A = 'In-Progress' LABEL A 'Spectrum' \n");
@@ -183,6 +119,7 @@ const GetFunctionName = () => {
 
 /**
  * Execute with Timeout
+ * Note: this function does not work with appscript because appscript is synchronous...
  * @param {function} some function to run
  * @param {number} timeout in seconds
  * @returns {Promise} race
