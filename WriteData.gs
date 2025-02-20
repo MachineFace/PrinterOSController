@@ -14,10 +14,9 @@ class WriteToSheet {
    */
   async WriteAll() {
     try {
-      Object.values(SHEETS).forEach( async (sheet) => {
-        console.warn(`Fetching New Data from PrinterOS ---> ${sheet.getSheetName()}`);
-        await this.WriteSingleSheet(sheet);
-      });
+      ExecuteWithTimeout(() => {
+        Object.values(SHEETS).forEach( async (sheet) => await this.WriteSingleSheet(sheet));
+      }, 250);
       return 0;
     } catch(err){
       console.error(`"WriteAll()" failed : ${err}`);
@@ -31,32 +30,35 @@ class WriteToSheet {
    */
   async WriteSingleSheet(sheet = SHEETS.Spectrum) {
     try {
+      const sheetName = sheet.getSheetName();
+      const machineID = PRINTERIDS[sheetName];
+      console.warn(`Fetching New Data from PrinterOS ---> ${sheetName}`);
       let jobList = [];
       const pos = new PrinterOS();
       pos.Login()
         .then( async () => {
-          let machineID = PRINTERIDS[sheet.getSheetName()];
           const jobs = await pos.GetPrintersJobList(machineID);
           jobs.forEach(job => {
             const exists = this._CheckIfJobExists(sheet, job.id);
-            if(!exists) jobList.push(job.id);
+            if(exists) return;
+            jobList.push(job.id);
           })
-          console.warn(jobList);
         })
         .then(() => {
           if(jobList.length === 0) {
-            console.warn(`${sheet.getSheetName()} ----> Nothing New....`);
+            console.warn(`${sheetName} ----> Nothing New....`);
             return 0;
-          } else {
-            jobList.forEach(async (job) => {
-              console.warn(`${sheet.getSheetName()} ----> New Job! : ${job}`);
-              let data = await pos.GetJobInfo(job);
-              console.warn(`Writing to sheet ${sheet.getSheetName()}, Data: ${JSON.stringify(data)}`);
-              await this._WriteJobDetailsToSheet(data, sheet);
-            });
-          }
+          } 
+          let rowStart = sheet.getLastRow();
+          jobList.forEach(async (job, idx) => {
+            let row = idx + rowStart;
+            console.warn(`${sheetName} ----> New Job! : ${job}`);
+            let data = await pos.GetJobInfo(job);
+            await this._WriteJobDetailsToSheet(sheet, row, data);
+          });
         })
         .then(() => pos.Logout());
+      
       return 0;
     } catch(err) {
       console.error(`"WriteSingleSheet()" failed : ${err}`);
@@ -71,21 +73,21 @@ class WriteToSheet {
    * @param {sheet} sheet
    * @return {bool} 0 or 1
    */
-  async _WriteJobDetailsToSheet(data, sheet) {
+  async _WriteJobDetailsToSheet(sheet = SHEETS.Aurum, row = 2, data = {}) {
     try {
-      const thisRow = sheet.getLastRow() + 1;
+      const thisRow = row > 2 ? row : sheet.getLastRow() + 1;
       const printerName = sheet.getSheetName();
       let { printer_id, id, datetime, email, status_id, printing_duration, filename, picture, weight, file_cost, cost, extruders } = data;
-      const timestamp = datetime ? datetime : new Date().toISOString();
+      let timestamp = datetime ? datetime : new Date().toISOString();
 
       printing_duration = !isNaN(printing_duration) && printing_duration != null && printing_duration != undefined ? Number.parseFloat(printing_duration) : 0.0;
-      const duration = printing_duration ? +Number(printing_duration / 3600).toFixed(2) : 0;
+      let duration = printing_duration ? +Number(printing_duration / 3600).toFixed(2) : 0;
       filename = filename ? CleanupService.FileNameCleanup(filename.toString()) : "";
 
       weight = !isNaN(weight) && weight != null && weight != undefined ? Number(weight).toFixed(2) : 0.0;
 
       // Calculate Cost
-      const total_cost = Number(weight * COSTMULTIPLIER).toFixed(2);
+      let total_cost = Number(weight * COSTMULTIPLIER).toFixed(2);
       cost = total_cost ? total_cost : this._PrintCost(weight);
 
       let imageBLOB = await TicketService.GetImage(picture);
@@ -99,7 +101,7 @@ class WriteToSheet {
         filename : filename,
         image : imageBLOB, 
       });
-      const url = ticket.getUrl() ? ticket.getUrl() : ``;
+      const url = ticket && ticket.getUrl() ? ticket.getUrl() : ``;
 
       const rowData = { 
         status : GetStatusByCode(status_id),
@@ -117,6 +119,7 @@ class WriteToSheet {
         weight : weight,
         cost : cost,
       }
+      // console.warn(`Writing to sheet ${printerName}, Data: ${JSON.stringify(rowData)}`);
       SheetService.SetRowData(sheet, thisRow, rowData);
       this._UpdateStatus(status_id, sheet, thisRow);
 
@@ -186,8 +189,8 @@ const WriteSingleSheet = (sheet) => new WriteToSheet().WriteSingleSheet(sheet);
 
 
 
-const _UpdateSingle = () => {
-  new WriteToSheet().WriteSingleSheet(SHEETS.Crystallum)
-}
+const _UpdateSingle = () => ExecuteWithTimeout(() => {
+  new WriteToSheet().WriteSingleSheet(SHEETS.Spectrum)
+}, 120);
 
 

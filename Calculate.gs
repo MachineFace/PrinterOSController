@@ -52,12 +52,13 @@ class Calculate {
    */
   StatusCountsPerSheet(sheet = SHEETS.Spectrum) {
     try {
-      const statuses = [...SheetService.GetColumnDataByHeader(sheet, HEADERNAMES.status)];
-      const distribution = [...StatisticsService.Distribution(statuses)] || [];
+      const statuses = [...SheetService.GetColumnDataByHeader(sheet, HEADERNAMES.status)]
+        .filter(Boolean);
+      const distribution = statuses.length > 0 ? [...StatisticsService.Distribution(statuses)] : [];
       const distSet = new Set(distribution.map(([key, _]) => key));
 
       let data = {};
-      distribution.forEach(([key, value]) => data[key] = value);
+      if(distribution.length > 0) distribution.forEach(([key, value]) => data[key] = value);
       
       // Add Missing Values
       let list = Object.values(STATUS);
@@ -212,6 +213,7 @@ class Calculate {
       [ `Status`, `Count`, ], 
       ...stats,
     ];
+    console.info(values);
     OTHERSHEETS.Metrics.getRange(1, 24, values.length, 2).setValues(values);
     return statuses;
   }
@@ -487,27 +489,23 @@ class Calculate {
 const Metrics = () => {
   try {
     const c = new Calculate();
-    const startTime = new Date().getTime();
-    const timeout = 5.9 * 60 * 1000;
-    while (new Date().getTime() - startTime < timeout) {
-      console.warn(`Calculating Metrics .... `);
-      c.GetUserCount()
-      c.PrintTurnarounds();
-      c.PrintStatusCounts();
-      c.CountUniqueUsers();
-      c.CountTotalSubmissions();
-      c.PrintTopTen();
-      c.GetUserArithmeticMean();
-      c.UserStandardDeviation();
-      c.UserKurtosisAndSkewness();
-      c.StatusCounts();
-      c.CountUniqueUsersWhoHavePrinted();
-      c.SumCosts();
-      c.PrintSheetCosts();
-      c.PrintSheetMaterials();
-      c.PrintZscoreDistribution();
-      console.info(`Recalculated Metrics`);
-    }
+    console.warn(`Calculating Metrics .... `);
+    c.GetUserCount()
+    c.PrintTurnarounds();
+    c.PrintStatusCounts();
+    c.CountUniqueUsers();
+    c.CountTotalSubmissions();
+    c.PrintTopTen();
+    c.GetUserArithmeticMean();
+    c.UserStandardDeviation();
+    c.UserKurtosisAndSkewness();
+    c.StatusCounts();
+    c.CountUniqueUsersWhoHavePrinted();
+    c.SumCosts();
+    c.PrintSheetCosts();
+    c.PrintSheetMaterials();
+    c.PrintZscoreDistribution();
+    console.info(`Recalculated Metrics`);
     return 0;
   } catch (err) {
     console.error(`"Metrics()" failed : ${err}`);
@@ -522,7 +520,7 @@ const Metrics = () => {
  */
 const _testMetrics = () => {
   const c = new Calculate();
-  c.PrintStatusCounts();
+  c.StatusCounts();
 }
 
 

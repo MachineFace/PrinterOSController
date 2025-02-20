@@ -66,7 +66,7 @@ class CleanupService {
 /**
  * @TRIGGERED
  */
-const RunCleanup = () => CleanupService.RemoveAllDuplicateRecords();
+const RunCleanup = () => ExecuteWithTimeout(() => CleanupService.RemoveAllDuplicateRecords(), 20);
 
 
 

@@ -130,7 +130,7 @@ const _test_State = () => {
   const task = new StatusService();
   task.SetState(STATUS.queued);
   console.log(task.state); // Output: 'queued'
-  console.log(task.CheckState(STATUS.queued)); // Output: true
+  console.log(`State (${task.state.plaintext}) is ${STATUS.queued.plaintext}: ${task.CheckState(STATUS.queued)}`); // Output: true
   console.log(task.IsOneOf(STATUS.complete, STATUS.queued)); // Output: true
   task.SetState(STATUS.complete);
   console.log(task.state); // Output: 'complete'

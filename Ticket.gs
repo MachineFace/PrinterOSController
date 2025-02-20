@@ -134,9 +134,10 @@ class TicketService {
     try {
       const response = await UrlFetchApp.fetch(url, params);
       const responseCode = response.getResponseCode();
-      if(responseCode != 200) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
-
-      const blob = response.getBlob().setName(`IMAGE_${pngFile}`);
+      let blob = HtmlService.createHtmlOutput();
+      if(responseCode == 404) return blob;
+      else if(responseCode !== 200 && responseCode !== 201) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
+      blob = response.getBlob().setName(`IMAGE_${pngFile}`);
       return blob;
     } catch(err) {
       console.error(`"GetImage()" failed : ${err}`);

@@ -200,14 +200,13 @@ class DriveController {
     try {
       const ticketFolder = DriveApp.getFolderById(PropertiesService.getScriptProperties().getProperty(`TICKET_FOLDER_GID`));
       const files = ticketFolder.getFilesByName(fileName);
-      if (files.hasNext()) {
-        const file = files.next();
-        console.info(`File found: ${file.getName()} (ID: ${file.getId()})`);
-        return file;
-      } else {
+      if (!files.hasNext()) {
         console.warn(`No file found with the specified name.`);
         return null;
       }
+      const file = files.next();
+      console.info(`File found: ${file.getName()} (ID: ${file.getId()})`);
+      return file;
     } catch(err) {
       console.error(`"GetFileByName()" failed: ${err}`);
       return 1;
