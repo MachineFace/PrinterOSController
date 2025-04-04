@@ -14,9 +14,7 @@ class WriteToSheet {
    */
   async WriteAll() {
     try {
-      ExecuteWithTimeout(() => {
-        Object.values(SHEETS).forEach( async (sheet) => await this.WriteSingleSheet(sheet));
-      }, 250);
+      Object.values(SHEETS).forEach( async (sheet) => await this.WriteSingleSheet(sheet));
       return 0;
     } catch(err){
       console.error(`"WriteAll()" failed : ${err}`);
@@ -189,8 +187,6 @@ const WriteSingleSheet = (sheet) => new WriteToSheet().WriteSingleSheet(sheet);
 
 
 
-const _UpdateSingle = () => ExecuteWithTimeout(() => {
-  new WriteToSheet().WriteSingleSheet(SHEETS.Spectrum)
-}, 120);
+const _UpdateSingle = () => new WriteToSheet().WriteSingleSheet(SHEETS.Spectrum);
 
 

@@ -85,12 +85,10 @@ class DriveController {
       const dateminus90 = new Date(new Date().setDate(new Date().getDate() - 90));
       console.warn(`DELETING TICKETS OLDER THAN 120 Days ago ---> ${dateminus90}`);
       const files = ticketFolder.getFiles();
-      const startTime = new Date().getTime();
-      const timeout = 5.9 * 60 * 1000;
-      while (files.hasNext() && (new Date().getTime() - startTime < timeout)) {
+      if (files.hasNext()) {
         let file = files.next();
         let date = file.getDateCreated();
-        if(date > dateminus90) continue;
+        if(date > dateminus90) return;
         let fileName = file.getName(), id = file.getId();
         let tag = `File: ${fileName}, ID: ${id}, Date: ${date}`;
         file.setTrashed(true);
@@ -117,7 +115,7 @@ class DriveController {
       let fileList = [];
       while (files.hasNext()) {
         let file = files.next();
-        if(file.getDateCreated() > dateminus90) continue;
+        if(file.getDateCreated() > dateminus90) return;
         fileList.push({
           file: file,
           createdDate: file.getDateCreated()
@@ -143,9 +141,7 @@ class DriveController {
     let fileMap = {};
 
     // Group files by name
-    const startTime = new Date().getTime();
-    const timeout = 5.9 * 60 * 1000;
-    while (files.hasNext() && (new Date().getTime() - startTime < timeout)) {
+    if (files.hasNext()) {
       let file = files.next();
       let fileName = file.getName();
 

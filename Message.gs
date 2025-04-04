@@ -48,8 +48,10 @@ class MessageService {
     this.questions = `If you have questions or need assistance please email ${this.designspecialistemaillink}.<br/>`;
     /** @private */
     this.salutations = `<p>Best,<br/>Jacobs Hall Staff</p>`;
-    /** @private */
-    this.survey = `<p><small>Please take a moment to take our survey so we can improve ${SERVICE_NAME}:<br/><a href="https://docs.google.com/forms/d/1fICKWXj67v8k6EznXgkYz6qgiy45V8bV-X8dlRwRPDc/viewform">Take Survey</a></small></p><br/>`;
+    /** @prvate */
+    this.not_monitored = `<br/><p style="color:grey"><small>This mailbox is not monitored. Please do not reply to this automated email.</small></p>`;
+    // /** @private */
+    // this.survey = `<p><small>Please take a moment to take our survey so we can improve ${SERVICE_NAME}:<br/><a href="https://docs.google.com/forms/d/1fICKWXj67v8k6EznXgkYz6qgiy45V8bV-X8dlRwRPDc/viewform">Take Survey</a></small></p><br/>`;
   }
   get defaultMessage() {
     let message = this.greetings;
@@ -58,7 +60,7 @@ class MessageService {
       message += this.questions;
       message += `</p>`;
       message += this.salutations;
-      message += this.survey;
+      message += this.not_monitored;
     return message; 
   }
   get queuedMessage() {
@@ -71,7 +73,7 @@ class MessageService {
       message += this.questions;
       message += `</p>`;
       message += this.salutations;
-      message += this.survey;
+      message += this.not_monitored;
     return message;
   }
   get inProgressMessage() {
@@ -86,7 +88,7 @@ class MessageService {
       message += this.questions;
       message += `</p>`;
       message += this.salutations;
-      message += this.survey;
+      message += this.not_monitored;
     return message;
   }
   get completedMessage() {
@@ -107,7 +109,7 @@ class MessageService {
       message += this.questions;
       message += `</p>`;
       message += this.salutations;
-      message += this.survey;
+      message += this.not_monitored;
     return message;
   }
   get pickedUpMessage() {
@@ -119,7 +121,7 @@ class MessageService {
       message += this.questions;
       message += `</p>`;
       message += this.salutations;
-      message += this.survey;
+      message += this.not_monitored;
     return message;
   }
   get abandonedMessage() {
@@ -134,7 +136,7 @@ class MessageService {
       message += this.questions;
       message += `</p>`;
       message += this.salutations;
-      message += this.survey;
+      message += this.not_monitored;
     return message;
   }
   get cancelledMessage() {
@@ -148,7 +150,7 @@ class MessageService {
       message += this.questions;
       message += `</p>`;
       message += this.salutations;
-      message += this.survey;
+      message += this.not_monitored;
     return message;
   }
   get failedMessage() {
@@ -161,7 +163,7 @@ class MessageService {
       message += this.questions;
       message += `</p>`;
       message += this.salutations;
-      message += this.survey;
+      message += this.not_monitored;
     return message;
   }
   get billedMessage() {
@@ -179,7 +181,7 @@ class MessageService {
       message += this.questions;
       message += `</p>`;
       message += this.salutations;
-      message += this.survey;
+      message += this.not_monitored;
     return message;
   }
   get noAccessMessage() {
@@ -198,7 +200,7 @@ class MessageService {
       message += this.questions;
       message += `</p>`;
       message += this.salutations;
-      message += this.survey;
+      message += this.not_monitored;
     return message;
   }
 }
