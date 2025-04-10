@@ -118,7 +118,7 @@ class Manager extends DesignSpecialist {
  * @returns {[string]} DSList
  */
 const BuildStaff = () => {
-  let staff = {};
+  let staff = {}
   let range = OTHERSHEETS.Staff.getRange(2, 1, OTHERSHEETS.Staff.getLastRow() - 1, 5).getValues();
   let culled = range.filter(Boolean);
 
@@ -167,7 +167,7 @@ const StaffEmailAsString = () => {
  */
 class StaffBuilder {
   constructor() {
-    this.staff = {};
+    this.staff = {}
     this.MakeStaff();
   }
 

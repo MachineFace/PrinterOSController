@@ -19,23 +19,26 @@ class BarcodeService {
    * @return {barcode} barcode
    */
   static async GenerateBarcode(jobID = Math.floor(Math.random() * 100000).toFixed()) {
-    const root = 'http://bwipjs-api.metafloor.com/';
-    // const rootsec = 'https://bwipjs-api.metafloor.com/';
-    const scale = '&scale=0.75'
-    const postfx = '&includetext';
-
-    //let url = 'http://bwipjs-api.metafloor.com/?bcid=code128&text=1234567890&includetext';  //KNOWN WORKING LOCATION
-    const url = root + `?bcid=code128` + `&text=` + jobID + scale + postfx;
-
-    const params = {
-      method : "GET",
-      headers : { "Authorization" : "Basic ", "Content-Type" : "image/png" },
-      contentType : "application/json",
-      followRedirects : true,
-      muteHttpExceptions : true,
-    };
-
     try {
+      const root = 'http://bwipjs-api.metafloor.com/';
+      // const rootsec = 'https://bwipjs-api.metafloor.com/';
+      const scale = '&scale=0.75'
+      const postfx = '&includetext';
+
+      //let url = 'http://bwipjs-api.metafloor.com/?bcid=code128&text=1234567890&includetext';  //KNOWN WORKING LOCATION
+      const url = root + `?bcid=code128` + `&text=` + jobID + scale + postfx;
+
+      const params = {
+        'method' : "GET",
+        'headers' : { 
+          "Authorization" : "Basic ", 
+          "Content-Type" : "image/png" 
+        },
+        'contentType' : "application/json",
+        'followRedirects' : true,
+        'muteHttpExceptions' : true,
+      }
+
       const response = await UrlFetchApp.fetch(url, params);
       const responseCode = response.getResponseCode();
       if(responseCode != 200) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`);  
@@ -57,22 +60,25 @@ class BarcodeService {
    * @return {barcode} barcode   
    */
   static async GenerateBarCodeForTicketHeader(jobID = Math.floor(Math.random() * 100000).toFixed()) {
-    const root = 'http://bwipjs-api.metafloor.com/';
-    const scaleX = `&scaleX=6`
-    const scaleY = '&scaleY=6';
-    const postfx = '&includetext';
-
-    const url = root + `?bcid=code128` + `&text=` + jobID + scaleX + scaleY + postfx;
-
-    const params = {
-      method : "GET",
-      headers : { "Authorization": "Basic ", "Content-Type" : "image/png" },
-      contentType : "application/json",
-      followRedirects : true,
-      muteHttpExceptions : true,
-    };
-    
     try {
+      const root = 'http://bwipjs-api.metafloor.com/';
+      const scaleX = `&scaleX=6`
+      const scaleY = '&scaleY=6';
+      const postfx = '&includetext';
+
+      const url = root + `?bcid=code128` + `&text=` + jobID + scaleX + scaleY + postfx;
+
+      const params = {
+        'method' : "GET",
+        'headers' : { 
+          "Authorization": "Basic ", 
+          "Content-Type" : "image/png" 
+        },
+        'contentType' : "application/json",
+        'followRedirects' : true,
+        'muteHttpExceptions' : true,
+      }
+    
       const response = await UrlFetchApp.fetch(url, params);
       const responseCode = response.getResponseCode();
       if(responseCode != 200) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
@@ -150,7 +156,7 @@ const MarkAsAbandonedByBarcode = async () => {
   const jobnumber = OTHERSHEETS.Scanner.getRange(3,2).getValue();
   let progressUpdate = OTHERSHEETS.Scanner.getRange(4,2);
   progressUpdate.setValue(`Searching for job number...`);
-  let res = {};
+  let res = {}
   if (!jobnumber || jobnumber instanceof String) {
     progressUpdate.setValue(`No job number provided. Select the yellow cell, scan, then press enter to make sure the cell's value has been changed.`);
     ui.alert(

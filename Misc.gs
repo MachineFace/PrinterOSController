@@ -11,7 +11,7 @@
  * @returns {object} Merged Row Data
  */
 const MergeObjects = (objA, objB) => {
-  let result = {};
+  let result = {}
 
   for (let key in objA) {
     if (objA.hasOwnProperty(key)) {
@@ -41,7 +41,7 @@ const GetObjectType = (ob) => {
         type : typeof ob,
         value : ob,
         length : typeof ob === `string` ? ob.length : null 
-      };
+      }
     } 
     try {
       stringify = JSON.stringify(ob);
@@ -56,7 +56,7 @@ const GetObjectType = (ob) => {
       name : ob.constructor ? ob.constructor.name : null,
       nargs : ob.constructor ? ob.constructor.arity : null,
       length : Array.isArray(ob) ? ob.length:null
-    };       
+    }       
   } catch(err) {
     return { type : `indeterminate type`, } ;
   }

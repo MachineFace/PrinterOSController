@@ -31,7 +31,7 @@ class IDService {
   IsValid(uuid) {
     const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
     return uuidPattern.test(uuid);
-  };
+  }
 
   /**
    * Is Valid UUID
@@ -41,7 +41,7 @@ class IDService {
   static isValid(uuid) {
     const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
     return uuidPattern.test(uuid);
-  };
+  }
 
   /**
    * Find by ID
@@ -49,7 +49,7 @@ class IDService {
    * @returns {object} sheet and row 
    */
   FindByID(id) {
-    let res = {};
+    let res = {}
     try {
       if (!this.IsValid(id)) throw new Error(`Invalid id supplied...`);
       Object.values(SHEETS).forEach(sheet => {

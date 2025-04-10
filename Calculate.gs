@@ -57,7 +57,7 @@ class Calculate {
       const distribution = statuses.length > 0 ? [...StatisticsService.Distribution(statuses)] : [];
       const distSet = new Set(distribution.map(([key, _]) => key));
 
-      let data = {};
+      let data = {}
       if(distribution.length > 0) distribution.forEach(([key, value]) => data[key] = value);
       
       // Add Missing Values
@@ -199,7 +199,7 @@ class Calculate {
    * @return {object} counts
    */
   StatusCounts() {
-    let statuses = {};
+    let statuses = {}
     Object.values(SHEETS).forEach(sheet => {
       const data = this.StatusCountsPerSheet(sheet);
       Object.entries(data).forEach(([key, value], idx) => {
@@ -354,7 +354,7 @@ class Calculate {
    * @private
    */
   _CountCategorical(list) {
-    let count = {};
+    let count = {}
     list.forEach( key => count[key] = ++count[key] || 1);
     return count;
   }

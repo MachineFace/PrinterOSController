@@ -138,7 +138,7 @@ class DriveController {
     const folder = DriveApp.getFolderById(PropertiesService.getScriptProperties().getProperty(`TICKET_FOLDER_GID`));
     const files = folder.getFiles();
 
-    let fileMap = {};
+    let fileMap = {}
 
     // Group files by name
     if (files.hasNext()) {

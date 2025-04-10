@@ -3395,7 +3395,7 @@ class BayesianClassifier {
     // classified in the model
     this.totalCount = 0;
     // Every item classified in the model
-    this.data = {};
+    this.data = {}
   }
 
   /**
@@ -3405,13 +3405,13 @@ class BayesianClassifier {
    * @return {undefined} adds the item to the classifier
    */
   Train(item, category) {
-    if (!this.data[category]) this.data[category] = {};  // If the data object doesn't have any values for this category, create a new object for it.
+    if (!this.data[category]) this.data[category] = {}  // If the data object doesn't have any values for this category, create a new object for it.
 
     // Iterate through each key in the item.
     for(const k in item) {
       const v = item[k];
       // Initialize the nested object `data[category][k][item[k]]` with an object of keys that equal 0.
-      if (this.data[category][k] === undefined) this.data[category][k] = {};
+      if (this.data[category][k] === undefined) this.data[category][k] = {}
       if (this.data[category][k][v] === undefined) this.data[category][k][v] = 0;
 
       // And increment the key for this key/value combination.
@@ -3428,7 +3428,7 @@ class BayesianClassifier {
    * @returns {Object} of probabilities that this item belongs to a given category.
    */
   Score(item) {
-    const odds = {};
+    const odds = {}
     let category;
     for(const k in item) {
       const v = item[k];
@@ -3446,7 +3446,7 @@ class BayesianClassifier {
     }
 
     // Tally all of the odds for each category-combination pair - the non-existence of a category does not add anything to the score.
-    const oddsSums = {};
+    const oddsSums = {}
     for(category in odds) {
       oddsSums[category] = 0;
       for (const combination in odds[category]) {

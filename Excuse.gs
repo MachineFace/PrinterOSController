@@ -120,22 +120,22 @@ class ExcuseAndAdviceService {
    * Generate an Excuse
    */
   static async Excuse() {
-    let dx = Math.random();
-    if(dx > 0.5) {
-      const ex = ExcuseAndAdviceService.random_excuse();
-      console.info(`Random: ${dx}, Excuse: ${ex}`);
-      return ex;
-    }
-    const url = `https://excuser-three.vercel.app/v1/excuse`;
-    const params = {
-      method : "GET",
-      headers : { "Authorization": "Basic ", },
-      contentType : "application/json",
-      followRedirects : true,
-      muteHttpExceptions : true,
-    };
-
     try {
+      let dx = Math.random();
+      if(dx > 0.5) {
+        const ex = ExcuseAndAdviceService.random_excuse();
+        console.info(`Random: ${dx}, Excuse: ${ex}`);
+        return ex;
+      }
+      const url = `https://excuser-three.vercel.app/v1/excuse`;
+      const params = {
+        'method' : "GET",
+        'headers' : { "Authorization": "Basic ", },
+        'contentType' : "application/json",
+        'followRedirects' : true,
+        'muteHttpExceptions' : true,
+      }
+
       const response = await UrlFetchApp.fetch(url, params);
       const responseCode = response.getResponseCode();
       if(responseCode != 200) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`);  
@@ -152,16 +152,16 @@ class ExcuseAndAdviceService {
    * Generate Advice
    */
   static async Advice() {
-    const url = `https://api.adviceslip.com/advice`;
-    const params = {
-      method : "GET",
-      headers : { "Authorization": "Basic ", },
-      contentType : "application/json",
-      followRedirects : true,
-      muteHttpExceptions : true,
-    };
-
     try {
+      const url = `https://api.adviceslip.com/advice`;
+      const params = {
+        'method' : "GET",
+        'headers' : { "Authorization": "Basic ", },
+        'contentType' : "application/json",
+        'followRedirects' : true,
+        'muteHttpExceptions' : true,
+      }
+
       const response = await UrlFetchApp.fetch(url, params);
       const responseCode = response.getResponseCode();
       if(responseCode != 200) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`);  
@@ -178,16 +178,16 @@ class ExcuseAndAdviceService {
    * Generate Design Advice
    */
   static async DesignAdvice() {
-    const url = `https://quotesondesign.com/wp-json/wp/v2/posts/?orderby=rand`;
-    const params = {
-      method : "GET",
-      headers : { "Authorization": "Basic ", },
-      contentType : "application/json",
-      followRedirects : true,
-      muteHttpExceptions : true,
-    };
-
     try {
+      const url = `https://quotesondesign.com/wp-json/wp/v2/posts/?orderby=rand`;
+      const params = {
+        'method' : "GET",
+        'headers' : { "Authorization": "Basic ", },
+        'contentType' : "application/json",
+        'followRedirects' : true,
+        'muteHttpExceptions' : true,
+      }
+
       const response = await UrlFetchApp.fetch(url, params);
       const responseCode = response.getResponseCode();
       if(responseCode != 200) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`);  
@@ -208,16 +208,16 @@ class ExcuseAndAdviceService {
    * @return {string} shortened url
    */
   static async ShortenURL(url = ``) {
-    const site = `https://api.shrtco.de/v2/shorten?url=${url}`;
-    const params = {
-      method : "POST",
-      headers : { "Authorization": "Basic ", },
-      contentType : "application/json",
-      followRedirects : true,
-      muteHttpExceptions : true,
-    };
-
     try {
+      const site = `https://api.shrtco.de/v2/shorten?url=${url}`;
+      const params = {
+        'method' : "POST",
+        'headers' : { "Authorization": "Basic ", },
+        'contentType' : "application/json",
+        'followRedirects' : true,
+        'muteHttpExceptions' : true,
+      }
+
       const response = await UrlFetchApp.fetch(site, params);
       const responseCode = response.getResponseCode();
       if(responseCode != 200 && responseCode != 201) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`);  

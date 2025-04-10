@@ -27,18 +27,18 @@ class QRCodeService {
    * return {blob} QR Code
    */
   async GenerateQRCode(){
-    const filename = this.filename = `file` ? Math.floor(Math.random() * 100000).toFixed() : this.filename;
-    // console.info(`URL : ${this.url}`);
-    const loc = `https://api.qrserver.com/v1/create-qr-code/?size=${this.size}&data=${this.url}`;  //API call
-    const postParams = {
-      method : "GET",
-      headers : { "Authorization" : "Basic" },
-      contentType : "application/json",
-      followRedirects : true,
-      muteHttpExceptions : true
-    };
-
     try {
+      const filename = this.filename = `file` ? Math.floor(Math.random() * 100000).toFixed() : this.filename;
+      // console.info(`URL : ${this.url}`);
+      const loc = `https://api.qrserver.com/v1/create-qr-code/?size=${this.size}&data=${this.url}`;  //API call
+      const postParams = {
+        'method' : "GET",
+        'headers' : { "Authorization" : "Basic" },
+        'contentType' : "application/json",
+        'followRedirects' : true,
+        'muteHttpExceptions' : true
+      }
+
       const response = await UrlFetchApp.fetch(loc, postParams);
       const responseCode = response.getResponseCode();
       if(responseCode != 200) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
@@ -94,7 +94,7 @@ class QRCodeService {
     // Return Document to use later
     console.info(`DOC ----> ${doc?.getUrl()?.toString()}`)
     return await doc;
-  };
+  }
 
   /**
    * Generate QR Code
@@ -105,12 +105,12 @@ class QRCodeService {
       const filename = this.filename = `file` ? `QRCode-${IDService.createId()}` : this.filename;
       const loc = `https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=${this.url}`;  // API call
       const postParams = {
-        method : "GET",
-        headers : { "Authorization" : "Basic" },
-        contentType : "application/json",
-        followRedirects : true,
-        muteHttpExceptions : true
-      };
+        'method' : "GET",
+        'headers' : { "Authorization" : "Basic" },
+        'contentType' : "application/json",
+        'followRedirects' : true,
+        'muteHttpExceptions' : true
+      }
 
       const response = await UrlFetchApp.fetch(loc, postParams);
       const responseCode = response.getResponseCode();

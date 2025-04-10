@@ -375,7 +375,7 @@ const _gasT_Misc_Testing = async () => {
   });
 
   // await test(`OpenQRGenerator`, (t) => {
-  //   const data = {url : `https://docs.google.com/forms/d/e/1FAIpQLSfLTLKre-6ZPU0qsxTkbvmfqm56p_Y_ajoRD1tKALLMvPfdMQ/viewform`, size : `1000x1000`};
+  //   const data = {url : `https://docs.google.com/forms/d/e/1FAIpQLSfLTLKre-6ZPU0qsxTkbvmfqm56p_Y_ajoRD1tKALLMvPfdMQ/viewform`, size : `1000x1000`}
   //   const x = new OpenQRGenerator(data).CreatePrintableQRCode();
   //   t.notEqual(x, undefined || null, `OpenQRGenerator SHOULD NOT return null or undefined: ${x}`);
   // });

@@ -21,8 +21,8 @@ const PopUpMarkAsAbandoned = async () => {
       return;
     }
     let { status, printerID, printerName, jobID, timestamp, email, posStatCode, duration, notes, picture, ticket, filename, weight, cost, row, sheetName } = res;
-    status = STATUS.abandoned.plaintext;
     let sheet = SHEETS[sheetName];
+    status = STATUS.abandoned.plaintext;
     SheetService.SetByHeader(sheet, HEADERNAMES.status, row, status);
     console.info(`Job ID ${jobID} marked as abandoned. Sheet: ${sheetName} row: ${row}`);
     new EmailService({
@@ -100,7 +100,7 @@ const PopupCountQueue = () => {
     `Prints Currently in Queue : ${count}`,
     ui.ButtonSet.OK
   );
-};
+}
 
 /**
  * Create a pop-up to Create a new Ticket if one is missing.
@@ -149,7 +149,7 @@ const PopupCreateTicket = async () => {
     `Ticket Created for : ${email}, @ Index : ${thisRow}, Job Number : ${jobID}`,
     ui.ButtonSet.OK
   );
-};
+}
 
 /**
  * Builds HTML file for the modal pop-up from the help list.
@@ -181,7 +181,7 @@ const BuildHTMLHELP = () => {
 
   console.info(html);
   return html;
-};
+}
 
 /**
  * Creates a modal pop-up for the help text.
@@ -193,7 +193,7 @@ const PopupHelp = () => {
     .setWidth(640)
     .setHeight(480);
   ui.showModalDialog(htmlOutput, title);
-};
+}
 
 /**
  * Run Update
@@ -206,7 +206,7 @@ const PopupUpdate = async () => {
     `All Info Updated from PrinterOS Server`,
     ui.ButtonSet.OK
   );
-};
+}
 
 /**
  * Remove Duplicates
@@ -219,7 +219,7 @@ const PopupRemoveDuplicates = async () => {
     `All Duplicate Info from PrinterOS Server removed.`,
     ui.ButtonSet.OK
   );
-};
+}
 
 /**
  * Fetch New Data Single Sheet
@@ -295,7 +295,7 @@ const PopupInterface = () => {
     .setWidth(640)
     .setHeight(480);
   ui.showModalDialog(htmlOutput, title);
-};
+}
 
 /**
  * Remove Users not in Billing List
@@ -356,7 +356,7 @@ const PopupCreateNewId = async () => {
     ui.ButtonSet.OK
   );
   if(a === ui.Button.OK) return;
-};
+}
 
 
 /**
@@ -398,7 +398,7 @@ const BarMenu = () => {
     .addSeparator()
     .addItem(`Help`, `PopupHelp`)
     .addToUi();
-};
+}
 
 
 
@@ -427,7 +427,7 @@ const BuildBillingHELP = () => {
   html += `</ol>`;
   html += `<p>See Cody for additional help / protips.</p>`;
   return html;
-};
+}
 const PopupBillingHelp = () => {
   let ui = SpreadsheetApp.getUi();
   let title = `${SERVICE_NAME} BILLING HELP`;
@@ -435,7 +435,7 @@ const PopupBillingHelp = () => {
     .setWidth(640)
     .setHeight(480);
   ui.showModalDialog(htmlOutput, title);
-};
+}
 
 
 /**

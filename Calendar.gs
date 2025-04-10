@@ -149,7 +149,7 @@ class CalendarFactory {
    */
   DeleteDuplicateEvents() {
     try {
-      let singletons = {};
+      let singletons = {}
       const events = this.Events;
       events.forEach(event => {
         const eventID = event.getId();
@@ -248,7 +248,7 @@ const _testCalendars = () => {
 const IsValidDate = (d) => {
   if (Object.prototype.toString.call(d) !== "[object Date]") return false;
   return !isNaN(d.getTime());
-};
+}
 
 const FormatDate = (date) => Utilities.formatDate(date ? date : new Date(), "PST", "MM/dd/yyyy 'at' HH:mm:ss z");
 

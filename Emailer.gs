@@ -79,6 +79,7 @@ class EmailService {
    * @param {string} message
    * @param {string} bcc email
    * @returns {bool} success
+   * @private
    */
   static Mail(to_email = ``, status = STATUS.queued, message = new MessageService({}), ds_email = ``) {
     try {

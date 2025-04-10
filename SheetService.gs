@@ -91,7 +91,7 @@ class SheetService {
    */
   static GetRowData(sheet, row = 2) {
     try {
-      let dict = {};
+      let dict = {}
       let headers = sheet.getRange(1, 1, 1, sheet.getMaxColumns()).getValues()[0];
       headers.forEach( (name, index) => {
         let linkedKey = Object.keys(HEADERNAMES).find(key => HEADERNAMES[key] === name);
@@ -278,7 +278,7 @@ class SheetService {
     try {
       if (value === null || value === undefined) throw new Error(`Bad inputs to function. Value: ${value}`);
       value = value.toString().replace(/\s+/g, "");
-      let res = {};
+      let res = {}
       Object.values(SHEETS).forEach(sheet => {
         const sheetName = sheet.getSheetName();
         const finder = sheet.createTextFinder(value).findAll();
@@ -304,7 +304,7 @@ class SheetService {
   static FindOne(value = ``) {
     try {
       if (value) value.toString().replace(/\s+/g, "");
-      let res = {};
+      let res = {}
       for(const [key, sheet] of Object.entries(SHEETS)) {
         const finder = sheet.createTextFinder(value).findNext();
         if (finder == null) return false;

@@ -129,7 +129,7 @@ class TicketService {
       contentType : "image/png",
       followRedirects : true,
       muteHttpExceptions : true
-    };
+    }
 
     try {
       const response = await UrlFetchApp.fetch(url, params);

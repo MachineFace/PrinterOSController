@@ -66,7 +66,7 @@ class UpdateService {
    * @return {[number]} jobIds
    */
   _FilterJobsByQueuedOrInProgress(sheet) {
-    let d = {};
+    let d = {}
     let jobIds = [...SheetService.GetColumnDataByHeader(sheet, HEADERNAMES.jobID)];
     let statuses = [...SheetService.GetColumnDataByHeader(sheet, HEADERNAMES.posStatCode)];
     jobIds.forEach((id, idx) => {
@@ -76,13 +76,13 @@ class UpdateService {
         d[id] = { 
           status_id : status_id,
           row : index,
-        };
+        }
       }
     });
 
     if(Object.entries(d).length == 0) {
       console.warn(`${sheet.getSheetName()}: Nothing to Update....`);
-      return {};
+      return {}
     }
     console.info(`Jobs to Update (${Object.entries(d).length}): ${JSON.stringify(d)}`);
     return d;
