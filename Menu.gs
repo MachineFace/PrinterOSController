@@ -311,19 +311,6 @@ const PopupRemoveUsersNotInBillingList = async () => {
 }
 
 /**
- * Calculate Billing
- */
-const PopupCalcBilling = async () => {
-  let ui = await SpreadsheetApp.getUi();
-  await CalculateMaterialCostForBilling();
-  ui.alert(
-    `${SERVICE_NAME} Billing`,
-    `Calculated Printing Costs for ALL our Users.`,
-    ui.ButtonSet.OK
-  );
-} 
-
-/**
  * Create a pop-up to make a new Jobnumber
  */
 const PopupCreateNewId = async () => {
@@ -392,7 +379,6 @@ const BarMenu = () => {
         .createMenu(`Billing`)
           .addItem(`HELP: How to do Semester Billing`, `PopupBillingHelp`)
           .addItem(`Generate Semester Billing Report`, `Billing`)
-          .addItem(`Generate Material Costs for All Users on Billing Sheet`, `PopupCalcBilling`)
           // .addItem(`Export Billing Report CSV`,`SaveAsCSV`)
     )
     .addSeparator()
