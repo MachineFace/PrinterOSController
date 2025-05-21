@@ -41,7 +41,9 @@ class BarcodeService {
 
       const response = await UrlFetchApp.fetch(url, params);
       const responseCode = response.getResponseCode();
-      if(responseCode != 200) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`);  
+      if(![200, 201].includes(responseCode)) {
+        throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`);  
+      }
       const content = response.getContent();
       const blob = Utilities.newBlob(content).setName(`Barcode_${jobID}`) ;
       const barcode = DriveApp.createFile(blob);      
@@ -81,7 +83,9 @@ class BarcodeService {
     
       const response = await UrlFetchApp.fetch(url, params);
       const responseCode = response.getResponseCode();
-      if(responseCode != 200) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
+      if(![200, 201].includes(responseCode)) {
+        throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
+      }
       const content = response.getContent();
       const blob = Utilities.newBlob(content).setName(`Barcode_${jobID}`);
       const barcode = DriveApp.createFile(blob);       

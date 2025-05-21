@@ -136,7 +136,9 @@ class TicketService {
       const responseCode = response.getResponseCode();
       let blob = HtmlService.createHtmlOutput();
       if(responseCode == 404) return blob;
-      else if(responseCode !== 200 && responseCode !== 201) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
+      else if(![200, 201].includes(responseCode)) {
+        throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
+      }
       blob = response.getBlob().setName(`IMAGE_${pngFile}`);
       return blob;
     } catch(err) {

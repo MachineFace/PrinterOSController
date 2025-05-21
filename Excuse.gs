@@ -138,7 +138,9 @@ class ExcuseAndAdviceService {
 
       const response = await UrlFetchApp.fetch(url, params);
       const responseCode = response.getResponseCode();
-      if(responseCode != 200) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`);  
+      if(![200, 201].includes(responseCode)) {
+        throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`);  
+      }
       const content = await JSON.parse(response.getContentText())[0].excuse;
       console.info(content);
       return content;
@@ -164,7 +166,9 @@ class ExcuseAndAdviceService {
 
       const response = await UrlFetchApp.fetch(url, params);
       const responseCode = response.getResponseCode();
-      if(responseCode != 200) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`);  
+      if(![200, 201].includes(responseCode)) {
+        throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`);  
+      }
       const content = await JSON.parse(response.getContentText()).slip.advice;
       console.info(content);
       return content;
@@ -190,7 +194,9 @@ class ExcuseAndAdviceService {
 
       const response = await UrlFetchApp.fetch(url, params);
       const responseCode = response.getResponseCode();
-      if(responseCode != 200) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`);  
+      if(![200, 201].includes(responseCode)) {
+        throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`);  
+      }
       const content = await JSON.parse(response.getContentText())[0];
       const title = content.title.rendered;
       const quote = content.content.rendered;
@@ -220,7 +226,9 @@ class ExcuseAndAdviceService {
 
       const response = await UrlFetchApp.fetch(site, params);
       const responseCode = response.getResponseCode();
-      if(responseCode != 200 && responseCode != 201) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`);  
+      if(![200, 201].includes(responseCode)) {
+        throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`);  
+      }
       const content = await JSON.parse(response.getContentText()).result?.full_short_link;
       console.info(content);
       return content;

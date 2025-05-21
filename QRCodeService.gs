@@ -41,7 +41,9 @@ class QRCodeService {
 
       const response = await UrlFetchApp.fetch(loc, postParams);
       const responseCode = response.getResponseCode();
-      if(responseCode != 200) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
+      if(![200, 201].includes(responseCode)) {
+        throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
+      }
       const content = response.getContent();
       const blob = Utilities.newBlob(content).setName(`QRCode ${filename}`);
       let qrCode = await DriveApp.getFolderById(this.gid).createFile(blob);
@@ -114,7 +116,9 @@ class QRCodeService {
 
       const response = await UrlFetchApp.fetch(loc, postParams);
       const responseCode = response.getResponseCode();
-      if(responseCode != 200) throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
+      if(![200, 201].includes(responseCode)) {
+        throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
+      }
       const blob =  Utilities.newBlob(response.getContent()).setName(`QRCode-${filename}`);
 
       let qrCode = DriveApp.createFile(blob);
