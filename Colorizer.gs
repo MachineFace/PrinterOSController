@@ -14,63 +14,37 @@ class ColorService {
    * @returns {bool} success 
    */
   static SetRowColorByStatus(sheet, row = 2, status = STATUS.queued.plaintext) {
-    sheet = sheet ? sheet : SpreadsheetApp.getActiveSheet();
-    crow = row > 2 ? row : 2;
-    status = status ? status : STATUS.queued.plaintext;
-    const wholerow = sheet.getRange(row, 1, 1, sheet.getLastColumn());
-    try {  
-      switch(status) {
-        case STATUS.queued.plaintext:
-          wholerow.setFontColor(null); //unset
-          wholerow.setFontColor(COLORS.greenish);  //Greenish
-          wholerow.setBackground(null); //unset
-          wholerow.setBackground(COLORS.green_light); //Light Green
-          console.warn(`Status: ${status}, Set Color to : Green`);
-          break;
-        case STATUS.inProgress.plaintext:
-          wholerow.setFontColor(null); //unset
-          wholerow.setFontColor(COLORS.orange_dark);  //Dark Yellow
-          wholerow.setBackground(null); //unset
-          wholerow.setBackground(COLORS.orange_light); //Light yellow
-          console.warn(`Status: ${status}, Set Color to : Orange`);
-          break;
-        case STATUS.closed.plaintext:
-        case STATUS.pickedUp.plaintext:
-        case STATUS.complete.plaintext:
-          wholerow.setFontColor(null); //unset
-          wholerow.setFontColor(COLORS.grey);  //Gray
-          wholerow.setBackground(null); //unset
-          wholerow.setBackground(COLORS.grey_light); //Light Grey
-          console.warn(`Status: ${status}, Set Color to : Grey`);
-          break;
-        case STATUS.failed.plaintext:
-          wholerow.setFontColor(null); //unset
-          wholerow.setFontColor(COLORS.red);  //Red
-          wholerow.setBackground(null); //unset
-          wholerow.setBackground(COLORS.red_light); //Light Red
-          console.warn(`Status: ${status}, Set Color to : Red`);
-          break;
-        case STATUS.cancelled.plaintext:
-          wholerow.setFontColor(null); //unset
-          wholerow.setFontColor(COLORS.purple_dark);  //yellow
-          wholerow.setBackground(null); //unset
-          wholerow.setBackground(COLORS.purle_light); //Light yellow
-          console.warn(`Status: ${status}, Set Color to : Purple`);
-          break;
-        case undefined:
-          wholerow.setBackground(null);
-          wholerow.setFontColor(null); //Unset Color
-          console.warn(`Status: ${status}, Set Color to : None`);
-          break;
-        default:
-          wholerow.setBackground(null);
-          wholerow.setFontColor(null); //Unset Color
-          console.warn(`Status: ${status}, Set Color to : None`);
-          break;
-      }    
+    try {
+      if (!sheet || typeof sheet.getRange !== 'function') {
+        sheet = SpreadsheetApp.getActiveSheet();
+      }
+      row = Number(row) >= 2 ? row : 2;
+      status = status ? status : STATUS.queued.plaintext;
+
+      const styles = {
+        [STATUS.queued.plaintext]:      { bg: COLORS.green_light,  fg: COLORS.greenish,     label: "Green" },
+        [STATUS.inProgress.plaintext]:  { bg: COLORS.orange_light, fg: COLORS.orange_dark,  label: "Orange" },
+        [STATUS.complete.plaintext]:    { bg: COLORS.grey_light,   fg: COLORS.grey,         label: "Grey" },
+        [STATUS.pickedUp.plaintext]:    { bg: COLORS.grey_light,   fg: COLORS.grey,         label: "Grey" },
+        [STATUS.closed.plaintext]:      { bg: COLORS.grey_light,   fg: COLORS.grey,         label: "Grey" },
+        [STATUS.failed.plaintext]:      { bg: COLORS.red_light,    fg: COLORS.red,          label: "Red" },
+        [STATUS.cancelled.plaintext]:   { bg: COLORS.purle_light,  fg: COLORS.purple_dark,  label: "Purple" },
+      }
+
+      const { bg, fg, label } = styles[validStatus] || { bg: null, fg: null, label: "None" };
+
+      const range = sheet.getRange(row, 1, 1, sheet.getLastColumn());
+      range.setBackground(null).setFontColor(null);  // Clear first
+
+      if (bg || fg) {
+        if (bg) range.setBackground(bg);
+        if (fg) range.setFontColor(fg);
+      }
+
+      console.warn(`Status: "${validStatus}" → Set row ${row} to color: ${label}`);
       return 0;
     } catch(err) {
-      console.error(`${err} : Couldn't color rows for some reason`);
+      console.error(`"SetRowColorByStatus()" failed: ${err}`);
       return 1;
     }
     
@@ -78,9 +52,9 @@ class ColorService {
 }
 
 const _testColorizer = () => {
-  // ColorService.SetRowColorByStatus(SHEETS.Aurum, 2, STATUS.queued.plaintext);
-  let statuses = [...Object.values(STATUS).map(status => status.plaintext)];
-  console.info(statuses)
+  ColorService.SetRowColorByStatus(SHEETS.Aurum, 2, STATUS.queued.plaintext);
+  // let statuses = [...Object.values(STATUS).map(status => status.plaintext)];
+  // console.info(statuses)
 }
 
 
