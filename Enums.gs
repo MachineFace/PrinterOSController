@@ -177,45 +177,41 @@ const STATUS = Object.freeze({
  * Printer IDS
  */
 const PRINTERIDS = Object.freeze({ 
-  Luteus : 79606,
-  Caerulus : 79605,
-  Photon : 75677,
-  Quasar : 75675,
-  Zardoz : 79166,
-  Viridis :79167,
-  Rubrum : 79170,
-  Plumbus : 75140,
-  Nimbus : 75670,
-  Spectrum : 79165,
-  Purpura : 87199,
-  Crystallum : 87200,
-  Aurum : 89128,
-  Cleetus: 113252,
-  Dingbat : 113254,
-  Moopy : 113255,
+  Luteus : 116705,
+  Caerulus : 116704,
+  Photon : 116707,
+  Quasar : 116708,
+  Zardoz : 116696,
+  Viridis : 116699,
+  Rubrum : 116702,
+  Plumbus : 116712,
+  Nimbus : 116710,
+  Spectrum : 116693,
+  Purpura : 110479,
+  Crystallum : 113601,
+  Aurum : 110558,
+  Alpha: 120697,
+  Beta : 120699,
+  Gamma : 120700,
 });
 
 /** 
-{`id`:`75140`,`name`:`Plumbus`,`type`:`Ultimaker 3`,`snr`:`0`,`host_num`:`165166140802c580`,local_ip : `192.168.1.133`,`workgroups`:[3288,3290,3286,3297,3293,3292,3285,3412,3275,3414,3294,3296,3291],}
-{`id`:`75670`,`name`:`Nimbus`,`type`:`Ultimaker 3`,`snr`:`0`,`host_num`:`165166820482b306`,local_ip : `192.168.1.125`,`workgroups`:[3288,3290,3286,3297,3293,3292,3285,3412,3275,3414,3294,3296,3291],}
-{`id`:`75675`,`name`:`Quasar`,`type`:`Ultimaker 3`,`snr`:`0`,`host_num`:`1651661008810220`,local_ip : `192.168.1.127`,`workgroups`:[3288,3290,3286,3297,3293,3292,3285,3412,3275,3414,3294,3296,3291],}
-{`id`:`75677`,`name`:`Photon`,`type`:`Ultimaker 3`,`snr`:`0`,`host_num`:`165166d20682d65f`,local_ip : `192.168.1.122`,`workgroups`:[3288,3290,3286,3297,3293,3292,3285,3412,3275,3414,3294,3296,3291],}
-{`id`:`79165`,`name`:`Spectrum`,`type`:`Ultimaker 3 Extended`,`snr`:`0`,`host_num`:`1651660105428348`,local_ip : `192.168.1.120`,`workgroups`:[3288,3290,3291,3286,3294,3296,3297,3293,3292,3285,3412,3275,3414],}
-{`id`:`79166`,`name`:`Zardoz`,`type`:`Ultimaker 3 Extended`,`snr`:`0`,`host_num`:`165166090580eaac`,local_ip : `192.168.1.129`,`workgroups`:[3288,3290,3286,3291,3297,3294,3296,3293,3292,3285,3412,3275,3414],}
-{`id`:`79167`,`name`:`Viridis`,`type`:`Ultimaker 3 Extended`,`snr`:`0`,`host_num`:`1651669703815126`,local_ip : `192.168.1.121`,`workgroups`:[3288,3290,3286,3297,3293,3292,3285,3412,3275,3414,3296,3294,3291],}
-{`id`:`79170`,`name`:`Rubrum`,`type`:`Ultimaker 3`,`snr`:`0`,`host_num`:`16516604068101a0`,local_ip : `192.168.1.119`,`workgroups`:[3288,3290,3286,3297,3293,3292,3285,3412,3275,3414,3296,3294,3291],}
-{`id`:`79605`,`name`:`Caerulus`,`type`:`Ultimaker 3`,`snr`:`0`,`host_num`:`165166030742c4fc`,local_ip : `192.168.1.131`,`workgroups`:[3288,3290,3286,3296,3297,3291,3293,3292,3285,3412,3275,3414,3294],}
-{`id`:`79606`,`name`:`Luteus`,`type`:`Ultimaker 3`,`snr`:`0`,`host_num`:`165166930282b1ae`,local_ip : `192.168.1.128`,`workgroups`:[3288,3290,3286,3296,3297,3293,3291,3292,3285,3412,3275,3414,3294],}
-{`id`:`87200`,`name`:`Crystallum`,`type`:`Ultimaker S3`,`snr`:`0`,`host_num`:`0x0030d62690efL`,local_ip : `192.168.1.130`,`workgroups`:[3291,3288,3290,3286,3297,3293,4006,3292,3285,3412,3275,3414,3294,3296]}
-{`id`:`110479`,`name`:`Pupura 2`,`type`:`Ultimaker S3`,`snr`:`0`,`host_num`:`0x0030d6269171L`,local_ip : `192.168.1.126`,`workgroups`:null,}
-{`id`:`110539`,`name`:`Purpura`,`type`:`Ultimaker S3`,`snr`:`0`,`host_num`:`0x0030d6269171L`,local_ip : `192.168.1.126`,`workgroups`:[3291,3288,3290,3286,3297,3293,3292,3285,3412,3294,3296,3275,3414],}
-{`id`:`110558`,`name`:`Aurum`,`type`:`Ultimaker S3`,`snr`:`0`,`host_num`:`0x0030d6287240L`,local_ip : `192.168.1.123`,`workgroups`:[3291,3288,3290,3286,3297,3293,3292,3285,3412,3294,3296,3275,3414],}
-/// Cleetus
-{ `id`:`113252`, `name`:`Alpha`,`type`:`Ultimaker S3`, `snr`:`0`, `host_num`:`0x0030d6299eafL`, local_ip : `192.168.1.135`, `workgroups`:[3291,3288,3412,3294,3296,3275,3290,3286,3297,3293,3292,3285,3414], }
-/// Dingbat
-{ `id`:`113254`, `name`:`Beta`,`type`:`Ultimaker S3`, `snr`:`0`, `host_num`:`0x0030d6287311L`, local_ip : `192.168.1.134`, `workgroups`:[3291,3288,3290,3286,3297,3293,3292,3285,3412,3294,3296,3275,3414], }
-/// Moopy
-{ `id`:`113255`, `name`:`Gamma`, `type`:`Ultimaker S3`, `snr`:`0`, `host_num`:`0x0030d6283577L`, local_ip : `192.168.1.136`, `workgroups`:[3291,3288,3290,3286,3297,3293,3292,3285,3412,3294,3296,3275,3414], }
+12:03:57 PM	Info	PrinterID: 110479, Name: Pupura, IPAddress: 192.168.1.141
+12:03:57 PM	Info	PrinterID: 110558, Name: Aurum, IPAddress: 192.168.1.147
+12:03:57 PM	Info	PrinterID: 113601, Name: Crystallum, IPAddress: 192.168.1.138
+12:03:57 PM	Info	PrinterID: 116693, Name: Spectrum, IPAddress: 192.168.1.131
+12:03:57 PM	Info	PrinterID: 116696, Name: Zardoz, IPAddress: 192.168.1.136
+12:03:57 PM	Info	PrinterID: 116699, Name: Viridis, IPAddress: 192.168.1.135
+12:03:57 PM	Info	PrinterID: 116702, Name: Rubrum, IPAddress: 192.168.1.112
+12:03:57 PM	Info	PrinterID: 116704, Name: Caerulus, IPAddress: 192.168.1.122
+12:03:57 PM	Info	PrinterID: 116705, Name: Luteus, IPAddress: 192.168.1.113
+12:03:57 PM	Info	PrinterID: 116707, Name: Photon, IPAddress: 192.168.1.128
+12:03:57 PM	Info	PrinterID: 116708, Name: Quasar, IPAddress: 192.168.1.129
+12:03:57 PM	Info	PrinterID: 116710, Name: Nimbus, IPAddress: 192.168.1.111
+12:03:57 PM	Info	PrinterID: 116712, Name: Plumbus, IPAddress: 192.168.1.126
+12:03:57 PM	Info	PrinterID: 120697, Name: Alpha, IPAddress: 192.168.1.137
+12:03:57 PM	Info	PrinterID: 120699, Name: Beta, IPAddress: 192.168.1.140
+12:03:57 PM	Info	PrinterID: 120700, Name: Gamma, IPAddress: 192.168.1.139
 */
 
 /**
@@ -224,130 +220,130 @@ const PRINTERIDS = Object.freeze({
 const PRINTERDATA = Object.freeze({ 
   Luteus : { 
     name : `Luteus`,
-    printerID : 79606,
+    printerID : 116705,
     sheet : THIS_SPREADSHEET.getSheetByName(`Luteus`),
     type : `UM3`,
-    local_ip : `192.168.1.128`,
+    local_ip : `192.168.1.113`,
     color : EVENT_COLORS.BLUE,
   },
   Caerulus : {
     name : `Caerulus`,
-    printerID : 79605,
+    printerID : 116704,
     sheet : THIS_SPREADSHEET.getSheetByName(`Caerulus`),
     type : `UM3`,
-    local_ip : `192.168.1.131`,
+    local_ip : `192.168.1.122`,
     color : EVENT_COLORS.CYAN,
   },
   Photon : {
     name : `Photon`,
-    printerID : 75677,
+    printerID : 116707,
     sheet : THIS_SPREADSHEET.getSheetByName(`Photon`),
     type : `UM3`,
-    local_ip : `192.168.1.122`,
+    local_ip : `192.168.1.128`,
     color : EVENT_COLORS.GRAY,
   },
   Quasar : {
     name : `Quasar`,
-    printerID : 75675,
+    printerID : 116708,
     sheet : THIS_SPREADSHEET.getSheetByName(`Quasar`),
     type : `UM3`,
-    local_ip : `192.168.1.127`,
+    local_ip : `192.168.1.129`,
     color : EVENT_COLORS.GREEN,
   },
   Zardoz : {
     name : `Zardoz`,
-    printerID : 79166,
+    printerID : 116696,
     sheet : THIS_SPREADSHEET.getSheetByName(`Zardoz`),
     type : `UM3 Extended`,
-    local_ip : `192.168.1.129`,
+    local_ip : `192.168.1.136`,
     color : EVENT_COLORS.MAUVE,
   },
   Viridis : {
     name : `Viridis`,
-    printerID : 79167,
+    printerID : 116699,
     sheet : THIS_SPREADSHEET.getSheetByName(`Viridis`),
     type : `UM3`,
-    local_ip : `192.168.1.121`,
+    local_ip : `192.168.1.135`,
     color : EVENT_COLORS.ORANGE,
   },
   Rubrum : {
     name : `Rubrum`,
-    printerID : 79170,
+    printerID : 116702,
     sheet : THIS_SPREADSHEET.getSheetByName(`Rubrum`),
     type : `UM3`,
-    local_ip : `192.168.1.119`,
+    local_ip : `192.168.1.112`,
     color : EVENT_COLORS.PALE_BLUE,
   },
   Plumbus : {
     name : `Plumbus`,
-    printerID : 75140,
+    printerID : 116712,
     sheet : THIS_SPREADSHEET.getSheetByName(`Plumbus`),
     type : `UM3`,
-    local_ip : `192.168.1.133`,
+    local_ip : `192.168.1.126`,
     color : EVENT_COLORS.PALE_GREEN,
   },
   Nimbus : {
     name : `Nimbus`,
-    printerID : 75670,
+    printerID : 116710,
     sheet : THIS_SPREADSHEET.getSheetByName(`Nimbus`),
     type : `UM3`,
-    local_ip : `192.168.1.125`,
+    local_ip : `192.168.1.111`,
     color : EVENT_COLORS.PALE_RED,
   },
   Spectrum : {
     name : `Spectrum`,
-    printerID : 79165,
+    printerID : 116693,
     sheet : THIS_SPREADSHEET.getSheetByName(`Spectrum`),
     type : `UM3 Extended`,
-    local_ip : `192.168.1.120`,
+    local_ip : `192.168.1.131`,
     color : EVENT_COLORS.RED,
   },
   Purpura : {
     name : `Purpura`,
-    printerID : 87199,
+    printerID : 110479,
     sheet : THIS_SPREADSHEET.getSheetByName(`Purpura`),
     type : `S3`,
-    local_ip : `192.168.1.126`,
+    local_ip : `192.168.1.141`,
     color : EVENT_COLORS.YELLOW,
   },
   Crystallum : {
     name : `Crystallum`,
-    printerID : 87200,
+    printerID : 113601,
     sheet : THIS_SPREADSHEET.getSheetByName(`Crystallum`),
     type : `S3`,
-    local_ip : `192.168.1.130`,
+    local_ip : `192.168.1.138`,
     color : EVENT_COLORS.BLUE,
   },
   Aurum : {
     name : `Aurum`,
-    printerID : 89128,
+    printerID : 110558,
     sheet : THIS_SPREADSHEET.getSheetByName(`Aurum`),
     type : `S3`,
-    local_ip : `192.168.1.123`,
+    local_ip : `192.168.1.147`,
     color : EVENT_COLORS.CYAN,
   },
-  Cleetus : {
-    name : `Cleetus`,
-    printerID : 113252,
-    sheet : THIS_SPREADSHEET.getSheetByName(`Cleetus`),
+  Alpha : {
+    name : `Alpha`,
+    printerID : 120697,
+    sheet : THIS_SPREADSHEET.getSheetByName(`Alpha`),
     type : `S3`,
-    local_ip : `192.168.1.135`,
+    local_ip : `192.168.1.137`,
     color : EVENT_COLORS.MAUVE,
   },
-  Dingbat : {
-    name : `Dingbat`,
-    printerID : 113254,
-    sheet : THIS_SPREADSHEET.getSheetByName(`Dingbat`),
+  Beta : {
+    name : `Beta`,
+    printerID : 120699,
+    sheet : THIS_SPREADSHEET.getSheetByName(`Beta`),
     type : `S3`,
-    local_ip : `192.168.1.134`,
+    local_ip : `192.168.1.140`,
     color : EVENT_COLORS.ORANGE,
   },
-  Moopy : {
-    name : `Moopy`,
-    printerID : 113255,
-    sheet : THIS_SPREADSHEET.getSheetByName(`Moopy`),
+  Gamma : {
+    name : `Gamma`,
+    printerID : 120700,
+    sheet : THIS_SPREADSHEET.getSheetByName(`Gamma`),
     type : `S3`,
-    local_ip : `192.168.1.136`,
+    local_ip : `192.168.1.139`,
     color : EVENT_COLORS.RED,
   },
 });
@@ -389,9 +385,9 @@ const SHEETS = Object.freeze({
   Purpura :    THIS_SPREADSHEET.getSheetByName(`Purpura`), 
   Crystallum : THIS_SPREADSHEET.getSheetByName(`Crystallum`),
   Aurum :      THIS_SPREADSHEET.getSheetByName(`Aurum`),
-  Cleetus :    THIS_SPREADSHEET.getSheetByName(`Cleetus`),
-  Dingbat :    THIS_SPREADSHEET.getSheetByName(`Dingbat`),
-  Moopy :      THIS_SPREADSHEET.getSheetByName(`Moopy`),
+  Alpha :      THIS_SPREADSHEET.getSheetByName(`Alpha`),
+  Beta :       THIS_SPREADSHEET.getSheetByName(`Beta`),
+  Gamma :      THIS_SPREADSHEET.getSheetByName(`Gamma`),
 });
 
 // const GetSheets = () => {

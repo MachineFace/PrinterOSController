@@ -12,7 +12,9 @@ class PrinterOS {
     /** @private */
     this.password = PropertiesService.getScriptProperties().getProperty(`POS_password`);
     /** @private */
-    this.session;
+    this.session = PropertiesService.getUserProperties().getProperty(`session`) ? 
+      PropertiesService.getUserProperties().getProperty(`session`) : 
+      PropertiesService.getUserProperties().setProperty(`session`, ``);
     /** @private */
     this.printerNames = [];
     /** @private */
@@ -34,6 +36,10 @@ class PrinterOS {
    */
   async Login() {
     try {
+      let session = ``;
+      // if(this.session) {
+      //   this.CheckSession();
+      // }
       const url = `${this.root}/login/`;
       const params = {
         method : "POST",
@@ -53,13 +59,17 @@ class PrinterOS {
 
       const parsed = JSON.parse(response.getContentText());
       const result = parsed?.result;
-      const session = parsed?.message?.session;
+      session = parsed?.message?.session;
       if(!result || !session) {
         throw new Error(`Missing results or session in response.`);
       }
 
       this.session = session;
       console.warn(`SessionID: (${session}), Session Started: ${result}`);
+
+      // Set user properties
+      PropertiesService.getUserProperties().setProperty(`session`, session);
+      console.warn(`PropertyStore: (${PropertiesService.getUserProperties().getProperty(`session`)}), Session Started: ${result}`);
       return session;
     } catch(err) {
       console.error(`"Login()" failed : ${err}`);
@@ -846,11 +856,6 @@ class PrinterOS {
 }
 
 
-
-
-
-
-
 /**
  * Fetch All Printer Data from Organization
  */
@@ -873,9 +878,8 @@ const _testPOS = async () => {
   await p.Login()
     // .then( async() => await p.CheckSession())
     // .then( async() => await p.GetPrinters())
-    // .then( async() => await p.GetPrinterData(PRINTERIDS.Quasar)). // Check again...
     // .then( async() => await p.GetPrinterTypes())
-    // .then( async() => await p.GetPrintersJobList(PRINTERDATA.Spectrum.printerID))  
+    .then( async() => await p.GetPrintersJobList(PRINTERDATA.Gamma.printerID))  
     // .then( async() => await p.GetPrintersLatestJob(PRINTERDATA.Spectrum.printerID))  
     // .then( async() => await p.GetLatestJobsForAllPrinters())
     // .then( async() => await p.GetJobInfo(4492876))
@@ -885,7 +889,7 @@ const _testPOS = async () => {
     // .then( async() => await p.GetUsersByWorkgroup())
     // .then( async() => await p.GetUsers())
     // .then( async() => await p.GetUserCount())
-    .then( async() => await p.GetPrintersInCloud())
+    // .then( async() => await p.GetPrintersInCloud())
     // .then( async() => {
     //   const { extruders, weight, file_cost, cost } = await p.GetJobInfo(3435856);
     //   console.info(`Extruders: ${extruders}, Weight: ${weight}, File Cost: ${file_cost}, Cost: ${cost}`);
@@ -905,4 +909,91 @@ const _testPOS = async () => {
     .finally(async () => await p.Logout())
 }
 
+
+
+
+class TestBedPrinterOS {
+  constructor() {
+    /** @private */
+    this.root = `https://cloud.3dprinteros.com/apiglobal`;
+    /** @private */
+    this.username = PropertiesService.getScriptProperties().getProperty(`POS_username`);
+    /** @private */
+    this.password = PropertiesService.getScriptProperties().getProperty(`POS_password`);
+    /** @private */
+    this.session;
+    /** @private */
+    this.printerNames = [];
+    /** @private */
+    this.printerIDs = [];
+    /** @private */
+    this.printerIPs = [];
+    /** @private */
+    this.jobdata;
+    /** @private */
+    this.picture;
+    /** @private */
+    this.imgBlob;
+  }
+
+  /**
+   * Configure the service
+   */
+  CreateService() {
+    try {
+      // const scope = `user-library-read playlist-read-private playlist-read-collaborative playlist-modify-public playlist-modify-private`;
+
+      const service = OAuth2.createService(`SpotifyService`)
+        .setAuthorizationBaseUrl(this.root)
+        .setTokenUrl(`${this.root}/token`)
+        .setClientId(this.username)
+        .setClientSecret(this.password)
+        .setPropertyStore(PropertiesService.getUserProperties())
+        .setCache(CacheService.getUserCache())
+        .setLock(LockService.getUserLock())
+        // .setScope(scope)
+        .setTokenHeaders({
+          Authorization: 'Basic ' + Utilities.base64Encode(this.username + ':' + this.password)
+        })
+        // .setCallbackFunction(`OAuth2Callback`)
+        
+      if (!service.hasAccess()) {
+        throw new Error(`Error: Missing PrinterOS authorization.`);
+      }
+      console.info(service);
+      console.info(`Service Access: ${service.hasAccess()}`);
+      return service;
+    } catch(err) {
+      console.error(`"CreateService()" failed: ${err.message}`);
+      return 1;
+    }
+  }
+
+  /**
+   * Callback
+   */
+  OAuth2Callback(e) {
+    const service = SpotifyService();
+    const isAuthorized = service.handleCallback(e);
+    if (isAuthorized) { 
+      return HtmlService
+        .createTemplateFromFile("auth_success")
+        .evaluate();
+    } else if(!isAuthorized) {
+      return HtmlService
+        .createTemplateFromFile("auth_steps")
+        .evaluate();
+    } else {
+      return HtmlService
+        .createTemplateFromFile("auth_error")
+        .evaluate();
+    }
+  }
+}
+
+
+const _testOAuth = () => {
+  const s = new TestBedPrinterOS();
+  s.CreateService();
+}
 

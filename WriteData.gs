@@ -6,7 +6,8 @@
  */
 class WriteToSheet {
   constructor() {
-
+    /** @private */
+    this.pOS = new PrinterOS();
   }
 
   /**
@@ -14,7 +15,14 @@ class WriteToSheet {
    */
   async WriteAll() {
     try {
-      Object.values(SHEETS).forEach( async (sheet) => await this.WriteSingleSheet(sheet));
+      this.pOS.Login()
+        .then( async () => {
+          Object.values(SHEETS).forEach( async (sheet) => await this.WriteSingleSheet(sheet));
+          // await this.WriteSingleSheet(SHEETS.Spectrum)
+        })
+        .finally( () => {
+          this.pOS.Logout();
+        });
       return 0;
     } catch(err){
       console.error(`"WriteAll()" failed : ${err}`);
@@ -29,34 +37,30 @@ class WriteToSheet {
   async WriteSingleSheet(sheet = SHEETS.Spectrum) {
     try {
       const sheetName = sheet.getSheetName();
-      const machineID = PRINTERIDS[sheetName];
-      console.warn(`Fetching New Data from PrinterOS ---> ${sheetName}`);
+      let printerData = PRINTERDATA[sheetName];
+      let machineID = printerData.printerID;
+      console.warn(`Fetching New Data from PrinterOS ---> ${sheetName} @ ${machineID}`);
+
       let jobList = [];
-      const pos = new PrinterOS();
-      pos.Login()
-        .then( async () => {
-          const jobs = await pos.GetPrintersJobList(machineID);
-          jobs.forEach(job => {
-            const exists = this._CheckIfJobExists(sheet, job.id);
-            if(exists) return;
-            jobList.push(job.id);
-          })
-        })
-        .then(() => {
-          if(jobList.length === 0) {
-            console.warn(`${sheetName} ----> Nothing New....`);
-            return 0;
-          } 
-          let rowStart = sheet.getLastRow();
-          jobList.forEach(async (job, idx) => {
-            let row = idx + rowStart;
-            console.warn(`${sheetName} ----> New Job! : ${job}`);
-            let data = await pos.GetJobInfo(job);
-            await this._WriteJobDetailsToSheet(sheet, row, data);
-          });
-        })
-        .then(() => pos.Logout());
-      
+      const jobs = await this.pOS.GetPrintersJobList(machineID);
+      jobs.forEach(job => {
+        const exists = WriteToSheet.IsValidJobID(sheet, job.id);
+        if(exists) return;
+        jobList.push(job.id);
+      })
+    
+      if(jobList.length === 0) {
+        console.warn(`${sheetName} ----> Nothing New....`);
+        return 0;
+      }
+      let rowStart = sheet.getLastRow();
+      jobList.forEach(async (job, idx) => {
+        let row = idx + rowStart;
+        console.warn(`${sheetName} ----> New Job! : ${job}`);
+        let data = await this.pOS.GetJobInfo(job);
+        await this._WriteJobDetailsToSheet(sheet, row, data);
+      });
+        
       return 0;
     } catch(err) {
       console.error(`"WriteSingleSheet()" failed : ${err}`);
@@ -85,8 +89,7 @@ class WriteToSheet {
       weight = !isNaN(weight) && weight != null && weight != undefined ? Number(weight).toFixed(2) : 0.0;
 
       // Calculate Cost
-      let total_cost = Number(weight * COSTMULTIPLIER).toFixed(2);
-      cost = total_cost ? total_cost : this._PrintCost(weight);
+      cost = WriteToSheet.CostFromWeight(weight);
 
       let imageBLOB = await TicketService.GetImage(picture);
       const ticket = await TicketService.CreateTicket({
@@ -99,7 +102,7 @@ class WriteToSheet {
         filename : filename,
         image : imageBLOB, 
       });
-      const url = ticket && ticket.getUrl() ? ticket.getUrl() : ``;
+      const url = await ticket && await ticket?.getUrl()?.toString() ? await ticket?.getUrl()?.toString() : ``;
 
       const rowData = { 
         status : StatusService.GetStatusByCode(status_id),
@@ -119,7 +122,7 @@ class WriteToSheet {
       }
       // console.warn(`Writing to sheet ${printerName}, Data: ${JSON.stringify(rowData)}`);
       SheetService.SetRowData(sheet, thisRow, rowData);
-      this._UpdateStatus(status_id, sheet, thisRow);
+      WriteToSheet.UpdateStatus(status_id, sheet, thisRow);
 
       return 0;
     } catch (err) {
@@ -131,12 +134,12 @@ class WriteToSheet {
 
   /**
    * Update Status
-   * @private
    * @param {number} statusCode
    * @param {sheet} sheet
    * @param {number} row
+   * @private
    */
-  _UpdateStatus(statusCode, sheet, row) {
+  static UpdateStatus(statusCode = 44, sheet = SHEETS.Aurum, row = 2) {
     try {
       const rowData = SheetService.GetRowData(sheet, row);
       const status = StatusService.GetStatusByCode(statusCode);
@@ -146,7 +149,7 @@ class WriteToSheet {
       }
       return 0;
     } catch(err) {
-      console.error(`"_UpdateStatus()" failed : ${err}`);
+      console.error(`"UpdateStatus()" failed: ${err}`);
       return 1;
     }
   }
@@ -157,8 +160,14 @@ class WriteToSheet {
    * @param {number} weight
    * @return {number} value
    */
-  _PrintCost(weight = 0.0) {
-    return Number(weight * COSTMULTIPLIER).toFixed(2);
+  static CostFromWeight(weight = 0.0) {
+    try {
+      weight = weight > 0 && isFinite(weight) ? Number(weight) : 0.0;
+      return Number(weight * COSTMULTIPLIER).toFixed(2);
+    } catch(err) {
+      console.error(`"CostFromWeight()" failed: ${err}`);
+      return 1;
+    }
   }
 
   /**
@@ -167,12 +176,12 @@ class WriteToSheet {
    * @param {string} jobId
    * @return {bool} true if exists 
    */
-  _CheckIfJobExists(sheet = SHEETS.Spectrum, jobId = 0) {
+  static IsValidJobID(sheet = SHEETS.Spectrum, jobId = 0) {
     try {
       let jobIds = [...SheetService.GetColumnDataByHeader(sheet, HEADERNAMES.jobID)];
       return jobIds.includes(Number(jobId));
     } catch(err) {
-      console.error(`"_CheckIfJobExists()" failed : ${err}`);
+      console.error(`"IsValidJobID()" failed: ${err}`);
       return 1;
     }
   }

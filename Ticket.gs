@@ -122,16 +122,15 @@ class TicketService {
    * @param {png} file
    */
   static async GetImage(pngFile) {
-    const url = `https://live3dprinteros.blob.core.windows.net/render/${pngFile}`;
-
-    const params = {
-      method : "GET",
-      contentType : "image/png",
-      followRedirects : true,
-      muteHttpExceptions : true
-    }
-
     try {
+      const url = `https://live3dprinteros.blob.core.windows.net/render/${pngFile}`;
+      const params = {
+        method : "GET",
+        contentType : "image/png",
+        followRedirects : true,
+        muteHttpExceptions : true
+      }
+
       const response = await UrlFetchApp.fetch(url, params);
       const responseCode = response.getResponseCode();
       let blob = HtmlService.createHtmlOutput();

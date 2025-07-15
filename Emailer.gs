@@ -43,32 +43,28 @@ class EmailService {
   }
 
   SendEmail() {
-    switch (this.status) {
-      case STATUS.queued.plaintext:
-        EmailService.Mail(this.email, STATUS.queued.plaintext, this.message.queuedMessage, this.designspecialistemail);
-        break;
-      case STATUS.inProgress.plaintext:
-        EmailService.Mail(this.email, STATUS.inProgress.plaintext, this.message.inProgressMessage, this.designspecialistemail);
-        break;
-      case STATUS.complete.plaintext:
-        EmailService.Mail(this.email, STATUS.complete.plaintext, this.message.completedMessage, this.designspecialistemail);
-        break;
-      case STATUS.failed.plaintext:
-        EmailService.Mail(this.email, STATUS.failed.plaintext, this.message.failedMessage, this.designspecialistemail);
-        break;
-      case STATUS.cancelled.plaintext:
-        EmailService.Mail(this.email, STATUS.cancelled.plaintext, this.message.cancelledMessage, this.designspecialistemail);
-        break;
-      case STATUS.closed.plaintext:
-        EmailService.Mail(this.email, STATUS.closed.plaintext, this.message.completedMessage, this.designspecialistemail);
-        break;
-      case STATUS.abandoned.plaintext:
-        EmailService.Mail(this.email, STATUS.abandoned.plaintext, this.message.abandonedMessage, this.designspecialistemail);
-        break;
-      case "":
-      case undefined:
-        console.warn(`Student ${this.name} NOT emailed...`);
-        break;
+    try {
+      const statusMap = {
+        [STATUS.queued.plaintext]:      this.message.queuedMessage,
+        [STATUS.inProgress.plaintext]:  this.message.inProgressMessage,
+        [STATUS.complete.plaintext]:    this.message.completedMessage,
+        [STATUS.closed.plaintext]:      this.message.completedMessage,
+        [STATUS.failed.plaintext]:      this.message.failedMessage,
+        [STATUS.cancelled.plaintext]:   this.message.cancelledMessage,
+        [STATUS.abandoned.plaintext]:   this.message.abandonedMessage,
+      }
+
+      const message = statusMap?.[this.status];
+      
+      if (!this.status || !message) {
+        console.warn(`Student ${this.name} NOT emailed... Status was "${this.status}"`);
+        return 0;
+      }
+      EmailService.Mail(this.email, this.status, message, this.designspecialistemail);
+      return 0;
+    } catch (err) {
+      console.error(`"SendEmail()" failed: ${err}`);
+      return 1;
     }
   }
 
