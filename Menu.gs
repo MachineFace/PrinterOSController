@@ -227,7 +227,7 @@ const PopupRemoveDuplicates = async () => {
 const PopupFetchNewForSingleSheet = async () => {
   // let ui = await SpreadsheetApp.getUi();
   let thisSheet = SpreadsheetApp.getActiveSheet();
-  WriteSingleSheet(thisSheet);
+  WriteToSheet.WriteSingleSheet(thisSheet);
   // ui.alert(
   //   `${SERVICE_NAME} Message`,
   //   `Fetching new Data for ${thisSheet.getSheetName()} from PrinterOS Server`,

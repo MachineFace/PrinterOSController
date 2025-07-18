@@ -243,10 +243,10 @@ class PrinterOS {
     try {
       const url = `${this.root}/get_printer_types`;
       const params = {
-        method : "POST",
-        followRedirects : true,
-        muteHttpExceptions : true,
-        payload : {
+        "method" : "POST",
+        "followRedirects" : true,
+        "muteHttpExceptions" : true,
+        "payload" : {
           session : this.session,
         },
       }
@@ -921,7 +921,9 @@ class TestBedPrinterOS {
     /** @private */
     this.password = PropertiesService.getScriptProperties().getProperty(`POS_password`);
     /** @private */
-    this.session;
+    this.session = PropertiesService.getUserProperties().getProperty(`session`) ? 
+      PropertiesService.getUserProperties().getProperty(`session`) : 
+      PropertiesService.getUserProperties().setProperty(`session`, ``);
     /** @private */
     this.printerNames = [];
     /** @private */
@@ -943,7 +945,7 @@ class TestBedPrinterOS {
     try {
       // const scope = `user-library-read playlist-read-private playlist-read-collaborative playlist-modify-public playlist-modify-private`;
 
-      const service = OAuth2.createService(`SpotifyService`)
+      const service = OAuth2.createService(`PrinterOSService`)
         .setAuthorizationBaseUrl(this.root)
         .setTokenUrl(`${this.root}/token`)
         .setClientId(this.username)
@@ -957,9 +959,9 @@ class TestBedPrinterOS {
         })
         // .setCallbackFunction(`OAuth2Callback`)
         
-      if (!service.hasAccess()) {
-        throw new Error(`Error: Missing PrinterOS authorization.`);
-      }
+      // if (!service.hasAccess()) {
+      //   throw new Error(`Error: Missing PrinterOS authorization.`);
+      // }
       console.info(service);
       console.info(`Service Access: ${service.hasAccess()}`);
       return service;

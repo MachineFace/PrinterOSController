@@ -67,6 +67,55 @@ class WriteToSheet {
       return 1;
     }
   }
+
+  /**
+   * Write Single Sheet
+   * @static
+   * @public
+   * @param {sheet} sheet
+   * @returns {number} 0 | 1
+   */
+  static async WriteSingleSheet(sheet = SHEETS.Alpha) {
+    try {
+      const pOS = new PrinterOS();
+      pOS.Login()
+        .then( async () => {
+          const sheetName = sheet.getSheetName();
+          let printerData = PRINTERDATA[sheetName];
+          let machineID = printerData.printerID;
+          console.warn(`Fetching New Data from PrinterOS ---> ${sheetName} @ ${machineID}`);
+
+          let jobList = [];
+          const jobs = await pOS.GetPrintersJobList(machineID);
+          jobs.forEach(job => {
+            const exists = WriteToSheet.IsValidJobID(sheet, job.id);
+            if(exists) return;
+            jobList.push(job.id);
+          })
+        
+          if(jobList.length === 0) {
+            console.warn(`${sheetName} ----> Nothing New....`);
+            return 0;
+          }
+          let rowStart = sheet.getLastRow();
+          jobList.forEach(async (job, idx) => {
+            let row = idx + rowStart;
+            console.warn(`${sheetName} ----> New Job! : ${job}`);
+            let data = await pOS.GetJobInfo(job);
+            await this._WriteJobDetailsToSheet(sheet, row, data);
+          });
+            
+          return 0;
+        })
+        .finally( () => {
+          pOS.Logout();
+        });
+      return 0;
+    } catch(err){
+      console.error(`"WriteSingleSheet()" failed: ${err}`);
+      return 1;
+    } 
+  }
   
   /**
    * Write Job Details to Sheet
@@ -91,18 +140,19 @@ class WriteToSheet {
       // Calculate Cost
       cost = WriteToSheet.CostFromWeight(weight);
 
-      let imageBLOB = await TicketService.GetImage(picture);
-      const ticket = await TicketService.CreateTicket({
-        submissionTime : timestamp,
-        email : email,
-        printerName : printerName,
-        printerID : printer_id,
-        weight : weight,
-        jobID : id,
-        filename : filename,
-        image : imageBLOB, 
-      });
-      const url = await ticket && await ticket?.getUrl()?.toString() ? await ticket?.getUrl()?.toString() : ``;
+      // let imageBLOB = await TicketService.GetImage(picture);
+      // const ticket = await TicketService.CreateTicket({
+      //   submissionTime : timestamp,
+      //   email : email,
+      //   printerName : printerName,
+      //   printerID : printer_id,
+      //   weight : weight,
+      //   jobID : id,
+      //   filename : filename,
+      //   image : imageBLOB, 
+      // });
+      // const url = await ticket && await ticket?.getUrl()?.toString() ? await ticket?.getUrl()?.toString() : ``;
+      const url = ``;
 
       const rowData = { 
         status : StatusService.GetStatusByCode(status_id),
@@ -113,7 +163,7 @@ class WriteToSheet {
         email : email,
         posStatCode : status_id ? status_id : 11,
         duration : duration,
-        notes : `Weight: ${weight} @ $0.04, Total: $${total_cost}`,
+        notes : `Weight: ${weight} @ $0.04, Total: $${cost}`,
         picture : picture,
         ticket : url,
         filename : filename,
@@ -154,6 +204,11 @@ class WriteToSheet {
     }
   }
 
+  // static GetPrinters() {
+  //   const printers = this.pOS.GetPrinters();
+  //   console.info(printers)
+  // }
+
   /**
    * Calculate Print Cost
    * @private
@@ -192,10 +247,9 @@ class WriteToSheet {
  * @TRIGGERED
  */
 const WriteAllNewDataToSheets = () => new WriteToSheet().WriteAll();
-const WriteSingleSheet = (sheet) => new WriteToSheet().WriteSingleSheet(sheet);
 
 
 
-const _UpdateSingle = () => new WriteToSheet().WriteSingleSheet(SHEETS.Spectrum);
+const _UpdateSingle = () => WriteToSheet.WriteSingleSheet(SHEETS.Spectrum);
 
 
