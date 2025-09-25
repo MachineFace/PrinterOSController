@@ -399,7 +399,7 @@ const _gasT_IDService_Testing = async () => {
   console.warn(`Testing: ${PrintEnclosingFunctionName()}`);  // Print Enclosing Function Name
 
   await test(`GetNewID NON-STATIC`, t => {
-    const j = new IDService().id;
+    const j = IDService.id;
     t.notEqual(j, undefined || null, `GetNewID SHOULD NOT return undefined or null: ${j}`);
   });
 
