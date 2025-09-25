@@ -30,6 +30,12 @@
         "userSymbol": "OAuth2",
         "version": "43",
         "libraryId": "1B7FSrk5Zi6L1rSxxTDgDEUsPzlukDsi4KGuTMorsTQHhGBzBkMun4iDF"
+      },
+      {
+        "userSymbol": "StatisticsService",
+        "version": "0",
+        "libraryId": "1oHi7qNmFxmHkt5UCx-OEOiH6eJiSp4Mk9j6ixlK4M5JRYmIk_1SVEK5N",
+        "developmentMode": true
       }
     ]
   },

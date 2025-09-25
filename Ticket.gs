@@ -120,6 +120,7 @@ class TicketService {
   /**
    * Find Image blob from File
    * @param {png} file
+   * @private
    */
   static async GetImage(pngFile) {
     try {
@@ -148,9 +149,9 @@ class TicketService {
 
   /**
    * Calculate PrintCost
-   * @private
    * @param {number} weight
    * @return {number} value
+   * @private
    */
   static PrintCost(weight = 0.0) {
     return Number(weight * COSTMULTIPLIER).toFixed(2);
@@ -309,11 +310,12 @@ const FixMissingTicketsForSingleSheet = (sheet) => {
  */
 const FixMissingTickets = () => {
   try {
-    console.info(`Checking Tickets....`);
-    Object.values(SHEETS).forEach(sheet => {
-      FixMissingTicketsForSingleSheet(sheet);
-    });
-    console.info(`Tickets Checked and Fixed....`);
+    console.info(`Skipping ticket creation...`);
+    // console.info(`Checking Tickets....`);
+    // Object.values(SHEETS).forEach(sheet => {
+    //   FixMissingTicketsForSingleSheet(sheet);
+    // });
+    // console.info(`Tickets Checked and Fixed....`);
     return 0;
   } catch(err) {
     console.error(`"FixMissingTickets()" failed : ${err}`);

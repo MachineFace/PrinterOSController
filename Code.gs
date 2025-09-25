@@ -15,11 +15,11 @@
 
 
 /**
- * On Change : Main Entry Point
- * Reserved word: onEdit() cannot be used here because it's reserved for simple triggers.
+ * Handle Change : Main Entry Point
+ * Reserved word: (onEdit) and (onChange) cannot be used here because it's reserved for simple triggers.
  * @param {Event} e
  */
-const onChange = async (e) => {
+const handleChange = async (e) => {
   const ss = e.range.getSheet();
   const sheetname = ss.getSheetName();
 
