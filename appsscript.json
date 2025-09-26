@@ -48,6 +48,12 @@
         "version": "0",
         "libraryId": "1x4rqwpo0BkrJ5kIuaN4Q4mfxMytwwkWzsZcW9Tz5Av4AmyxB_3zT_FhX",
         "developmentMode": true
+      },
+      {
+        "userSymbol": "Log",
+        "version": "0",
+        "libraryId": "1Z1YXYpuN2j2owNQIYk4NeDEgzW9450Sts-y77VMFnnbw7gTMP96b3awX",
+        "developmentMode": true
       }
     ]
   },
