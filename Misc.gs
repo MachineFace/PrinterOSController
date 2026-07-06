@@ -73,13 +73,15 @@ const GetObjectType = (ob) => {
  */
 const BuildSummaryEquation = () => {
   try {
-    let query = `={`
+    let query = `={`;
     Object.entries(PRINTERDATA).forEach(([key, value], idx) => {
-      console.info(`ENTRY: IDX: ${idx}, Key: ${key}, Value: ${JSON.stringify(value, null, 3)}`);
-      const queryString = `QUERY(${key}!A2:S, "Select * Where A = 'Queued' OR A = 'In-Progress' LABEL A '${key}' ")`;
-      query += queryString;
-      if(idx != Object.entries(PRINTERDATA).length -1) {
-        query += `;\n`; // The very last semicolon throws an error when present.
+      if(value.active == true) {
+        // console.info(`ENTRY: IDX: ${idx}, Key: ${key}, Value: ${JSON.stringify(value, null, 3)}`);
+        const queryString = `QUERY(${key}!A2:S, "Select * Where A = 'Queued' OR A = 'In-Progress' LABEL A '${key}' ")`;
+        query += queryString;
+        if(idx != Object.entries(PRINTERDATA).length -1) {
+          query += `;\n`; // The very last semicolon throws an error when present.
+        }
       }
     });
     query += `}`;

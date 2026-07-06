@@ -225,6 +225,7 @@ const PRINTERDATA = Object.freeze({
     type : `UM3`,
     local_ip : `192.168.1.113`,
     color : EVENT_COLORS.BLUE,
+    active : false,
   },
   Caerulus : {
     name : `Caerulus`,
@@ -233,6 +234,7 @@ const PRINTERDATA = Object.freeze({
     type : `UM3`,
     local_ip : `192.168.1.122`,
     color : EVENT_COLORS.CYAN,
+    active : false,
   },
   Photon : {
     name : `Photon`,
@@ -241,6 +243,7 @@ const PRINTERDATA = Object.freeze({
     type : `UM3`,
     local_ip : `192.168.1.128`,
     color : EVENT_COLORS.GRAY,
+    active : false,
   },
   Quasar : {
     name : `Quasar`,
@@ -249,6 +252,7 @@ const PRINTERDATA = Object.freeze({
     type : `UM3`,
     local_ip : `192.168.1.129`,
     color : EVENT_COLORS.GREEN,
+    active : false,
   },
   Zardoz : {
     name : `Zardoz`,
@@ -257,6 +261,7 @@ const PRINTERDATA = Object.freeze({
     type : `UM3 Extended`,
     local_ip : `192.168.1.136`,
     color : EVENT_COLORS.MAUVE,
+    active : false,
   },
   Viridis : {
     name : `Viridis`,
@@ -265,6 +270,7 @@ const PRINTERDATA = Object.freeze({
     type : `UM3`,
     local_ip : `192.168.1.135`,
     color : EVENT_COLORS.ORANGE,
+    active : true,
   },
   Rubrum : {
     name : `Rubrum`,
@@ -273,6 +279,7 @@ const PRINTERDATA = Object.freeze({
     type : `UM3`,
     local_ip : `192.168.1.112`,
     color : EVENT_COLORS.PALE_BLUE,
+    active : false,
   },
   Plumbus : {
     name : `Plumbus`,
@@ -281,6 +288,7 @@ const PRINTERDATA = Object.freeze({
     type : `UM3`,
     local_ip : `192.168.1.126`,
     color : EVENT_COLORS.PALE_GREEN,
+    active : false,
   },
   Nimbus : {
     name : `Nimbus`,
@@ -289,6 +297,7 @@ const PRINTERDATA = Object.freeze({
     type : `UM3`,
     local_ip : `192.168.1.111`,
     color : EVENT_COLORS.PALE_RED,
+    active : true,
   },
   Spectrum : {
     name : `Spectrum`,
@@ -297,6 +306,7 @@ const PRINTERDATA = Object.freeze({
     type : `UM3 Extended`,
     local_ip : `192.168.1.131`,
     color : EVENT_COLORS.RED,
+    active : false,
   },
   Purpura : {
     name : `Purpura`,
@@ -305,6 +315,7 @@ const PRINTERDATA = Object.freeze({
     type : `S3`,
     local_ip : `192.168.1.141`,
     color : EVENT_COLORS.YELLOW,
+    active : true,
   },
   Crystallum : {
     name : `Crystallum`,
@@ -313,6 +324,7 @@ const PRINTERDATA = Object.freeze({
     type : `S3`,
     local_ip : `192.168.1.138`,
     color : EVENT_COLORS.BLUE,
+    active : false,
   },
   Aurum : {
     name : `Aurum`,
@@ -321,6 +333,7 @@ const PRINTERDATA = Object.freeze({
     type : `S3`,
     local_ip : `192.168.1.147`,
     color : EVENT_COLORS.CYAN,
+    active : true,
   },
   Alpha : {
     name : `Alpha`,
@@ -329,6 +342,7 @@ const PRINTERDATA = Object.freeze({
     type : `S3`,
     local_ip : `192.168.1.137`,
     color : EVENT_COLORS.MAUVE,
+    active : true,
   },
   Beta : {
     name : `Beta`,
@@ -337,6 +351,7 @@ const PRINTERDATA = Object.freeze({
     type : `S3`,
     local_ip : `192.168.1.140`,
     color : EVENT_COLORS.ORANGE,
+    active : true,
   },
   Gamma : {
     name : `Gamma`,
@@ -345,6 +360,7 @@ const PRINTERDATA = Object.freeze({
     type : `S3`,
     local_ip : `192.168.1.139`,
     color : EVENT_COLORS.RED,
+    active : true,
   },
 });
 

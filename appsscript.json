@@ -28,34 +28,50 @@
     "libraries": [
       {
         "userSymbol": "OAuth2",
-        "version": "43",
-        "libraryId": "1B7FSrk5Zi6L1rSxxTDgDEUsPzlukDsi4KGuTMorsTQHhGBzBkMun4iDF"
-      },
-      {
-        "userSymbol": "StatisticsService",
-        "version": "0",
-        "libraryId": "1oHi7qNmFxmHkt5UCx-OEOiH6eJiSp4Mk9j6ixlK4M5JRYmIk_1SVEK5N",
-        "developmentMode": true
+        "libraryId": "1B7FSrk5Zi6L1rSxxTDgDEUsPzlukDsi4KGuTMorsTQHhGBzBkMun4iDF",
+        "version": "43"
       },
       {
         "userSymbol": "IDService",
-        "version": "0",
         "libraryId": "17ovDw4cwQ_ykMknpWnpha1J5UzAkjniZhFuhnC-UEytNCm9ZtjcUO2H2",
+        "version": "0",
         "developmentMode": true
       },
       {
         "userSymbol": "TimeService",
-        "version": "0",
         "libraryId": "1x4rqwpo0BkrJ5kIuaN4Q4mfxMytwwkWzsZcW9Tz5Av4AmyxB_3zT_FhX",
+        "version": "0",
         "developmentMode": true
       },
       {
         "userSymbol": "Log",
-        "version": "0",
         "libraryId": "1Z1YXYpuN2j2owNQIYk4NeDEgzW9450Sts-y77VMFnnbw7gTMP96b3awX",
+        "version": "0",
         "developmentMode": true
+      },
+      {
+        "userSymbol": "ExcuseAndAdviceService",
+        "libraryId": "1b98UDJqGgHfEj4XsTCACXfLl4_xPGeAl5tOkCLPPhZkyQqU-b1Zw3yDy",
+        "version": "0",
+        "developmentMode": true
+      },
+      {
+        "userSymbol": "BarcodeService",
+        "libraryId": "1YX8BYZ_SHCXF-PgSoThB-KvbZboyPuRxtF7pSIvstcZn98j36OMXhktW",
+        "version": "0",
+        "developmentMode": true
+      },
+      {
+        "userSymbol": "StatisticsService",
+        "version": "2",
+        "libraryId": "1oHi7qNmFxmHkt5UCx-OEOiH6eJiSp4Mk9j6ixlK4M5JRYmIk_1SVEK5N",
+        "developmentMode": false
       }
     ]
+  },
+  "webapp": {
+    "executeAs": "USER_DEPLOYING",
+    "access": "DOMAIN"
   },
   "oauthScopes": [
     "https://www.googleapis.com/auth/forms",
@@ -69,9 +85,5 @@
     "https://www.googleapis.com/auth/script.container.ui",
     "https://www.googleapis.com/auth/script.scriptapp",
     "https://www.googleapis.com/auth/userinfo.email"
-  ],
-  "webapp": {
-    "executeAs": "USER_DEPLOYING",
-    "access": "DOMAIN"
-  }
+  ]
 }
