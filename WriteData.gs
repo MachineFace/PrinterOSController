@@ -15,19 +15,39 @@ class WriteToSheet {
    */
   async WriteAll() {
     try {
-      this.pOS.Login()
-        .then( async () => {
-          Object.values(SHEETS).forEach( async (sheet) => await this.WriteSingleSheet(sheet));
-          // await this.WriteSingleSheet(SHEETS.Spectrum)
-        })
-        .finally( () => {
-          this.pOS.Logout();
-        });
+      const sheets = Object.values(SHEETS);
+      if(!sheets.length) {
+        console.warn(`"WriteAll()" ---> No sheets configured.`);
+        return 0;
+      }
+
+      const loginResult = await this.pOS.Login();
+      if(loginResult === false) {
+        throw new Error(`PrinterOS login failed.`);
+      }
+
+      for(const sheet of sheets) {
+        if(!sheet) {
+          console.warn(`"_WriteAllSheets()" ---> Skipping invalid sheet.`);
+          continue;
+        }
+
+        const result = await this.WriteSingleSheet(sheet);
+        if(result !== 0) {
+          throw new Error(`"WriteSingleSheet()" failed for "${sheet.getSheetName()}".`);
+        }
+      }
+
+      const logoutResult = await this.pOS.Logout();
+      if(logoutResult === false) {
+        throw new Error(`PrinterOS logout failed.`);
+      }
+
       return 0;
-    } catch(err){
-      console.error(`"WriteAll()" failed : ${err}`);
-      return 1;
-    } 
+    } catch(err) {
+      console.error(`"WriteAll()" failed: ${err}`);
+      return null;
+    }
   }
 
   /**
@@ -36,35 +56,71 @@ class WriteToSheet {
    */
   async WriteSingleSheet(sheet = SHEETS.Spectrum) {
     try {
+      if(!sheet || typeof sheet.getSheetName !== `function`) {
+        throw new TypeError(`Invalid sheet supplied.`);
+      }
       const sheetName = sheet.getSheetName();
       let printerData = PRINTERDATA[sheetName];
+      if(!printerData) {
+        throw new Error(`No printer configuration exists for "${sheetName}".`);
+      }
+
       let machineID = printerData.printerID;
+      if(!machineID) {
+        throw new Error(`No printer ID configured for "${sheetName}".`);
+      }
+
       console.warn(`Fetching New Data from PrinterOS ---> ${sheetName} @ ${machineID}`);
 
-      let jobList = [];
       const jobs = await this.pOS.GetPrintersJobList(machineID);
-      jobs.forEach(job => {
+      if(!Array.isArray(jobs)) {
+        throw new TypeError(`PrinterOS returned an invalid job list for "${sheetName}".`);
+      }
+
+      let jobList = [];
+      for(const job of jobs) {
+        if(!job || job.id == null) continue;
+
         const exists = WriteToSheet.IsValidJobID(sheet, job.id);
-        if(exists) return;
+        if(exists === null) {
+          throw new Error(`Unable to determine whether job "${job.id}" already exists.`);
+        }
+        if(exists) continue;
         jobList.push(job.id);
-      })
-    
-      if(jobList.length === 0) {
+      }
+
+      if(!jobList.length) {
         console.warn(`${sheetName} ----> Nothing New....`);
         return 0;
       }
-      let rowStart = sheet.getLastRow();
-      jobList.forEach(async (job, idx) => {
-        let row = idx + rowStart;
-        console.warn(`${sheetName} ----> New Job! : ${job}`);
-        let data = await this.pOS.GetJobInfo(job);
-        await this._WriteJobDetailsToSheet(sheet, row, data);
-      });
-        
-      return 0;
+
+      const rowStart = sheet.getLastRow();
+
+      for(let i = 0; i < jobList.length; i++) {
+        const jobID = jobList[i];
+        const row = rowStart + i + 1;
+
+        console.warn(`${sheetName} ----> New Job! : ${jobID}`);
+
+        const data = await this.pOS.GetJobInfo(jobID);
+
+        if(!data) {
+          throw new Error(`No data returned for job "${jobID}".`);
+        }
+
+        const result = await this._WriteJobDetailsToSheet(
+          sheet,
+          row,
+          data
+        );
+
+        if(result !== 0) {
+          throw new Error(`Failed writing job "${jobID}" to row ${row}.`);
+        }
+      }
     } catch(err) {
       console.error(`"WriteSingleSheet()" failed : ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -73,7 +129,6 @@ class WriteToSheet {
    * @static
    * @public
    * @param {sheet} sheet
-   * @returns {number} 0 | 1
    */
   static async WriteSingleSheet(sheet = SHEETS.Alpha) {
     try {
@@ -113,7 +168,7 @@ class WriteToSheet {
       return 0;
     } catch(err){
       console.error(`"WriteSingleSheet()" failed: ${err}`);
-      return 1;
+      return null;
     } 
   }
   
@@ -122,23 +177,58 @@ class WriteToSheet {
    * @private
    * @param {object} data
    * @param {sheet} sheet
-   * @return {bool} 0 or 1
    */
-  async _WriteJobDetailsToSheet(sheet = SHEETS.Aurum, row = 2, data = {}) {
+  async _WriteJobDetailsToSheet(sheet, row, data = {}) {
     try {
-      const thisRow = row > 2 ? row : sheet.getLastRow() + 1;
+      // Validate Inputs
+      if(!sheet || typeof sheet.getSheetName !== `function`) {
+        throw new TypeError(`Invalid sheet supplied.`);
+      }
+
+      if(!Number.isInteger(row) || row < 1) {
+        throw new TypeError(`Invalid row supplied.`);
+      }
+
+      if(!data || typeof data !== `object`) {
+        throw new TypeError(`Invalid job data supplied.`);
+      }
+
       const printerName = sheet.getSheetName();
-      let { printer_id, id, datetime, email, status_id, printing_duration, filename, picture, weight, file_cost, cost, extruders } = data;
-      let timestamp = datetime ? datetime : new Date().toISOString();
+      let { 
+        printer_id, 
+        id, 
+        datetime, 
+        email, 
+        status_id, 
+        printing_duration, 
+        filename, 
+        picture, 
+        weight, 
+        file_cost, 
+        cost, 
+        extruders 
+      } = data;
 
-      printing_duration = !isNaN(printing_duration) && printing_duration != null && printing_duration != undefined ? Number.parseFloat(printing_duration) : 0.0;
-      let duration = printing_duration ? +Number(printing_duration / 3600).toFixed(2) : 0;
-      filename = filename ? CleanupService.FileNameCleanup(filename.toString()) : "";
+      if(id == null) {
+        throw new Error(`Job is missing an ID.`);
+      }
 
-      weight = !isNaN(weight) && weight != null && weight != undefined ? Number(weight).toFixed(2) : 0.0;
+      const timestamp = datetime || new Date().toISOString();
 
-      // Calculate Cost
-      cost = WriteToSheet.CostFromWeight(weight);
+      const durationValue = Number(printing_duration);
+      const duration = Number.isFinite(durationValue) ? Number((durationValue / 3600).toFixed(2)) : 0;
+
+      const weightValue = Number(weight);
+
+      const normalizedWeight = Number.isFinite(weightValue) ? weightValue.toFixed(2) : `0.00`;
+
+      const cleanedFilename = filename ? CleanupService.FileNameCleanup(String(filename)) : ``;
+
+      cost = WriteToSheet.CostFromWeight(normalizedWeight);
+
+      if(cost === null) {
+        throw new Error(`Unable to calculate cost for job (${id}).`);
+      }
 
       // let imageBLOB = await TicketService.GetImage(picture);
       // const ticket = await TicketService.CreateTicket({
@@ -152,32 +242,36 @@ class WriteToSheet {
       //   image : imageBLOB, 
       // });
       // const url = await ticket && await ticket?.getUrl()?.toString() ? await ticket?.getUrl()?.toString() : ``;
-      const url = ``;
 
-      const rowData = { 
-        status : StatusService.GetStatusByCode(status_id),
-        printerID : printer_id,
-        printerName : printerName,
-        jobID : id,
-        timestamp : timestamp,
-        email : email,
-        posStatCode : status_id ? status_id : 11,
-        duration : duration,
-        notes : `Weight: ${weight} @ $0.04, Total: $${cost}`,
-        picture : picture,
-        ticket : url,
-        filename : filename,
-        weight : weight,
-        cost : cost,
+      const rowData = {
+        status: StatusService.GetStatusByCode(status_id),
+        printerID: printer_id,
+        printerName: printerName,
+        jobID: id,
+        timestamp: timestamp,
+        email: email,
+        posStatCode: status_id || 11,
+        duration: duration,
+        notes: `Weight: ${normalizedWeight} @ $0.04, Total: $${cost}`,
+        picture: picture,
+        ticket: ``,
+        filename: cleanedFilename,
+        weight: normalizedWeight,
+        cost: cost
+      };
+
+      SheetService.SetRowData(sheet, row, rowData);
+
+      const statusResult = WriteToSheet.UpdateStatus(status_id, sheet, row);
+      if(statusResult !== 0) {
+        throw new Error(`Unable to update status for job (${id}).`);
       }
-      // console.warn(`Writing to sheet ${printerName}, Data: ${JSON.stringify(rowData)}`);
-      SheetService.SetRowData(sheet, thisRow, rowData);
-      WriteToSheet.UpdateStatus(status_id, sheet, thisRow);
 
+      // console.warn(`Writing to sheet ${printerName}, Data: ${JSON.stringify(rowData)}`);
       return 0;
     } catch (err) {
-      console.error(`"_WriteJobDetailsToSheet()" failed : ${err}`);
-      return 1;
+      console.error(`"_WriteJobDetailsToSheet()" failed: ${err}`);
+      return null;
     }
 
   }
@@ -191,16 +285,35 @@ class WriteToSheet {
    */
   static UpdateStatus(statusCode = 44, sheet = SHEETS.Aurum, row = 2) {
     try {
+      // Validate
+      if(!sheet || typeof sheet.getSheetName !== `function`) {
+        throw new TypeError(`Invalid sheet supplied.`);
+      }
+
+      if(!Number.isInteger(row) || row < 1) {
+        throw new TypeError(`Invalid row supplied.`);
+      }
+
       const rowData = SheetService.GetRowData(sheet, row);
+      if(!rowData) {
+        throw new Error(`Unable to retrieve row ${row}.`);
+      }
+
       const status = StatusService.GetStatusByCode(statusCode);
+      if(status == null) {
+        throw new Error(`Unknown status code: ${statusCode}.`);
+      }
+
       SheetService.SetByHeader(sheet, HEADERNAMES.status, row, status);
-      if(statusCode == STATUS.inProgress.statusCode) {
+
+      if(statusCode === STATUS.inProgress.statusCode) {
         new CalendarFactory().CreateEvent(rowData);
       }
+
       return 0;
     } catch(err) {
       console.error(`"UpdateStatus()" failed: ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -217,11 +330,20 @@ class WriteToSheet {
    */
   static CostFromWeight(weight = 0.0) {
     try {
-      weight = weight > 0 && isFinite(weight) ? Number(weight) : 0.0;
-      return Number(weight * COSTMULTIPLIER).toFixed(2);
+      const numericWeight = Number(weight);
+
+      if(!Number.isFinite(numericWeight)) {
+        throw new TypeError(`Weight must be a finite number.`);
+      }
+
+      if(numericWeight < 0) {
+        throw new RangeError(`Weight cannot be negative.`);
+      }
+
+      return Number((numericWeight * COSTMULTIPLIER).toFixed(2));
     } catch(err) {
       console.error(`"CostFromWeight()" failed: ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -229,15 +351,34 @@ class WriteToSheet {
    * Check If Job Exists
    * @private
    * @param {string} jobId
-   * @return {bool} true if exists 
    */
   static IsValidJobID(sheet = SHEETS.Spectrum, jobId = 0) {
     try {
-      let jobIds = [...SheetService.GetColumnDataByHeader(sheet, HEADERNAMES.jobID)];
-      return jobIds.includes(Number(jobId));
+      // Validate
+      if(!sheet || typeof sheet.getSheetName !== `function`) {
+        throw new TypeError(`Invalid sheet supplied.`);
+      }
+
+      if(jobId == null || jobId === ``) {
+        throw new TypeError(`Invalid job ID supplied.`);
+      }
+
+      const numericJobID = Number(jobId);
+
+      if(!Number.isFinite(numericJobID)) {
+        throw new TypeError(`Job ID must resolve to a finite number.`);
+      }
+
+      const values = SheetService.GetColumnDataByHeader(sheet, HEADERNAMES.jobID);
+
+      if(!Array.isArray(values)) {
+        throw new TypeError(`Job ID column did not return an array.`);
+      }
+
+      return values.some(value => Number(value) === numericJobID);
     } catch(err) {
       console.error(`"IsValidJobID()" failed: ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -249,7 +390,9 @@ class WriteToSheet {
 const WriteAllNewDataToSheets = () => new WriteToSheet().WriteAll();
 
 
-
-const _UpdateSingle = () => WriteToSheet.WriteSingleSheet(SHEETS.Spectrum);
+/**
+ * Update Single Sheet
+ */
+const _UpdateSingle = () => WriteToSheet.WriteSingleSheet(SHEETS.Alpha);
 
 

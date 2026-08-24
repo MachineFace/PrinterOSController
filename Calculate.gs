@@ -20,7 +20,7 @@ class Calculate {
       return average;
     } catch (err) {
       console.error(`"GetAverageTurnaroundPerSheet()" failed : ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -43,7 +43,7 @@ class Calculate {
       return 0;
     } catch(err) {
       console.error(`"PrintTurnarounds()" failed : ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -71,7 +71,7 @@ class Calculate {
       return data;
     } catch(err) {
       console.error(`"StatusCountsPerSheet()" failed: ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -96,7 +96,7 @@ class Calculate {
       return 0;
     } catch(err) {
       console.error(`"PrintStatusCounts()" failed : ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -120,7 +120,7 @@ class Calculate {
       return items;  
     } catch(err) {
       console.error(`"UserDistribution()" failed : ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -166,7 +166,7 @@ class Calculate {
       return count;
     } catch(err) {
       console.error(`"CountUniqueUsers()" failed : ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -190,7 +190,7 @@ class Calculate {
       return count;
     } catch(err) {
       console.error(`"CountTotalSubmissions()" failed : ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -256,7 +256,7 @@ class Calculate {
       return mean;
     } catch(err) {
       console.error(`"GetUserArithmeticMean()" failed : ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -276,7 +276,7 @@ class Calculate {
       return standardDeviation;
     } catch(err) {
       console.error(`"UserStandardDeviation()" failed : ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -298,7 +298,7 @@ class Calculate {
       return standardDeviation;
     } catch(err) {
       console.error(`"UserKurtosisAndSkewness()" failed : ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -319,7 +319,7 @@ class Calculate {
       return 0;
     } catch(err) {
       console.error(`"PrintTopTen()" failed : ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -345,7 +345,7 @@ class Calculate {
 
     } catch(err) {
       console.error(`"PrintZscoreDistribution()" failed : ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -377,7 +377,7 @@ class Calculate {
       return sum;
     } catch(err) {
       console.error(`"_SumSingleSheetMaterials()" failed : ${err}`);
-      return 1;
+      return null;
     }
   }
   
@@ -408,7 +408,7 @@ class Calculate {
       return 0;
     } catch(err) {
       console.error(`"PrintSheetMaterials()" failed : ${err}`);
-      return 1;
+      return null;
     }
    
   }
@@ -432,7 +432,7 @@ class Calculate {
       return sum;
     } catch(err) {
       console.error(`"_SumSingleSheetCost()" failed : ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -453,7 +453,7 @@ class Calculate {
       return total;
     } catch(err) {
       console.error(`"SumCosts()" failed : ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -472,7 +472,7 @@ class Calculate {
       return 0;
     } catch(err) {
       console.error(`"PrintSheetCosts()" failed : ${err}`);
-      return 1;
+      return null;
     }
    
   }
@@ -509,7 +509,7 @@ const Metrics = () => {
     return 0;
   } catch (err) {
     console.error(`"Metrics()" failed : ${err}`);
-    return 1;
+    return null;
   }
 }
 

@@ -315,7 +315,7 @@ const PRINTERDATA = Object.freeze({
     type : `S3`,
     local_ip : `192.168.1.141`,
     color : EVENT_COLORS.YELLOW,
-    active : true,
+    active : false,
   },
   Crystallum : {
     name : `Crystallum`,

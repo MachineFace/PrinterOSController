@@ -18,7 +18,7 @@ class CleanupService {
       return 0;
     } catch(err){
       console.error(`"RemoveAllDuplicateRecords()" failed : ${err}`);
-      return 1;
+      return null;
     } 
   }
 

@@ -296,10 +296,10 @@ const _gasT_Misc_Testing = async () => {
     t.equal(x, 1, `GetByHeader SHOULD return "1": Actual: ${x}`);
 
     x = SheetService.GetByHeader(`BAD SHEET`, HEADERNAMES.filename, 2);
-    t.equal(x, 1, `GetByHeader SHOULD return 1: ${x}`);
+    t.equal(x, 1, `GetByHeader SHOULD return null: ${x}`);
 
     x = SheetService.GetByHeader(`BAD SHEET`, `BAD COLUMN NAME`, `BAD ROW NUMBER`);
-    t.equal(x, 1, `GetByHeader SHOULD return 1: ${x}`);
+    t.equal(x, 1, `GetByHeader SHOULD return null: ${x}`);
 
   });
 
@@ -2739,7 +2739,7 @@ const _gasTTestAll = async () => {
   .then(console.info('Test Success'))
   .catch(err => {
     console.error(`"TestAll()" failed : ${err}`);
-    return 1;
+    return null;
   });
   console.timeEnd(`TESTING TIMER`);
 }

@@ -24,7 +24,7 @@ class DriveController {
       return out;
     } catch(err) {
       console.error(`"AllFileNamesInRoot()" failed : ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -51,7 +51,7 @@ class DriveController {
       return 0;
     } catch(err) {
       console.error(`"MoveTicketsOutOfRoot()" failed : ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -71,7 +71,7 @@ class DriveController {
       return count;
     } catch(err) {
       console.error(`"CountTickets()" failed : ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -98,7 +98,7 @@ class DriveController {
       return 0;
     } catch(err) {
       console.error(`"DeleteOldTickets()" failed: ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -127,7 +127,7 @@ class DriveController {
       return 0;
     } catch(err) {
       console.error(`"TrashOldTickets()" failed: ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -205,7 +205,7 @@ class DriveController {
       return file;
     } catch(err) {
       console.error(`"GetFileByName()" failed: ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -219,7 +219,7 @@ class DriveController {
       return DriveApp.getFileById(id);
     } catch(err) {
       console.error(`"GetFileByID()" failed: ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -235,7 +235,7 @@ class DriveController {
       return 0;
     } catch(err) {
       console.error(`"DeleteFileByID()" failed: ${err}`);
-      return 1;
+      return null;
     }
   }
   

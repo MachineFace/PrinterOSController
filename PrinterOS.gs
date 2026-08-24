@@ -73,7 +73,7 @@ class PrinterOS {
       return session;
     } catch(err) {
       console.error(`"Login()" failed : ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -105,7 +105,7 @@ class PrinterOS {
       return 0;
     } catch(err) {
       console.error(`"Logout()" failed : ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -136,7 +136,7 @@ class PrinterOS {
       return !!result;
     } catch(err) {
       console.error(`"CheckSession()" failed : ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -184,7 +184,7 @@ class PrinterOS {
       return printerListOut;
     } catch(err) {
       console.error(`"GetPrinters()" failed : ${err}`);
-      return 1;
+      return null;
     } 
   }
 
@@ -230,7 +230,7 @@ class PrinterOS {
       return printerlist;
     } catch(err) {
       console.error(`"GetPrinterData()" failed : ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -266,7 +266,7 @@ class PrinterOS {
       return types;
     } catch(err) {
       console.error(`"GetPrinterTypes()" failed: ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -367,7 +367,7 @@ class PrinterOS {
       
     } catch(err) {
       console.error(`"GetLatestJobsForAllPrinters()" failed : ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -409,7 +409,7 @@ class PrinterOS {
       return res;
     } catch(err) {
       console.error(`"GetJobInfo()" failed : ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -447,7 +447,7 @@ class PrinterOS {
       return weight;
     } catch(err) {
       console.error(`"GetMaterialWeight()" failed : ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -487,7 +487,7 @@ class PrinterOS {
       return price;
     } catch(err) {
       console.error(`"CalculateCost()" failed : ${err}`);
-      return 1;
+      return null;
     }
     
   }
@@ -532,7 +532,7 @@ class PrinterOS {
       return ids;
     } catch(err) {
       console.error(`"GetWorkGroups()" failed : ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -571,7 +571,7 @@ class PrinterOS {
       return users;
     } catch(err) {
       console.error(`"GetUsersByWorkgroup()" failed : ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -673,7 +673,7 @@ class PrinterOS {
 
     } catch(err) {
       console.error(`"GetUserById()" failed : ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -696,7 +696,7 @@ class PrinterOS {
       return count;
     } catch(err) {
       console.error(`"GetUserCount()" failed : ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -733,7 +733,7 @@ class PrinterOS {
       return res;
     } catch(err) {
       console.error(`"GetPrintersInCloud()" failed : ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -760,7 +760,7 @@ class PrinterOS {
       return blob;
     } catch(err) {
       console.error(`"GetJobImage()" failed : ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -779,7 +779,7 @@ class PrinterOS {
       return name;
     } catch(err) {
       console.error(`"GetPrinterNameFromID()" failed : ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -818,7 +818,7 @@ class PrinterOS {
       return out;
     } catch(err) {
       console.error(`"GetPrinterTypes()" failed: ${err}`);
-      return 1;
+      return null;
     }
   }
   */
@@ -848,7 +848,7 @@ class PrinterOS {
       return total;
     } catch(err) {
       console.error(`_CalculateCost() failed: ${err}`);
-      return 1;
+      return null;
     }
   }
   */
@@ -967,7 +967,7 @@ class TestBedPrinterOS {
       return service;
     } catch(err) {
       console.error(`"CreateService()" failed: ${err.message}`);
-      return 1;
+      return null;
     }
   }
 

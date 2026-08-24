@@ -52,7 +52,7 @@
 //       return qrCode;
 //     } catch(err) {
 //       console.error(`"GenerateQRCode()" failed : ${err}`);
-//       return 1;
+//       return null;
 //     }
 //   }
 
@@ -128,7 +128,7 @@
 //       return qrCode;
 //     } catch(err) {
 //       console.error(`"GenerateQRCode()" failed : ${err}`);
-//       return 1;
+//       return null;
 //     }
 //   }
 

@@ -45,7 +45,7 @@ class ColorService {
       return 0;
     } catch(err) {
       console.error(`"SetRowColorByStatus()" failed: ${err}`);
-      return 1;
+      return null;
     }
     
   }

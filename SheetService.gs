@@ -21,7 +21,7 @@ class SheetService {
       return !forbiddenNames.includes(thisSheetName);
     } catch(err) {
       console.error(`"IsValidSheet()" failed : ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -39,7 +39,7 @@ class SheetService {
       return data[row - 1][col];
     } catch (err) {
       console.error(`"GetByHeader()" failed : ${err} @ Sheet: ${sheet} Col Name specified: ${columnName} Row: ${row}`);
-      return 1;
+      return null;
     }
   }
 
@@ -60,7 +60,7 @@ class SheetService {
       return 0;
     } catch (err) {
       console.error(`"SetByHeader()" failed : ${err} @ Sheet: ${sheet} Row: ${row}, Value: ${val}`);
-      return 1;
+      return null;
     }
   }
 
@@ -80,7 +80,7 @@ class SheetService {
       return colData;
     } catch (err) {
       console.error(`"GetColumnDataByHeader()" failed : ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -108,7 +108,7 @@ class SheetService {
       return dict;
     } catch (err) {
       console.error(`"GetRowData()" failed : ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -160,7 +160,7 @@ class SheetService {
       return 0;
     } catch (err) {
       console.error(`"SetRowData()" failed : ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -188,7 +188,7 @@ class SheetService {
       return 0;
     } catch (err) {
       console.error(`"WriteNewRowData()" failed : ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -265,7 +265,7 @@ class SheetService {
       return finder.getRow();
     } catch(err) {
       console.error(`"SearchSpecificSheet()" failed : ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -291,7 +291,7 @@ class SheetService {
       return res;
     } catch(err) {
       console.error(`"Search()" failed : ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -314,7 +314,7 @@ class SheetService {
       return res;
     } catch(err) {
       console.error(`"FindOne()" failed: ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -338,7 +338,7 @@ class SheetService {
       return email;
     } catch(err) {
       console.error(`"FindEmail()" failed: ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -418,7 +418,7 @@ class SheetService {
       return 0;
     } catch(err) {
       console.error(`"AddArrayToSheet()" failed: ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -479,7 +479,7 @@ class SheetService {
       return 0;
     } catch(err) {
       console.error(`"DeleteEmptyColumns()" failed: ${err}`);
-      return 1;
+      return null;
     }
   }
 

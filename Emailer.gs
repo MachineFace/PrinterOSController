@@ -64,7 +64,7 @@ class EmailService {
       return 0;
     } catch (err) {
       console.error(`"SendEmail()" failed: ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -93,7 +93,7 @@ class EmailService {
       return 0;
     } catch(err) {
       console.error(`"Mail()" failed: ${err}`);
-      return 1;
+      return null;
 
     }
   }

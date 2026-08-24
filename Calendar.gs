@@ -39,7 +39,7 @@ class CalendarFactory {
       return events;
     } catch(err) {
       console.error(`"GetEvents()" failed : ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -75,7 +75,7 @@ class CalendarFactory {
       return event;
     } catch(err) {
       console.error(`"CreateEvent()" failed : ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -104,7 +104,7 @@ class CalendarFactory {
       return 0;
     } catch(err) {
       console.error(`"DeleteEvent()" failed : ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -121,7 +121,7 @@ class CalendarFactory {
       return 0;
     } catch(err) {
       console.error(`"DeleteEventByGID()" failed : ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -140,7 +140,7 @@ class CalendarFactory {
       return 0;
     } catch(err) {
       console.error(`"DeleteAllEvents()" failed : ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -164,7 +164,7 @@ class CalendarFactory {
       return 0;
     } catch(err) {
       console.error(`"DeleteDuplicateEvents()" failed : ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -190,7 +190,7 @@ class CalendarFactory {
       }
     } catch(err) {
       console.error(`"_CheckIfEventExists()" failed : ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -209,7 +209,7 @@ class CalendarFactory {
       return date;
     } catch(err) {
       console.error(`"_CalculateCompletionTime()" failed : ${err}`);
-      return 1;
+      return null;
     }
   }
 

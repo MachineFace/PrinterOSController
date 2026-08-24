@@ -52,7 +52,7 @@
 //       return blob;
 //     } catch(err) {
 //       console.error(`"GenerateBarcode()" failed : ${err}`);
-//       return 1;
+//       return null;
 //     }
 //   }
 
@@ -94,7 +94,7 @@
 //       return blob;
 //     } catch(err) {
 //       console.error(`"GenerateBarCodeForTicketHeader()" failed : ${err}`);
-//       return 1;
+//       return null;
 //     }
 //   }
   
@@ -156,56 +156,61 @@ const PickupByBarcode = () => {
  * Mark a job as abandoned and send an email to that student
  */
 const MarkAsAbandonedByBarcode = async () => {
-  const ui = SpreadsheetApp.getUi();
-  const jobnumber = OTHERSHEETS.Scanner.getRange(3,2).getValue();
-  let progressUpdate = OTHERSHEETS.Scanner.getRange(4,2);
-  progressUpdate.setValue(`Searching for job number...`);
-  let res = {}
-  if (!jobnumber || jobnumber instanceof String) {
-    progressUpdate.setValue(`No job number provided. Select the yellow cell, scan, then press enter to make sure the cell's value has been changed.`);
+  try {
+    const ui = SpreadsheetApp.getUi();
+    const jobnumber = OTHERSHEETS.Scanner.getRange(3,2).getValue();
+    let progressUpdate = OTHERSHEETS.Scanner.getRange(4,2);
+    progressUpdate.setValue(`Searching for job number...`);
+    let res = {}
+    if (!jobnumber || jobnumber instanceof String) {
+      progressUpdate.setValue(`No job number provided. Select the yellow cell, scan, then press enter to make sure the cell's value has been changed.`);
+      ui.alert(
+        `${SERVICE_NAME}`,
+        `Jobnumber : ${jobnumber} was goofy. Please fix and try again...`,
+        ui.ButtonSet.OK
+      );
+      return;
+    } 
+    res = SheetService.FindOne(jobnumber);
+    console.info(res)
+    if(Object.keys(res).length === 0) {
+      progressUpdate.setValue(`Job number not found. Try again.`);
+      ui.alert(
+        `${SERVICE_NAME}`,
+        `Jobnumber : ${jobnumber} not found...`,
+        ui.ButtonSet.OK
+      );
+      return 0;
+    } 
+
+    let sheet = SHEETS[res.sheetName];
+    let row = res.row;
+    let email = res.email;
+    let projectname = res.filename;
+    let weight = res.weight;
+    SheetService.SetByHeader(sheet, HEADERNAMES.status, row, STATUS.abandoned.plaintext);
+    progressUpdate.setValue(`Job number ${jobnumber} marked as abandoned. Sheet: ${sheet.getSheetName()} row: ${row}`);
+    console.info(`Job number ${jobnumber} marked as abandoned. Sheet: ${sheet.getSheetName()} row: ${row}`);
+
+    progressUpdate.setValue(`Emailing ${email}......`);
+    await new EmailService({
+      email : email, 
+      status : STATUS.abandoned.plaintext,
+      projectname : projectname,
+      jobnumber : jobnumber,
+      weight : weight,
+    })
+    progressUpdate.setValue(`Owner ${email} of abandoned job: ${jobnumber} emailed..`);
     ui.alert(
       `${SERVICE_NAME}`,
-      `Jobnumber : ${jobnumber} was goofy. Please fix and try again...`,
+      `Owner ${email} of abandoned job: ${jobnumber} emailed..`,
       ui.ButtonSet.OK
     );
     return;
-  } 
-  res = SheetService.FindOne(jobnumber);
-  console.info(res)
-  if(Object.keys(res).length === 0) {
-    progressUpdate.setValue(`Job number not found. Try again.`);
-    ui.alert(
-      `${SERVICE_NAME}`,
-      `Jobnumber : ${jobnumber} not found...`,
-      ui.ButtonSet.OK
-    );
-    return 0;
-  } 
-
-  let sheet = SHEETS[res.sheetName];
-  let row = res.row;
-  let email = res.email;
-  let projectname = res.filename;
-  let weight = res.weight;
-  SheetService.SetByHeader(sheet, HEADERNAMES.status, row, STATUS.abandoned.plaintext);
-  progressUpdate.setValue(`Job number ${jobnumber} marked as abandoned. Sheet: ${sheet.getSheetName()} row: ${row}`);
-  console.info(`Job number ${jobnumber} marked as abandoned. Sheet: ${sheet.getSheetName()} row: ${row}`);
-
-  progressUpdate.setValue(`Emailing ${email}......`);
-  await new EmailService({
-    email : email, 
-    status : STATUS.abandoned.plaintext,
-    projectname : projectname,
-    jobnumber : jobnumber,
-    weight : weight,
-  })
-  progressUpdate.setValue(`Owner ${email} of abandoned job: ${jobnumber} emailed..`);
-  ui.alert(
-    `${SERVICE_NAME}`,
-    `Owner ${email} of abandoned job: ${jobnumber} emailed..`,
-    ui.ButtonSet.OK
-  );
-  return;
+  } catch(err) {
+    console.error(`"MarkAsAbandonedByBarcode()" failed: ${err}`);
+    return null;
+  }
   
 }
 

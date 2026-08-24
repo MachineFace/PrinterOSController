@@ -113,7 +113,7 @@ class TicketService {
       return doc;
     } catch(err) {
       console.error(`"CreateTicket()" failed: ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -143,7 +143,7 @@ class TicketService {
       return blob;
     } catch(err) {
       console.error(`"GetImage()" failed : ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -251,7 +251,7 @@ class UpdateMissingTickets {
       return 0;
     } catch (err) {
       console.error(`${err} : Couldn't generate a ticket....`);
-      return 1;
+      return null;
     }
   }
 }
@@ -300,7 +300,7 @@ const FixMissingTicketsForSingleSheet = (sheet) => {
     return 0;
   } catch(err) {
     console.error(`"FixMissingTicketsForSingleSheet()" failed : ${err}`);
-    return 1;
+    return null;
   }
 }
 
@@ -319,7 +319,7 @@ const FixMissingTickets = () => {
     return 0;
   } catch(err) {
     console.error(`"FixMissingTickets()" failed : ${err}`);
-    return 1;
+    return null;
   }
 }
 

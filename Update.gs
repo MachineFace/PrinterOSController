@@ -20,7 +20,7 @@ class UpdateService {
       return 0;
     } catch(err){
       console.error(`"UpdateAll()" failed : ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -56,7 +56,7 @@ class UpdateService {
       return 0;
     } catch(err) {
       console.error(`"Update()" failed : ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -119,7 +119,7 @@ class UpdateService {
       return 0;
     } catch(err){
       console.error(`"UpdateAllFilenames()" failed: ${err}`);
-      return 1;
+      return null;
     } 
   }
 
@@ -139,10 +139,10 @@ class UpdateService {
         .finally(() => {
           this.pOS.Logout();
         });
-      return 1;
+      return null;
     } catch(err) {
       console.error(`"UpdateAllMaterialCosts()" failed: ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -165,7 +165,7 @@ class UpdateService {
       return 0;
     } catch(err){
       console.error(`"UpdateSingleSheetMaterials()" failed ${err}`);
-      return 1;
+      return null;
     } 
   }
 

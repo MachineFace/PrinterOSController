@@ -60,7 +60,7 @@ class StatusService {
       }
     } catch(err) {
       console.error(`"GetStatusByCode()" failed: ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -79,7 +79,7 @@ class StatusService {
       }
     } catch(err) {
       console.error(`"GetCodeFromStatus()" failed: ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -92,7 +92,7 @@ class StatusService {
       return 0;
     } catch(err) {
       console.error(`"FixAllStatuses()" failed: ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -118,7 +118,7 @@ class StatusService {
       return 0;
     } catch(err) {
       console.error(`"FixSheetStatuses()" failed: ${err}`);
-      return 1;
+      return null;
     }
   }
 
@@ -159,7 +159,7 @@ const SetStatusDropdowns = () => {
     return 0;
   } catch(err) {
     console.error(`"SetStatusDropdowns()" failed : ${err}`);
-    return 1;
+    return null;
   }
 }
 

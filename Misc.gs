@@ -90,7 +90,7 @@ const BuildSummaryEquation = () => {
     return 0;
   } catch(err) {
     console.error(`"BuildSummaryEquation()" failed: ${err}`);
-    return 1;
+    return null;
   }
   
 }
