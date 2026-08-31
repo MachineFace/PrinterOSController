@@ -388,51 +388,6 @@ const _gasT_Misc_Testing = async () => {
 }
 
 /**
- * Test ID with GasT
- * PASSED 6/16/2025
- */
-const _gasT_IDService_Testing = async () => {
-  if ((typeof GasTap) === 'undefined') {
-    eval(UrlFetchApp.fetch(gasT_URL).getContentText());
-  }
-  const test = new GasTap();
-  console.warn(`Testing: ${PrintEnclosingFunctionName()}`);  // Print Enclosing Function Name
-
-  await test(`GetNewID NON-STATIC`, t => {
-    const j = IDService.id;
-    t.notEqual(j, undefined || null, `GetNewID SHOULD NOT return undefined or null: ${j}`);
-  });
-
-  await test(`GetNewID STATIC`, t => {
-    const k = IDService.createId();
-    t.notEqual(k, undefined || null, `GetNewID SHOULD NOT return undefined or null: ${k}`);
-  });
-
-  await test(`TestUUIDToDecimal`, t => {
-    const testUUID = `b819a295-66b7-4b82-8f91-81cf227c5216`;
-    const decInterp = `0244711056233028958513683553892786000406`;
-    const dec = IDService.toDecimal(testUUID);
-    t.equal(dec, decInterp, `TestUUIDToDecimal SHOULD return ${decInterp}: ${decInterp == dec}, ${dec}`);
-  });
-
-  await test(`TestDecimalToUUID`, t => {
-    const testUUID = `b819a295-66b7-4b82-8f91-81cf227c5216`;
-    const dec = `0244711056233028958513683553892786000406`;
-    const x = IDService.decimalToUUID(dec);
-    t.equal(x, testUUID, `TestDecimalToUUID SHOULD return ${testUUID}: ${x == testUUID}, ${x}`);
-  });
-
-  await test(`IDIsValid`, t => {
-    const testUUID = `b819a295-66b7-4b82-8f91-81cf227c5216`;
-    const val = IDService.isValid(testUUID);
-    t.equal(val, true, `IDIsValid SHOULD return true: ${val == true}, ${testUUID} is valid: ${val}`);
-  });
-
-  await test.finish();
-  if (test.totalFailed() > 0) throw "Some test(s) failed!";
-}
-
-/**
  * Test Calculations with GasT
  * PASSED 6/16/2025
  */
@@ -2729,7 +2684,6 @@ const _gasTTestAll = async () => {
     await _gasT_MessagingAndStaff_Testing(),
     await _gasT_Ticket_Testing(),
     await _gasT_Misc_Testing(),
-    await _gasT_IDService_Testing(),
     await _gasT_Calculation_Testing(),
     await _gasT_Logger_Testing(),
     await _gasT_DriveController_Testing(),

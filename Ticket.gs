@@ -118,58 +118,303 @@ class TicketService {
   }
 
   /**
-   * Find Image blob from File
-   * @param {png} file
-   * @private
+   * Normalize and validate ticket input.
+   * @param {Object} options
+   * @return {Object}
    */
-  static async GetImage(pngFile) {
+  static NormalizeTicketData(options = {}) {
     try {
-      const url = `https://live3dprinteros.blob.core.windows.net/render/${pngFile}`;
-      const params = {
-        method : "GET",
-        contentType : "image/png",
-        followRedirects : true,
-        muteHttpExceptions : true
+      if(!options || typeof options !== `object` || Array.isArray(options)) {
+        throw new TypeError(`Ticket options must be an object.`);
       }
 
-      const response = await UrlFetchApp.fetch(url, params);
-      const responseCode = response.getResponseCode();
-      let blob = HtmlService.createHtmlOutput();
-      if(responseCode == 404) return blob;
-      else if(![200, 201].includes(responseCode)) {
-        throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
+      let {
+        designspecialist = `Staff`,
+        submissiontime = new Date(),
+        name = `Student Name`,
+        email = `Student Email`,
+        projectname = `Project Name`,
+        weight = 0,
+        printerID = `79165`,
+        printerName = `Spectrum`,
+        jobID = 12934871,
+        ticketName,
+        filename = `file.gcode`,
+        image = null,
+      } = options;
+
+      if(!(submissiontime instanceof Date)) {
+        submissiontime = new Date(submissiontime);
       }
-      blob = response.getBlob().setName(`IMAGE_${pngFile}`);
-      return blob;
+
+      if(isNaN(submissiontime.getTime())) {
+        throw new TypeError(`Invalid submissiontime.`);
+      }
+
+      weight = Number(weight);
+
+      if(!Number.isFinite(weight) || weight < 0) {
+        throw new TypeError(`Weight must be a finite number >= 0.`);
+      }
+
+      if(jobID === null || jobID === undefined || `${jobID}`.trim() === ``) {
+        throw new TypeError(`Job ID is required.`);
+      }
+
+      jobID = String(jobID).trim();
+
+      printerID = String(printerID ?? ``).trim();
+      printerName = String(printerName ?? ``).trim();
+      designspecialist = String(designspecialist ?? ``).trim();
+      name = String(name ?? ``).trim();
+      email = String(email ?? ``).trim();
+      projectname = String(projectname ?? ``).trim();
+      filename = String(filename ?? ``).trim();
+
+      ticketName = String(
+        ticketName || `PrinterOSTicket-${jobID}`
+      ).trim();
+
+      if(!ticketName) {
+        throw new TypeError(`Ticket name is required.`);
+      }
+
+      return {
+        designspecialist,
+        submissiontime,
+        name,
+        email,
+        projectname,
+        weight,
+        printerID,
+        printerName,
+        jobID,
+        ticketName,
+        filename,
+        image,
+      }
+
     } catch(err) {
-      console.error(`"GetImage()" failed : ${err}`);
+      console.error(`"NormalizeTicketData()" failed: ${err}`);
       return null;
     }
   }
 
   /**
-   * Calculate PrintCost
-   * @param {number} weight
-   * @return {number} value
-   * @private
+   * Populate a ticket document.
+   *
+   * @param {GoogleAppsScript.Document.Document} doc
+   * @param {Object} ticket
    */
-  static PrintCost(weight = 0.0) {
-    return Number(weight * COSTMULTIPLIER).toFixed(2);
+  static async PopulateDocument(doc, ticket) {
+    try {
+      // Validate
+      if(!doc) throw new Error(`Document is required.`);
+      if(!ticket) throw new Error(`Ticket data is required.`);
+
+      const body = doc.getBody();
+      const width = 260;
+      const cost = TicketService.PrintCost(ticket.weight);
+
+      body
+        .setPageWidth(PAGESIZES.custom.width)
+        .setPageHeight(PAGESIZES.custom.height)
+        .setMarginTop(2)
+        .setMarginBottom(2)
+        .setMarginLeft(2)
+        .setMarginRight(2);
+
+      const barcode = await BarcodeService.GenerateBarCodeForTicketHeader(ticket.jobID);
+      if(!barcode) throw new Error(`Barcode generation failed.`);
+
+      body
+        .appendImage(barcode)
+        .setWidth(width)
+        .setHeight(100);
+
+      body.appendHorizontalRule();
+
+      body
+        .appendParagraph(`Email: ${ticket.email}`)
+        .setHeading(DocumentApp.ParagraphHeading.HEADING1)
+        .setAttributes({
+          [DocumentApp.Attribute.FONT_SIZE]: 11,
+          [DocumentApp.Attribute.BOLD]: true,
+          [DocumentApp.Attribute.LINE_SPACING]: 1,
+        });
+
+      body
+        .appendParagraph(`Printer: ${ticket.printerName}`)
+        .setHeading(DocumentApp.ParagraphHeading.HEADING2)
+        .setAttributes({
+          [DocumentApp.Attribute.FONT_SIZE]: 9,
+          [DocumentApp.Attribute.BOLD]: true,
+          [DocumentApp.Attribute.LINE_SPACING]: 1,
+        });
+
+      body
+        .appendTable([
+          [`Name`, ticket.name],
+          [`Date Started`, ticket.submissiontime.toDateString()],
+          [`Design Specialist`, ticket.designspecialist],
+          [`Job ID`, ticket.jobID],
+          [`Student Email`, ticket.email],
+          [`Materials`, `PLA : ${ticket.weight} grams`],
+          [`Estimated Cost @ $0.04/gram`, `$${cost}`],
+          [`Filename`, ticket.filename],
+        ])
+        .setAttributes({
+          [DocumentApp.Attribute.FONT_SIZE]: 6,
+          [DocumentApp.Attribute.LINE_SPACING]: 1,
+          [DocumentApp.Attribute.BORDER_WIDTH]: 0.5,
+        });
+
+      if(ticket.image) {
+        body
+          .appendImage(ticket.image)
+          .setWidth(width)
+          .setHeight(width);
+      }
+
+      return doc;
+
+    } catch(err) {
+      console.error(`"PopulateDocument()" failed: ${err}`);
+      return null;
+    }
   }
 
   /**
-   * Check if a Ticket Exists
-   * @param {string} ticket name
-   * @returns {bool} exists
+   * Delete an existing ticket if one exists.
+   * @param {string} ticketName
+   * @return {boolean}
    */
-  static TicketExists(ticketName = ``) {
-    const files = DriveController.GetFileByName(ticketName);
-    return !!files;
+  static DeleteExistingTicket(ticketName = ``) {
+    try {
+      if(!ticketName) return false;
+
+      const file = DriveController.GetFileByName(ticketName);
+      if(!file) return false;
+
+      const fileID = file.getId();
+      if(!fileID) {
+        throw new Error(`Existing ticket has no file ID.`);
+      }
+
+      DriveController.DeleteFileByID(fileID);
+      console.info(`Deleted existing ticket: ${ticketName}`);
+
+      return true;
+
+    } catch(err) {
+      console.error(`"DeleteExistingTicket()" failed: ${err}`);
+      return false;
+    }
   }
 
+  /**
+   * Delete a ticket by Drive file ID.
+   *
+   * @param {string} gid
+   * @return {boolean}
+   */
   static DeleteTicket(gid = ``) {
-    DriveController.DeleteFileByID(gid);
+    try {
+      gid = String(gid).trim();
+
+      if(!gid) return false;
+
+      DriveController.DeleteFileByID(gid);
+      return true;
+
+    } catch(err) {
+      console.error(`"DeleteTicket()" failed: ${err}`);
+      return false;
+    }
   }
+
+
+  /**
+   * Check whether a ticket exists.
+   * @param {string} ticketName
+   * @return {boolean}
+   */
+  static TicketExists(ticketName = ``) {
+    try {
+      ticketName = String(ticketName).trim();
+
+      if(!ticketName) return false;
+      return !!DriveController.GetFileByName(ticketName);
+
+    } catch(err) {
+      console.error(`"TicketExists()" failed: ${err}`);
+      return null;
+    }
+  }
+
+  /**
+   * Fetch an image blob from PrinterOS.
+   *
+   * @param {string} pngFile
+   * @return {GoogleAppsScript.Base.Blob|null}
+   */
+  static async GetImage(pngFile = ``) {
+    try {
+      pngFile = String(pngFile).trim();
+      if(!pngFile) throw new TypeError(`Image filename is required.`);
+
+      const url = `https://live3dprinteros.blob.core.windows.net/render/${encodeURIComponent(pngFile)}`;
+
+      const response = await UrlFetchApp.fetch(url, {
+        method: `get`,
+        followRedirects: true,
+        muteHttpExceptions: true,
+      });
+
+      const responseCode = response.getResponseCode();
+      if(responseCode === 404) {
+        console.warn(`Image not found: ${pngFile}, ${responseCode} ---> ${RESPONSECODES[responseCode]}`);
+        return null;
+      }
+
+      if(responseCode !== 200) {
+        throw new Error(`Image request failed with HTTP ${responseCode} ---> ${RESPONSECODES[responseCode]}.`);
+      }
+
+      const blob = response.getBlob();
+
+      if(!blob) {
+        throw new Error(`Image response contained no blob.`);
+      }
+
+      return blob.setName(`IMAGE_${pngFile}`);
+
+    } catch(err) {
+      console.error(`"GetImage()" failed: ${err}`);
+      return null;
+    }
+  }
+
+  /**
+   * Calculate print cost.
+   * @param {number} weight
+   * @return {string|null}
+   */
+  static PrintCost(weight = 0) {
+    try {
+      weight = Number(weight);
+      if(!Number.isFinite(weight) || weight < 0) {
+        throw new TypeError(`Weight must be a finite number >= 0.`);
+      }
+
+      return (weight * COSTMULTIPLIER).toFixed(2);
+
+    } catch(err) {
+      console.error(`"PrintCost()" failed: ${err}`);
+      return null;
+    }
+  }
+
 
 }
 

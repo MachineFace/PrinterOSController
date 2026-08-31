@@ -19,7 +19,7 @@ class UpdateService {
         .finally(() => this.pOS.Logout());
       return 0;
     } catch(err){
-      console.error(`"UpdateAll()" failed : ${err}`);
+      console.error(`"UpdateAll()" failed: ${err}`);
       return null;
     }
   }
@@ -157,7 +157,7 @@ class UpdateService {
         .filter(Boolean)
         .forEach( async(jobId, index) => {
           const weight = await this.pOS.GetMaterialWeight(jobId);
-          const price = PrintCost(weight);
+          const price = UpdateService.PrintCost(weight);
           // console.info(`Weight = ${weight}, Price = ${price}`);
           SheetService.SetByHeader(sheet, HEADERNAMES.weight, index + 2, weight);
           SheetService.SetByHeader(sheet, HEADERNAMES.cost, index + 2, price);
@@ -167,6 +167,26 @@ class UpdateService {
       console.error(`"UpdateSingleSheetMaterials()" failed ${err}`);
       return null;
     } 
+  }
+
+  /**
+   * Calculate print cost.
+   * @param {number} weight
+   * @return {string|null}
+   */
+  static PrintCost(weight = 0) {
+    try {
+      weight = Number(weight);
+      if(!Number.isFinite(weight) || weight < 0) {
+        throw new TypeError(`Weight must be a finite number >= 0.`);
+      }
+
+      return (weight * COSTMULTIPLIER).toFixed(2);
+
+    } catch(err) {
+      console.error(`"PrintCost()" failed: ${err}`);
+      return null;
+    }
   }
 
 }

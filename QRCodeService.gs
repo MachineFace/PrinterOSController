@@ -61,7 +61,7 @@
 //    * @return {doc} printable doc
 //    */
 //   async CreatePrintableQRCode() {
-//     const filename = this.filename = `file` ? `QRCode-${IDService.createId()}` : this.filename;
+//     const filename = this.filename = `file` ? `QRCode-${IDService.CreateId()}` : this.filename;
 //     const folder = DriveApp.getFolderById(this.gid);
 //     let doc = DocumentApp.create(filename); // Make Document
 //     let body = doc.getBody();
@@ -104,7 +104,7 @@
 //    */
 //   async GenerateQRCodeBasic(){
 //     try {
-//       const filename = this.filename = `file` ? `QRCode-${IDService.createId()}` : this.filename;
+//       const filename = this.filename = `file` ? `QRCode-${IDService.CreateId()}` : this.filename;
 //       const loc = `https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=${this.url}`;  // API call
 //       const postParams = {
 //         'method' : "GET",
