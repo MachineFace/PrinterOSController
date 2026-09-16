@@ -1,6 +1,6 @@
 /**
  * -----------------------------------------------------------------------------------------------------------------
- * PrinterOS Class for handling PrinterOS requests and responses
+ * ## PrinterOS Class for handling PrinterOS requests and responses
  * API Info: https://docs.google.com/document/d/16u1uKQFML0sJ9SCdnHzcYX4eQh9dvsgeSeEtFymhTLs/edit#heading=h.tn9ro1ef6f0
  */
 class PrinterOS {
@@ -31,7 +31,9 @@ class PrinterOS {
   
 
   /**
-   * Login Classic : Username and Password
+   * ### Login Classic
+   * Username and Password
+   * 
    * @return {string|number} session
    */
   async Login() {
@@ -72,13 +74,14 @@ class PrinterOS {
       console.warn(`PropertyStore: (${PropertiesService.getUserProperties().getProperty(`session`)}), Session Started: ${result}`);
       return session;
     } catch(err) {
-      console.error(`"Login()" failed : ${err}`);
+      console.error(`"Login()" failed: ${err}`);
       return null;
     }
   }
 
   /**
-   * Logout
+   * ### Logout
+   * 
    * return {bool} 0 or 1
    */
   async Logout() {
@@ -104,13 +107,14 @@ class PrinterOS {
       console.warn(`SessionID: (${this.session}), Session Closed: ${result}`);
       return 0;
     } catch(err) {
-      console.error(`"Logout()" failed : ${err}`);
+      console.error(`"Logout()" failed: ${err}`);
       return null;
     }
   }
 
   /**
-   * Check PrinterOS Session
+   * ### Check PrinterOS Session
+   * 
    * @return {string} bool
    */
   async CheckSession() {
@@ -135,13 +139,14 @@ class PrinterOS {
 
       return !!result;
     } catch(err) {
-      console.error(`"CheckSession()" failed : ${err}`);
+      console.error(`"CheckSession()" failed: ${err}`);
       return null;
     }
   }
 
   /**
-   * Get Organizations Printers
+   * ### Get Organizations Printers
+   * 
    * @param {obj} session
    * @param {int} printer_id (optional)
    * workgroup_id {int} (optional)
@@ -183,13 +188,14 @@ class PrinterOS {
       
       return printerListOut;
     } catch(err) {
-      console.error(`"GetPrinters()" failed : ${err}`);
+      console.error(`"GetPrinters()" failed: ${err}`);
       return null;
     } 
   }
 
   /**
-   * Get Printer's Data
+   * ### Get Printer's Data
+   * 
    * @required {obj} session
    * @param {int} printer_id (optional, printer id)
    */
@@ -229,13 +235,14 @@ class PrinterOS {
       });
       return printerlist;
     } catch(err) {
-      console.error(`"GetPrinterData()" failed : ${err}`);
+      console.error(`"GetPrinterData()" failed: ${err}`);
       return null;
     }
   }
 
   /**
-   * Get Printer Types in Cloud
+   * ### Get Printer Types in Cloud
+   * 
    * @required {obj} session
    * @return types
    */
@@ -271,7 +278,8 @@ class PrinterOS {
   }
 
   /**
-   * Get a Specific Printer's Job List
+   * ### Get a Specific Printer's Job List
+   * 
    * @required {obj} session
    * @required {int} printerID
    * @param {int} limit (optional, default 20) - max job count in response
@@ -308,13 +316,14 @@ class PrinterOS {
       data && data.forEach(p => console.info(JSON.stringify(p, null, 3)));
       return data;
     } catch(err) {
-      console.error(`"GetPrintersJobList()" failed : ${err}`);
+      console.error(`"GetPrintersJobList()" failed: ${err}`);
       return [];
     }
   }
 
   /**
-   * Get Latest Job on this Printer.
+   * ### Get Latest Job on this Printer.
+   * 
    * @return {object} job data
    */
   async GetPrintersLatestJob(printerID = 79165)  {
@@ -343,13 +352,14 @@ class PrinterOS {
       } 
       return job;
     } catch(err) {
-      console.error(`"GetPrintersLatestJob()" failed : ${err}`);
+      console.error(`"GetPrintersLatestJob()" failed: ${err}`);
       return {};
     }
   }
 
   /**
-   * Get Latest Job from All Printers
+   * ### Get Latest Job from All Printers
+   * 
    * @returns {Promise<string[]|number>} Array of job IDs or 1 on failure.
    */
   async GetLatestJobsForAllPrinters() {
@@ -366,13 +376,14 @@ class PrinterOS {
       return jobIDs;
       
     } catch(err) {
-      console.error(`"GetLatestJobsForAllPrinters()" failed : ${err}`);
+      console.error(`"GetLatestJobsForAllPrinters()" failed: ${err}`);
       return null;
     }
   }
 
   /**
-   * Get a Specific Job Details
+   * ### Get a Specific Job Details
+   * 
    * @required {int} jobID
    * @return {object} job data
    */
@@ -408,13 +419,14 @@ class PrinterOS {
       console.info(res);
       return res;
     } catch(err) {
-      console.error(`"GetJobInfo()" failed : ${err}`);
+      console.error(`"GetJobInfo()" failed: ${err}`);
       return null;
     }
   }
 
   /**
-   * Get Material Weight
+   * ### Get Material Weight
+   * 
    * @param {number} jobID
    * @return {number} Weight
    */
@@ -446,13 +458,14 @@ class PrinterOS {
       console.info(`Weight: ${weight}`);
       return weight;
     } catch(err) {
-      console.error(`"GetMaterialWeight()" failed : ${err}`);
+      console.error(`"GetMaterialWeight()" failed: ${err}`);
       return null;
     }
   }
 
   /**
-   * Calculate Cost of a Job
+   * ### Calculate Cost of a Job
+   * 
    * @param {number} JobId
    * @param {number} Unit Cost
    * @return {number} Total Cost
@@ -486,14 +499,15 @@ class PrinterOS {
       console.info(`Price: $${price}`);
       return price;
     } catch(err) {
-      console.error(`"CalculateCost()" failed : ${err}`);
+      console.error(`"CalculateCost()" failed: ${err}`);
       return null;
     }
     
   }
 
   /**
-   * Get WorkGroup Numbers
+   * ### Get WorkGroup Numbers
+   * 
    * @return {Promise<number[]|number>} list of numbers
    */
   async GetWorkGroups() {
@@ -531,13 +545,14 @@ class PrinterOS {
 
       return ids;
     } catch(err) {
-      console.error(`"GetWorkGroups()" failed : ${err}`);
+      console.error(`"GetWorkGroups()" failed: ${err}`);
       return null;
     }
   }
 
   /**
-   * Get Users by Workgroup Assignment
+   * ### Get Users by Workgroup Assignment
+   * 
    * @param {obj} session
    * @param {int} workgroupID
    */
@@ -570,13 +585,14 @@ class PrinterOS {
       // console.info(users);
       return users;
     } catch(err) {
-      console.error(`"GetUsersByWorkgroup()" failed : ${err}`);
+      console.error(`"GetUsersByWorkgroup()" failed: ${err}`);
       return null;
     }
   }
 
   /**
-   * Get Users
+   * ### Get Users
+   * 
    * returns : {name= **, balance= **, monthly_quota= **, email= **, id= **}
    */
   async GetUsers() {
@@ -597,7 +613,8 @@ class PrinterOS {
   }
 
   /**
-   * Get Users
+   * ### Get Users
+   * 
    * returns : {name= **, balance= **, monthly_quota= **, email= **, id= **}
    */
   async FixUserBalances() {
@@ -618,6 +635,8 @@ class PrinterOS {
   }
 
   /**
+   * ### Brute Force
+   * 
    * @private
    */
   async BruteForce(id = ``) {
@@ -672,13 +691,14 @@ class PrinterOS {
 
 
     } catch(err) {
-      console.error(`"GetUserById()" failed : ${err}`);
+      console.error(`"GetUserById()" failed: ${err}`);
       return null;
     }
   }
 
   /**
-   * Get User Counts and Print to Data / Metrics
+   * ### Get User Counts
+   * 
    * @returns {Promise<number|1>} Unique user count or 1 on failure.  
    */
   async GetUserCount() {
@@ -695,13 +715,14 @@ class PrinterOS {
       console.info(`User Count: ${count}`);
       return count;
     } catch(err) {
-      console.error(`"GetUserCount()" failed : ${err}`);
+      console.error(`"GetUserCount()" failed: ${err}`);
       return null;
     }
   }
 
   /**
-   * Get Printers in Cloud
+   * ### Get Printers in Cloud
+   * 
    * @NOTIMPLEMENTED
    */
   async GetPrintersInCloud() {
@@ -732,13 +753,14 @@ class PrinterOS {
       res && res.forEach(x => console.info(x));
       return res;
     } catch(err) {
-      console.error(`"GetPrintersInCloud()" failed : ${err}`);
+      console.error(`"GetPrintersInCloud()" failed: ${err}`);
       return null;
     }
   }
 
   /**
-   * Get an Image
+   * ### Get an Image
+   * @returns {blob} image blob
    */
   async GetJobImage() {
     try {
@@ -759,13 +781,13 @@ class PrinterOS {
       const blob = html.getBlob().setName(`IMAGE_${this.picture}`);
       return blob;
     } catch(err) {
-      console.error(`"GetJobImage()" failed : ${err}`);
+      console.error(`"GetJobImage()" failed: ${err}`);
       return null;
     }
   }
 
   /**
-   * Helper Function to find the name from an ID
+   * ### Helper Function to find the name from an ID
    */
   GetPrinterNameFromID(printerID = 79165) {
     try {
@@ -778,13 +800,13 @@ class PrinterOS {
       console.info(`PrinterID: ${printerID}, Name: ${name}`);
       return name;
     } catch(err) {
-      console.error(`"GetPrinterNameFromID()" failed : ${err}`);
+      console.error(`"GetPrinterNameFromID()" failed: ${err}`);
       return null;
     }
   }
 
   /**
-   * Add User to Workgroup
+   * ### Add User to Workgroup
    * @private
    * @param {string} email
    * @param {int} workgroupId
@@ -825,15 +847,18 @@ class PrinterOS {
 
 
   /** 
-   * Print Cost
+   * ### Print Cost
+   * 
    * @private
+   * @param {number} weight
+   * @returns {number} price
    */
   _PrintCost(weight = 0.0) {
     return Number(weight * COSTMULTIPLIER).toFixed(2);
   }
 
   /**
-   * Calculate Cost Via Extruder Data
+   * ### Calculate Cost Via Extruder Data
    * @private
    * NOTIMPLEMENTED
   _CalculateCost(extruders = {}) {
@@ -857,7 +882,7 @@ class PrinterOS {
 
 
 /**
- * Fetch All Printer Data from Organization
+ * ### Fetch All Printer Data from Organization
  */
 const GetPrinterData = () => {
   const p = new PrinterOS();
@@ -939,7 +964,7 @@ class TestBedPrinterOS {
   }
 
   /**
-   * Configure the service
+   * ### Configure the service
    */
   CreateService() {
     try {
@@ -972,7 +997,7 @@ class TestBedPrinterOS {
   }
 
   /**
-   * Callback
+   * ### Callback
    */
   OAuth2Callback(e) {
     const service = SpotifyService();

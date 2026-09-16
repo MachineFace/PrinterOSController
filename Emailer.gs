@@ -1,5 +1,5 @@
 /**
- * Send an Email
+ * ## Send an Email
  * @required {string} Student Email
  * @required {string} Status
  */
@@ -69,7 +69,8 @@ class EmailService {
   }
 
   /**
-   * Mail
+   * ### Mail
+   * 
    * @param {string} to email
    * @param {string} status
    * @param {string} message

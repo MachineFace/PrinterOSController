@@ -1,6 +1,6 @@
 /**
  * -----------------------------------------------------------------------------------------------------------------
- * Class for Working with Google Drive
+ * ## Class for Working with Google Drive
  * @TRIGGERED once a week
  */
 class DriveController {
@@ -9,7 +9,7 @@ class DriveController {
   }
 
   /**
-   * Get Files in Root
+   * ### Get Files in Root
    * @return {[string]} list of files
    */
   static get AllFileNamesInRoot() {
@@ -23,13 +23,14 @@ class DriveController {
       }
       return out;
     } catch(err) {
-      console.error(`"AllFileNamesInRoot()" failed : ${err}`);
+      console.error(`"AllFileNamesInRoot()" failed: ${err}`);
       return null;
     }
   }
 
   /**
-   * Move Tickets Out Of Root
+   * ### Move Tickets Out Of Root
+   * 
    * @return {bool} success or failure
    */
   static MoveTicketsOutOfRoot() {
@@ -50,13 +51,13 @@ class DriveController {
       });
       return 0;
     } catch(err) {
-      console.error(`"MoveTicketsOutOfRoot()" failed : ${err}`);
+      console.error(`"MoveTicketsOutOfRoot()" failed: ${err}`);
       return null;
     }
   }
 
   /**
-   * Count Tickets
+   * ### Count Tickets
    */
   static CountTickets() {
     try {
@@ -70,13 +71,14 @@ class DriveController {
       console.info(`Total Tickets : ${count}`);
       return count;
     } catch(err) {
-      console.error(`"CountTickets()" failed : ${err}`);
+      console.error(`"CountTickets()" failed: ${err}`);
       return null;
     }
   }
 
   /**
-   * Delete Old Tickets
+   * ### Delete Old Tickets
+   * 
    * ** Note: this function needed a timeout. Otherwise it runs forever
    */
   static DeleteOldTickets() {
@@ -103,7 +105,7 @@ class DriveController {
   }
 
   /**
-   * Trash Old Tickets
+   * ### Trash Old Tickets
    */
   static DeleteOldestTicketsFirst() {
     try {
@@ -132,7 +134,7 @@ class DriveController {
   }
 
   /**
-   * Delete Duplicate Files
+   * ### Delete Duplicate Files
    */
   static DeleteDuplicateFiles() {
     const folder = DriveApp.getFolderById(PropertiesService.getScriptProperties().getProperty(`TICKET_FOLDER_GID`));
@@ -159,7 +161,7 @@ class DriveController {
   }
 
   /**
-   * Get Drive ID from URL
+   * ### Get Drive ID from URL
    * @param {string} url
    * @return {string} id
    */
@@ -178,7 +180,7 @@ class DriveController {
   }
 
   /**
-   * Download File
+   * ### Download File
    */
   static DownloadFile(file) {
     const fileID = file.getId();
@@ -188,7 +190,8 @@ class DriveController {
   }
 
   /**
-   * Search for File
+   * ### Search for File
+   * 
    * @param {string} filename
    * @returns {file} file
    */
@@ -210,7 +213,8 @@ class DriveController {
   }
 
   /**
-   * Get File by ID
+   * ### Get File by ID
+   * 
    * @param {string} google id
    * @returns {file} file
    */
@@ -224,7 +228,8 @@ class DriveController {
   }
 
   /**
-   * Delete File by ID
+   * ### Delete File by ID
+   * 
    * @param {string} id
    * @returns {bool} success
    */
@@ -243,7 +248,7 @@ class DriveController {
 
 /**
  * -----------------------------------------------------------------------------------------------------------------
- * Main Cleanup Function
+ * ### Main Cleanup Function
  */
 const CleanupDrive = () => DriveController.MoveTicketsOutOfRoot();
 const TrashOldTickets = () => DriveController.DeleteOldTickets();

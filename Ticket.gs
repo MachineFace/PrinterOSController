@@ -1,7 +1,7 @@
 
 /**
  * -----------------------------------------------------------------------------------------------------------------
- * Ticket Class
+ * ## Ticket Class
  */
 class TicketService {
   constructor(){
@@ -9,7 +9,7 @@ class TicketService {
   }
 
   /**
-   * Create Ticket
+   * ### Create Ticket
    */
   static async CreateTicket({
     designspecialist : designspecialist = `Staff`, 
@@ -44,7 +44,7 @@ class TicketService {
       let docId = doc.getId();
       let url = doc.getUrl();
       
-      const barcode = await BarcodeService.GenerateBarCodeForTicketHeader(jobID);
+      const barcode = BarcodeService.GenerateBarCodeForTicketHeader(jobID);
 
       // Append Document with Info
       body
@@ -118,7 +118,8 @@ class TicketService {
   }
 
   /**
-   * Normalize and validate ticket input.
+   * ### Normalize and validate ticket input.
+   * 
    * @param {Object} options
    * @return {Object}
    */
@@ -201,7 +202,7 @@ class TicketService {
   }
 
   /**
-   * Populate a ticket document.
+   * ### Populate a ticket document.
    *
    * @param {GoogleAppsScript.Document.Document} doc
    * @param {Object} ticket
@@ -224,7 +225,7 @@ class TicketService {
         .setMarginLeft(2)
         .setMarginRight(2);
 
-      const barcode = await BarcodeService.GenerateBarCodeForTicketHeader(ticket.jobID);
+      const barcode = BarcodeService.GenerateBarCodeForTicketHeader(ticket.jobID);
       if(!barcode) throw new Error(`Barcode generation failed.`);
 
       body
@@ -285,7 +286,8 @@ class TicketService {
   }
 
   /**
-   * Delete an existing ticket if one exists.
+   * ### Delete an existing ticket if one exists.
+   * 
    * @param {string} ticketName
    * @return {boolean}
    */
@@ -313,7 +315,7 @@ class TicketService {
   }
 
   /**
-   * Delete a ticket by Drive file ID.
+   * ### Delete a ticket by Drive file ID.
    *
    * @param {string} gid
    * @return {boolean}
@@ -335,7 +337,8 @@ class TicketService {
 
 
   /**
-   * Check whether a ticket exists.
+   * ### Check whether a ticket exists.
+   * 
    * @param {string} ticketName
    * @return {boolean}
    */
@@ -353,7 +356,7 @@ class TicketService {
   }
 
   /**
-   * Fetch an image blob from PrinterOS.
+   * ### Fetch an image blob from PrinterOS.
    *
    * @param {string} pngFile
    * @return {GoogleAppsScript.Base.Blob|null}
@@ -396,7 +399,8 @@ class TicketService {
   }
 
   /**
-   * Calculate print cost.
+   * ### Calculate print cost.
+   * 
    * @param {number} weight
    * @return {string|null}
    */
@@ -436,7 +440,7 @@ const _test_tickets = async () => {
 
 /**
  * -----------------------------------------------------------------------------------------------------------------
- * Update All Missing Tickets
+ * ## Update All Missing Tickets
  */
 class UpdateMissingTickets {
   constructor() {
@@ -444,7 +448,7 @@ class UpdateMissingTickets {
   }
 
   /**
-   * Update All Tickets
+   * ### Update All Tickets
    */
   async UpdateAllTickets () {
     // this.UpdateSheetTickets(SHEETS.Crystallum);
@@ -454,7 +458,8 @@ class UpdateMissingTickets {
   }
 
   /**
-   * Update Sheet Tickets
+   * ### Update Sheet Tickets
+   * 
    * @param {sheet} sheet
    */
   async UpdateSheetTickets(sheet) {
@@ -470,7 +475,8 @@ class UpdateMissingTickets {
   }
 
   /**
-   * Update Row 
+   * ### Update Row 
+   * 
    * @private
    * @param {number} row index
    * @param {sheet} sheet
@@ -502,7 +508,7 @@ class UpdateMissingTickets {
 }
 
 /**
- * Main Entry Point
+ * ### Main Entry Point
  * @TRIGGERED
  */
 const MissingTicketUpdater = () => new UpdateMissingTickets();
@@ -513,7 +519,7 @@ const MissingTicketUpdater = () => new UpdateMissingTickets();
 // -----------------------------------------------------------------------------------------------------------------
 
 /**
- * Fix Tickets for a Single Sheet
+ * ### Fix Tickets for a Single Sheet
  */
 const FixMissingTicketsForSingleSheet = (sheet) => {
   try {
@@ -544,14 +550,14 @@ const FixMissingTicketsForSingleSheet = (sheet) => {
       });
     return 0;
   } catch(err) {
-    console.error(`"FixMissingTicketsForSingleSheet()" failed : ${err}`);
+    console.error(`"FixMissingTicketsForSingleSheet()" failed: ${err}`);
     return null;
   }
 }
 
 
 /**
- * Check and Fix Missing Tickets
+ * ### Check and Fix Missing Tickets
  */
 const FixMissingTickets = () => {
   try {
@@ -563,7 +569,7 @@ const FixMissingTickets = () => {
     // console.info(`Tickets Checked and Fixed....`);
     return 0;
   } catch(err) {
-    console.error(`"FixMissingTickets()" failed : ${err}`);
+    console.error(`"FixMissingTickets()" failed: ${err}`);
     return null;
   }
 }

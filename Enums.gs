@@ -15,7 +15,7 @@ const COSTMULTIPLIERBREAKAWAY = 0.20;
 const COSTMULTIPLIER_AVERAGE = 0.12;
 
 /**
- * Colors
+ * ### Colors
  */
 const COLORS = Object.freeze({
   green_light : `#d9ead3`,
@@ -47,7 +47,7 @@ const COLORS = Object.freeze({
 });
 
 /**
- * Event Colors
+ * ### Event Colors
  */
 const EVENT_COLORS = Object.freeze({
   PALE_BLUE	: 1,
@@ -64,7 +64,7 @@ const EVENT_COLORS = Object.freeze({
 });
 
 /**
- * Response Codes
+ * ### Response Codes
  */
 const RESPONSECODES = Object.freeze({
 	200 : `OK`,
@@ -136,7 +136,7 @@ const RESPONSECODES = Object.freeze({
 });
 
 /**
- * Status
+ * ### Status
  */
 const STATUS = Object.freeze({
   queued : {
@@ -174,7 +174,7 @@ const STATUS = Object.freeze({
 });
 
 /**
- * Printer IDS
+ * ### Printer IDS
  */
 const PRINTERIDS = Object.freeze({ 
   Luteus : 116705,
@@ -215,7 +215,7 @@ const PRINTERIDS = Object.freeze({
 */
 
 /**
- * Printer Data
+ * ### Printer Data
  */
 const PRINTERDATA = Object.freeze({ 
   Luteus : { 
@@ -365,7 +365,7 @@ const PRINTERDATA = Object.freeze({
 });
 
 /**
- * Headernames
+ * ### Headernames
  */
 const HEADERNAMES = Object.freeze({
   status : `Status`,
@@ -385,7 +385,7 @@ const HEADERNAMES = Object.freeze({
 });
 
 /**
- * Sheets
+ * ### Sheets
  */
 const SHEETS = Object.freeze({
   Spectrum :   THIS_SPREADSHEET.getSheetByName(`Spectrum`), 
@@ -413,7 +413,7 @@ const SHEETS = Object.freeze({
 // }
 
 /**
- * Other Sheets
+ * ### Other Sheets
  */
 const OTHERSHEETS = Object.freeze({
   Summary : THIS_SPREADSHEET.getSheetByName('Summary'),
@@ -426,21 +426,21 @@ const OTHERSHEETS = Object.freeze({
 });
 
 /**
- * Workgroups
+ * ### Workgroups
  */
 const WORKGROUPS = [
   3275, 3285, 3286, 3291, 3292, 3296, 3414, 3473, 3474, 3475,
 ];
 
 /**
- * Jacobs Specific Workgroups
+ * ### Jacobs Specific Workgroups
  */
 const JACOBSWORKGROUPS = [
   3275, 3285, 3286, 3296, 3414,
 ];
 
 /**
- * Workgroups Enumerated
+ * ### Workgroups Enumerated
  */
 const WORKGROUPS_ENUMERATED = Object.freeze({
   STUDENTS_GENERAL : 3275, 
@@ -456,7 +456,7 @@ const WORKGROUPS_ENUMERATED = Object.freeze({
 });
 
 /**
- * Non-Jacobs Workgroups Enumerated
+ * ### Non-Jacobs Workgroups Enumerated
  * 3291, 3292, 3473, 3474, 3475,
  */
 const NOT_JACOBS_ENUMERATED = Object.freeze({
@@ -468,7 +468,7 @@ const NOT_JACOBS_ENUMERATED = Object.freeze({
 });
 
 /**
- * Page Sizes
+ * ### Page Sizes
  * INPUTS
  * -argument-     :-inches-      :-mm-     :-points-
  * letter_size    :8.5`x11`      :216x279  :612.283x790.866

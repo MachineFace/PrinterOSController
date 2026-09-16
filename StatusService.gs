@@ -1,5 +1,5 @@
 /**
- * Status Service Class
+ * ## Status Service Class
  * @NOTIMPLEMENTED
  * @private
  */
@@ -10,14 +10,14 @@ class StatusService {
   }
 
   /**
-   * Get State
+   * ### Get State
    */
   GetState() {
     return this.state;
   }
 
   /**
-   * Set State
+   * ### Set State
    */
   SetState(newState = ``) {
     if (!Object.values(STATUS).includes(newState)) throw new Error(`Invalid state: ${newState}`);
@@ -25,6 +25,7 @@ class StatusService {
   }
 
   /**
+   * ### Check State
    * Method to check if the current state matches a specific state
    */
   CheckState(stateToCheck = ``) {
@@ -32,21 +33,22 @@ class StatusService {
   }
 
   /**
-   * Method to check if the current state is one of the provided states
+   * ### Method to check if the current state is one of the provided states
    */
   IsOneOf(...states) {
     return states.includes(this.state);
   }
 
   /** 
-   * Reset state to 'none'
+   * ### Reset state to 'none'
    */
   ResetState() {
     this.state = STATUS.queued;
   }
 
   /**
-   * Get Status By Code
+   * ### Get Status By Code
+   * 
    * @param {number} statusCode
    * @returns {string} status
    */
@@ -65,7 +67,8 @@ class StatusService {
   }
 
   /**
-   * Get Status By Code
+   * ### Get Status By Code
+   * 
    * @param {string} status
    * @returns {number} statusCode
    */
@@ -84,7 +87,7 @@ class StatusService {
   }
 
   /**
-   * Fix Statuses
+   * ### Fix Statuses
    */
   static FixAllStatuses() {
     try {
@@ -97,7 +100,8 @@ class StatusService {
   }
 
   /**
-   * Fix a Single Sheet's Statuses
+   * ### Fix a Single Sheet's Statuses
+   * 
    * @param {sheet} sheet
    * @returns {bool} success
    * @private
@@ -139,14 +143,14 @@ const _test_State = () => {
 
 
 /**
- * Fix Statuses
+ * ### Fix Statuses
  */
 const FixStatus = () => StatusService.FixAllStatuses();
 
 
 
 /**
- * Set Dropdowns for status
+ * ### Set Dropdowns for status
  * @TRIGGERED
  */
 const SetStatusDropdowns = () => {
@@ -158,7 +162,7 @@ const SetStatusDropdowns = () => {
     Object.values(SHEETS).forEach(sheet => sheet.getRange(2, 1, sheet.getLastRow(), 1).setDataValidation(rule));
     return 0;
   } catch(err) {
-    console.error(`"SetStatusDropdowns()" failed : ${err}`);
+    console.error(`"SetStatusDropdowns()" failed: ${err}`);
     return null;
   }
 }

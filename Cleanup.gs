@@ -1,6 +1,6 @@
 /**
  * ----------------------------------------------------------------------------------------------------------------
- * Sheet Cleanup Class
+ * ## Sheet Cleanup Class
  */
 class CleanupService {
   constructor() {
@@ -8,7 +8,7 @@ class CleanupService {
   }
 
   /**
-   * Remove All Duplicate Records
+   * ### Remove All Duplicate Records
    */
   static RemoveAllDuplicateRecords() {
     try {
@@ -17,13 +17,14 @@ class CleanupService {
       });
       return 0;
     } catch(err){
-      console.error(`"RemoveAllDuplicateRecords()" failed : ${err}`);
+      console.error(`"RemoveAllDuplicateRecords()" failed: ${err}`);
       return null;
     } 
   }
 
   /**
-   * Remove Duplicate Records
+   * ### Remove Duplicate Records
+   * 
    * @param {sheet} sheet
    */
   static RemoveDuplicateRecords(sheet) {
@@ -46,7 +47,8 @@ class CleanupService {
   }
 
   /**
-   * Clean the junk out of the filename
+   * ### Clean the junk out of the filename
+   * 
    * @param {string} filename
    * @return {string} fixed filename
    */

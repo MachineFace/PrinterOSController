@@ -1,7 +1,7 @@
 
 /**
  * -----------------------------------------------------------------------------------------------------------------
- * Factory for creating calendar events 
+ * ## Factory for creating calendar events 
  */
 class CalendarFactory {
   constructor() {
@@ -16,7 +16,7 @@ class CalendarFactory {
   }
 
   /**
-   * Get Calendars
+   * ### Get Calendars
    * @return {object} calendar
    */
   get Calendars() {
@@ -28,7 +28,7 @@ class CalendarFactory {
   }
 
   /**
-   * Get Events
+   * ### Get Events
    * @return {object} events
    */
   get Events() {
@@ -38,13 +38,13 @@ class CalendarFactory {
       events.forEach(event => console.info(`ID: ${event.getId()} \nTitle: ${event.getTitle()}`));
       return events;
     } catch(err) {
-      console.error(`"GetEvents()" failed : ${err}`);
+      console.error(`"GetEvents()" failed: ${err}`);
       return null;
     }
   }
 
   /**
-   * Create Event from rowdata
+   * ### Create Event from rowdata
    * @param {object} rowdata
    * @return {event} event
    */
@@ -74,13 +74,13 @@ class CalendarFactory {
       this.DeleteDuplicateEvents();
       return event;
     } catch(err) {
-      console.error(`"CreateEvent()" failed : ${err}`);
+      console.error(`"CreateEvent()" failed: ${err}`);
       return null;
     }
   }
 
   /**
-   * Delete Event By JobID
+   * ### Delete Event By JobID
    */
   DeleteEvent(jobID = ``) {
     try {
@@ -103,13 +103,13 @@ class CalendarFactory {
       });
       return 0;
     } catch(err) {
-      console.error(`"DeleteEvent()" failed : ${err}`);
+      console.error(`"DeleteEvent()" failed: ${err}`);
       return null;
     }
   }
 
   /**
-   * Delete Event by Google ID
+   * ### Delete Event by Google ID
    */
   DeleteEventByGID(googleId = ``) {
     try {
@@ -120,7 +120,7 @@ class CalendarFactory {
       console.info(`Event: ${googleId} deleted.`);
       return 0;
     } catch(err) {
-      console.error(`"DeleteEventByGID()" failed : ${err}`);
+      console.error(`"DeleteEventByGID()" failed: ${err}`);
       return null;
     }
   }
@@ -139,13 +139,13 @@ class CalendarFactory {
       });
       return 0;
     } catch(err) {
-      console.error(`"DeleteAllEvents()" failed : ${err}`);
+      console.error(`"DeleteAllEvents()" failed: ${err}`);
       return null;
     }
   }
 
   /**
-   * Delete Duplicate Events
+   * ### Delete Duplicate Events
    */
   DeleteDuplicateEvents() {
     try {
@@ -163,13 +163,14 @@ class CalendarFactory {
       Object.values(singletons).forEach(id => this.DeleteEventByGID(id));
       return 0;
     } catch(err) {
-      console.error(`"DeleteDuplicateEvents()" failed : ${err}`);
+      console.error(`"DeleteDuplicateEvents()" failed: ${err}`);
       return null;
     }
   }
 
   /** 
-   * Check If Event Exists
+   * ### Check If Event Exists
+   * 
    * @param {string} jobID
    * @return {bool} true or false
    * @private 
@@ -189,13 +190,14 @@ class CalendarFactory {
         return true;
       }
     } catch(err) {
-      console.error(`"_CheckIfEventExists()" failed : ${err}`);
+      console.error(`"_CheckIfEventExists()" failed: ${err}`);
       return null;
     }
   }
 
   /** 
-   * Calculate Completion Time
+   * ### Calculate Completion Time
+   * 
    * @private 
    * @param {Date} start
    * @param {number} duration in hours
@@ -208,7 +210,7 @@ class CalendarFactory {
       const date = new Date(s + d);
       return date;
     } catch(err) {
-      console.error(`"_CalculateCompletionTime()" failed : ${err}`);
+      console.error(`"_CalculateCompletionTime()" failed: ${err}`);
       return null;
     }
   }
@@ -217,7 +219,7 @@ class CalendarFactory {
 }
 
 /**
- * Delete Duplicate Events
+ * ### Delete Duplicate Events
  * @TRIGGERED
  */
 const deleteDupEvents = () => new CalendarFactory().DeleteDuplicateEvents();
@@ -241,7 +243,8 @@ const _testCalendars = () => {
 
 /**
  * ----------------------------------------------------------------------------------------------------------------
- * Test if value is a date and return true or false
+ * ### Test if value is a date and return true or false
+ * 
  * @param {date} d
  * @returns {boolean} b
  */

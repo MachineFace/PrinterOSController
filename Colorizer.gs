@@ -1,5 +1,5 @@
 /**
- * Color Service Class for coloring rows.
+ * ## Color Service Class for coloring rows.
  */
 class ColorService {
   constructor() {
@@ -7,7 +7,8 @@ class ColorService {
   }
 
   /**
-   * Set Row Color By Status
+   * ### Set Row Color By Status
+   * 
    * @param {sheet} sheet
    * @param {number} row
    * @param {string} status
@@ -60,7 +61,7 @@ const _testColorizer = () => {
 
 
 /**
- * Set the Conditional Formatting for each page
+ * ### Set the Conditional Formatting for each page
  * @TRIGGERED
  */
 const SetConditionalFormatting = () => {

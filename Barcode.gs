@@ -1,5 +1,6 @@
 
 /**
+ * ### Pickup By Barcode
  * For use with barcode scanner.
  * Searches for job number found in cell B2 of SearchByBarCode sheet and changes status to 'Picked Up'
  */
@@ -46,7 +47,7 @@ const PickupByBarcode = () => {
 
 
 /**
- * Mark a job as abandoned and send an email to that student
+ * ### Mark a job as abandoned and send an email to that student
  */
 const MarkAsAbandonedByBarcode = async () => {
   try {

@@ -1,6 +1,7 @@
 
 /**
  * ----------------------------------------------------------------------------------------------------------------
+ * ### Design Specialist 
  * Class for Creating a Design Specialist Employee
  */
 class DesignSpecialist {
@@ -37,7 +38,7 @@ class DesignSpecialist {
 
 /**
  * ----------------------------------------------------------------------------------------------------------------
- * SS Class - child of DS Class
+ * ### SS Class - child of DS Class
  * Note: In derived classes, super() must be called before you can use 'this'. Leaving this out will cause a reference error.
  */
 class StudentSupervisor extends DesignSpecialist {
@@ -76,7 +77,7 @@ class StudentSupervisor extends DesignSpecialist {
 
 /**
  * ----------------------------------------------------------------------------------------------------------------
- * Manager Class - child of DS Class
+ * ### Manager Class - child of DS Class
  */
 class Manager extends DesignSpecialist { 
   constructor({
@@ -113,8 +114,7 @@ class Manager extends DesignSpecialist {
 
 
 /**
- * ----------------------------------------------------------------------------------------------------------------
- * Create a Design Specialist from spreadsheet and return a list
+ * ### Create a Design Specialist from spreadsheet and return a list
  * @returns {[string]} DSList
  */
 const BuildStaff = () => {
@@ -151,7 +151,7 @@ const BuildStaff = () => {
 
 
 /**
- * Return Staff Email as a string.
+ * ### Return Staff Email as a string.
  */
 const StaffEmailAsString = () => {
   let emaillist = OTHERSHEETS.staff.getRange(2, 3, OTHERSHEETS.staff.getLastRow() - 1, 1).getValues();
@@ -163,37 +163,36 @@ const StaffEmailAsString = () => {
 
 
 /**
- * Class for Building Staff
+ * ### Get Staff
+ * Returns an object staff
+ * 
+ * @returns {object} staff
  */
-class StaffBuilder {
-  constructor() {
-    this.staff = {}
-    this.MakeStaff();
-  }
-
-  MakeStaff () {
+const GetStaff = () => {
+  try {
+    let staff = {};
     const data = OTHERSHEETS.Staff.getRange(2, 1, OTHERSHEETS.Staff.getLastRow() -1, 5).getValues();
     data.forEach( item => {
       let name = item[0], fullname = item[1], email = item[2], emaillink = item[3], type = item[4];
       switch(type) {
         case `DS`:
-          this.staff[name] = new DesignSpecialist({name : name, fullname : fullname, email : email});
+          staff[name] = new DesignSpecialist({name : name, fullname : fullname, email : email});
           break;
         case `SS`:
-          this.staff[name] = new StudentSupervisor({name : name, fullname : fullname, email : email});
+          staff[name] = new StudentSupervisor({name : name, fullname : fullname, email : email});
           break;
         case `MA`:
-          this.staff[name] = new Manager({name : name, fullname : fullname, email : email});
+          staff[name] = new Manager({name : name, fullname : fullname, email : email});
           break;
       }
     });
+    return staff;
+  } catch(err) {
+    console.error(`"GetStaff()" failed: ${err}`);
+    return null;
   }
-
-  get () {
-    return this.staff;
-  }
-
 }
+
 
 
 

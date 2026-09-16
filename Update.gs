@@ -1,14 +1,16 @@
 /**
  * -----------------------------------------------------------------------------------------------------------------
- * Update Data on Sheet
+ * 
+ * ## Update Data on Sheet
  */
 class UpdateService {
   constructor () {
     /** @private */
     this.pOS = new PrinterOS();
   }
+
   /**
-   * Update Info on the sheet.
+   * ### Update Info on the sheet.
    */
   async UpdateAll() {
     try {
@@ -25,7 +27,8 @@ class UpdateService {
   }
 
   /**
-   * Update
+   * ### Update
+   * 
    * @private
    * @param {sheet} sheet
    */
@@ -55,13 +58,14 @@ class UpdateService {
 
       return 0;
     } catch(err) {
-      console.error(`"Update()" failed : ${err}`);
+      console.error(`"Update()" failed: ${err}`);
       return null;
     }
   }
 
   /**
-   * Filter Jobs By Queued Or InProgress
+   * ### Filter Jobs By Queued Or InProgress
+   * 
    * @private
    * @param {sheet} sheet
    * @return {[number]} jobIds
@@ -95,7 +99,7 @@ class UpdateService {
   }
 
   /**
-   * Update all Filenames
+   * ### Update all Filenames
    */
   UpdateAllFilenames() {
     try {
@@ -124,7 +128,7 @@ class UpdateService {
   }
 
   /**
-   * Update All Material Costs
+   * ### Update All Material Costs
    */
   UpdateAllMaterialCosts() {
     try {
@@ -147,7 +151,8 @@ class UpdateService {
   }
 
   /**
-   * Update Single Sheet Materials
+   * ### Update Single Sheet Materials
+   * 
    * @return {boolean} successful
    * @private
    */
@@ -170,7 +175,8 @@ class UpdateService {
   }
 
   /**
-   * Calculate print cost.
+   * ### Calculate print cost.
+   * 
    * @param {number} weight
    * @return {string|null}
    */
@@ -192,19 +198,19 @@ class UpdateService {
 }
 
 /**
- * Main Entry Point
+ * ### Main Entry Point
  * @TRIGGERED
  */
 const UpdateAll = () => new UpdateService().UpdateAll();
 
 /**
- * Update all Filenames
+ * ### Update all Filenames
  * @TRIGGERED
  */
 const UpdateAllFilenames = () => new UpdateService().UpdateAllFilenames();
 
 /**
- * Update All Material Costs
+ * ### Update All Material Costs
  * @TRIGGERED
  */
 const UpdateAllMaterialCosts = () => new UpdateService().UpdateAllMaterialCosts();

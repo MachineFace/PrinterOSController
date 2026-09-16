@@ -2,7 +2,7 @@
 
 /**
  * -----------------------------------------------------------------------------------------------------------------
- * Write all new Data To Sheet
+ * ## Write all new Data To Sheet
  */
 class WriteToSheet {
   constructor() {
@@ -11,7 +11,7 @@ class WriteToSheet {
   }
 
   /**
-   * Write All New Data to Sheet
+   * ### Write All New Data to Sheet
    */
   async WriteAll() {
     try {
@@ -51,7 +51,8 @@ class WriteToSheet {
   }
 
   /**
-   * Fetch And Write
+   * ### Fetch And Write
+   * 
    * @param {sheet} sheet
    */
   async WriteSingleSheet(sheet = SHEETS.Spectrum) {
@@ -119,13 +120,14 @@ class WriteToSheet {
         }
       }
     } catch(err) {
-      console.error(`"WriteSingleSheet()" failed : ${err}`);
+      console.error(`"WriteSingleSheet()" failed: ${err}`);
       return null;
     }
   }
 
   /**
-   * Write Single Sheet
+   * ### Write Single Sheet
+   * 
    * @static
    * @public
    * @param {sheet} sheet
@@ -173,7 +175,8 @@ class WriteToSheet {
   }
   
   /**
-   * Write Job Details to Sheet
+   * ### Write Job Details to Sheet
+   * 
    * @private
    * @param {object} data
    * @param {sheet} sheet
@@ -277,7 +280,8 @@ class WriteToSheet {
   }
 
   /**
-   * Update Status
+   * ### Update Status
+   * 
    * @param {number} statusCode
    * @param {sheet} sheet
    * @param {number} row
@@ -323,7 +327,8 @@ class WriteToSheet {
   // }
 
   /**
-   * Calculate Print Cost
+   * ### Calculate Print Cost
+   * 
    * @private
    * @param {number} weight
    * @return {number} value
@@ -348,7 +353,8 @@ class WriteToSheet {
   }
 
   /**
-   * Check If Job Exists
+   * ### Check If Job Exists
+   * 
    * @private
    * @param {string} jobId
    */
@@ -384,14 +390,14 @@ class WriteToSheet {
 
 }
 /**
- * Main Entry Point
+ * ### Main Entry Point
  * @TRIGGERED
  */
 const WriteAllNewDataToSheets = () => new WriteToSheet().WriteAll();
 
 
 /**
- * Update Single Sheet
+ * ### Update Single Sheet
  */
 const _UpdateSingle = () => WriteToSheet.WriteSingleSheet(SHEETS.Alpha);
 

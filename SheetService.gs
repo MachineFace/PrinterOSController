@@ -2,17 +2,17 @@
  * SHEET SERVICE
  * ----------------------------------------------------------------------------------------------------------------
  */
-
 class SheetService {
   constructor() {
 
   }
 
   /**
+   * ### Is Valid Sheet
    * Check if this sheet is forbidden
+   * 
    * @param {sheet} sheet to check
-   * @returns {bool} false if sheet is allowed
-   * @returns {bool} true if forbidden
+   * @returns {bool} false if sheet is INVALID
    */
   static IsValidSheet(someSheet = SHEETS.Aurum) {
     try {
@@ -20,13 +20,15 @@ class SheetService {
       let forbiddenNames = Object.values(OTHERSHEETS).map(sheet => sheet.getSheetName());
       return !forbiddenNames.includes(thisSheetName);
     } catch(err) {
-      console.error(`"IsValidSheet()" failed : ${err}`);
+      console.error(`"IsValidSheet()" failed: ${err}`);
       return null;
     }
   }
 
   /**
+   * ### Get By Header
    * Return the value of a cell by column name and row number
+   * 
    * @param {sheet} sheet
    * @param {string} colName
    * @param {number} row
@@ -38,14 +40,16 @@ class SheetService {
       if (col == -1) throw new Error(`Getting data by header failed.`);
       return data[row - 1][col];
     } catch (err) {
-      console.error(`"GetByHeader()" failed : ${err} @ Sheet: ${sheet} Col Name specified: ${columnName} Row: ${row}`);
+      console.error(`"GetByHeader()" failed: ${err}`);
       return null;
     }
   }
 
 
   /**
+   * ### Set By Header
    * Set the value of a cell by column name and row number
+   * 
    * @param {sheet} sheet
    * @param {string} colName
    * @param {number} row
@@ -59,13 +63,15 @@ class SheetService {
       sheet.getRange(row, col).setValue(val);
       return 0;
     } catch (err) {
-      console.error(`"SetByHeader()" failed : ${err} @ Sheet: ${sheet} Row: ${row}, Value: ${val}`);
+      console.error(`"SetByHeader()" failed: ${err}`);
       return null;
     }
   }
 
   /**
+   * ### Get Column Data by Header
    * Return the values of a column by the name
+   * 
    * @param {sheet} sheet
    * @param {string} colName
    * @param {number} row
@@ -79,13 +85,15 @@ class SheetService {
       colData.splice(0, 1); // Pop first item out.
       return colData;
     } catch (err) {
-      console.error(`"GetColumnDataByHeader()" failed : ${err}`);
+      console.error(`"GetColumnDataByHeader()" failed: ${err}`);
       return null;
     }
   }
 
   /**
+   * ### Get Row Data
    * Return a dictionary of values from a whole row on a given sheet
+   * 
    * @param {sheet} sheet
    * @param {number} row
    */
@@ -107,13 +115,14 @@ class SheetService {
       console.info(dict);
       return dict;
     } catch (err) {
-      console.error(`"GetRowData()" failed : ${err}`);
+      console.error(`"GetRowData()" failed: ${err}`);
       return null;
     }
   }
 
   /**
-   * Set Row Data
+   * ### Set Row Data
+   * 
    * @param {sheet} sheet
    * @param {number} row
    * @param {object} rowdata to write
@@ -159,13 +168,14 @@ class SheetService {
       sheet.getRange(row, 1, 1, sorted.length).setValues([sorted]);
       return 0;
     } catch (err) {
-      console.error(`"SetRowData()" failed : ${err}`);
+      console.error(`"SetRowData()" failed: ${err}`);
       return null;
     }
   }
 
   /**
-   * Set Row Data
+   * ### Write New Row Data
+   * 
    * @param {sheet} sheet
    * @param {object} rowdata to write
    * @return {number} success or failure
@@ -187,14 +197,16 @@ class SheetService {
       sheet.appendRow(sorted);
       return 0;
     } catch (err) {
-      console.error(`"WriteNewRowData()" failed : ${err}`);
+      console.error(`"WriteNewRowData()" failed: ${err}`);
       return null;
     }
   }
 
 
   /**
+   * ### Search Column
    * Search Column for Value
+   * 
    * @param {sheet} sheet
    * @param {string} column name
    * @param {string} value to look for
@@ -211,13 +223,15 @@ class SheetService {
       if (col == -1) return false;
       return range.some( row => row[0] === val);
     } catch (err) {
-      console.error(`"SearchColumn()" failed : ${err} @ Sheet: ${sheet} Col Name specified: ${columnName} value: ${val}`);
+      console.error(`"SearchColumn()" failed: ${err} @ Sheet: ${sheet} Col Name specified: ${columnName} value: ${val}`);
       return false;
     }
   }
 
   /**
+   * ### Find Data in Column
    * Find some data in the column
+   * 
    * @param {spreadsheet} sheet
    * @param {string} column
    * @param {any} data
@@ -235,7 +249,9 @@ class SheetService {
   }
 
   /**
+   * ### Find Data in Row
    * Find some data in the row
+   * 
    * @param {spreadsheet} sheet
    * @param {any} data
    * @returns {[int]} column indexes
@@ -253,7 +269,9 @@ class SheetService {
   }
 
   /**
+   * ### Search Specific Sheet
    * Search a Specific Sheets for a value
+   * 
    * @required {string} value
    * @returns {[sheet, [values]]} list of sheets with lists of indexes
    */
@@ -264,13 +282,15 @@ class SheetService {
       if (finder == null) return false;
       return finder.getRow();
     } catch(err) {
-      console.error(`"SearchSpecificSheet()" failed : ${err}`);
+      console.error(`"SearchSpecificSheet()" failed: ${err}`);
       return null;
     }
   }
 
   /**
+   * ### Search
    * Search all Sheets for a value
+   * 
    * @required {string} value
    * @returns {[sheet, [values]]} list of sheets with lists of indexes
    */
@@ -290,14 +310,16 @@ class SheetService {
       // console.info(JSON.stringify(res));
       return res;
     } catch(err) {
-      console.error(`"Search()" failed : ${err}`);
+      console.error(`"Search()" failed: ${err}`);
       return null;
     }
   }
 
 
   /**
+   * ### Find One
    * Search all Sheets for one specific value
+   * 
    * @required {string} value
    * @returns {[sheet, [number]]} [sheetname, row]
    */
@@ -319,7 +341,8 @@ class SheetService {
   }
 
   /**
-   * Find Email
+   * ### Find Email
+   * 
    * @param {string} name
    * @returns {string} email
    */
@@ -343,7 +366,8 @@ class SheetService {
   }
 
   /**
-   * Write Array to Column
+   * ### Write Array to Column
+   * 
    * @param {array} array to write
    * @param {sheet} sheet
    * @param {number} column number
@@ -356,14 +380,18 @@ class SheetService {
   }
 
   /**
+   * ### Is Row Empty
    * Checks if array is all empty values.
+   * 
+   * @returns {boolean} boolean
    */
   static IsRowEmpty(row = []) {
     return row.filter((value) => value !== '').length === 0;
   }
 
   /**
-   * Delete Empty Rows
+   * ### Delete Empty Rows
+   * 
    * @param {sheet} sheet
    * @private
    */
@@ -407,7 +435,7 @@ class SheetService {
   }
 
   /**
-   * Add Array to Sheet
+   * ### Add Array to Sheet
    * @private
    */
   static AddArrayToSheet(sheet, column = 1, values = ``) {
@@ -423,11 +451,14 @@ class SheetService {
   }
 
   /**
+   * ### Delete Empty Columns
    * Removes blank columns in a selected range.
+   * 
    * Cells containing Space characters are treated as non-empty.
    * The entire column, including cells outside of the selected range,
    * must be empty to be deleted.
    * Called from menu option.
+   * 
    * @private
    */
   static DeleteEmptyColumns(sheet) {
@@ -484,8 +515,10 @@ class SheetService {
   }
 
   /**
+   * ### Crop Sheet
    * Trims all of the unused rows and columns outside of selected data range.
    * Called from menu option.
+   * 
    * @private
    */
   static CropSheet(sheet) {
@@ -514,9 +547,11 @@ class SheetService {
   }
 
   /**
+   * ### Fill Down Data
    * Copies value of active cell to the blank cells beneath it. 
    * Stops at last row of the sheet's data range if only blank cells are encountered.
    * Called from menu option.
+   * 
    * @private
    */
   static FillDownData(sheet, cell) {

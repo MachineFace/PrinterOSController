@@ -1,5 +1,5 @@
 /**
- * Error Checker
+ * ## Error Checker
  * Functions for determining who was overbilled
  * @NOTIMPLEMENTED until end of semester
  */
@@ -9,7 +9,7 @@ class ErrorChecker {
   }
 
   /**
-   * Check Emails
+   * ### Check Emails
    */
   static CheckEmails() {
     // Set of Everyone who printed
@@ -60,7 +60,7 @@ class ErrorChecker {
   }
 
   /**
-   * Function for determining who was overbilled
+   * ### Function for determining who was overbilled
    * @NOTIMPLEMENTED until end of semester
    */
   static RemoveStudentsWhoDidntPrint() {
@@ -106,7 +106,7 @@ class ErrorChecker {
   }
 
   /**
-   * Remove Bad Statuses
+   * ### Remove Bad Statuses
    */
   static RemoveShitStatuses() {
     // Remove Shitty status
@@ -126,7 +126,7 @@ class ErrorChecker {
   }
 
   /**
-   * Check Non-Existant Job Ids
+   * ### Check Non-Existant Job Ids
    */
   static CheckNonExistantJobIDs() {
     // Set of Everyone who printed
@@ -176,7 +176,7 @@ class ErrorChecker {
   }
 
   /**
-   * Calculate Material Costs for Billing
+   * ### Calculate Material Costs for Billing
    */
   static CalculateMaterialCostForBilling() {
     let materialUsed = SheetService.GetColumnDataByHeader(OTHERSHEETS.Report, `Material Used (∑,kg)`); //Material in kg

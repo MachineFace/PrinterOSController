@@ -1,6 +1,6 @@
 
 /**
- * Get Billing per Sheet
+ * ### Get Billing per Sheet
  * @param {sheet} sheet
  * @return {object} data
  */
@@ -23,7 +23,7 @@ const BillingPerSheet = (sheet) => {
 }
 
 /**
- * Billing
+ * ### Billing
  */
 const Billing = () => {
   let data = {}
@@ -98,7 +98,8 @@ const ConvertRangeToCsvFile = (sheet) => {
 
 
 /**
- * Calculate PrintCost
+ * ### Calculate PrintCost
+ * 
  * @param {number} weight
  * @return {number} value
  */

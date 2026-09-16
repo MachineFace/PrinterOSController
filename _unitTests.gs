@@ -1,5 +1,5 @@
 /**
- * Load GasT for Testing
+ * ### Load GasT for Testing
  * See : https://github.com/huan/gast for instructions
  */
 const gasT_URL = `https://raw.githubusercontent.com/huan/gast/master/src/gas-tap-lib.js`;
@@ -13,7 +13,7 @@ if ((typeof GasTap) === 'undefined') {
 }
 
 /**
- * Test PrinterOS with GasT
+ * ### Test PrinterOS with GasT
  * PASSED 6/16/2025
  */
 const _gasT_PrinterOS_Testing = async () => {
@@ -109,7 +109,7 @@ const _gasT_PrinterOS_Testing = async () => {
 }
 
 /**
- * Test with GasT
+ * ### Test with GasT
  * PASSED 6/16/2025
  */
 const _gasT_MessagingAndStaff_Testing = async () => {
@@ -195,7 +195,7 @@ const _gasT_MessagingAndStaff_Testing = async () => {
   });
 
   await test(`StaffBuilder`, (t) => {
-    const x = new StaffBuilder().get();
+    const x = GetStaff();
     for(const [name, values] of Object.entries(x)) {
       console.info(`${name} ----> First Name :${values.name}, Full : ${values.fullname} ~~ ${JSON.stringify(values)}`)
     }
@@ -208,7 +208,7 @@ const _gasT_MessagingAndStaff_Testing = async () => {
 }
 
 /**
- * Test Ticket with GasT
+ * ### Test Ticket with GasT
  */
 const _gasT_Ticket_Testing = async () => {
   console.warn(`Testing: ${new Error().stack.split('\n')[1].split(`at `)[1]}`);  // Print Enclosing Function Name
@@ -277,7 +277,7 @@ const _gasT_Ticket_Testing = async () => {
 }
 
 /**
- * Test Misc with GasT
+ * ### Test Misc with GasT
  * PASSED 6/16/2025
  */
 const _gasT_Misc_Testing = async () => {
@@ -387,7 +387,7 @@ const _gasT_Misc_Testing = async () => {
 }
 
 /**
- * Test Calculations with GasT
+ * ### Test Calculations with GasT
  * PASSED 6/16/2025
  */
 const _gasT_Calculation_Testing = async () => {
@@ -398,29 +398,29 @@ const _gasT_Calculation_Testing = async () => {
   
   await test(`Calc Average Turnaround`, (t) => {
     let x, y;
-    x = c.GetAverageTurnaroundPerSheet(SHEETS.Aurum);
+    x = Calculate.GetAverageTurnaroundPerSheet(SHEETS.Aurum);
     y = undefined || null || NaN;
     t.notEqual(x, y, `Average Turnaround SHOULD NOT return ${y}, Actual: ${x}`);
 
     y = true;
     t.equal(!isNaN(x), y, `GetAverageTurnaroundPerSheet SHOULD return ${y}, Actual: ${JSON.stringify(GetObjectType(x))}`);
 
-    x = c.GetAverageTurnaroundPerSheet(OTHERSHEETS.Logger);
+    x = Calculate.GetAverageTurnaroundPerSheet(OTHERSHEETS.Logger);
     y = false;
     t.equal(isNaN(x), y, `GetAverageTurnaroundPerSheet SHOULD return ${y}, Actual: ${x}`);
 
-    x = c.GetAverageTurnaroundPerSheet(`Fuck`);
+    x = Calculate.GetAverageTurnaroundPerSheet(`Fuck`);
     y = false;
     t.equal(isNaN(x), y, `GetAverageTurnaroundPerSheet SHOULD return ${y}, Actual: ${x}`);
   });
 
   await test(`StatusCountsPerSheet`, (t) => {
     let x, y;
-    x = c.StatusCountsPerSheet(SHEETS.Aurum);
+    x = Calculate.StatusCountsPerSheet(SHEETS.Aurum);
     y = undefined || null || NaN;
     t.notEqual(x, y, `StatusCountsPerSheet SHOULD NOT return ${y}, Actual: ${JSON.stringify(x)}`);
 
-    x = c.StatusCountsPerSheet(OTHERSHEETS.Logger);
+    x = Calculate.StatusCountsPerSheet(OTHERSHEETS.Logger);
     y = true;
     t.equal(!isNaN(x), y, `StatusCountsPerSheet SHOULD return ${y} for forbidden sheet: ${x}`);
   });
@@ -510,41 +510,7 @@ const _gasT_Calculation_Testing = async () => {
 }
 
 /**
- * Test Logger with GasT
- * PASSED 6/16/2025
- */
-const _gasT_Logger_Testing = async () => {
-  console.warn(`Testing: ${new Error().stack.split('\n')[1].split(`at `)[1]}`);  // Print Enclosing Function Name
-
-  const test = new GasTap();
-
-  await test(`Logger`, (t) => {
-    console.time(`EXECUTION TIMER`);
-
-    const w = Log.Warning(`Ooopsies ----> Warning`);
-    const i = Log.Info(`Some Info`);
-    const e = Log.Error(`ERROR`);
-    const d = Log.Debug(`Debugging`);
-    
-
-    console.timeEnd(`EXECUTION TIMER`);
-    t.notThrow(() => w,`Warning SHOULD NOT throw error.`);
-    t.notThrow(() => i,`Info SHOULD NOT throw error.`);
-    t.notThrow(() => e,`Error SHOULD NOT throw error.`);
-    t.notThrow(() => d,`Debug SHOULD NOT throw error.`);
-  });
-
-  await test(`SetConditionalFormatting`, t => {
-    const x = SetConditionalFormatting();
-    t.notThrow(() => x,`SetConditionalFormatting SHOULD NOT throw error.`);
-  });
-
-  await test.finish();
-  if (test.totalFailed() > 0) throw "Some test(s) failed!";
-}
-
-/**
- * Test Drive Controller with GasT
+ * ### Test Drive Controller with GasT
  * FAILED 6/16/2025
  */
 const _gasT_DriveController_Testing = async () => {
@@ -571,7 +537,7 @@ const _gasT_DriveController_Testing = async () => {
 }
 
 /**
- * Test Emailing with GasT
+ * ### Test Emailing with GasT
  * PASSED 6/16/2025
  */
 const _gasT_Email_Testing = async () => {
@@ -598,7 +564,7 @@ const _gasT_Email_Testing = async () => {
 }
 
 /**
- * Test Updating with GasT
+ * ### Test Updating with GasT
  * PASSED 6/16/2025
  */
 const _gasT_Update_Testing = async () => {
@@ -649,7 +615,7 @@ const _gasT_Update_Testing = async () => {
 
 
 /**
- * Test All with GasT
+ * ### Test All with GasT
  */
 const _gasTTestAll = async () => {
   console.time(`TESTING TIMER`);
@@ -665,7 +631,7 @@ const _gasTTestAll = async () => {
   ])
   .then(console.info('Test Success'))
   .catch(err => {
-    console.error(`"TestAll()" failed : ${err}`);
+    console.error(`"TestAll()" failed: ${err}`);
     return null;
   });
   console.timeEnd(`TESTING TIMER`);

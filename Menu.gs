@@ -1,6 +1,7 @@
 
 /**
- * Mark a job as abandoned and send an email to that student
+ * ### Mark a job as abandoned
+ * and send an email to that student
  */
 const PopUpMarkAsAbandoned = async () => {
   let ui = SpreadsheetApp.getUi(); 
@@ -47,7 +48,8 @@ const PopUpMarkAsAbandoned = async () => {
 }
 
 /**
- * Mark a job as abandoned and send an email to that student
+ * ### Mark a job as abandoned 
+ * and send an email to that student
  */
 const PopUpMarkAsPickedUp = async () => {
   let ui = SpreadsheetApp.getUi(); 
@@ -85,8 +87,7 @@ const PopUpMarkAsPickedUp = async () => {
 }
 
 /**
- * -----------------------------------------------------------------------------------------------------------------
- * Creates a pop-up for counting users.
+ * ### Creates a pop-up for counting users.
  */
 const PopupCountQueue = () => {
   let ui = SpreadsheetApp.getUi();
@@ -103,7 +104,7 @@ const PopupCountQueue = () => {
 }
 
 /**
- * Create a pop-up to Create a new Ticket if one is missing.
+ * ### Create a pop-up to Create a new Ticket if one is missing.
  */
 const PopupCreateTicket = async () => {
   let ui = SpreadsheetApp.getUi();
@@ -152,7 +153,7 @@ const PopupCreateTicket = async () => {
 }
 
 /**
- * Builds HTML file for the modal pop-up from the help list.
+ * ### Builds HTML file for the modal pop-up from the help list.
  */
 const BuildHTMLHELP = () => {
   let items = [
@@ -184,7 +185,7 @@ const BuildHTMLHELP = () => {
 }
 
 /**
- * Creates a modal pop-up for the help text.
+ * ### Creates a modal pop-up for the help text.
  */
 const PopupHelp = () => {
   let ui = SpreadsheetApp.getUi();
@@ -196,7 +197,7 @@ const PopupHelp = () => {
 }
 
 /**
- * Run Update
+ * ### Run Update
  */
 const PopupUpdate = async () => {
   let ui = await SpreadsheetApp.getUi();
@@ -209,7 +210,7 @@ const PopupUpdate = async () => {
 }
 
 /**
- * Remove Duplicates
+ * ### Remove Duplicates
  */
 const PopupRemoveDuplicates = async () => {
   let ui = await SpreadsheetApp.getUi();
@@ -222,7 +223,7 @@ const PopupRemoveDuplicates = async () => {
 }
 
 /**
- * Fetch New Data Single Sheet
+ * ### Fetch New Data Single Sheet
  */
 const PopupFetchNewForSingleSheet = async () => {
   // let ui = await SpreadsheetApp.getUi();
@@ -236,7 +237,7 @@ const PopupFetchNewForSingleSheet = async () => {
 }
 
 /**
- * Fix Missing Tickets for This Sheet
+ * ### Fix Missing Tickets for This Sheet
  */
 PopupFixMissingTicketsForThisSheet = () => {
   let ui = SpreadsheetApp.getUi();
@@ -250,6 +251,7 @@ PopupFixMissingTicketsForThisSheet = () => {
 }
 
 /**
+ * ### Popup Modal
  * Creates a modal pop-up for the help text.
  * @NOTIMPLEMENTED
  */
@@ -298,7 +300,7 @@ const PopupInterface = () => {
 }
 
 /**
- * Remove Users not in Billing List
+ * ### Remove Users not in Billing List
  */
 const PopupRemoveUsersNotInBillingList = async () => {
   let ui = await SpreadsheetApp.getUi();
@@ -311,7 +313,7 @@ const PopupRemoveUsersNotInBillingList = async () => {
 }
 
 /**
- * Create a pop-up to make a new Jobnumber
+ * ### Create a pop-up to make a new Jobnumber
  */
 const PopupCreateNewId = async () => {
   const ui = await SpreadsheetApp.getUi();
@@ -347,7 +349,7 @@ const PopupCreateNewId = async () => {
 
 
 /**
- * Builds our JPS Menu and sets functions.
+ * ### Builds our JPS Menu and sets functions.
  * @TRIGGERED ONOPEN
  */
 const BarMenu = () => {
@@ -389,7 +391,7 @@ const BarMenu = () => {
 
 
 /**
- * Creates a modal pop-up for the help text.
+ * ### Creates a modal pop-up for the help text.
  */
 const BuildBillingHELP = () => {
   let items = [
@@ -425,7 +427,7 @@ const PopupBillingHelp = () => {
 
 
 /**
- * Switch to scanning page.
+ * ### Switch to scanning page.
  */
 const OpenBarcodeTab = async () => {
   let spreadsheet = SpreadsheetApp.getActiveSpreadsheet();

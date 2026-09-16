@@ -1,6 +1,6 @@
 /**
  * -----------------------------------------------------------------------------------------------------------------
- * Calculate Metrics
+ * ## Calculate Metrics
  */
 class Calculate {
   constructor() {
@@ -8,30 +8,31 @@ class Calculate {
   }
 
   /**
-   * Calculate Average Turnaround for a sheet
+   * ### Calculate Average Turnaround for a sheet
+   * 
    * @param {sheet} sheet
    * @return {number} average (hrs)
    */
-  GetAverageTurnaroundPerSheet(sheet = SHEETS.Spectrum) {
+  static GetAverageTurnaroundPerSheet(sheet = SHEETS.Spectrum) {
     try {
       let completionTimes = [...SheetService.GetColumnDataByHeader(sheet, HEADERNAMES.duration)];
       let average = StatisticsService.ArithmeticMean(completionTimes);
       average = !isNaN(average) ? Number(average).toFixed(3) : 0;
       return average;
     } catch (err) {
-      console.error(`"GetAverageTurnaroundPerSheet()" failed : ${err}`);
+      console.error(`"GetAverageTurnaroundPerSheet()" failed: ${err}`);
       return null;
     }
   }
 
   /**
-   * Print Turnaround Averages
+   * ### Print Turnaround Averages
    */
   PrintTurnarounds() {
     try {
       let entries = [];
       Object.entries(SHEETS).forEach(([key, sheet], idx) => {
-        let turnaround = `${this.GetAverageTurnaroundPerSheet(sheet)} days`;
+        let turnaround = `${Calculate.GetAverageTurnaroundPerSheet(sheet)} days`;
         entries.push([ key, turnaround, ]);
       }); 
       
@@ -42,15 +43,17 @@ class Calculate {
       OTHERSHEETS.Metrics.getRange(1, 2, values.length, 2).setValues(values);
       return 0;
     } catch(err) {
-      console.error(`"PrintTurnarounds()" failed : ${err}`);
+      console.error(`"PrintTurnarounds()" failed: ${err}`);
       return null;
     }
   }
 
   /**
-   * Sum all Statuses
+   * ### Sum all Statuses
+   * 
+   * @ returns {object} status data
    */
-  StatusCountsPerSheet(sheet = SHEETS.Spectrum) {
+  static StatusCountsPerSheet(sheet = SHEETS.Spectrum) {
     try {
       const statuses = [...SheetService.GetColumnDataByHeader(sheet, HEADERNAMES.status)]
         .filter(Boolean);
@@ -76,13 +79,13 @@ class Calculate {
   }
 
   /**
-   * Print Status Counts
+   * ### Print Status Counts
    */
   PrintStatusCounts() {
     try {
       OTHERSHEETS.Metrics.getRange(1, 4, 1, 4).setValues([[ `Completed`, `Cancelled`, `Failed`, `Completion Ratio`, ]]);
       Object.entries(SHEETS).forEach(([key, sheet], idx) => {
-        const counts = this.StatusCountsPerSheet(sheet);
+        const counts = Calculate.StatusCountsPerSheet(sheet);
         const sum = (counts.Completed + counts.CLOSED);
         const completed = !isNaN(sum) && sum != null && sum != undefined && sum > 0 ? Number(sum).toFixed(3) : 0.0;
         const cancelled = !isNaN(counts.Cancelled) && counts.Cancelled != null && counts.Cancelled != undefined && counts.Cancelled > 0 ? Number(counts.Cancelled).toFixed(3) : 0.0;
@@ -95,14 +98,15 @@ class Calculate {
       }); 
       return 0;
     } catch(err) {
-      console.error(`"PrintStatusCounts()" failed : ${err}`);
+      console.error(`"PrintStatusCounts()" failed: ${err}`);
       return null;
     }
   }
 
   /**
-   * Calculate User Distribution
-   * @return {[]} users and counts
+   * ### Calculate User Distribution
+   * 
+   * @return {object} users and counts
    */
   UserDistribution() {
     try {
@@ -119,13 +123,14 @@ class Calculate {
       let items = StatisticsService.Distribution(userList);
       return items;  
     } catch(err) {
-      console.error(`"UserDistribution()" failed : ${err}`);
+      console.error(`"UserDistribution()" failed: ${err}`);
       return null;
     }
   }
 
   /**
-   * Get User Counts from PrinterOS
+   * ### Get User Counts from PrinterOS
+   * 
    * @return {object} counts
    */
   async GetUserCount() {
@@ -146,7 +151,7 @@ class Calculate {
   }
 
   /**
-   * Count Unique Users
+   * ### Count Unique Users
    */
   CountUniqueUsers() {
     try {
@@ -165,13 +170,14 @@ class Calculate {
       OTHERSHEETS.Metrics.getRange(1, 13, 2, 1).setValues(values);
       return count;
     } catch(err) {
-      console.error(`"CountUniqueUsers()" failed : ${err}`);
+      console.error(`"CountUniqueUsers()" failed: ${err}`);
       return null;
     }
   }
 
   /**
-   * Count Total Submissions
+   * ### Count Total Submissions
+   * 
    * @return {number} count
    */
   CountTotalSubmissions() {
@@ -189,19 +195,20 @@ class Calculate {
       OTHERSHEETS.Metrics.getRange(1, 14, 2, 1).setValues(values);
       return count;
     } catch(err) {
-      console.error(`"CountTotalSubmissions()" failed : ${err}`);
+      console.error(`"CountTotalSubmissions()" failed: ${err}`);
       return null;
     }
   }
 
   /**
-   * Status Counts
+   * ### Status Counts
+   * 
    * @return {object} counts
    */
   StatusCounts() {
     let statuses = {}
     Object.values(SHEETS).forEach(sheet => {
-      const data = this.StatusCountsPerSheet(sheet);
+      const data = Calculate.StatusCountsPerSheet(sheet);
       Object.entries(data).forEach(([key, value], idx) => {
         if(statuses[key]) statuses[key] += value;
         else statuses[key] = value;
@@ -219,7 +226,8 @@ class Calculate {
   }
   
   /**
-   * Count Unique Users Who Have Printed
+   * ### Count Unique Users Who Have Printed
+   * 
    * return {object} users
    */
   CountUniqueUsersWhoHavePrinted() {
@@ -242,7 +250,8 @@ class Calculate {
   }
 
   /**
-   * Arithmetic Mean
+   * ### Arithmetic Mean
+   * 
    * @return {number} mean
    */
   GetUserArithmeticMean() {
@@ -255,13 +264,14 @@ class Calculate {
       OTHERSHEETS.Metrics.getRange(1, 15, 2, 1).setValues(values);
       return mean;
     } catch(err) {
-      console.error(`"GetUserArithmeticMean()" failed : ${err}`);
+      console.error(`"GetUserArithmeticMean()" failed: ${err}`);
       return null;
     }
   }
 
   /**
-   * Standard Deviation for Users
+   * ### Standard Deviation for Users
+   * 
    * @return {number} standard deviation
    */
   UserStandardDeviation() {
@@ -275,13 +285,14 @@ class Calculate {
       OTHERSHEETS.Metrics.getRange(1, 16, 2, 1).setValues(values);
       return standardDeviation;
     } catch(err) {
-      console.error(`"UserStandardDeviation()" failed : ${err}`);
+      console.error(`"UserStandardDeviation()" failed: ${err}`);
       return null;
     }
   }
 
   /**
-   * Standard Deviation for Users
+   * ### Standard Deviation for Users
+   * 
    * @return {number} standard deviation
    */
   UserKurtosisAndSkewness() {
@@ -297,13 +308,13 @@ class Calculate {
       OTHERSHEETS.Metrics.getRange(1, 17, 2, 2).setValues(values);
       return standardDeviation;
     } catch(err) {
-      console.error(`"UserKurtosisAndSkewness()" failed : ${err}`);
+      console.error(`"UserKurtosisAndSkewness()" failed: ${err}`);
       return null;
     }
   }
 
   /**
-   * Print Top Ten
+   * ### Print Top Ten
    */
   PrintTopTen() {
     try {
@@ -318,13 +329,13 @@ class Calculate {
       });
       return 0;
     } catch(err) {
-      console.error(`"PrintTopTen()" failed : ${err}`);
+      console.error(`"PrintTopTen()" failed: ${err}`);
       return null;
     }
   }
 
   /**
-   * Print Zscore / Distribution / Detect Outliers
+   * ### Print Zscore / Distribution / Detect Outliers
    */
   PrintZscoreDistribution() {
     try {
@@ -344,13 +355,13 @@ class Calculate {
       OTHERSHEETS.Metrics.getRange(1, 33, values.length, 3).setValues(values);
 
     } catch(err) {
-      console.error(`"PrintZscoreDistribution()" failed : ${err}`);
+      console.error(`"PrintZscoreDistribution()" failed: ${err}`);
       return null;
     }
   }
 
   /**
-   * Count Categorical
+   * ### Count Categorical
    * @private
    */
   _CountCategorical(list) {
@@ -360,7 +371,7 @@ class Calculate {
   }
 
   /** 
-   * Sum Single Sheet Materials
+   * ### Sum Single Sheet Materials
    * @private 
    */
   _SumSingleSheetMaterials(sheet) {
@@ -376,14 +387,14 @@ class Calculate {
       console.info(`SUM for ${sheet.getSheetName()} = ${sum} grams`);
       return sum;
     } catch(err) {
-      console.error(`"_SumSingleSheetMaterials()" failed : ${err}`);
+      console.error(`"_SumSingleSheetMaterials()" failed: ${err}`);
       return null;
     }
   }
   
 
   /**
-   * Print Sheet Materials
+   * ### Print Sheet Materials
    */
   PrintSheetMaterials() {
     try {
@@ -407,14 +418,15 @@ class Calculate {
       OTHERSHEETS.Metrics.getRange(values.length + 2, 8, sumValues.length, 1).setValues(sumValues);
       return 0;
     } catch(err) {
-      console.error(`"PrintSheetMaterials()" failed : ${err}`);
+      console.error(`"PrintSheetMaterials()" failed: ${err}`);
       return null;
     }
    
   }
 
   /** 
-   * _SumSingleSheetCost
+   * ### _SumSingleSheetCost
+   * 
    * @private 
    * @param {sheet} sheet
    */
@@ -431,13 +443,13 @@ class Calculate {
       console.info(`SUM for ${sheet.getSheetName()} = $${sum}`);
       return sum;
     } catch(err) {
-      console.error(`"_SumSingleSheetCost()" failed : ${err}`);
+      console.error(`"_SumSingleSheetCost()" failed: ${err}`);
       return null;
     }
   }
 
   /**
-   * Sum Costs
+   * ### Sum Costs
    */
   SumCosts() {
     try {
@@ -452,13 +464,13 @@ class Calculate {
       OTHERSHEETS.Metrics.getRange(19, 9, values.length, 1).setValues(values);
       return total;
     } catch(err) {
-      console.error(`"SumCosts()" failed : ${err}`);
+      console.error(`"SumCosts()" failed: ${err}`);
       return null;
     }
   }
 
   /**
-   * Print Sheet Costs
+   * ### Print Sheet Costs
    */
   PrintSheetCosts() {
     try {
@@ -471,7 +483,7 @@ class Calculate {
       OTHERSHEETS.Metrics.getRange(1, 9, values.length, 1).setValues(values);
       return 0;
     } catch(err) {
-      console.error(`"PrintSheetCosts()" failed : ${err}`);
+      console.error(`"PrintSheetCosts()" failed: ${err}`);
       return null;
     }
    
@@ -484,7 +496,7 @@ class Calculate {
 
 /**
  * -----------------------------------------------------------------------------------------------------------------
- * Run Metrics
+ * ### Run Metrics
  */
 const Metrics = () => {
   try {
@@ -508,7 +520,7 @@ const Metrics = () => {
     console.info(`Recalculated Metrics`);
     return 0;
   } catch (err) {
-    console.error(`"Metrics()" failed : ${err}`);
+    console.error(`"Metrics()" failed: ${err}`);
     return null;
   }
 }
@@ -516,7 +528,7 @@ const Metrics = () => {
 
 /**
  * -----------------------------------------------------------------------------------------------------------------
- * Testing for Metrics
+ * ### Testing for Metrics
  */
 const _testMetrics = () => {
   const c = new Calculate();

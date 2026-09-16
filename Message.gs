@@ -1,6 +1,6 @@
 /**
  * -----------------------------------------------------------------------------------------------------------------
- * Class for Creating Response Messages
+ * ## Class for Creating Response Messages
  * Properties accessed via 'this.receivedMessage' or 'this.failedMessage'
  * @param {string} name
  * @param {string} projectname
@@ -32,7 +32,7 @@ class MessageService {
     /** @private */
     this.designspecialistemaillink = designspecialistemaillink;
     /** @private */
-    this.staff = new StaffBuilder().get();
+    this.staff = GetStaff();
 
     /** @private */
     this.greetings = `<p>Hi ${this.name},</p>`;

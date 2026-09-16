@@ -5,7 +5,8 @@
 
 
 /** 
- * Merge Objects
+ * ### Merge Objects
+ * 
  * @param {object} (rowData)
  * @param {object} (rowData2)
  * @returns {object} Merged Row Data
@@ -29,7 +30,8 @@ const MergeObjects = (objA, objB) => {
 }
 
 /**
- * Get Type
+ * ### Get Type
+ * 
  * @param {*} object to analyze
  * @return {object} object information
  */
@@ -65,7 +67,8 @@ const GetObjectType = (ob) => {
 
 
 /**
- * Build Summary Equation:
+ * ### Build Summary Equation
+ * 
  * @TRIGGERED
  * FORMAT: `={QUERY(Spectrum!A2:S, "Select * Where A = 'Queued' OR A = 'In-Progress' LABEL A 'Spectrum' \n");
     QUERY(Zardoz!A2:S, "Select * Where A = 'Queued' OR A = 'In-Progress' LABEL A 'Zardoz' "); 
@@ -96,7 +99,8 @@ const BuildSummaryEquation = () => {
 }
 
 /**
- * Helper Method for TitleCasing Names
+ * ### Helper Method for TitleCasing Names
+ * 
  * @param {string} string
  * @returns {string} titlecased
  */
@@ -111,7 +115,7 @@ const TitleCase = (str) => {
 }
 
 /**
- * Get Function Name
+ * ### Get Function Name
  */
 const GetFunctionName = () => {
   let stack = new Error().stack.split('\n')[2].split(`at `)[1];
@@ -120,7 +124,7 @@ const GetFunctionName = () => {
 }
 
 /**
- * Print Enclosing Function Name
+ * ### Print Enclosing Function Name
  */
 const PrintEnclosingFunctionName = () => {
   const fname = new Error().stack.split('\n')[2].split(`at `)[1];
@@ -129,8 +133,9 @@ const PrintEnclosingFunctionName = () => {
 }
 
 /**
- * Execute with Timeout
+ * ### Execute with Timeout
  * Note: this function does not work with appscript because appscript is synchronous...
+ * 
  * @param {function} some function to run
  * @param {number} timeout in seconds
  * @returns {Promise} race
