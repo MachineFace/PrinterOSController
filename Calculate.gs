@@ -16,7 +16,7 @@ class Calculate {
   static GetAverageTurnaroundPerSheet(sheet = SHEETS.Spectrum) {
     try {
       let completionTimes = [...SheetService.GetColumnDataByHeader(sheet, HEADERNAMES.duration)];
-      let average = StatisticsService.ArithmeticMean(completionTimes);
+      let average = StatisticsService.Mean(completionTimes);
       average = !isNaN(average) ? Number(average).toFixed(3) : 0;
       return average;
     } catch (err) {
@@ -256,7 +256,7 @@ class Calculate {
    */
   GetUserArithmeticMean() {
     try {
-      const mean = StatisticsService.ArithmeticMean(this.userDistribution);
+      const mean = StatisticsService.Mean(this.userDistribution);
       const values = [
         [ `Average # of Submissions Per User` ], 
         [ mean ],

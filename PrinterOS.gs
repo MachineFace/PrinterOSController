@@ -1,6 +1,7 @@
 /**
  * -----------------------------------------------------------------------------------------------------------------
- * ## PrinterOS Class for handling PrinterOS requests and responses
+ * ## PrinterOS 
+ * Class for handling PrinterOS requests and responses
  * API Info: https://docs.google.com/document/d/16u1uKQFML0sJ9SCdnHzcYX4eQh9dvsgeSeEtFymhTLs/edit#heading=h.tn9ro1ef6f0
  */
 class PrinterOS {
@@ -55,6 +56,7 @@ class PrinterOS {
       }
       const response = await UrlFetchApp.fetch(url, params);
       const responseCode = response.getResponseCode();
+
       if(![200, 201].includes(responseCode)) {
         throw new Error(`Bad response from server: ${responseCode}: ${RESPONSECODES[responseCode]}`); 
       }
