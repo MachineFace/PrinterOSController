@@ -63,9 +63,9 @@
       },
       {
         "userSymbol": "StatisticsService",
-        "version": "2",
+        "version": "0",
         "libraryId": "1oHi7qNmFxmHkt5UCx-OEOiH6eJiSp4Mk9j6ixlK4M5JRYmIk_1SVEK5N",
-        "developmentMode": false
+        "developmentMode": true
       }
     ]
   },

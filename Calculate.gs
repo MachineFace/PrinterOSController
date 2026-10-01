@@ -4,7 +4,7 @@
  */
 class Calculate {
   constructor() {
-    this.userDistribution = this.UserDistribution();
+
   }
 
   /**
@@ -28,7 +28,7 @@ class Calculate {
   /**
    * ### Print Turnaround Averages
    */
-  PrintTurnarounds() {
+  static PrintTurnarounds() {
     try {
       let entries = [];
       Object.entries(SHEETS).forEach(([key, sheet], idx) => {
@@ -40,8 +40,9 @@ class Calculate {
         [ `Printer`, `Turnaround` ],
         ...entries,
       ];
+      console.info(values);
       OTHERSHEETS.Metrics.getRange(1, 2, values.length, 2).setValues(values);
-      return 0;
+
     } catch(err) {
       console.error(`"PrintTurnarounds()" failed: ${err}`);
       return null;
@@ -57,21 +58,18 @@ class Calculate {
     try {
       const statuses = [...SheetService.GetColumnDataByHeader(sheet, HEADERNAMES.status)]
         .filter(Boolean);
-      const distribution = statuses.length > 0 ? [...StatisticsService.Distribution(statuses)] : [];
-      const distSet = new Set(distribution.map(([key, _]) => key));
 
-      let data = {}
-      if(distribution.length > 0) distribution.forEach(([key, value]) => data[key] = value);
+      let distribution = StatisticsService.Distribution(statuses);
       
       // Add Missing Values
       let list = Object.values(STATUS);
       list.forEach(entry => {
-        if (!distSet.has(entry.plaintext)) {
-          data[entry.plaintext] = 0;
+        if (!distribution.hasOwnProperty(entry.plaintext)) {
+          distribution[entry.plaintext] = 0;
         }
       });
-      // console.info(JSON.stringify(data, null, 2));
-      return data;
+      console.info(JSON.stringify(distribution, null, 2));
+      return distribution;
     } catch(err) {
       console.error(`"StatusCountsPerSheet()" failed: ${err}`);
       return null;
@@ -81,7 +79,7 @@ class Calculate {
   /**
    * ### Print Status Counts
    */
-  PrintStatusCounts() {
+  static PrintStatusCounts() {
     try {
       OTHERSHEETS.Metrics.getRange(1, 4, 1, 4).setValues([[ `Completed`, `Cancelled`, `Failed`, `Completion Ratio`, ]]);
       Object.entries(SHEETS).forEach(([key, sheet], idx) => {
@@ -108,7 +106,7 @@ class Calculate {
    * 
    * @return {object} users and counts
    */
-  UserDistribution() {
+  static UserDistribution() {
     try {
       let userList = [];
       let staff = SheetService.GetColumnDataByHeader(OTHERSHEETS.Staff, `EMAIL`);
@@ -133,7 +131,7 @@ class Calculate {
    * 
    * @return {object} counts
    */
-  async GetUserCount() {
+  static async GetUserCount() {
     const pos = new PrinterOS();
     pos.Login()
       .then(async () => {
@@ -153,7 +151,7 @@ class Calculate {
   /**
    * ### Count Unique Users
    */
-  CountUniqueUsers() {
+  static CountUniqueUsers() {
     try {
       let userList = [];
       Object.values(SHEETS).forEach(sheet => {
@@ -180,7 +178,7 @@ class Calculate {
    * 
    * @return {number} count
    */
-  CountTotalSubmissions() {
+  static CountTotalSubmissions() {
     try {
       let count = 0;
       Object.values(SHEETS).forEach(sheet => {
@@ -205,7 +203,7 @@ class Calculate {
    * 
    * @return {object} counts
    */
-  StatusCounts() {
+  static StatusCounts() {
     let statuses = {}
     Object.values(SHEETS).forEach(sheet => {
       const data = Calculate.StatusCountsPerSheet(sheet);
@@ -230,7 +228,7 @@ class Calculate {
    * 
    * return {object} users
    */
-  CountUniqueUsersWhoHavePrinted() {
+  static CountUniqueUsersWhoHavePrinted() {
     let userList = [];
     Object.values(SHEETS).forEach(sheet => {
       let status = SheetService.GetColumnDataByHeader(sheet, HEADERNAMES.status);
@@ -254,13 +252,16 @@ class Calculate {
    * 
    * @return {number} mean
    */
-  GetUserArithmeticMean() {
+  static GetUserArithmeticMean() {
     try {
-      const mean = StatisticsService.Mean(this.userDistribution);
+      const distribution = Calculate.UserDistribution();
+      const dist_list = [...Object.entries(distribution)];
+      const mean = Number(StatisticsService.Mean(dist_list)).toFixed(3);
       const values = [
         [ `Average # of Submissions Per User` ], 
         [ mean ],
       ];
+      console.info(values);
       OTHERSHEETS.Metrics.getRange(1, 15, 2, 1).setValues(values);
       return mean;
     } catch(err) {
@@ -274,9 +275,13 @@ class Calculate {
    * 
    * @return {number} standard deviation
    */
-  UserStandardDeviation() {
+  static UserStandardDeviation() {
     try {
-      const standardDeviation = StatisticsService.StandardDeviation(this.userDistribution);
+      const distribution = Calculate.UserDistribution();
+      const dist_list = [...Object.entries(distribution)];
+
+      const standardDeviation = StatisticsService.StandardDeviation(dist_list);
+
       const values = [
         [ `Std. Deviation for # of Submissions per User` ], 
         [ `+/- ${Number(standardDeviation).toFixed(4)}` ],
@@ -295,18 +300,21 @@ class Calculate {
    * 
    * @return {number} standard deviation
    */
-  UserKurtosisAndSkewness() {
+  static UserKurtosisAndSkewness() {
     try {
-      const standardDeviation = StatisticsService.StandardDeviation(this.userDistribution);
-      const kurtosis = StatisticsService.Kurtosis(this.userDistribution, standardDeviation);
-      const skewness = StatisticsService.Skewness(this.userDistribution, standardDeviation);
+      const distribution = Calculate.UserDistribution();
+      const dist_list = [...Object.values(distribution)];
+
+
+      const kurtosis = Number(StatisticsService.Sample_Kurtosis(dist_list)).toFixed(3);
+      const skewness = Number(StatisticsService.Sample_Skewness(dist_list)).toFixed(3);
       const values = [
         [ `Kurtosis (High Kurtosis means more outliers in data)`, `Skewness (Measure of asymmetry of the data)`  ], 
         [ kurtosis, skewness, ],
       ];
       console.info(values);
       OTHERSHEETS.Metrics.getRange(1, 17, 2, 2).setValues(values);
-      return standardDeviation;
+      return kurtosis;
     } catch(err) {
       console.error(`"UserKurtosisAndSkewness()" failed: ${err}`);
       return null;
@@ -316,18 +324,26 @@ class Calculate {
   /**
    * ### Print Top Ten
    */
-  PrintTopTen() {
+  static PrintTopTen() {
     try {
-      const distribution = this.userDistribution
-        .slice(0, 11);
-      console.info(distribution);
+      const distribution = Calculate.UserDistribution();
+      const dist_list = [...Object.entries(distribution)];
 
-      OTHERSHEETS.Metrics.getRange(1, 20, 1, 3).setValues([[ `Place`, `Email`, `# of Submissions`, ]]);
-      distribution.forEach(([email, count], idx) => {
-        const values = [ [ idx + 1, email, count ], ];
-        OTHERSHEETS.Metrics.getRange(2 + idx, 20, 1, 3).setValues(values); 
+      const dist = dist_list
+        .slice(0, 11);
+
+      let values = [
+        [ `Place`, `Email`, `# of Submissions`, ],
+      ];
+
+      dist.forEach(([email, count], idx) => {
+        const entry = [ idx + 1, email, count ];
+        values.push(entry)
       });
-      return 0;
+
+      console.info(values);
+      OTHERSHEETS.Metrics.getRange(1, 20, values.length, 3).setValues(values);
+
     } catch(err) {
       console.error(`"PrintTopTen()" failed: ${err}`);
       return null;
@@ -337,11 +353,15 @@ class Calculate {
   /**
    * ### Print Zscore / Distribution / Detect Outliers
    */
-  PrintZscoreDistribution() {
+  static PrintZscoreDistribution() {
     try {
-      const stdDev = StatisticsService.StandardDeviation(this.userDistribution);
-      const zScore = StatisticsService.ZScore(this.userDistribution, stdDev);
-      const outliers = StatisticsService.DetectOutliers(this.userDistribution, stdDev);
+      const distribution = Calculate.UserDistribution();
+      const dist_list = [...Object.entries(distribution)];
+
+      const stdDev = StatisticsService.StandardDeviation(dist_list);
+
+      const zScore = StatisticsService.ZScore(dist_list, `arithmetic`, stdDev);
+      const outliers = StatisticsService.Detect_Outliers(distribution, stdDev);
 
       // console.warn(`<<< Outliers >>>`);
       // console.info(outliers);
@@ -360,32 +380,32 @@ class Calculate {
     }
   }
 
-  /**
-   * ### Count Categorical
-   * @private
-   */
-  _CountCategorical(list) {
-    let count = {}
-    list.forEach( key => count[key] = ++count[key] || 1);
-    return count;
-  }
-
   /** 
    * ### Sum Single Sheet Materials
    * @private 
    */
-  _SumSingleSheetMaterials(sheet) {
+  static _SumSingleSheetMaterials(sheet) {
     try {
-      if(SheetService.IsValidSheet(sheet) == false) throw new Error(`Sheet is FORBIDDEN.`);
+      if(SheetService.IsValidSheet(sheet) == false) {
+        throw new Error(`Sheet is FORBIDDEN.`);
+      }
+
       let weights = SheetService.GetColumnDataByHeader(sheet, HEADERNAMES.weight);
       let statuses = SheetService.GetColumnDataByHeader(sheet, HEADERNAMES.status);
+
       for(let i = 0; i < weights.length; i++) {
-        if(statuses[i] != STATUS.complete.plaintext && statuses[i] != STATUS.closed.plaintext) weights[i] = 0.0;
-        if(weights[i] == null || !weights[i] || weights[i] == ' ' || isNaN(weights[i])) weights[i] = 0.0;
+        if(statuses[i] != STATUS.complete.plaintext && statuses[i] != STATUS.closed.plaintext) {
+          weights[i] = 0.0;
+        }
+        if(weights[i] == null || !weights[i] || weights[i] == ' ' || isNaN(weights[i])) {
+          weights[i] = 0.0;
+        }
       }
+
       let sum = StatisticsService.Sum(weights);
       console.info(`SUM for ${sheet.getSheetName()} = ${sum} grams`);
       return sum;
+
     } catch(err) {
       console.error(`"_SumSingleSheetMaterials()" failed: ${err}`);
       return null;
@@ -396,10 +416,10 @@ class Calculate {
   /**
    * ### Print Sheet Materials
    */
-  PrintSheetMaterials() {
+  static PrintSheetMaterials() {
     try {
       let counts = [];
-      Object.values(SHEETS).forEach(sheet => counts.push([this._SumSingleSheetMaterials(sheet)]));
+      Object.values(SHEETS).forEach(sheet => counts.push([Calculate._SumSingleSheetMaterials(sheet)]));
       const values = [
         [ `PLA Used (grams)` ],
         ...counts,
@@ -430,18 +450,29 @@ class Calculate {
    * @private 
    * @param {sheet} sheet
    */
-  _SumSingleSheetCost(sheet) {
+  static _SumSingleSheetCost(sheet) {
     try {
-      if(SheetService.IsValidSheet(sheet) == false) throw new Error(`Sheet is FORBIDDEN.`);
+      if(SheetService.IsValidSheet(sheet) == false) {
+        throw new Error(`Sheet is FORBIDDEN.`);
+      }
+
       let costs = SheetService.GetColumnDataByHeader(sheet, HEADERNAMES.cost);
       let statuses = SheetService.GetColumnDataByHeader(sheet, HEADERNAMES.status);
+
       for(let i = 0; i < costs.length; i++) {
-        if(statuses[i] == STATUS.complete.plaintext || statuses[i] == STATUS.closed.plaintext) costs[i] = 0.0;
-        if(costs[i] === null || !costs[i] || costs[i] == ' ' || isNaN(costs[i])) costs[i] = 0.0;
+        if(statuses[i] == STATUS.complete.plaintext || statuses[i] == STATUS.closed.plaintext) {
+          costs[i] = 0.0;
+        }
+        if(costs[i] === null || !costs[i] || costs[i] == ' ' || isNaN(costs[i])) {
+          costs[i] = 0.0;
+        }
       }
+
       let sum = StatisticsService.Sum(costs);
       console.info(`SUM for ${sheet.getSheetName()} = $${sum}`);
+
       return sum;
+
     } catch(err) {
       console.error(`"_SumSingleSheetCost()" failed: ${err}`);
       return null;
@@ -451,18 +482,22 @@ class Calculate {
   /**
    * ### Sum Costs
    */
-  SumCosts() {
+  static SumCosts() {
     try {
       let count = [];
-      Object.values(SHEETS).forEach(sheet => count.push(this._SumSingleSheetCost(sheet)));
+      Object.values(SHEETS).forEach(sheet => count.push(Calculate._SumSingleSheetCost(sheet)));
       const total = StatisticsService.Sum(count);
+
       const values = [
         [ `Sum of All Funds Generated ($)` ], 
         [ total ],
       ];
+
       console.info(values);
       OTHERSHEETS.Metrics.getRange(19, 9, values.length, 1).setValues(values);
+
       return total;
+
     } catch(err) {
       console.error(`"SumCosts()" failed: ${err}`);
       return null;
@@ -472,10 +507,10 @@ class Calculate {
   /**
    * ### Print Sheet Costs
    */
-  PrintSheetCosts() {
+  static PrintSheetCosts() {
     try {
       let counts = [];
-      Object.values(SHEETS).forEach(sheet => counts.push([this._SumSingleSheetCost(sheet)]));
+      Object.values(SHEETS).forEach(sheet => counts.push([Calculate._SumSingleSheetCost(sheet)]));
       const values = [
         [ `Funds Generated ($)`, ],
         ...counts,
@@ -500,25 +535,23 @@ class Calculate {
  */
 const Metrics = () => {
   try {
-    const c = new Calculate();
     console.warn(`Calculating Metrics .... `);
-    c.GetUserCount()
-    c.PrintTurnarounds();
-    c.PrintStatusCounts();
-    c.CountUniqueUsers();
-    c.CountTotalSubmissions();
-    c.PrintTopTen();
-    c.GetUserArithmeticMean();
-    c.UserStandardDeviation();
-    c.UserKurtosisAndSkewness();
-    c.StatusCounts();
-    c.CountUniqueUsersWhoHavePrinted();
-    c.SumCosts();
-    c.PrintSheetCosts();
-    c.PrintSheetMaterials();
-    c.PrintZscoreDistribution();
+    Calculate.GetUserCount()
+    Calculate.PrintTurnarounds();
+    Calculate.PrintStatusCounts();
+    Calculate.CountUniqueUsers();
+    Calculate.CountTotalSubmissions();
+    Calculate.PrintTopTen();
+    Calculate.GetUserArithmeticMean();
+    Calculate.UserStandardDeviation();
+    Calculate.UserKurtosisAndSkewness();
+    Calculate.StatusCounts();
+    Calculate.CountUniqueUsersWhoHavePrinted();
+    Calculate.SumCosts();
+    Calculate.PrintSheetCosts();
+    Calculate.PrintSheetMaterials();
+    Calculate.PrintZscoreDistribution();
     console.info(`Recalculated Metrics`);
-    return 0;
   } catch (err) {
     console.error(`"Metrics()" failed: ${err}`);
     return null;
@@ -531,8 +564,24 @@ const Metrics = () => {
  * ### Testing for Metrics
  */
 const _testMetrics = () => {
-  const c = new Calculate();
-  c.StatusCounts();
+  // Calculate.PrintTurnarounds(); // g
+  // Calculate.StatusCountsPerSheet();  // g
+  // Calculate.PrintStatusCounts(); // g
+  // Calculate.UserDistribution(); // g
+  // Calculate.GetUserCount();
+  // Calculate.CountUniqueUsers();
+  // Calculate.CountTotalSubmissions();
+  // Calculate.PrintTopTen(); // g
+  // Calculate.PrintZscoreDistribution(); // g
+  // Calculate.GetUserArithmeticMean();
+  // Calculate.StatusCounts(); // g
+  // Calculate.UserStandardDeviation(); // g
+  // Calculate.UserKurtosisAndSkewness(); // g
+  // Calculate.StatusCounts();
+  // Calculate.CountUniqueUsersWhoHavePrinted();
+  Calculate.SumCosts();
+  // Calculate.PrintSheetCosts(); // g
+  // Calculate.PrintSheetMaterials(); // g
 }
 
 
