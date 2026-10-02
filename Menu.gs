@@ -21,11 +21,14 @@ const PopUpMarkAsAbandoned = async () => {
       progressUpdate.setValue(`Job number not found. Try again.`);
       return;
     }
+
     let { status, printerID, printerName, jobID, timestamp, email, posStatCode, duration, notes, picture, ticket, filename, weight, cost, row, sheetName } = res;
     let sheet = SHEETS[sheetName];
     status = STATUS.abandoned.plaintext;
+
     SheetService.SetByHeader(sheet, HEADERNAMES.status, row, status);
     console.info(`Job ID ${jobID} marked as abandoned. Sheet: ${sheetName} row: ${row}`);
+    
     new EmailService({
       email : email, 
       status : status,
@@ -34,6 +37,7 @@ const PopUpMarkAsAbandoned = async () => {
       weight : weight,
     })
     console.warn(`Owner ${email} of abandoned job: ${jobID} emailed...`);
+
     ui.alert(
       `${SERVICE_NAME} : Marked as Abandoned`, 
       `Job ID: ${jobID}: ${email} emailed... (Sheet: ${sheetName} @ Row: ${row})`, 
@@ -92,10 +96,12 @@ const PopUpMarkAsPickedUp = async () => {
 const PopupCountQueue = () => {
   let ui = SpreadsheetApp.getUi();
   let count = 0;
+
   Object.values(SHEETS).forEach(sheet => {
     let pageCount = sheet.createTextFinder(`Queued`).findAll().length;
     count = count + pageCount;
   });
+
   ui.alert(
     `${SERVICE_NAME}`,
     `Prints Currently in Queue : ${count}`,
@@ -107,27 +113,26 @@ const PopupCountQueue = () => {
  * ### Create a pop-up to Create a new Ticket if one is missing.
  */
 const PopupCreateTicket = async () => {
-  let ui = SpreadsheetApp.getUi();
-
-  let thisSheet = SpreadsheetApp.getActiveSheet();
-  let sheetname = thisSheet.getName();
-  let thisRow = thisSheet.getActiveRange().getRow();
-
-  if(SheetService.IsValidSheet(thisSheet) == false) {
-    Browser.msgBox(
-      `${SERVICE_NAME}`,
-      `Bad Sheet Selected. Please select from the correct sheet. Select one cell in the row and a ticket will be created.`,
-      Browser.Buttons.OK
-    );
-    return;
-  }
-
-  const rowData = SheetService.GetRowData(sheet, thisRow);
-  let { status, printerID, printerName, jobID, timestamp, email, posStatCode, duration, notes, picture, ticket, filename, weight, cost, } = rowData;
-  const imageBlob = await TicketService.GetImage(picture);
-  
   try {
-    const ticket = await TicketService.CreateTicket({
+    let ui = SpreadsheetApp.getUi();
+
+    let thisSheet = SpreadsheetApp.getActiveSheet();
+    let thisRow = thisSheet.getActiveRange().getRow();
+
+    if(SheetService.IsValidSheet(thisSheet) == false) {
+      Browser.msgBox(
+        `${SERVICE_NAME}`,
+        `Please select from the correct sheet. Select one cell in the row and a ticket will be created.`,
+        Browser.Buttons.OK
+      );
+      return;
+    }
+
+    const rowData = SheetService.GetRowData(sheet, thisRow);
+    let { status, printerID, printerName, jobID, timestamp, email, posStatCode, duration, notes, picture, ticket, filename, weight, cost, } = rowData;
+  
+    const imageBlob = await TicketService.GetImage(picture);
+    ticket = await TicketService.CreateTicket({
       name : email,
       submissionTime : timestamp,
       email : email,
@@ -141,15 +146,16 @@ const PopupCreateTicket = async () => {
 
     const url = ticket.getUrl();
     SheetService.SetByHeader(thisSheet, HEADERNAMES.ticket, thisRow, url.toString());
-  } catch (err) {
-    console.error(`${err} : Couldn't create a ticket.`);
-  }
 
-  ui.alert(
-    `${SERVICE_NAME} Message`,
-    `Ticket Created for : ${email}, @ Index : ${thisRow}, Job Number : ${jobID}`,
-    ui.ButtonSet.OK
-  );
+    ui.alert(
+      `${SERVICE_NAME} Message`,
+      `Ticket Created for: ${email}, @Row: ${thisRow}, ID: ${jobID}`,
+      ui.ButtonSet.OK
+    );
+
+  } catch (err) {
+    console.error(`"PopupCreateTicket()" failed: ${err}`);
+  }
 }
 
 /**

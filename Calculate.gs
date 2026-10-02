@@ -16,8 +16,10 @@ class Calculate {
   static GetAverageTurnaroundPerSheet(sheet = SHEETS.Spectrum) {
     try {
       let completionTimes = [...SheetService.GetColumnDataByHeader(sheet, HEADERNAMES.duration)];
+
       let average = StatisticsService.Mean(completionTimes);
       average = !isNaN(average) ? Number(average).toFixed(3) : 0;
+
       return average;
     } catch (err) {
       console.error(`"GetAverageTurnaroundPerSheet()" failed: ${err}`);
@@ -81,20 +83,28 @@ class Calculate {
    */
   static PrintStatusCounts() {
     try {
-      OTHERSHEETS.Metrics.getRange(1, 4, 1, 4).setValues([[ `Completed`, `Cancelled`, `Failed`, `Completion Ratio`, ]]);
+      let values = [
+        [ `Completed`, `Cancelled`, `Failed`, `Completion Ratio`, ],
+      ];
+
       Object.entries(SHEETS).forEach(([key, sheet], idx) => {
         const counts = Calculate.StatusCountsPerSheet(sheet);
         const sum = (counts.Completed + counts.CLOSED);
-        const completed = !isNaN(sum) && sum != null && sum != undefined && sum > 0 ? Number(sum).toFixed(3) : 0.0;
-        const cancelled = !isNaN(counts.Cancelled) && counts.Cancelled != null && counts.Cancelled != undefined && counts.Cancelled > 0 ? Number(counts.Cancelled).toFixed(3) : 0.0;
-        const failed = !isNaN(counts.FAILED) && counts.FAILED != null && counts.FAILED != undefined && counts.FAILED > 0 ? Number(counts.FAILED).toFixed(3) : 0.0;
+
+        const completed = !isNaN(sum) && sum != null && sum != undefined && sum > 0 ? Math.floor(sum) : 0;
+        const cancelled = !isNaN(counts.Cancelled) && counts.Cancelled != null && counts.Cancelled != undefined && counts.Cancelled > 0 ? Math.floor(counts.Cancelled) : 0;
+        const failed = !isNaN(counts.FAILED) && counts.FAILED != null && counts.FAILED != undefined && counts.FAILED > 0 ? Math.floor(counts.FAILED) : 0;
+
         const total = StatisticsService.Sum(Object.values(counts)) || 0;
+
         let ratio = total > 0 ? `${Number(Number(completed / total).toFixed(3) * 100).toFixed(1)} %` : `0 %`;
-        console.info(`COMPLETED: ${completed}, CANCELLED: ${cancelled}, FAILED: ${failed}, TOTAL: ${total}, COMPLETED RATIO: ${ratio}`);
-        const values = [ [ completed, cancelled, failed, ratio ], ];
-        OTHERSHEETS.Metrics.getRange(2 + idx, 4, 1, 4).setValues(values);
+
+        values.push([ completed, cancelled, failed, ratio ]);
       }); 
-      return 0;
+
+      console.info(values);
+      OTHERSHEETS.Metrics.getRange(1, 4, values.length, 4).setValues(values);
+
     } catch(err) {
       console.error(`"PrintStatusCounts()" failed: ${err}`);
       return null;
@@ -566,7 +576,7 @@ const Metrics = () => {
 const _testMetrics = () => {
   // Calculate.PrintTurnarounds(); // g
   // Calculate.StatusCountsPerSheet();  // g
-  // Calculate.PrintStatusCounts(); // g
+  Calculate.PrintStatusCounts(); // g
   // Calculate.UserDistribution(); // g
   // Calculate.GetUserCount();
   // Calculate.CountUniqueUsers();
@@ -579,7 +589,7 @@ const _testMetrics = () => {
   // Calculate.UserKurtosisAndSkewness(); // g
   // Calculate.StatusCounts();
   // Calculate.CountUniqueUsersWhoHavePrinted();
-  Calculate.SumCosts();
+  // Calculate.SumCosts();
   // Calculate.PrintSheetCosts(); // g
   // Calculate.PrintSheetMaterials(); // g
 }

@@ -394,7 +394,6 @@ const _gasT_Calculation_Testing = async () => {
   console.warn(`Testing: ${new Error().stack.split('\n')[1].split(`at `)[1]}`);  // Print Enclosing Function Name
 
   const test = new GasTap();
-  const c = new Calculate();
   
   await test(`Calc Average Turnaround`, (t) => {
     let x, y;
@@ -427,21 +426,21 @@ const _gasT_Calculation_Testing = async () => {
 
   await test(`Calc Distribution`, (t) => {
     let x, y;
-    x = c.UserDistribution();
+    x = Calculate.UserDistribution();
     y = undefined || null
     t.notEqual(x, y, `Distribution should not return ${y}, Actual: ${x.slice(0, 20)}`);
   });
 
   await test(`GetUserCount`, (t) => {
     let x, y;
-    x = c.GetUserCount();
+    x = Calculate.GetUserCount();
     y = undefined || null;
     t.notEqual(x, y, `GetUserCount should not return ${y}, Actual: ${x}`);
   });
 
   await test(`CountUniqueUsers`, (t) => {
     let x, y;
-    x = c.CountUniqueUsers();
+    x = Calculate.CountUniqueUsers();
     y = undefined || null;
     t.notEqual(x, y, `CountUniqueUsers should not return ${y}, Actual: ${x}`);
 
@@ -451,7 +450,7 @@ const _gasT_Calculation_Testing = async () => {
 
   await test(`CountTotalSubmissions`, (t) => {
     let x, y;
-    x = c.CountTotalSubmissions();
+    x = Calculate.CountTotalSubmissions();
     y = undefined || null;
     t.notEqual(x, y, `CountTotalSubmissions should not return ${y}, Actual: ${x}`);
 
@@ -461,21 +460,21 @@ const _gasT_Calculation_Testing = async () => {
 
   await test(`StatusCounts`, (t) => {
     let x, y;
-    x = c.StatusCounts();
+    x = Calculate.StatusCounts();
     y = undefined || null;
     t.notEqual(x, y, `StatusCounts SHOULD NOT return ${y}, Actual: ${x}`);
   });
 
   await test(`CountUniqueUsersWhoHavePrinted`, (t) => {
     let x, y;
-    x = c.CountUniqueUsersWhoHavePrinted();
+    x = Calculate.CountUniqueUsersWhoHavePrinted();
     y = undefined || null;
     t.notEqual(x, y, `CountUniqueUsersWhoHavePrinted SHOULD NOT return ${y}, Actual: ${x}`);
   });
 
   await test(`Calc Standard Deviation`, (t) => {
     let x, y;
-    x = c.UserStandardDeviation();
+    x = Calculate.UserStandardDeviation();
     y = undefined || null;
     t.notEqual(x, y, `Standard Deviation SHOULD NOT return ${y}, Actual: ${x}`);
     t.equal(!isNaN(x), true, `UserStandardDeviation SHOULD return a number: ${JSON.stringify(GetObjectType(x))}`)
@@ -483,7 +482,7 @@ const _gasT_Calculation_Testing = async () => {
 
   await test(`Calculate Arithmetic Mean`, (t) => {
     let x, y;
-    x = c.GetUserArithmeticMean();
+    x = Calculate.GetUserArithmeticMean();
     y = undefined || null;
     t.notEqual(x, y, `Arithmetic Mean SHOULD NOT return ${y}, Actual: ${x}`);
     t.equal(!isNaN(x), true, `GetUserArithmeticMean SHOULD return a number: ${JSON.stringify(GetObjectType(x))}`)
@@ -491,7 +490,7 @@ const _gasT_Calculation_Testing = async () => {
 
   await test(`SumSingleSheetMaterials`, (t) => {
     let x, y;
-    x = c._SumSingleSheetMaterials(SHEETS.Aurum);
+    x = Calculate._SumSingleSheetMaterials(SHEETS.Aurum);
     y = undefined || null;
     t.notEqual(x, y, `SumSingleSheetMaterials SHOULD NOT return ${y}, Actual: ${x}`);
     t.equal(!isNaN(x), true, `SumSingleSheetMaterials SHOULD return a number: ${JSON.stringify(GetObjectType(x))}`)
@@ -499,7 +498,7 @@ const _gasT_Calculation_Testing = async () => {
 
   await test(`SumCosts`, (t) => {
     let x, y;
-    x = c.SumCosts();
+    x = Calculate.SumCosts();
     y = undefined || null;
     t.notEqual(x, y, `SumCosts SHOULD NOT return ${y}, Actual: ${x}`);
     t.equal(!isNaN(x), true, `SumCosts SHOULD return a number: ${JSON.stringify(GetObjectType(x))}`)
