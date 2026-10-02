@@ -92,7 +92,7 @@ class StatusService {
   static FixAllStatuses() {
     try {
       Object.values(SHEETS).forEach(sheet => StatusService.FixSheetStatuses(sheet));
-      return 0;
+      
     } catch(err) {
       console.error(`"FixAllStatuses()" failed: ${err}`);
       return null;
@@ -119,7 +119,7 @@ class StatusService {
         }
       });
       console.warn(`Statuses Checked and Fixed for ${sheet.getSheetName()}....`);
-      return 0;
+      
     } catch(err) {
       console.error(`"FixSheetStatuses()" failed: ${err}`);
       return null;
@@ -160,7 +160,7 @@ const SetStatusDropdowns = () => {
       .newDataValidation()
       .requireValueInList(statuses);
     Object.values(SHEETS).forEach(sheet => sheet.getRange(2, 1, sheet.getLastRow(), 1).setDataValidation(rule));
-    return 0;
+    
   } catch(err) {
     console.error(`"SetStatusDropdowns()" failed: ${err}`);
     return null;

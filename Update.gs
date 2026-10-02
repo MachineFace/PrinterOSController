@@ -19,7 +19,7 @@ class UpdateService {
           Object.values(SHEETS).forEach( async (sheet) => await this.Update(sheet));
         })
         .finally(() => this.pOS.Logout());
-      return 0;
+      
     } catch(err){
       console.error(`"UpdateAll()" failed: ${err}`);
       return null;
@@ -56,7 +56,7 @@ class UpdateService {
           
       });
 
-      return 0;
+      
     } catch(err) {
       console.error(`"Update()" failed: ${err}`);
       return null;
@@ -120,7 +120,7 @@ class UpdateService {
           });
         })
         .finally(() => this.pOS.Logout());
-      return 0;
+      
     } catch(err){
       console.error(`"UpdateAllFilenames()" failed: ${err}`);
       return null;
@@ -167,7 +167,7 @@ class UpdateService {
           SheetService.SetByHeader(sheet, HEADERNAMES.weight, index + 2, weight);
           SheetService.SetByHeader(sheet, HEADERNAMES.cost, index + 2, price);
         });
-      return 0;
+      
     } catch(err){
       console.error(`"UpdateSingleSheetMaterials()" failed ${err}`);
       return null;

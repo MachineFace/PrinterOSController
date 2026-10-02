@@ -446,7 +446,7 @@ class Calculate {
         [ numOfSpools ],
       ];
       OTHERSHEETS.Metrics.getRange(values.length + 2, 8, sumValues.length, 1).setValues(sumValues);
-      return 0;
+      
     } catch(err) {
       console.error(`"PrintSheetMaterials()" failed: ${err}`);
       return null;
@@ -526,7 +526,7 @@ class Calculate {
         ...counts,
       ];
       OTHERSHEETS.Metrics.getRange(1, 9, values.length, 1).setValues(values);
-      return 0;
+      
     } catch(err) {
       console.error(`"PrintSheetCosts()" failed: ${err}`);
       return null;

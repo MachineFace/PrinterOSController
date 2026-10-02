@@ -49,7 +49,7 @@ class DriveController {
           return;
         }
       });
-      return 0;
+      
     } catch(err) {
       console.error(`"MoveTicketsOutOfRoot()" failed: ${err}`);
       return null;
@@ -97,7 +97,7 @@ class DriveController {
         console.warn(`DELETED: (${tag})`);
         if(!file.isTrashed()) throw new Error(`Whoops: Couldn't delete (${tag})`);
       } 
-      return 0;
+      
     } catch(err) {
       console.error(`"DeleteOldTickets()" failed: ${err}`);
       return null;
@@ -126,7 +126,7 @@ class DriveController {
       
       fileList.sort((a, b) => a.createdDate - b.createdDate);
       fileList.forEach(entry => entry.file.setTrashed(true));
-      return 0;
+      
     } catch(err) {
       console.error(`"TrashOldTickets()" failed: ${err}`);
       return null;
@@ -237,7 +237,7 @@ class DriveController {
     try {
       DriveApp.getFileById(id)
         .setTrashed(true);
-      return 0;
+      
     } catch(err) {
       console.error(`"DeleteFileByID()" failed: ${err}`);
       return null;

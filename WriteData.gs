@@ -17,12 +17,11 @@ class WriteToSheet {
     try {
       const sheets = Object.values(SHEETS);
       if(!sheets.length) {
-        console.warn(`"WriteAll()" ---> No sheets configured.`);
-        return 0;
+        throw new Error(`"WriteAll()" ---> No sheets configured.`);
       }
 
       const loginResult = await this.pOS.Login();
-      if(loginResult === false) {
+      if(!loginResult) {
         throw new Error(`PrinterOS login failed.`);
       }
 
@@ -39,11 +38,11 @@ class WriteToSheet {
       }
 
       const logoutResult = await this.pOS.Logout();
-      if(logoutResult === false) {
+      if(!logoutResult) {
         throw new Error(`PrinterOS logout failed.`);
       }
 
-      return 0;
+      
     } catch(err) {
       console.error(`"WriteAll()" failed: ${err}`);
       return null;
@@ -92,7 +91,7 @@ class WriteToSheet {
 
       if(!jobList.length) {
         console.warn(`${sheetName} ----> Nothing New....`);
-        return 0;
+        
       }
 
       const rowStart = sheet.getLastRow();
@@ -152,7 +151,7 @@ class WriteToSheet {
         
           if(jobList.length === 0) {
             console.warn(`${sheetName} ----> Nothing New....`);
-            return 0;
+            return;
           }
           let rowStart = sheet.getLastRow();
           jobList.forEach(async (job, idx) => {
@@ -162,12 +161,12 @@ class WriteToSheet {
             await this._WriteJobDetailsToSheet(sheet, row, data);
           });
             
-          return 0;
+          
         })
         .finally( () => {
           pOS.Logout();
         });
-      return 0;
+      
     } catch(err){
       console.error(`"WriteSingleSheet()" failed: ${err}`);
       return null;
@@ -271,7 +270,7 @@ class WriteToSheet {
       }
 
       // console.warn(`Writing to sheet ${printerName}, Data: ${JSON.stringify(rowData)}`);
-      return 0;
+      
     } catch (err) {
       console.error(`"_WriteJobDetailsToSheet()" failed: ${err}`);
       return null;
@@ -314,7 +313,7 @@ class WriteToSheet {
         new CalendarFactory().CreateEvent(rowData);
       }
 
-      return 0;
+      
     } catch(err) {
       console.error(`"UpdateStatus()" failed: ${err}`);
       return null;

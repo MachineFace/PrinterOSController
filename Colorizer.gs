@@ -43,7 +43,7 @@ class ColorService {
       }
 
       console.warn(`Status: "${validStatus}" → Set row ${row} to color: ${label}`);
-      return 0;
+      
     } catch(err) {
       console.error(`"SetRowColorByStatus()" failed: ${err}`);
       return null;

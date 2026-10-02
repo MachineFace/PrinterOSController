@@ -86,7 +86,9 @@ class CalendarFactory {
     try {
       const events = [...this.Events]
         .filter(Boolean);
-      if(events.length == 0) return 0; 
+      if(events.length == 0) {
+        return; 
+      }
       events.forEach(event => {
         const eventID = event?.getId();
         let jID = event?.getTitle()
@@ -101,7 +103,7 @@ class CalendarFactory {
           console.info(`Event: ${eventID}, Deleted`);
         }
       });
-      return 0;
+      
     } catch(err) {
       console.error(`"DeleteEvent()" failed: ${err}`);
       return null;
@@ -118,7 +120,7 @@ class CalendarFactory {
         .getEventById(googleId)
         .deleteEvent();
       console.info(`Event: ${googleId} deleted.`);
-      return 0;
+      
     } catch(err) {
       console.error(`"DeleteEventByGID()" failed: ${err}`);
       return null;
@@ -137,7 +139,7 @@ class CalendarFactory {
           .getEventById(event.getId())
           .deleteEvent();
       });
-      return 0;
+      
     } catch(err) {
       console.error(`"DeleteAllEvents()" failed: ${err}`);
       return null;
@@ -161,7 +163,7 @@ class CalendarFactory {
       });
       console.info(JSON.stringify(singletons));
       Object.values(singletons).forEach(id => this.DeleteEventByGID(id));
-      return 0;
+      
     } catch(err) {
       console.error(`"DeleteDuplicateEvents()" failed: ${err}`);
       return null;

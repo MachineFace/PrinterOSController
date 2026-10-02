@@ -58,10 +58,10 @@ class EmailService {
       
       if (!this.status || !message) {
         console.warn(`Student ${this.name} NOT emailed... Status was "${this.status}"`);
-        return 0;
+        
       }
       EmailService.Mail(this.email, this.status, message, this.designspecialistemail);
-      return 0;
+      
     } catch (err) {
       console.error(`"SendEmail()" failed: ${err}`);
       return null;
@@ -91,7 +91,7 @@ class EmailService {
       }
       MailApp.sendEmail(to_email, subject, "", options);
       console.warn(`User (${to_email}) emailed ${status} message.`);
-      return 0;
+      
     } catch(err) {
       console.error(`"Mail()" failed: ${err}`);
       return null;

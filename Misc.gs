@@ -90,7 +90,7 @@ const BuildSummaryEquation = () => {
     query += `}`;
     console.info(query);
     OTHERSHEETS.Summary.getRange(3, 1, 1, 1).setValue(query);
-    return 0;
+    
   } catch(err) {
     console.error(`"BuildSummaryEquation()" failed: ${err}`);
     return null;

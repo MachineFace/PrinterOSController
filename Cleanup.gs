@@ -15,7 +15,7 @@ class CleanupService {
       Object.values(SHEETS).forEach(sheet => {
         CleanupService.RemoveDuplicateRecords(sheet);
       });
-      return 0;
+      
     } catch(err){
       console.error(`"RemoveAllDuplicateRecords()" failed: ${err}`);
       return null;

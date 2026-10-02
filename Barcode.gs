@@ -74,7 +74,7 @@ const MarkAsAbandonedByBarcode = async () => {
         `Jobnumber : ${jobnumber} not found...`,
         ui.ButtonSet.OK
       );
-      return 0;
+      
     } 
 
     let sheet = SHEETS[res.sheetName];
@@ -100,7 +100,7 @@ const MarkAsAbandonedByBarcode = async () => {
       `Owner ${email} of abandoned job: ${jobnumber} emailed..`,
       ui.ButtonSet.OK
     );
-    return;
+
   } catch(err) {
     console.error(`"MarkAsAbandonedByBarcode()" failed: ${err}`);
     return null;

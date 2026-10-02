@@ -499,7 +499,7 @@ class UpdateMissingTickets {
       });
       const url = t.getUrl();
       SheetService.SetByHeader(sheet, HEADERNAMES.ticket, index, url.toString());
-      return 0;
+      
     } catch (err) {
       console.error(`${err} : Couldn't generate a ticket....`);
       return null;
@@ -548,7 +548,7 @@ const FixMissingTicketsForSingleSheet = (sheet) => {
           console.warn(`Ticket Created....`);
         }
       });
-    return 0;
+    
   } catch(err) {
     console.error(`"FixMissingTicketsForSingleSheet()" failed: ${err}`);
     return null;
@@ -567,7 +567,7 @@ const FixMissingTickets = () => {
     //   FixMissingTicketsForSingleSheet(sheet);
     // });
     // console.info(`Tickets Checked and Fixed....`);
-    return 0;
+    
   } catch(err) {
     console.error(`"FixMissingTickets()" failed: ${err}`);
     return null;
